@@ -1,0 +1,29 @@
+.ctn_body{
+  display: flex;
+  width: 100%;
+  height:100%;
+}
+.hover {
+  cursor: pointer;
+}
+.tooltip {
+  background-color: #0b69e3;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 5px;
+  padding: 10px 15px;
+  opacity: 0;
+  transform: translate3d(-50%, -100%, 0);
+  transition: opacity .3s, transform .3s;
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+}
+
+.tooltip.is-active {
+  opacity: 1;
+  transform: translate3d(-50%, calc(-100% - 20px), 0);
+}
+
+

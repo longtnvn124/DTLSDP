@@ -1,0 +1,8 @@
+.section-example {
+	display: block;
+	margin-bottom: 10px;
+}
+
+.section-example button + button {
+	margin-left: 15px;
+}

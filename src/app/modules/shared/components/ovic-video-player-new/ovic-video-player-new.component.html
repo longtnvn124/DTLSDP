@@ -1,0 +1,15 @@
+<plyr style="display: block; width: 100%;" plyrTitle="Video lesson" [plyrPlaysInline]="true" [plyrOptions]="options" [plyrSources]="videoSources" (plyrInit)="player = $event" (plyrPause)="videoPaused($event)" (plyrPlaying)="videoPlying($event)" (plyrWaiting)="videoWaiting($event)"></plyr>
+<div *ngIf="mediaDownloader" class="ovic-video-player-loader">
+    <div class="ovic-video-player-loader__progress">
+        <div class="progress" [ngClass]="[mediaDownloader && mediaDownloader.progress === 0 ? '--waiting' : '' ]">
+            <span class="lbl-prepare-download" *ngIf="mediaDownloader.progress === 0">Preparing to download</span>
+            <div class="progress-bar" role="progressbar" [style.width.%]="mediaDownloader.progress">{{mediaDownloader.progress}}%</div>
+        </div>
+    </div>
+    <div class="ovic-video-player-loader__progress-error" *ngIf="mediaDownloaderFail">
+        <div class="ovic-video-player-loader__progress-error__inner">
+            <p>Đã có lỗi trong quá trình load video</p>
+            <button class="btn btn-primary" (click)="loadMediaFile(data)">Reload</button>
+        </div>
+    </div>
+</div>

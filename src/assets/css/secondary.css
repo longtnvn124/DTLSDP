@@ -1,0 +1,23 @@
+p-calendar .p-calendar {
+  width: 100%;
+}
+
+.ovic-side-navigation-content__foot__notice {
+  font-size: 13px;
+  color: #333333;
+}
+
+.ovic-side-navigation-content__foot__notice mark {
+  background: transparent;
+  color: var(--danger);
+  padding: 0;
+}
+
+.ctn_body > canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.img-child-max-width > img {
+  max-width: 100%;
+}

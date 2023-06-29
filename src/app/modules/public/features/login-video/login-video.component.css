@@ -1,0 +1,134 @@
+.login-video {
+	width: 100vw;
+	height: 100vh;
+	background: #fff url("../../../../../assets/videos/video-thumb.png") 50% 50%;
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.login-video-background-video-container {
+	height: 100%;
+	width: 100%;
+	top: 0;
+	left: 0;
+	position: absolute;
+	overflow: hidden;
+	z-index: 0;
+	direction: ltr;
+	pointer-events: none;
+}
+
+.login-video-background-video-embed {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.login-video__content {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+	z-index: 5;
+	background-color: rgba(255, 255, 255, .8);
+	padding: 30px;
+	border-radius: 0;
+	width: 420px;
+}
+
+.login-video__content > * {
+	width: 100%;
+}
+
+.login-video__content__head__title {
+	font-size: 21px;
+	font-weight: 700;
+	color: #333333;
+	text-align: center;
+	text-transform: uppercase;
+	margin: 0;
+	padding: 0;
+}
+
+.login-video__content__body .form-control {
+	border-radius: 0;
+	box-shadow: none !important;
+	padding: 9px 10px;
+	height: auto;
+	font-size: 14px;
+}
+
+.login-video__content__body .form-group label {
+	display: block;
+	margin: 0 0 5px;
+	font-size: 14px;
+	color: #333333;
+	line-height: 1;
+	font-weight: 500;
+}
+
+.btn-sign-in {
+	border-radius: 0;
+	width: 100%;
+	padding: 12px;
+	outline: none !important;
+	box-shadow: none !important;
+}
+
+.form-group {
+	margin-bottom: 20px;
+}
+
+.mb-30 {
+	margin-bottom: 30px;
+}
+
+.separator-break {
+	text-align: center;
+	overflow: hidden;
+	width: calc(100% - 20px);
+	margin: 15px auto 15px;
+}
+
+.separator-break__label {
+	display: inline-block;
+	background-color: transparent;
+	padding: 5px;
+	margin: 0;
+	font-size: 14px;
+	line-height: 1;
+	font-weight: 500;
+	position: relative;
+}
+
+.separator-break__label::before,
+.separator-break__label::after {
+	content: '';
+	display: block;
+	position: absolute;
+	top: 50%;
+	width: 500px;
+	border-top: 1px solid #aaaaaa;
+	right: calc(100% + 5px);
+}
+
+.separator-break__label::after {
+	right: auto;
+	left: calc(100% + 5px);
+}
+
+.btn-forgot-password {
+	font-size: 14px;
+	padding: 0;
+	margin: 0 auto;
+	display: block;
+	border: none;
+	background: transparent;
+	outline: none !important;
+	box-shadow: none !important;
+	line-height: 1;
+}

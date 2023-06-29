@@ -1,0 +1,32 @@
+<div class="login-video">
+    <div class="login-video-background-video-container">
+        <video [style.width.px]="video.width" [style.height.px]="video.height" class="login-video-background-video-embed" src="assets/videos/login-video.mp4" autoplay loop poster="assets/videos/video-thumb.png"></video>
+    </div>
+    <div class="login-video__content">
+        <div class="login-video__content__head">
+            <h1 class="login-video__content__head__title">Đăng nhập</h1>
+        </div>
+        <div class="login-video__content__body">
+            <form action="">
+                <div class="form-group">
+                    <label for="user">Tài khoản</label>
+                    <input type="text" class="form-control" id="user" placeholder="Tên tài khoản đăng nhập">
+                </div>
+                <div class="form-group mb-30">
+                    <label for="password">Mật khẩu</label>
+                    <input type="text" class="form-control" id="password" placeholder="Mật khẩu đăng nhập">
+                </div>
+                <button type="button" pButton pRipple label="Đăng nhập" class="btn-sign-in"></button>
+                <div class="separator-break">
+                    <p class="separator-break__label">hoặc</p>
+                </div>
+                <div class="form-group">
+                    <!--google-sign-in-->
+                </div>
+            </form>
+        </div>
+        <div class="login-video__content__foot">
+            <button type="button" class="btn-forgot-password">Quên mật khẩu?</button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,199 @@
+<!--<div class="row">-->
+<!--  <div class="col-12" [class.ovic-is-loading]="isLoading">-->
+<!--    <div class="ovic-load-init-fail alert alert-danger &#45;&#45;fs-14" *ngIf="loadInitFail; else tableData">-->
+<!--      Đã có lỗi trong quá trình tải dữ liệu-->
+<!--      <button class="btn btn-primary border-circle &#45;&#45;fs-13 ml-2" (click)="loadInit()">Reload</button>-->
+<!--    </div>-->
+<!--    <ng-template #tableData>-->
+<!--      <ovic-table emptyMessage="Danh sách trống" [index]="index" [data]="listData"-->
+<!--                  styleClass="tbl-danh-sach-tap-the head-input-size&#45;&#45;normal head-input-size&#45;&#45;250px" dataKey="id"-->
+<!--                  rowHover="true"-->
+<!--                  [rows]="15" tableName="Danh sách nhân vật lịch sử" [tblStructure]="tblStructure"-->
+<!--                  (onButtonClick)="handleClickOnTable($event)" [enableSearch]="true" [enableSearchLocal]="false"-->
+<!--                  (onSearch)="onSearch($event)" [searchDebounceTime]="800" [headerButtons]="headButtons"></ovic-table>-->
+<!--      <p-paginator class="p-paginator&#45;&#45;custom" [showCurrentPageReport]="true" [rows]="rows"-->
+<!--                   [totalRecords]="recordsTotal" [pageLinkSize]="5" (onPageChange)="paginate($event)"></p-paginator>-->
+<!--    </ng-template>-->
+<!--  </div>-->
+<!--</div>-->
+
+<!--suppress ALL -->
+<div class="intro-y h-full container__body">
+  <!-- headding -->
+  <div class="p-card p-2 d-flex justify-content-between">
+    <div class="d-flex align-items-center">
+      <h3 class="tbl-title">Danh sách nhân vật lịch sử</h3>
+    </div>
+    <div>
+      <input type="text" pInputText [(ngModel)]="filter.search" placeholder="Tìm kiếm"
+             (ngModelChange)="onSearch($event)" style="padding:8px"
+             class="p-inputtext p-component p-element"/>
+      <p-button class="my-auto ml-2 " label="Thêm nhân vật lịch sử" iconPos="right" icon="pi pi-plus"
+                styleClass="p-button-rounded p-button-success" (click)="btnAdd()"></p-button>
+    </div>
+  </div>
+  <!--   body -->
+  <div class="row h-full">
+    <div class="set-width inline-block flex flex-wrap flex-row justify-content-between align-items-center col-md-3 p-3"
+         *ngFor="let item of listData">
+      <div class="w-full inline-block border-round-lg shadow-6 bg-white border ovic--parent-image position-relative">
+        <div class='head-card_hover w-100' (click)="btnShowInfo(item)" style="cursor: pointer;">
+          <div class="position-relative w-100 st-image img-child-max-width" [ovicLoadImageById]="item.files ? item.files : null"></div>
+          <div class="m-2">
+            <div
+              class="headding-card text-xl font-weight-bold text-capitalize text-center align-items-center p-2 text_hover text-primary"
+              style="font-size: 16px">
+              {{item.bietdanh}}
+            </div>
+            <div class="text-lg font-medium border-top-1 p-2 text-center">
+              <p class="text-base font-weight-normal d-sm-inline-block mb-0">
+                {{item.nam}}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex border-top-1 ">
+          <div class="w-50 d-flex justify-content-center align-items-center border-top">
+            <button pButton pRipple label="Cập nhật" styleClass="p-button-link" class=" w-100 p-button-text p-button-primary text-base" (click)="btnEdit(item)"></button>
+          </div>
+          <div class="w-50 d-flex justify-content-center align-items-center border-left border-top">
+            <button pButton pRipple label="Xoá" styleClass="p-button-link" class=" w-100 p-button-text p-button-danger text-base" (click)="btnDelete(item.id)"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<input type="file" #fileChooser hidden="true" (change)="onInputAvatar($event , fileChooser)">
+
+<ng-template #fromUpdate>
+  <div class="ovic-side-navigation-content">
+    <div class="ovic-side-navigation-content__head">
+      <h4 class="ovic-side-navigation-content__head__title">{{formState ? formState.formTitle : ''}}</h4>
+      <button (click)="closeForm()" pButton pRipple type="button" icon="pi pi-times"
+              class="p-button-rounded p-button-danger p-button-text close ovic-side-navigation-content__head__btn-close"></button>
+    </div>
+    <div class="ovic-side-navigation-content__body ovic-scroll-style">
+      <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
+        <form [formGroup]="formSave" autocomplete="off">
+          <div class="row">
+            <div class="col-6">
+              <p class="form-row">
+                <label>Biệt danh<span class="ovic-mark">*</span></label>
+                <input type="text" placeholder="Biệt danh..." formControlName="bietdanh"
+                       autocomplete="off">
+              </p>
+            </div>
+
+            <div class="col-6">
+              <p class="form-row">
+                <label>Tên thật<span class="ovic-mark">*</span></label>
+                <input type="text" placeholder="Tên thật..." formControlName="ten"
+                       autocomplete="off">
+              </p>
+            </div>
+
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <p class="form-row">
+                <label for="mota">Mô tả</label>
+                <textarea formControlName="mota" placeholder="Mô tả..." autocomplete="off" id="mota" cols="30"
+                          rows="5"></textarea>
+              </p>
+            </div>
+
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <p class="form-row">
+                <label for="mota">Giai đoạn lịch sử</label>
+                <ovic-editor [formField]="f['giaidoan_lichsu']" [readonly]="true" height='150px' [default]="f['giaidoan_lichsu'].value"></ovic-editor>
+              </p>
+            </div>
+
+          </div>
+          <div class="row">
+            <div class="col-6">
+              <p class="form-row">
+                <label>Năm sinh - Năm mất <span class="ovic-mark">*</span></label>
+                <input type="text" placeholder="vd: dd/mm/yyyy - dd/mm/yyyy" formControlName="nam"
+                       autocomplete="off">
+              </p>
+            </div>
+            <div class="col-6">
+              <p class="form-row">
+                <label>Giới tính<span class="ovic-mark">*</span></label>
+                <p-dropdown placeholder="Chọn..." class="w-100" [options]="gioitinh" optionLabel="label"
+                            optionValue="value" [showClear]="true"
+                            formControlName='gioitinh'></p-dropdown>
+              </p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <p class="form-row">
+                <label>File media</label>
+                <button pRipple class="btn w-100 btn-ctm" (click)="fileChooser.click()">
+                  <img *ngIf="characterAvatar; else showIcon" [src]="characterAvatar | ovicSafeUrl" alt="">
+                  <ng-template #showIcon>
+                    <i class="pi pi-camera "></i>
+                  </ng-template>
+                </button>
+                <!--                <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"-->
+                <!--                                     [formField]="f['files']" [multiple]="true"-->
+                <!--                                     [accept]="['.jpg']"></app-file-list-local>-->
+              </p>
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </div>
+    <div class="ovic-side-navigation-content__foot">
+      <span class="ovic-side-navigation-content__foot__notice mr-auto"><mark>(*)</mark> bắt buộc phải nhập</span>
+      <button pButton pRipple type="button" label="Cập nhật" icon="pi pi-save" (click)="saveForm()"
+              class="p-button-success"></button>
+      <button pButton pRipple type="button" label="Đóng" class="p-button-secondary ml-3" icon="pi pi-times"
+              (click)="closeForm()"></button>
+    </div>
+  </div>
+</ng-template>
+
+
+<ng-template #formInfo>
+  <div class="ovic-side-navigation-content">
+    <div class="ovic-side-navigation-content__head">
+      <h4 class="ovic-side-navigation-content__head__title">Thông tin chi tiết nhân vật lịch sử </h4>
+      <button (click)="closeForm()" pButton pRipple type="button" icon="pi pi-times"
+              class="p-button-rounded p-button-danger p-button-text close ovic-side-navigation-content__head__btn-close"></button>
+    </div>
+    <div class="ovic-side-navigation-content__body ovic-scroll-style">
+      <div class="d-flex justify-content-center w-100 h-100">
+        <div clas="" style="height:100%;width :1000px;border:1px solid #bdbdbd;background-color: #fafafa">
+          <div class="row mx-0 h-100">
+            <div class="col-4 border-right">
+              <div class="position-relative w-100 st-image img-child-max-width" [ovicLoadImageById]="infoNhanvalichsu.files ? infoNhanvalichsu.files : null"></div>
+              <div class="mt-3 ml-3">
+                <div class="mt-2 font-weight-normal" style="font-size: 16px" ><b>Biệt danh : </b>        <span class="text-capitalize"> {{infoNhanvalichsu.bietdanh}}</span></div>
+                <div class="mt-2 font-weight-normal" style="font-size: 16px" ><b>Tên thật:</b> <span class="text-capitalize"> {{infoNhanvalichsu.ten}}</span></div>
+                <div class="mt-2 font-weight-normal" style="font-size: 16px" ><b>Năm sinh - Năm mất:</b> <span class=""> {{infoNhanvalichsu.nam}}</span></div>
+                <div class="mt-2 font-weight-normal" style="font-size: 16px" ><b>Giới tính:</b> <span class=""> {{infoNhanvalichsu['__gioitinh_converted']}}</span></div>
+              </div>
+            </div>
+            <div class="col-8">
+              <div class="mt-2 font-weight-normal" style="font-size: 16px"> <b>Thông tin chi tiết:</b> <br><span>{{infoNhanvalichsu.mota}}</span></div>
+              <div class="mt-2 font-weight-normal" style="font-size: 16px">  <b>Giai đoạn lịch sử:</b> <br> <div [innerHTML]="infoNhanvalichsu['giaidoan_lichsu'] | htmlDecode"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ovic-side-navigation-content__foot">
+      <button pButton pRipple type="button" label="Đóng" class="p-button-secondary ml-3" icon="pi pi-times"
+              (click)="closeForm()"></button>
+    </div>
+  </div>
+</ng-template>
+

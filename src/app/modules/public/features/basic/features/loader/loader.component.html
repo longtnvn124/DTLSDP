@@ -1,0 +1,14 @@
+<div class="loader-component">
+    <div class="container">
+        <div class="loader-component__list-wrap">
+            <ul class="loader-component__list" *ngIf="!isLoading">
+                <li *ngFor="let row of data">
+                    <div class="loader-component__elm-wrap" [ovicLoader]="row.isLoading ? row.type : ''">
+                        <button class="btn btn-outline-success" (click)="row.loading()">{{row.type}}</button>
+                        <button class="loader-component__elm-wrap__lbl" (click)="copyData(row)">[ovicLoader]="{{ row.isLoading ? row.type : '' }}"</button>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
