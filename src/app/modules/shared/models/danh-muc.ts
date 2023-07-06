@@ -21,7 +21,7 @@ export interface DmLoaiNguLieu extends DmChung {
   id: number;
   ten: string;
   mota: string;
-
+  donvi_id:number;
   kihieu: string;
   status: number; //1 Active; 0: inactive
 }

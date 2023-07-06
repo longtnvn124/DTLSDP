@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {getRoute} from "@env";
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {HttpParamsHeplerService} from "@core/services/http-params-hepler.service";
 import {ThemeSettingsService} from "@core/services/theme-settings.service";
 import {AuthService} from "@core/services/auth.service";
 import {map, Observable} from "rxjs";
-import {DmChuyenMuc, DmLoaiNguLieu} from "@shared/models/danh-muc";
+import {DmLoaiNguLieu} from "@shared/models/danh-muc";
 import {Dto, OvicConditionParam, OvicQueryCondition} from "@core/models/dto";
 
 @Injectable({
@@ -97,4 +97,28 @@ export class DanhMucLoaiNguLieuService {
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => ({ recordsTotal: res.recordsFiltered, data: res.data })));
   }
+
+  getData(donvi_id:number): Observable<DmLoaiNguLieu[]> {
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'is_deleted',
+        condition: OvicQueryCondition.equal,
+        value: '0'
+      },{
+      conditionName:'donvi_id',
+        condition:OvicQueryCondition.equal,
+        value:donvi_id.toString(10),
+        orWhere:'and'
+      }
+    ];
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+      orderby: 'ten',
+      order: 'ASC'
+    };
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res =>res.data ));
+  }
+
 }

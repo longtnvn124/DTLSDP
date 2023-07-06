@@ -138,7 +138,7 @@ export class MediaVrManagerComponent implements OnInit,AfterViewInit {
         this.imageLink = imageObject ? URL.createObjectURL(imageObject) : '';
         this.audioLink = audioObject ? URL.createObjectURL(audioObject) : '';
         this.renderer2.appendChild(this.element.nativeElement, this.container);
-        this.loadInit(this.imageLink, this.audioLink);
+        this.loadInit(this.imageLink, this.audioLink, this.dataPoint.id);
       },
       error: () => {
         this.dataPoint['__media_info'] = [];
@@ -146,7 +146,7 @@ export class MediaVrManagerComponent implements OnInit,AfterViewInit {
     })
   }
   s: any;
-  loadInit(image: string, audio: string) {
+  loadInit(image: string, audio: string,idPoint) {
     //scene and controls
     this.scene = new THREE.Scene();
     this.controls.rotateSpeed = -0.2
@@ -186,25 +186,6 @@ export class MediaVrManagerComponent implements OnInit,AfterViewInit {
     this.renderer.setSize(width, height);
     this.renderer.render(this.scene, this.camera)
   }
-  // onClick = (e) => {
-  //   let mouse = new THREE.Vector2(
-  //     (e.clientX / window.innerWidth) * 2 - 1, -(e.clientY / window.innerHeight) * 2 + 1);
-  //   this.rayCaster.setFromCamera(mouse, this.camera)
-  //   let intersects = this.rayCaster.intersectObjects(this.scene.children)
-  //   intersects.forEach(function (intersect) {
-  //     if (intersect.object.type === 'Sprite') {
-  //       intersect.object.onClick();
-  //       if (this.spriteActive) {
-  //         this.tooltip.classList.remove('is-active')
-  //         this.spriteActive = false
-  //       }
-  //     }
-  //   })
-  //   intersects = this.rayCaster.intersectObject(this.s.sphere);
-  //   if (intersects.length > 0) {
-  //     console.log(intersects[0].point)
-  //   }
-  // }
 
   onClick = (e: any) => {
     const mouse = new THREE.Vector2(

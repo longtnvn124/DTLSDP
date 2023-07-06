@@ -1,11 +1,13 @@
-.ctn_body{
+.ctn_body {
   display: flex;
   width: 100%;
-  height:100%;
+  height: 100%;
 }
+
 .hover {
   cursor: pointer;
 }
+
 .tooltip {
   background-color: #0b69e3;
   position: absolute;
@@ -25,5 +27,70 @@
   opacity: 1;
   transform: translate3d(-50%, calc(-100% - 20px), 0);
 }
+.onRight-bottom {
+  float: left;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
 
+  right: 20px;
+  bottom: 50px;
+  z-index: 100;
+}
+
+.ctn-left {
+  width: 40%;
+  height:300px;
+  padding-right: 20px;
+  border-right: 1px solid #2687fc;
+}
+
+.ctn-right {
+  width: 60%;
+  margin: 0;
+  padding: 0 20px ;
+}
+
+.datainfo-title {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+}
+
+.datainfo-title, .datainfo-body {
+  width: 100%;
+  border: 1px dashed #2687fc;
+  border-radius: 5px;
+  padding: 10px 10px;
+}
+.datainfo-title__p {
+  font-size: 16px;
+  font-weight: 600;
+}
+.datainfo-body__dec {
+  display: block;
+}
+.datainfo-body__tag {
+  display: inline-block;
+}
+.datainfo-body__tag--item{
+  background: #2687fc;
+  color:#fff;
+  padding: 7px 10px 5px;
+  border-radius: 999px;
+  line-height: 1;
+  margin: 5px;
+}
+.datainfo-body__img{
+  padding:0 10px 10px 10px;
+  width:80%;
+  /*max-width:300px;*/
+
+  background-size: contain;
+
+}
+.datainfo-body__audio{
+  width:100%;
+
+}
 

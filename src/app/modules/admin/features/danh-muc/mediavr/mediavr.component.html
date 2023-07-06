@@ -17,7 +17,7 @@
 
 <p-contextMenu [target]="container" [model]="items" appendTo="body"></p-contextMenu>
 <ng-template #fromUpdate>
-  <div class="ovic-side-navigation-content">
+  <div class="ovic-side-navigation-content h-100">
     <div class="ovic-side-navigation-content__head">
       <h4 class="ovic-side-navigation-content__head__title">{{formState ? formState.formTitle : ''}}</h4>
       <button (click)="closeForm()" pButton pRipple type="button" icon="pi pi-times"
@@ -26,15 +26,6 @@
     <div class="ovic-side-navigation-content__body ovic-scroll-style">
       <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
         <form [formGroup]="formSave" autocomplete="off">
-          <!--          <div class="row">-->
-          <!--            <div class="col-12">-->
-          <!--              <p class="form-row">-->
-          <!--                <label>Toạ độ vị trí <span class="ovic-mark">*</span></label>-->
-          <!--                <input type="text" placeholder="" formControlName="location"-->
-          <!--                       autocomplete="off">-->
-          <!--              </p>-->
-          <!--            </div>-->
-          <!--          </div>-->
           <div class="row">
             <div class="col-6">
               <p class="form-row">
@@ -46,14 +37,11 @@
             <div class="col-6">
               <p class="form-row">
                 <label>Icon<span class="ovic-mark">*</span></label>
-                <!--                <p-dropdown placeholder="Chọn icon ..." class="w-100" [options]="statusList" optionLabel="label"-->
-                <!--                            optionValue="value" [showClear]="true"-->
-                <!--                            formControlName='status'></p-dropdown>-->
                 <p-dropdown [options]="iconList" optionLabel="name" formControlName="icon" optionValue="path"
                             class="w-100" placeholder="chọn...">
                 </p-dropdown>
-
               </p>
+
             </div>
           </div>
           <div class="row">
@@ -68,10 +56,30 @@
           <div class="row">
             <div class="col-12">
               <p class="form-row">
-                <label>File media</label>
-                <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"
+                <label>Loại ngữ liệu</label>
+                <p-multiSelect class="custom-multiselect w-100" [options]="dataLoaiNguLieu"
+                               formControlName="loaingulieu" optionValue="ten" optionLabel="ten" placeholder="Chọn..."></p-multiSelect>
+              </p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <p class="form-row">
+                <label>File media <span class="ovic-mark">*</span></label>
+                <ng-container *ngIf="typeAdd ==='VITRI'">
+                  <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"
                                      [formField]="f['file_media']" [multiple]="true"
-                                     [accept]="['.jpg']"></app-file-list-local>
+                                     [accept]="['.jpg']" [state]="1"></app-file-list-local>
+                </ng-container>
+                <ng-container *ngIf="typeAdd ==='thongtin'">
+                  <button pRipple class="btn w-100 btn-ctm" (click)="fileChooser.click()">
+                    <img *ngIf="characterAvatar; else showIcon" [src]="characterAvatar | ovicSafeUrl" alt="">
+                    <ng-template #showIcon>
+                      <i class="pi pi-camera "></i>
+                    </ng-template>
+                  </button>
+                </ng-container>
+
               </p>
             </div>
           </div>
@@ -80,7 +88,7 @@
               <p class="form-row">
                 <label>File audio thuyết minh</label>
                 <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"
-                                     [formField]="f['file_audio']" [multiple]="true"></app-file-list-local>
+                                     [formField]="f['file_audio']" [multiple]="true" [state]="1"></app-file-list-local>
               </p>
             </div>
           </div>
@@ -97,3 +105,56 @@
   </div>
 
 </ng-template>
+
+
+<div class="onRight-bottom">
+  <p-button class="m-2" [icon]="rotate ? 'pi pi-spin pi-spinner':'pi pi-refresh'" (onClick)="btnRotate()"></p-button>
+  <p-button class="m-2" icon="pi pi-volume-up" styleClass="p-button-secondary" (onClick)="btnVolume()"></p-button>
+  <!--  <p-button class="m-2" icon="pi pi-minus" styleClass="p-button-success" ></p-button>-->
+  <ng-template [ngIf]="typeMedia === 'video'">
+    <p-button class="m-2" [icon]="video360.paused ? 'pi pi-play' : 'pi pi-pause'" styleClass="p-button-warning"
+              (onClick)="btnPausePlay()"></p-button>
+  </ng-template>
+</div>
+
+<!--<audio controls autoplay>-->
+<!--  <source [src]="audioLink | ovicSafeUrl" type="audio/ogg">-->
+<!--  <source [src]="audioLink | ovicSafeUrl" type="audio/mpeg">-->
+<!--  Your browser does not support the audio element.-->
+<!--</audio>-->
+
+<p-dialog header="Thông tin chi tiết" [(visible)]="visible" [modal]="true" [style]="{ width: '60vw' }"
+          [draggable]="false" [resizable]="false" class="m-0">
+  <div class="w-100 d-flex">
+    <div class="ctn-left d-block">
+      <ng-container *ngIf="dataInformation">
+        <div id="media" class="w-100 text-center">
+          <img src="{{dataInformation['imageLink']}}" class="datainfo-body__img">
+        </div>
+        <div *ngIf="dataInformation.file_audio" id="audio" class="w-100 text-center">
+<!--          <audio src="{{dataInformation['audioLink']}}"></audio>-->
+          <audio controls>
+            <source src="{{dataInformation['audioLink']}}" type="audio/mpeg">
+          </audio>
+        </div>
+      </ng-container>
+
+
+    </div>
+    <div class="ctn-right">
+      <ng-container *ngIf="dataInformation">
+        <div class="datainfo-title">
+          <p class="datainfo-title__p m-auto">{{dataInformation.title}}</p>
+        </div>
+        <div class="datainfo-body mt-1">
+          <div class="datainfo-body__dec">{{dataInformation.mota}}</div>
+          <div class="datainfo-body__tag --fs-14 font-weight-bold" >Tag:
+              <div class="d-inline-block datainfo-body__tag--item" *ngFor="let item of dataInformation.loaingulieu">{{item}}</div>
+          </div>
+        </div>
+
+      </ng-container>
+    </div>
+  </div>
+</p-dialog>
+

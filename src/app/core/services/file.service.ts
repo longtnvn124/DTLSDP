@@ -1,5 +1,5 @@
 import {Inject, Injectable} from '@angular/core';
-import {environment, getFileDir, getLinkDownload, getLinkDrive, getLinkMedia, getRoute} from '@env';
+import {ACCESS_TOKEN, environment, getFileDir, getLinkDownload, getLinkDrive, getLinkMedia, getRoute} from '@env';
 import {
   HttpClient,
   HttpEvent,
@@ -133,8 +133,8 @@ export class FileService {
   /**********************************************************
    * Upload file functions
    * ********************************************************/
-  uploadFile(file: File, status: number = 0): Observable<OvicFile> {
-    return this.http.post<Dto>(this.media, FileService.packFiles([file], status)).pipe(
+  uploadFile(file: File, _public: number = 0): Observable<OvicFile> {
+    return this.http.post<Dto>(this.media, FileService.packFiles([file], _public)).pipe(
       retry(2),
       map(res => Array.isArray(res.data) ? res.data[0] : res.data)
     );
@@ -468,5 +468,11 @@ export class FileService {
       result = this.http.get(url, {responseType: 'blob'}).pipe(map(res => URL.createObjectURL(res)));
     }
     return result;
+  }
+ /*****************************************************************************/
+  getPreviewLinkLocalFile( { id } : OvicFile | { id : number } ) : string {
+    const url = new URL( getLinkDownload( id ) );
+    url.searchParams.append( 'token' , localStorage.getItem( ACCESS_TOKEN ) || '' );
+    return url.toString();
   }
 }

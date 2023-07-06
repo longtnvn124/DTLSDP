@@ -19,6 +19,7 @@ import {DialogModule} from 'primeng/dialog';
 import { EditorModule } from 'primeng/editor';
 import { ContextMenuModule } from 'primeng/contextmenu';
 import { MediavrComponent } from './mediavr/mediavr.component';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { MediavrComponent } from './mediavr/mediavr.component';
     DialogModule,
     EditorModule,
     ContextMenuModule,
+    MultiSelectModule
   ]
 })
 export class DanhMucModule {

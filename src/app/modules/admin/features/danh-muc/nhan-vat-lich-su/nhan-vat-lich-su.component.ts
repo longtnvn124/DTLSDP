@@ -144,6 +144,7 @@ export class NhanVatLichSuComponent implements OnInit {
     setTimeout(() => this.notificationService.openSideNavigationMenu({template: this.fromUpdate, size: 600}), 100);
   }
 
+
   changeInputMode(formType: 'add' | 'edit', object: DmNhanVatLichSu | null = null) {
     this.formState.formTitle = formType === 'add' ? 'Thêm nhân vật lịch sử' : 'Cập nhật nhân vật lịch sử ';
     this.formState.formType = formType;

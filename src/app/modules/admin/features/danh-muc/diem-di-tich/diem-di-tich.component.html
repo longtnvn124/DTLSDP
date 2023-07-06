@@ -17,6 +17,8 @@
   </div>
 </div>
 
+<input type="file" #fileChooser hidden="true" (change)="onInputAvatar($event , fileChooser)">
+
 <ng-template #fromUpdate>
   <div class="ovic-side-navigation-content">
     <div class="ovic-side-navigation-content__head">
