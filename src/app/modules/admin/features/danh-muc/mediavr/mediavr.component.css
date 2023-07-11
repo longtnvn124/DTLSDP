@@ -7,6 +7,10 @@
 .hover {
   cursor: pointer;
 }
+.btn-ctm{
+  border: 1px solid #e0e0e0;
+  min-height: 42px;
+}
 
 .tooltip {
   background-color: #0b69e3;
@@ -40,7 +44,7 @@
 
 .ctn-left {
   width: 40%;
-  height:300px;
+  /*height:300px;*/
   padding-right: 20px;
   border-right: 1px solid #2687fc;
 }
@@ -83,14 +87,18 @@
 }
 .datainfo-body__img{
   padding:0 10px 10px 10px;
-  width:80%;
+  width:100%;
   /*max-width:300px;*/
-
   background-size: contain;
-
 }
 .datainfo-body__audio{
   width:100%;
-
 }
 
+.btn-backtoScene{
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 14px;
+
+}

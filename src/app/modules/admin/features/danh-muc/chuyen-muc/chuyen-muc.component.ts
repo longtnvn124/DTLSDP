@@ -128,8 +128,8 @@ export class ChuyenMucComponent implements OnInit {
   ) {
     this.formSave = this.fb.group({
       ten: ['', Validators.required],
-      mota: ['', Validators.required],
-      status: ['', Validators.required],
+      mota: [''],
+      status: [null, Validators.required],
     });
 
     const observeProcessFormData = this.OBSERVE_PROCESS_FORM_DATA.asObservable().pipe(debounceTime(100)).subscribe(form => this.__processFrom(form));

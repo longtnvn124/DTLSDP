@@ -58,9 +58,6 @@ export class NhanVatLichSuComponent implements OnInit {
   };
 
   characterAvatar: string;
-
-  // filePermistionOnlyShow = { canDelete : false , canDownload : true , canUpload : false };
-
   @ViewChild('fileChooser', {static: true}) fileChooser: TemplateRef<any>;
 
   constructor(
@@ -285,7 +282,7 @@ export class NhanVatLichSuComponent implements OnInit {
       const file = await this.makeCharacterAvatar(fileChooser.files[0], this.helperService.sanitizeVietnameseTitle(this.f['ten'].value));
       console.log(file);
       // upload file to server
-      this.fileService.uploadFile(file, -1).subscribe({
+      this.fileService.uploadFile(file, 1).subscribe({
         next: fileUl => {
           this.formSave.get('files').setValue(fileUl);
         }, error: () => {
@@ -302,6 +299,7 @@ export class NhanVatLichSuComponent implements OnInit {
   infoNhanvalichsu: DmNhanVatLichSu;
 
   btnShowInfo(object: DmNhanVatLichSu) {
+    this.infoNhanvalichsu= null;
     setTimeout(() => this.notificationService.openSideNavigationMenu({
       name: this.menuName,
       template: this.formInfo,
@@ -310,6 +308,8 @@ export class NhanVatLichSuComponent implements OnInit {
       offCanvas: false
     }), 100);
     this.infoNhanvalichsu = this.listData.find(f => f.id === object.id)
+    this.infoNhanvalichsu['image_convenrted'] =  this.infoNhanvalichsu.files ? this.fileService.getPreviewLinkLocalFile( this.infoNhanvalichsu.files) : null;
+
     // this.infoNhanvalichsu['__giaidoan_lichsu_converted'] = unescape(this.infoNhanvalichsu.giaidoan_lichsu);
     console.log(this.infoNhanvalichsu);
   }

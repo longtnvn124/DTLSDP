@@ -17,8 +17,8 @@
   </div>
 </div>
 
-<input type="file" #fileChooser hidden="true" (change)="onInputAvatar($event , fileChooser)">
 
+<input type="file" #fileChooser hidden="true" (change)="onInputAvatar($event , fileChooser)">
 <ng-template #fromUpdate>
   <div class="ovic-side-navigation-content">
     <div class="ovic-side-navigation-content__head">
@@ -68,21 +68,27 @@
             <div class="col-12">
               <p class="form-row">
                 <label>File media</label>
-                <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"
-                                     [formField]="f['file_media']" [multiple]="true"
-                                     [accept]="['.jpg']"></app-file-list-local>
+<!--                <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"-->
+<!--                                     [formField]="f['file_media']" [multiple]="true"-->
+<!--                                     [accept]="['.jpg']"></app-file-list-local>-->
+                <button pRipple class="btn w-100 btn-ctm" (click)="fileChooser.click()">
+                  <img *ngIf="characterAvatar; else showIcon" [src]="characterAvatar | ovicSafeUrl" alt="">
+                  <ng-template #showIcon>
+                    <i class="pi pi-camera "></i>
+                  </ng-template>
+                </button>
               </p>
             </div>
           </div>
-          <div class="row">
-            <div class="col-12">
-              <p class="form-row">
-                <label>File audio thuyết minh</label>
-                <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"
-                                     [formField]="f['file_audio']" [multiple]="true"></app-file-list-local>
-              </p>
-            </div>
-          </div>
+<!--          <div class="row">-->
+<!--            <div class="col-12">-->
+<!--              <p class="form-row">-->
+<!--                <label>File audio thuyết minh</label>-->
+<!--                <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"-->
+<!--                                     [formField]="f['file_audio']" [multiple]="true"></app-file-list-local>-->
+<!--              </p>-->
+<!--            </div>-->
+<!--          </div>-->
         </form>
       </div>
     </div>
@@ -114,3 +120,36 @@
     </div>
   </div>
 </ng-template>
+
+<p-dialog header="Thông tin chi tiết" [(visible)]="visible" [modal]="true" [style]="{ width: '60vw' }"
+          [draggable]="false" [resizable]="false" class="m-0">
+  <div class="w-100 d-flex">
+    <div class="ctn-left d-block">
+      <ng-container *ngIf="dataInformation">
+        <div id="media" class="w-100 text-center">
+          <img src="{{dataInformation['__fileMedia_converted']}}" class="datainfo-body__img">
+        </div>
+        <div *ngIf="dataInformation.file_audio" id="audio" class="w-100 text-center">
+          <!--          <audio src="{{dataInformation['audioLink']}}"></audio>-->
+          <audio controls>
+            <source src="{{dataInformation['__fileMeia']}}" type="audio/mpeg">
+          </audio>
+        </div>
+      </ng-container>
+    </div>
+    <div class="ctn-right">
+      <ng-container *ngIf="dataInformation">
+        <div class="datainfo-title">
+          <p class="datainfo-title__p m-auto">{{dataInformation.ten}}</p>
+        </div>
+        <div class="datainfo-body mt-1">
+          <div class="datainfo-body__dec">{{dataInformation.mota}}</div>
+<!--          <div class="datainfo-body__tag &#45;&#45;fs-14 font-weight-bold" >Tag:-->
+<!--            <div class="d-inline-block datainfo-body__tag&#45;&#45;item" *ngFor="let item of dataInformation.loaingulieu">{{item}}</div>-->
+<!--          </div>-->
+        </div>
+
+      </ng-container>
+    </div>
+  </div>
+</p-dialog>

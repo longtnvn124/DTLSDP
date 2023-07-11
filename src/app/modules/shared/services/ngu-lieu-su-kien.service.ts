@@ -1,19 +1,17 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import {getRoute} from "@env";
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {HttpParamsHeplerService} from "@core/services/http-params-hepler.service";
 import {ThemeSettingsService} from "@core/services/theme-settings.service";
 import {AuthService} from "@core/services/auth.service";
 import {map, Observable} from "rxjs";
-import {Dto, OvicConditionParam, OvicQueryCondition} from "@core/models/dto";
-import {DmChuyenMuc} from "@shared/models/danh-muc";
-
+import { DsSuKien} from "@shared/models/quan-ly-ngu-lieu";
+import {Dto, OvicConditionParam, OvicQueryCondition} from "@core/models/dto"
 @Injectable({
   providedIn: 'root'
 })
-export class DanhMucChuyenMucService {
-  private readonly api = getRoute('danh-muc-chuyen-muc/');
-
+export class NguLieuSuKienService {
+  private readonly api = getRoute('danh-sach-su-kien/');
   constructor(
     private http: HttpClient,
     private httpParamsHelper: HttpParamsHeplerService,
@@ -22,7 +20,7 @@ export class DanhMucChuyenMucService {
   ) {
   }
 
-  load(page: number): Observable<{ recordsTotal: number, data: DmChuyenMuc[] }> {
+  load(page:number): Observable<DsSuKien[]> {
     const conditions: OvicConditionParam[] = [
       {
         conditionName: 'is_deleted',
@@ -33,14 +31,11 @@ export class DanhMucChuyenMucService {
     const fromObject = {
       paged: page,
       limit: this.themeSettingsService.settings.rows,
-      orderby: 'ten',
+      orderby: 'diemditich_id',
       order: "ASC"
     }
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
-    return this.http.get<Dto>(this.api, {params}).pipe(map(res => ({
-      recordsTotal: res.recordsFiltered,
-      data: res.data
-    })))
+    return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
   }
 
   create(data: any): Observable<number> {
@@ -59,7 +54,7 @@ export class DanhMucChuyenMucService {
     return this.update(id, {is_deleted, deleted_by});
   }
 
-  search(page: number,select: string = null, search: string): Observable<{ recordsTotal: number, data: DmChuyenMuc[] }> {
+  searchData(page:number, search?: string, linhvuc?:string): Observable<{ recordsTotal: number, data: DsSuKien[] }> {
     const conditions: OvicConditionParam[] = [
       {
         conditionName: 'is_deleted',
@@ -67,66 +62,36 @@ export class DanhMucChuyenMucService {
         value: '0'
       },
     ];
+    if (search) {
+      const c1: OvicConditionParam = {
+        conditionName: 'title',
+        condition: OvicQueryCondition.like,
+        value: `%${search}%`,
+        orWhere: 'and'
+      };
+      conditions.push(c1);
+    }
+
+    if (linhvuc) {
+      const c2: OvicConditionParam = {
+        conditionName: 'linhvuc',
+        condition: OvicQueryCondition.equal,
+        value: linhvuc,
+        orWhere: 'and'
+      };
+      conditions.push(c2);
+    }
     const fromObject = {
       paged: page,
       limit: this.themeSettingsService.settings.rows,
-      orderby: 'ten',
-      order: 'ASC'
-    };
-    if (search) {
-      const c1: OvicConditionParam[] = [
-        {
-          conditionName: 'ten',
-          condition: OvicQueryCondition.like,
-          value: `%${search}%`,
-          orWhere: 'and'
-        },
-        {
-          conditionName: 'mota',
-          condition: OvicQueryCondition.like,
-          value: `%${search}%`,
-          orWhere: 'or'
-        },
-        {
-          conditionName: 'is_deleted',
-          condition: OvicQueryCondition.equal,
-          value: '0',
-          orWhere: 'and'
-        }
-        ];
-      conditions.push(...c1);
-      }
-    if (select) {
-      fromObject['select'] = select;
+      orderby: 'diemditich_id',
+      order: "ASC"
     }
+
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
     return this.http.get<Dto>(this.api, {params}).pipe(map(res => ({
       recordsTotal: res.recordsFiltered,
       data: res.data
     })));
-  }
-
-  getDataUnlimit():Observable<DmChuyenMuc[]>{
-    const conditions: OvicConditionParam[] = [
-      {
-        conditionName: 'is_deleted',
-        condition: OvicQueryCondition.equal,
-        value: '0'
-      },
-      {
-        conditionName: 'status',
-        condition: OvicQueryCondition.equal,
-        value: '1',
-        orWhere:'and'
-      },
-    ];
-    const fromObject = {
-      paged: 1,
-      limit: -1,
-      orderby: 'ten',
-      order: "ASC"
-    }
-    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
-    return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
   }
 }

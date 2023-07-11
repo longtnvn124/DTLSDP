@@ -14,7 +14,7 @@
 <!--  </button>-->
 <!--</div>-->
 
-
+<input type="file" #fileChooser hidden="true" (change)="onInputAvatar($event , fileChooser)">
 <p-contextMenu [target]="container" [model]="items" appendTo="body"></p-contextMenu>
 <ng-template #fromUpdate>
   <div class="ovic-side-navigation-content h-100">
@@ -66,12 +66,14 @@
             <div class="col-12">
               <p class="form-row">
                 <label>File media <span class="ovic-mark">*</span></label>
-                <ng-container *ngIf="typeAdd ==='VITRI'">
+                <ng-container *ngIf="typeAdd === 'VITRI'">
                   <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"
                                      [formField]="f['file_media']" [multiple]="true"
                                      [accept]="['.jpg']" [state]="1"></app-file-list-local>
                 </ng-container>
-                <ng-container *ngIf="typeAdd ==='thongtin'">
+
+                <ng-container *ngIf="typeAdd === 'THONGTIN'">
+
                   <button pRipple class="btn w-100 btn-ctm" (click)="fileChooser.click()">
                     <img *ngIf="characterAvatar; else showIcon" [src]="characterAvatar | ovicSafeUrl" alt="">
                     <ng-template #showIcon>
@@ -138,8 +140,6 @@
           </audio>
         </div>
       </ng-container>
-
-
     </div>
     <div class="ctn-right">
       <ng-container *ngIf="dataInformation">
@@ -158,3 +158,8 @@
   </div>
 </p-dialog>
 
+<ng-template [ngIf]="backToScene">
+<!--  <p-button icon="pi pi-chevron-left" label="Thoát" class=" btn-backtoScene p-button-secondary" (click)="btnBackToScere($event)"></p-button>-->
+  <button pButton pRipple type="button" label="Thoát" icon="pi pi-chevron-left" (click)="btnBackToScere($event)"
+          class="btn-backtoScene p-button-secondary"></button>
+</ng-template>

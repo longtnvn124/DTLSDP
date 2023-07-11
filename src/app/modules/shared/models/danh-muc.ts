@@ -50,7 +50,7 @@ export interface DmDiemDiTich extends DmChung {
   mota: string;
   vitri_ggmap: string;
   file_media: OvicFile[];
-  file_audio: OvicFile[];
+  file_audio?: OvicFile[];
   status: number; //1 Active; 0: inactive
 }
 

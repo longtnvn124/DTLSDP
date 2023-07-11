@@ -21,7 +21,7 @@ export class DanhMucDiemDiTichService {
     private auth: AuthService
   ) { }
 
-  load(page: number): Observable<{ recordsTotal: number, data: DmDiemDiTich[] }> {
+  load(page: number, search?:string): Observable<{ recordsTotal: number, data: DmDiemDiTich[] }> {
     const conditions: OvicConditionParam[] = [
       {
         conditionName: 'is_deleted',
@@ -29,6 +29,18 @@ export class DanhMucDiemDiTichService {
         value: '0'
       },
     ];
+
+    if(search){
+      const c1:OvicConditionParam[]=[
+        {
+          conditionName: 'ten',
+          condition: OvicQueryCondition.like,
+          value: `%${search}%`,
+          orWhere:'and'
+        }
+      ]
+      conditions.push(...c1);
+    }
     const fromObject = {
       paged: page,
       limit: this.themeSettingsService.settings.rows,
@@ -53,7 +65,7 @@ export class DanhMucDiemDiTichService {
     return this.update(id, { is_deleted, deleted_by });
   }
 
-  search(page: number,select:string = null, search:string ): Observable<{ recordsTotal: number, data: DmDiemDiTich[] }> {
+  search(page: number,select:string = null, search?:string ): Observable<{ recordsTotal: number, data: DmDiemDiTich[] }> {
     const conditions: OvicConditionParam[] = [
       {
         conditionName: 'is_deleted',
@@ -120,5 +132,66 @@ export class DanhMucDiemDiTichService {
 
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
     return this.http.get<Dto>(this.api, { params }).pipe(map(res =>  res.data));
+  }
+
+  getDataUnlimit():Observable<DmDiemDiTich[]>{
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'is_deleted',
+        condition: OvicQueryCondition.equal,
+        value: '0'
+      },
+      {
+        conditionName: 'status',
+        condition: OvicQueryCondition.equal,
+        value: '1',
+        orWhere:'and'
+      },
+    ];
+
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+      orderby: 'ten',
+      order: 'ASC'
+    };
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res =>  res.data));
+  }
+
+  getDataByIsactive(page: number, search?:string): Observable<{ recordsTotal: number, data: DmDiemDiTich[] }> {
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'is_deleted',
+        condition: OvicQueryCondition.equal,
+        value: '0'
+      },
+      {
+        conditionName: 'status',
+        condition: OvicQueryCondition.equal,
+        value: '1',
+        orWhere:'and'
+      },
+    ];
+
+    if(search){
+      const c1:OvicConditionParam[]=[
+        {
+          conditionName: 'ten',
+          condition: OvicQueryCondition.like,
+          value: `%${search}%`,
+          orWhere:'and'
+        }
+      ]
+      conditions.push(...c1);
+    }
+    const fromObject = {
+      paged: page,
+      limit: this.themeSettingsService.settings.rows,
+      orderby: 'ten',
+      order: "ASC"
+    }
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => ({ recordsTotal: res.recordsFiltered, data: res.data })))
   }
 }

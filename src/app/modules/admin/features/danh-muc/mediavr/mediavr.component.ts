@@ -20,7 +20,7 @@ import {DanhMucLoaiNguLieuService} from "@shared/services/danh-muc-loai-ngu-lieu
 
 import {AvatarMakerSetting, MediaService} from "@shared/services/media.service";
 import {getLinkDownload} from "@env";
-import { HelperService } from '@core/services/helper.service';
+import {HelperService} from '@core/services/helper.service';
 
 
 export interface fileConvent {
@@ -60,11 +60,7 @@ export class MediavrComponent implements OnInit, AfterViewInit {
     canDownload: true,
     canUpload: true
   };
-  iconList: { name: string, path: string }[] = [
-    {name: 'vị trí mới', path: './assets/icon-png/location.png'},
-    {name: 'Chuyển cảnh', path: './assets/icon-png/chuyencanh.png'},
-    {name: 'Thông tin chi tiết ', path: './assets/icon-png/infomation.png'},
-  ]
+  iconList: { name: string, path: string }[];
   viewMode = [
     {label: 'Truy cập trực tiếp', value: 'DIRECT'},
     {label: 'Thông tin trực tiếp', value: 'info'},
@@ -76,11 +72,9 @@ export class MediavrComponent implements OnInit, AfterViewInit {
     canEdit: false,
     canDelete: false,
   }
-
   characterAvatar: string;
+  backToScene: boolean = false;
   // three js-----------------------------------------------------------------
-
-
   spriteActive = false;
   scene: any = [];
   camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
@@ -117,7 +111,7 @@ export class MediavrComponent implements OnInit, AfterViewInit {
     private router: Router,
     private danhMucDiemDiTichService: DanhMucDiemDiTichService,
     private danhMucLoaiNguLieuService: DanhMucLoaiNguLieuService,
-    private mediaService:MediaService,
+    private mediaService: MediaService,
     private helperService: HelperService
   ) {
     this.video360 = this.renderer2.createElement('video');
@@ -126,7 +120,7 @@ export class MediavrComponent implements OnInit, AfterViewInit {
         this.dataLoaiNguLieu = data;
       }
     });
-    this.f['loaingulieu'].valueChanges.subscribe(res => console.log(res));
+    // this.f['loaingulieu'].valueChanges.subscribe(res => console.log(res));
   }
 
   ngAfterViewInit(): void {
@@ -146,6 +140,12 @@ export class MediavrComponent implements OnInit, AfterViewInit {
   dataLoaiNguLieu: DmLoaiNguLieu[];
 
   ngOnInit() {
+    this.iconList = this.typeAdd === 'THONGTIN' ?
+      [{name: 'Thông tin chi tiết ', path: './assets/icon-png/infomation.png'}] :
+      [
+        {name: 'vị trí mới', path: './assets/icon-png/location.png'},
+        {name: 'Chuyển cảnh', path: './assets/icon-png/chuyencanh.png'},
+      ];
     // this.dataLoaiNguLieu = this.danhMucLoaiNguLieuService.getData(this.auth.userDonViId).subscribe();
     if (this.activatedRoute.snapshot.queryParamMap.has('code')) {
       this.idDitich = this.auth.decryptData(this.activatedRoute.snapshot.queryParamMap.get('code'));
@@ -156,15 +156,16 @@ export class MediavrComponent implements OnInit, AfterViewInit {
   }
 
 
-
   dataPoint: Pinable[];
   typeMedia: string;
 
   startSeen() {
+    this.backToScene = false;
     this.notificationService.isProcessing(true);
     this.danhMucDiemDiTichService.getDataById(this.idDitich).pipe(mergeMap(list => {
       const paramId = list[0].id;
-      return list ? forkJoin<[DmDiemDiTich[], fileConvent[], Point[]]>([of(list), this.loadFileMedia(list[0]), this.pointsService.getDataByparentId(paramId)]) : of([], [], []);
+      return list ? forkJoin<[DmDiemDiTich[], fileConvent[], Point[]]>([of(list), this.loadFileMedia(list[0]),
+        this.pointsService.getDataByparentId(paramId)]) : of([], [], []);
     })).subscribe({
       next: ([dmdiemDitich, files, dataPoint]) => {
         this.dataDitich = dmdiemDitich[0];
@@ -174,12 +175,11 @@ export class MediavrComponent implements OnInit, AfterViewInit {
         const audioObject = this.dataDitich.file_audio[0] ? files.find(f => f.file.id === this.dataDitich.file_audio[0].id).blob : null;
         this.imageLink = imageObject ? URL.createObjectURL(imageObject) : '';
         this.audioLink = audioObject ? URL.createObjectURL(audioObject) : '';
-        this.dataPoint = dataPoint.map(m =>{
+        this.dataPoint = dataPoint.map(m => {
           m['imageLink'] = m.file_media ? this.fileService.getPreviewLinkLocalFile(m.file_media[0]) : null;
-          m['audioLink'] =  m.file_audio ? this.fileService.getPreviewLinkLocalFile(m.file_audio[0]) : null;
+          m['audioLink'] = m.file_audio ? this.fileService.getPreviewLinkLocalFile(m.file_audio[0]) : null;
           return m;
         });
-        console.log(this.dataPoint);
 
         this.loadInit(this.imageLink, this.audioLink, this.dataPoint);
         this.notificationService.isProcessing(false);
@@ -313,18 +313,18 @@ export class MediavrComponent implements OnInit, AfterViewInit {
     let intersects = this.rayCaster.intersectObjects(this.scene.children);
     intersects.forEach((intersect: any) => {
       if (intersect.object.type === "Sprite") {
-
         intersect.object.onClick();
+        this.backToScene = true;
         if (this.spriteActive) {
           this.tooltip.nativeElement.classList.remove('is-active');
           this.spriteActive = false;
         }
       }
     });
-    intersects = this.rayCaster.intersectObject(this.s.sphere);
-    if (intersects.length > 0) {
-      // console.log(intersects[0].point);
-    }
+    // intersects = this.rayCaster.intersectObject(this.s.sphere);
+    // if (intersects.length > 0) {
+    // console.log(intersects[0].point);
+    // }
   }
   onMouseMove = (e: MouseEvent) => {
     let mouse = new THREE.Vector2(
@@ -342,6 +342,7 @@ export class MediavrComponent implements OnInit, AfterViewInit {
         this.tooltip.nativeElement.style.left = ((p.x + 1) * this.container.nativeElement.offsetWidth / 2) + 'px';
         // this.tooltip.classList.add('is-active');
         this.tooltip.nativeElement.classList.add('is-active');
+
         this.tooltip.nativeElement.innerHTML = intersect.object.name;
         this.spriteActive = intersect.object;
         foundSprite = true;
@@ -453,16 +454,19 @@ export class MediavrComponent implements OnInit, AfterViewInit {
       this.characterAvatar = object.file_media ? getLinkDownload(object.file_media[0].id) : '';//get media
     }
   }
-  typeAdd:string;
-  btnFormAdd(type:'VITRI'|'THONGTIN') {
-    this.typeAdd =type;
+
+  typeAdd: 'VITRI' |'THONGTIN';
+
+  btnFormAdd(type: 'VITRI' | 'THONGTIN') {
+    this.typeAdd = type;
     this.onOpenFormEdit();
-    this.f['type'].setValue(type==='VITRI' ? 'DIRECT ':'INFO');
+    this.f['type'].setValue(type === 'VITRI' ? 'DIRECT ' : 'INFO');
     this.changeInputMode("add");
   }
 
   btnFormEdit() {
     const object = this.dataPoint.find(f => f.id === this.varMouseRight);
+    this.typeAdd = object.type === 'INFO' ? 'THONGTIN' : 'VITRI';
     this.onOpenFormEdit();
     this.changeInputMode("edit", object);
   }
@@ -476,10 +480,6 @@ export class MediavrComponent implements OnInit, AfterViewInit {
       this.pointsService.delete(idDelete).subscribe({
         next: () => {
           this.s.deletePoint(idDelete);
-          this.renderSecene();
-          // const bnewdatam =this.dataPoint.filter(f =>f.id !== idDelete)
-          // const bnewdata =this.dataPoint.filter(f =>f.id === idDelete)
-          // console.log(bnewdata)
           this.notificationService.isProcessing(false);
           this.notificationService.toastSuccess('Thao tác thành công');
         },
@@ -495,18 +495,12 @@ export class MediavrComponent implements OnInit, AfterViewInit {
   dataInformation: Pinable;
 
   btnFormInformation() {
-
     this.visible = true;
-    console.log(this.varMouseRight);
     this.dataInformation = this.dataPoint.find(f => f.id === this.varMouseRight);
-    console.log(this.dataInformation);
   }
 
   saveForm() {
     if (this.formSave.valid) {
-      // const getMa_ns = 'ns'+ {''}
-      // this.formSave.get('ma_ns').setValue(getMa_ns)
-
       const newPin: Pinable = {
         id: 0,
         icon: this.f['icon'].value,
@@ -526,16 +520,7 @@ export class MediavrComponent implements OnInit, AfterViewInit {
             // this.typeMedia = this.dataDitich.file_media[0].type.split("/")[0] === "video" ? "video" : 'image';
             newPin.id = id;
             this.pin(newPin);
-            // const typePoint = this.f['file_media'][0].type.split("/")[0];
-            // console.log(typePoint);
-            // if (typePoint === 'image') {
-            //   this.s.
-            // }
-            // this.formSave.addControl('id', new FormControl(id));
-            // console.log(this.formSave.value);
             this.dataPoint.push(newPin)
-            console.log(this.dataPoint);
-
             this.formSave.reset({
               title: '',
               mota: '',
@@ -546,6 +531,7 @@ export class MediavrComponent implements OnInit, AfterViewInit {
               file_media: null, // ảnh 360 | video360
               file_audio: null, // audio thuyết minh
             });
+            this.characterAvatar = '';
             this.notificationService.isProcessing(false);
             this.notificationService.toastSuccess("Thêm mới thành công");
           }, error: () => {
@@ -611,7 +597,6 @@ export class MediavrComponent implements OnInit, AfterViewInit {
         });
       } else {
         audio.stop();
-        console.log('pause');
       }
     } else {
       this.notificationService.toastWarning('Bạn chưa lưu audio thuyết minh');
@@ -626,13 +611,7 @@ export class MediavrComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // btnDelete1(){
-  //   this.s.logShepre();
-  //   console.log(this.s.spheres.filter(f=> f.userData.ovicIdPoint === 10));
-  // }
-
-
-
+  //file information
   async makeCharacterAvatar(file: File, characterName: string): Promise<File> {
     try {
       const options: AvatarMakerSetting = {
@@ -657,28 +636,35 @@ export class MediavrComponent implements OnInit, AfterViewInit {
       this.notificationService.isProcessing(false);
       this.notificationService.toastError('Quá trình tạo avatar thất bại');
       return Promise.resolve(null);
-
     }
   }
 
   async onInputAvatar(event, fileChooser: HTMLInputElement) {
     if (fileChooser.files && fileChooser.files.length) {
-      console.log(fileChooser.files);
-      const file = await this.makeCharacterAvatar(fileChooser.files[0], this.helperService.sanitizeVietnameseTitle(this.f['ten'].value));
-      console.log(file);
+      const file = await this.makeCharacterAvatar(fileChooser.files[0], fileChooser.files[0].name);
       // upload file to server
-      this.fileService.uploadFile(file, -1).subscribe({
+      this.fileService.uploadFile(file, 1).subscribe({
         next: fileUl => {
-          this.formSave.get('files').setValue(fileUl);
+          this.formSave.get('file_media').setValue([fileUl]);
         }, error: () => {
           this.notificationService.toastError('Upload file không thành công');
         }
       })
       // laasy thoong tin vaf update truongwf
       this.characterAvatar = URL.createObjectURL(file);
-      console.log(this.characterAvatar);
-      // this.f['files'].setValue()
     }
   }
+
+  btnBackToScere(event: MouseEvent) {
+    console.log(event);
+    this.startSeen();
+    // this.s.backToScene();
+  }
+
+  // btnDelete1(){
+  //   const idDelete = this.varMouseRight;
+  //   console.log()
+  //   this.s.deletePoint(idDelete);
+  // }
 }
 

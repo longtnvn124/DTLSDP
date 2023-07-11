@@ -10,11 +10,17 @@ import {NotificationService} from "@core/services/notification.service";
 import {OvicButton} from "@core/models/buttons";
 import {MediaVrManagerComponent} from "@shared/components/media-vr-manager/media-vr-manager.component";
 import {AuthService} from "@core/services/auth.service";
-import { Router } from '@angular/router';
+import {Router} from '@angular/router';
+import {AvatarMakerSetting, MediaService} from "@shared/services/media.service";
+import {fileConvent} from "@modules/admin/features/danh-muc/mediavr/mediavr.component";
+import {FileService} from "@core/services/file.service";
+import {HelperService} from "@core/services/helper.service";
+import {getLinkDownload} from "@env";
 
 interface FormDmDiemDiTich extends OvicForm {
   object: DmDiemDiTich;
 }
+
 @Component({
   selector: 'app-diem-di-tich',
   templateUrl: './diem-di-tich.component.html',
@@ -24,7 +30,7 @@ export class DiemDiTichComponent implements OnInit {
   @ViewChild('fromUpdate', {static: true}) template: TemplateRef<any>;
   @ViewChild('formMedia') formMedia: TemplateRef<any>;
   @ViewChild(Paginator) paginator: Paginator;
-  @ViewChild(MediaVrManagerComponent) MediaVr :MediaVrManagerComponent;
+  @ViewChild(MediaVrManagerComponent) MediaVr: MediaVrManagerComponent;
   statusList = [
     {
       value: 1,
@@ -76,18 +82,11 @@ export class DiemDiTichComponent implements OnInit {
       headClass: 'ovic-w-180px text-center',
       buttons: [
         {
-          tooltip: 'Truy cập hình ảnh',
+          tooltip: 'Thông tin chi tiết ',
           label: '',
-          icon: 'pi pi-image',
-          name: 'MEDIA_DECISION',
+          icon: 'pi pi-file',
+          name: 'INFORMATION_DECTISION',
           cssClass: 'btn-secondary rounded'
-        },
-        {
-          tooltip: 'Truy cập map',
-          label: '',
-          icon: 'pi pi-map',
-          name: 'MAP_DECISION',
-          cssClass: 'btn-success rounded'
         },
         {
           tooltip: 'Sửa',
@@ -121,7 +120,7 @@ export class DiemDiTichComponent implements OnInit {
     [FormType.UPDATE]: {type: FormType.UPDATE, title: 'Cập nhật di tích', object: null, data: null}
   };
 
-  formActive:FormDmDiemDiTich;
+  formActive: FormDmDiemDiTich;
   formSave: FormGroup;
 
   private OBSERVE_PROCESS_FORM_DATA = new Subject<FormDmDiemDiTich>();
@@ -144,14 +143,16 @@ export class DiemDiTichComponent implements OnInit {
     search: ''
   }
 
-  dataBinding :any;
+  dataBinding: any;
 
-  filePermission         = {
-    canDelete   : true ,
-    canDownload : true ,
-    canUpload   : true
+  filePermission = {
+    canDelete: true,
+    canDownload: true,
+    canUpload: true
   };
-  filePermistionOnlyShow = { canDelete : false , canDownload : true , canUpload : false };
+  filePermistionOnlyShow = {canDelete: false, canDownload: true, canUpload: false};
+  visible:boolean= false;
+
   constructor(
     private themeSettingsService: ThemeSettingsService,
     private fb: FormBuilder,
@@ -159,14 +160,16 @@ export class DiemDiTichComponent implements OnInit {
     private danhMucDiemDiTichService: DanhMucDiemDiTichService,
     private auth: AuthService,
     private router: Router,
+    private mediaService: MediaService,
+    private fileService: FileService,
+    private helperService: HelperService,
   ) {
     this.formSave = this.fb.group({
       ten: ['', Validators.required],
       mota: [''],
-      vitri_ggmap:[''],
+      vitri_ggmap: [''],
       status: ['', Validators.required],
-      file_media:[''],
-      file_audio:[''],
+      file_media: [null],
     });
 
     const observeProcessFormData = this.OBSERVE_PROCESS_FORM_DATA.asObservable().pipe(debounceTime(100)).subscribe(form => this.__processFrom(form));
@@ -189,16 +192,19 @@ export class DiemDiTichComponent implements OnInit {
   loadData(page) {
     const limit = this.themeSettingsService.settings.rows;
     this.index = (page * limit) - limit + 1;
-    this.danhMucDiemDiTichService.search(page,null, this.filter.search).subscribe({
+    this.danhMucDiemDiTichService.search(page, null, this.filter.search).subscribe({
       next: ({data, recordsTotal}) => {
         this.recordsTotal = recordsTotal;
         this.listData = data.map(m => {
           const sIndex = this.statusList.findIndex(i => i.value === m.status);
           m['__status'] = sIndex !== -1 ? this.statusList[sIndex].color : '';
+          m['__fileMedia_converted'] = m.file_media ? this.fileService.getPreviewLinkLocalFile(m.file_media[0]) : null;
+
           // m['__ten_converted'] = `<b>${m.ten}</b> <br>` + m.mota;
           // m['__duongdan']=m.vitri_ggmap + ' ' + `<a href="${m.vitri_ggmap}" target="_blank"><i class="pi pi-map"></i></a>`;
           return m;
         })
+        console.log(this.listData);
         this.isLoading = false;
       }, error: () => {
         this.isLoading = false;
@@ -211,15 +217,26 @@ export class DiemDiTichComponent implements OnInit {
     const observer$: Observable<any> = type === FormType.ADDITION ? this.danhMucDiemDiTichService.create(data) : this.danhMucDiemDiTichService.update(object.id, data);
     observer$.subscribe({
       next: () => {
-        // this.needUpdate = true;
+        this.needUpdate = true;
+        if (type === FormType.ADDITION) {
+          this.formSave.reset({
+            ten: '',
+            mota: '',
+            vitri_ggmap: '',
+            status: '',
+            file_media:[],
+          });
+        }
         this.notificationService.toastSuccess('Thao tác thành công', 'Thông báo');
       },
       error: () => this.notificationService.toastError('Thao tác thất bại', 'Thông báo')
     });
   }
-  get f() : { [ key : string ] : AbstractControl<any> } {
+
+  get f(): { [key: string]: AbstractControl<any> } {
     return this.formSave.controls;
   }
+
   paginate({page}: NgPaginateEvent) {
     this.page = page + 1;
     this.loadData(this.page);
@@ -230,6 +247,7 @@ export class DiemDiTichComponent implements OnInit {
     this.paginator.changePage(1);
     this.loadData(1);
   }
+
   private preSetupForm(name: string) {
     this.notificationService.isProcessing(false);
     this.notificationService.openSideNavigationMenu({
@@ -239,12 +257,10 @@ export class DiemDiTichComponent implements OnInit {
       offsetTop: '0px'
     });
   }
+
   closeForm() {
     this.loadInit();
     this.notificationService.closeSideNavigationMenu(this.menuName);
-    event.preventDefault();
-    event.stopPropagation();
-    event.stopImmediatePropagation();
   }
 
   async handleClickOnTable(button: OvicButton) {
@@ -257,11 +273,12 @@ export class DiemDiTichComponent implements OnInit {
         this.formSave.reset({
           ten: '',
           mota: '',
-          vitri_ggmap:'',
+          vitri_ggmap: '',
           status: '',
-          file_media:'',
-          file_audio:'',
+          file_media: [],
+
         });
+        this.characterAvatar = ''
         this.formActive = this.listForm[FormType.ADDITION];
         this.preSetupForm(this.menuName);
         break;
@@ -272,60 +289,24 @@ export class DiemDiTichComponent implements OnInit {
           mota: object1.mota,
           vitri_ggmap: object1.vitri_ggmap,
           status: object1.status,
-          file_media:object1.file_media,
-          file_audio:object1.file_audio,
+          file_media: object1.file_media,
 
-        })
+        });
+        this.characterAvatar = object1.file_media ? getLinkDownload(object1.file_media['id']) : '';
         this.formActive = this.listForm[FormType.UPDATE];
         this.formActive.object = object1;
         this.preSetupForm(this.menuName);
         break;
-      case 'DELETE_DECISION':
-        const confirm = await this.notificationService.confirmDelete();
-        if (confirm) {
-          this.danhMucDiemDiTichService.delete(decision.id).subscribe({
-            next: () => {
-              this.page = Math.max(1, this.page - (this.listData.length > 1 ? 0 : 1));
-              this.notificationService.isProcessing(false);
-              this.notificationService.toastSuccess('Thao tác thành công');
-              this.loadData(this.page);
-
-            }, error: () => {
-              this.notificationService.isProcessing(false);
-              this.notificationService.toastError('Thao tác không thành công');
-            }
-          })
-        }
-        break;
-      case 'MAP_DECISION':
-        const object3 = this.listData.find(u => u.id === decision.id);
-        if(object3.vitri_ggmap != null){
-          window.open(object3.vitri_ggmap , '_blank');
-        }else{
-          this.notificationService.toastError('Không có đường dẫn ');
-        }
-        break;
-      case 'MEDIA_DECISION':
-        this.dataBinding = this.listData.find(u=>u.id ===decision.id);
-
-        // this.dataBinding = this.auth.encryptData(`${data}`);
-        // console.log(dataBinding);
-        const code = this.auth.encryptData(`${this.dataBinding.id}`);
-        this.router.navigate(['admin/danh-muc/media-vr-manager'], { queryParams: { code } });
-
-        // setTimeout(() => this.notificationService.openSideNavigationMenu({
-        //   name: this.menuName,
-        //   template: this.formMedia,
-        //   size: this.sizeFullWidth,
-        //   offsetTop: '0px',
-        //   offCanvas: false,
-        // }), 100);
+      case 'INFORMATION_DECTISION':
+        this.dataInformation = this.listData.find(u => u.id === decision.id);
+        console.log(this.dataInformation);
+        this.visible =true;
         break;
       default:
         break;
     }
   }
-
+  dataInformation:DmDiemDiTich;
   saveForm() {
     if (this.formSave.valid) {
       this.formActive.data = this.formSave.value;
@@ -335,8 +316,58 @@ export class DiemDiTichComponent implements OnInit {
       this.notificationService.toastError('Vui lòng điền đầy đủ thông tin');
     }
   }
-  btnControlVolume(){
+
+  btnControlVolume() {
     // this.MediaVr.toggleVolume();
+  }
+
+  async makeCharacterAvatar(file: File, characterName: string): Promise<File> {
+    try {
+      const options: AvatarMakerSetting = {
+        aspectRatio: 3 / 2,
+        resizeToWidth: 300,
+        format: 'jpeg',
+        cropperMinWidth: 10,
+        dirRectImage: {
+          enable: true,
+          dataUrl: URL.createObjectURL(file)
+        }
+      };
+      const avatar = await this.mediaService.callAvatarMaker(options);
+      if (avatar && !avatar.error && avatar.data) {
+        const none = new Date().valueOf();
+        const fileName = characterName + none + '.jpg';
+        return Promise.resolve(this.fileService.base64ToFile(avatar.data.base64, fileName));
+      } else {
+        return Promise.resolve(null);
+      }
+    } catch (e) {
+      this.notificationService.isProcessing(false);
+      this.notificationService.toastError('Quá trình tạo avatar thất bại');
+      return Promise.resolve(null);
+    }
+  }
+
+  characterAvatar: string;
+
+  async onInputAvatar(event, fileChooser: HTMLInputElement) {
+    if (fileChooser.files && fileChooser.files.length) {
+      console.log(fileChooser.files);
+      const file = await this.makeCharacterAvatar(fileChooser.files[0], this.helperService.sanitizeVietnameseTitle(this.f['ten'].value));
+      console.log(file);
+      // upload file to server
+      this.fileService.uploadFile(file, 1).subscribe({
+        next: fileUl => {
+          this.formSave.get('file_media').setValue([fileUl]);
+        }, error: () => {
+          this.notificationService.toastError('Upload file không thành công');
+        }
+      })
+      // laasy thoong tin vaf update truongwf
+      this.characterAvatar = URL.createObjectURL(file);
+      console.log(this.characterAvatar);
+      // this.f['files'].setValue()
+    }
   }
 
 }
