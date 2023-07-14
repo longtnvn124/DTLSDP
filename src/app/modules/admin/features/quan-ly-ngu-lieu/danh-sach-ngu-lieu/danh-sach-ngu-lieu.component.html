@@ -1,19 +1,88 @@
 <div class="row">
-  <div class="col-12" [class.ovic-is-loading]="isLoading">
+  <div class="col-12 ovic-ui-table" [class.ovic-is-loading]="isLoading">
     <div class="ovic-load-init-fail alert alert-danger --fs-14" *ngIf="loadInitFail; else tableData">
       Đã có lỗi trong quá trình tải dữ liệu
       <button class="btn btn-primary border-circle --fs-13 ml-2" (click)="loadInit()">Reload</button>
     </div>
     <ng-template #tableData>
-      <ovic-table emptyMessage="Danh sách trống" [index]="index" [data]="listData"
-                  styleClass="tbl-danh-sach-tap-the head-input-size--normal head-input-size--250px" dataKey="id"
-                  rowHover="true"
-                  [rows]="15" tableName="Danh sách ngữ liệu" [tblStructure]="tblStructure"
-                  (onButtonClick)="handleClickOnTable($event)" [enableSearch]="true" [enableSearchLocal]="false"
-                  (onSearch)="onSearch($event)" [searchDebounceTime]="800" [headerButtons]="headButtons"></ovic-table>
-      <p-paginator class="p-paginator--custom" [showCurrentPageReport]="true" [rows]="rows"
-                   [totalRecords]="recordsTotal" [pageLinkSize]="5" (onPageChange)="paginate($event)"></p-paginator>
+      <div class="p-datatable-header">
+        <h3 class="tbl-title ng-star-inserted">Danh sách ngữ liệu</h3>
+        <div class="search-block ui-table-globalfilter-container ng-star-inserted">
+          <div class="d-flex align-items-center">
+            <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
+              <div class="d-flex">
+                <div class="search-block__elm filter-by-group-control ml-3">
+                  <p-dropdown [options]="dataDiemditich" styleClass="ovic-dropdown-style w-100 dropdown--narrow-angle"
+                              placeholder="Chọn Dhtd-htkt" optionLabel="ten"
+                              optionValue="id" (onChange)="changeFilter($event)" [showClear]="true"
+                  ></p-dropdown>
+                </div>
+                <div class="search-block__elm ml-2">
+                      <span class="p-input-icon-right">
+                        <i class="pi pi-search"></i>
+                        <input type="text" pInputText style="height:42px" placeholder="Tìm kiếm" [(ngModel)]="filterData.search" (ngModelChange)="changeInput($event)"/>
+                      </span>
+                </div>
+                <div class="ml-2">
+                  <p-button icon="pi pi-plus" label="Thêm mới ngữ liệu" (click)="btnAddNew()"
+                            [style]="{'height':'42px'}"></p-button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p-table [value]="listData" [paginator]="true" [rows]="rows" [showCurrentPageReport]="true"
+               [tableStyle]="{ 'min-width': '100px' }">
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="ovic-w-50px text-center">#</th>
+            <th class="text-left">Tiêu đề ngữ liệu</th>
+            <th class="text-left">Ngữ liệu thuộc</th>
+            <th class="ovic-w-180px text-left p-1">Lĩnh vực</th>
+            <th class="ovic-w-250px text-left">Loại ngữ liệu</th>
+            <th class="ovic-w-180px text-center">Thao tác</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6">Không có dữ liệu</td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+          <tr>
+            <td class="ovic-w-50px text-center">{{item['indexTable']}}</td>
+            <td>
+              <div class="d-block --fs-14">{{item['title']}}</div>
+            </td>
+            <td>
+              <div class="d-block --fs-14">{{item['__diemditich_converted']}}</div>
+            </td>
+            <td class="ovic-w-100px">
+              <div class="d-block --fs-14">{{item['linhvuc']}}</div>
+            </td>
+            <td class="ovic-w-150px text-left px-1 pt-1 pb-0">
+              <div class="d-inline-block --fs-14" *ngFor="let item of item['loaingulieu']">
+                <div class="d-block btn_ngulieu">{{item}}</div>
+              </div>
+            </td>
+
+            <td class="ovic-w-100px text-center">
+              <div class="d-block --fs-14">
+                <p-button class="btn-p-10px" styleClass="p-button-sm" icon="pi pi-info-circle"
+                          (click)="btnInformation(item)"></p-button>
+                <p-button class="btn-p-10px mx-2" styleClass="p-button-sm p-button-warning" icon="pi pi-pencil"
+                          (click)="btnEdit(item)"></p-button>
+                <p-button class="btn-p-10px" styleClass="p-button-sm p-button-danger" icon="pi pi-trash"
+                          (click)="btnDelete(item)"></p-button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
     </ng-template>
+
   </div>
 </div>
 
@@ -29,7 +98,7 @@
         <form [formGroup]="formSave" autocomplete="off">
           <div class="row">
             <div class="col-6">
-              <p class="form-row" >
+              <p class="form-row">
                 <label>Tiêu đề ngữ liệu<span class="ovic-mark">*</span></label>
                 <input pRipple type="text" placeholder="Tiêu đề..." formControlName="title"
                        autocomplete="off">
@@ -37,8 +106,10 @@
             </div>
             <div class="col-6">
               <p class="form-row">
-                <label >Là ngữ liệu của <span class="ovic-mark">*</span></label>
-                <p-dropdown [options]="dataDiemditich" optionLabel="ten" formControlName="diemditich_id" optionValue="id"
+                <label>Ngữ liệu của<span class="ovic-mark">*</span></label>
+                <p-dropdown [options]="dataDiemditich" optionLabel="ten" formControlName="diemditich_id"
+                            optionValue="id"
+                            [showClear]="true"
                             class="w-100" placeholder="chọn...">
                 </p-dropdown>
               </p>
@@ -47,16 +118,19 @@
           <div class="row">
             <div class="col-6">
               <p class="form-row">
-                <label >Lĩnh vực<span class="ovic-mark">*</span></label>
-                <p-dropdown [options]="dataLinhvuc" optionLabel="ten" formControlName="linhvuc" optionValue="ten" [showClear]="true"
+                <label>Lĩnh vực<span class="ovic-mark">*</span></label>
+                <p-dropdown [options]="dataLinhvuc" optionLabel="ten" formControlName="linhvuc" optionValue="ten"
+                            [showClear]="true"
                             class="w-100" placeholder="chọn...">
                 </p-dropdown>
               </p>
+
             </div>
             <div class="col-6">
               <p class="form-row">
-                <label >Chuyên mục<span class="ovic-mark">*</span></label>
-                <p-dropdown [options]="dataChuyemuc" optionLabel="ten" formControlName="chuyenmuc" optionValue="ten" [showClear]="true"
+                <label>Chuyên mục<span class="ovic-mark">*</span></label>
+                <p-dropdown [options]="dataChuyemuc" optionLabel="ten" formControlName="chuyenmuc" optionValue="ten"
+                            [showClear]="true"
                             class="w-100" placeholder="chọn...">
                 </p-dropdown>
               </p>
@@ -65,9 +139,10 @@
           <div class="row">
             <div class="col-12">
               <p class="form-row">
-                <label >Loại ngữ liệu <span class="ovic-mark">*</span></label>
+                <label>Loại ngữ liệu <span class="ovic-mark">*</span></label>
                 <p-multiSelect class="custom-multiselect w-100" [options]="dataLoaingulieu"
-                               formControlName="loaingulieu" optionValue="ten" optionLabel="ten" placeholder="Chọn..."></p-multiSelect>
+                               formControlName="loaingulieu" optionValue="ten" optionLabel="ten"
+                               placeholder="Chọn..."></p-multiSelect>
               </p>
             </div>
           </div>
@@ -75,7 +150,7 @@
           <div class="row">
             <div class="col-12">
               <p class="form-row">
-                <label >Nội dung </label>
+                <label>Nội dung </label>
                 <textarea formControlName="mota" placeholder="Nội dung..." autocomplete="off" cols="30"
                           rows="5"></textarea>
               </p>
@@ -88,7 +163,7 @@
                 <label>File Media <span class="ovic-mark">*</span></label>
                 <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"
                                      [formField]="f['file_media']" [multiple]="true"
-                                      [state]="1"></app-file-list-local>
+                                     [state]="1"></app-file-list-local>
               </p>
             </div>
           </div>
@@ -97,7 +172,7 @@
           <div class="row">
             <div class="col-12">
               <p class="form-row">
-                <label >File thuyết minh</label>
+                <label>File thuyết minh</label>
                 <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"
                                      [formField]="f['file_audio']" [multiple]="true"
                                      [accept]="['.jpg']" [state]="1"></app-file-list-local>
@@ -111,7 +186,7 @@
     </div>
     <div class="ovic-side-navigation-content__foot">
       <span class="ovic-side-navigation-content__foot__notice mr-auto"><mark>(*)</mark> bắt buộc phải nhập</span>
-      <button pButton pRipple type="button" label="Cập nhật" icon="pi pi-save" (click)="saveForm()"
+      <button pButton pRipple type="button" [label]="labelBtnAcept" icon="pi pi-save" (click)="saveForm()"
               class="p-button-success"></button>
       <button pButton pRipple type="button" label="Đóng" class="p-button-secondary ml-3" icon="pi pi-times"
               (click)="closeForm()"></button>

@@ -1,6 +1,14 @@
-import * as THREE from "three";
+import {
+  Scene, PerspectiveCamera, Audio,
+  SphereGeometry,
+  MeshBasicMaterial,
+  Mesh,
+  TextureLoader,
+  SpriteMaterial,
+  Sprite, RepeatWrapping, DoubleSide, VideoTexture, AudioLoader,
+  Vector3
+} from "three";
 import TweenLite from "gsap";
-import {Vector3} from "three/src/math/Vector3";
 
 interface OvicVrPoint {
   userData: {
@@ -18,16 +26,17 @@ export class sceneControl {
   image: string;
   audio: string;
 
-  scene = new THREE.Scene();
+  scene = new Scene();
   sprites: any = [];
   sphere: any = [];
   spheres: any = [];
-  camera :THREE.PerspectiveCamera;
+  camera: PerspectiveCamera;
   points: OvicVrPoint[] = [];
   point: any = {};
   listener: any;
-  sound: THREE.Audio;
-  state:any;
+  sound: Audio;
+  state: any;
+
   constructor(image, camera, audio) {
     this.image = image;
     this.points = [];
@@ -37,19 +46,19 @@ export class sceneControl {
     this.audio = audio;
   }
 
-  createScrene(scene, ovicPointId?: number, state?:boolean) {
+  createScrene(scene, ovicPointId?: number, state?: boolean) {
     this.scene = scene;
-    if(state){
+    if (state) {
       this.state = scene;
     }
-    const geometry = new THREE.SphereGeometry(50, 32, 32);
-    let textureLoader = new THREE.TextureLoader();
+    const geometry = new SphereGeometry(50, 32, 32);
+    let textureLoader = new TextureLoader();
     const texture = textureLoader.load(this.image);// load hinh anh bat dau
-    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapS = RepeatWrapping;
     texture.repeat.x = -1;
-    const material = new THREE.MeshBasicMaterial({map: texture, side: THREE.DoubleSide});
+    const material = new MeshBasicMaterial({map: texture, side: DoubleSide});
     // material.transparent = true;
-    this.sphere = new THREE.Mesh(geometry, material);
+    this.sphere = new Mesh(geometry, material);
     if (ovicPointId) {
       this.sphere.userData = {ovicPointId: ovicPointId};
       this.spheres.push(this.sphere);
@@ -77,14 +86,14 @@ export class sceneControl {
     // ovicPointId: 27
     // console.log(this.sprites.filter(f=>f.userData['ovicPointId'] === ovicPointId));
     // console.log(this.spheres.filter(f=>f.userData['ovicPointId'] === ovicPointId));
-    let spritesRemove = this.sprites.filter(f=>f.userData['ovicPointId'] === ovicPointId)
-    spritesRemove.forEach(f=>{
-      // sprite.material.dispose();
-      // sprite.material.map.dispose();
-      // sprite.texture.dispose();
-      f.material.dispose();
-      f.material.map.dispose();
-      this.scene.remove(f);
+    let spritesRemove = this.sprites.filter(f => f.userData['ovicPointId'] === ovicPointId)
+    spritesRemove.forEach(f => {
+        // sprite.material.dispose();
+        // sprite.material.map.dispose();
+        // sprite.texture.dispose();
+        f.material.dispose();
+        f.material.map.dispose();
+        this.scene.remove(f);
       }
     )
 
@@ -96,11 +105,12 @@ export class sceneControl {
     this.addPoint(point);
   }
 
-  addTooltip(point,isCheck?:boolean) {
-    // let spriteMap = new THREE.TextureLoader().load(point.userData.iconPoint);
-    let spriteMap = new THREE.TextureLoader().load('./assets/icon-png/info.gif');
-    let spriteMaterial = new THREE.SpriteMaterial({map: spriteMap});
-    let sprite = new THREE.Sprite(spriteMaterial);
+  async addTooltip(point, isCheck?: boolean) {
+    console.log(new TextureLoader().load(point.userData.iconPoint))
+    // let spriteMap = new TextureLoader().load('https://vr360.com.vn/projects/dai-hoc-ngan-hang-tp-hcm/assets/Move/right.png');
+    let spriteMap = new TextureLoader().load('./assets/icon-png/info.gif');
+    let spriteMaterial = new SpriteMaterial({map: spriteMap});
+    let sprite = new Sprite(spriteMaterial);
 
     sprite.name = point.name;
     sprite.userData = point.userData;
@@ -141,12 +151,12 @@ export class sceneControl {
 
   createMovie(scene, videoDom: HTMLVideoElement) {
     this.scene = scene;
-    const geometry = new THREE.SphereGeometry(50, 32, 32);
-    const videoTexture = new THREE.VideoTexture(videoDom);
-    const material = new THREE.MeshBasicMaterial({map: videoTexture, side: THREE.DoubleSide});
+    const geometry = new SphereGeometry(50, 32, 32);
+    const videoTexture = new VideoTexture(videoDom);
+    const material = new MeshBasicMaterial({map: videoTexture, side: DoubleSide});
     material.needsUpdate = true;
     // material.transparent = true;
-    this.sphere = new THREE.Mesh(geometry, material);
+    this.sphere = new Mesh(geometry, material);
     scene.add(this.sphere);
     this.points.forEach((f) => {
       this.addTooltip(f);
@@ -155,10 +165,10 @@ export class sceneControl {
 
   addAudio(audio) {
     this.audio = audio;
-    this.listener = new THREE.AudioListener();
+    this.listener = new AudioListener();
     this.camera.add(this.listener);
-    this.sound = new THREE.Audio(this.listener);
-    const audioLoader = new THREE.AudioLoader();
+    this.sound = new Audio(this.listener);
+    const audioLoader = new AudioLoader();
     audioLoader.load(audio, function (buffer) {
       this.sound.setBuffer(buffer);
       this.sound.setLoop(true);
@@ -198,18 +208,20 @@ export class sceneControl {
       TweenLite.to(sprite.scale, 1, {x: 1, y: 1, z: 1})
     })
   }
-  hoverUp(){
-    const originalScale = new THREE.Vector3();
-    this.sprites.forEach(sprite=>{
-      TweenLite.to(sprite.scale, 0.2, { x: originalScale.x * 1.2, y: originalScale.y * 1.2, z: originalScale.z * 1.2 });
+
+  hoverUp() {
+    const originalScale = new Vector3();
+    this.sprites.forEach(sprite => {
+        TweenLite.to(sprite.scale, 0.2, {x: originalScale.x * 1.2, y: originalScale.y * 1.2, z: originalScale.z * 1.2});
       }
     )
   }
-  hoverDown(){
-    const originalScale = new THREE.Vector3();
 
-    this.sprites.forEach(sprite=>{
-        TweenLite.to(sprite.scale, 0.2, { x: originalScale.x, y: originalScale.y, z: originalScale.z });
+  hoverDown() {
+    const originalScale = new Vector3();
+
+    this.sprites.forEach(sprite => {
+        TweenLite.to(sprite.scale, 0.2, {x: originalScale.x, y: originalScale.y, z: originalScale.z});
       }
     )
 

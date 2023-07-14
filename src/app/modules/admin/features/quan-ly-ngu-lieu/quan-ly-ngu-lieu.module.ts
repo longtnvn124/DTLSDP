@@ -11,22 +11,27 @@ import {ReactiveFormsModule} from "@angular/forms";
 import {ButtonModule} from "primeng/button";
 import { MultiSelectModule } from 'primeng/multiselect';
 import {RippleModule} from "primeng/ripple";
-
+import {TableModule} from "primeng/table";
+import {InputMaskModule} from "primeng/inputmask";
+import { InputTextModule } from 'primeng/inputtext';
 @NgModule({
   declarations: [
     DanhSachNguLieuComponent,
-    DanhSachSuKienComponent
+    DanhSachSuKienComponent,
   ],
-    imports: [
-        CommonModule,
-        QuanLyNguLieuRoutingModule,
-        ContextMenuModule,
-        SharedModule,
-        PaginatorModule,
-        ReactiveFormsModule,
-        ButtonModule,
-        MultiSelectModule,
-        RippleModule
-    ]
+  imports: [
+    CommonModule,
+    QuanLyNguLieuRoutingModule,
+    ContextMenuModule,
+    SharedModule,
+    PaginatorModule,
+    ReactiveFormsModule,
+    ButtonModule,
+    MultiSelectModule,
+    RippleModule,
+    TableModule,
+    InputMaskModule,
+    InputTextModule
+  ]
 })
 export class QuanLyNguLieuModule { }

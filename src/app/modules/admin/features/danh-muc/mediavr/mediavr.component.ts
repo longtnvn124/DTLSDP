@@ -1,9 +1,22 @@
 import {
-  AfterViewInit, Component, ElementRef, HostListener, OnInit, Renderer2, TemplateRef, ViewChild
+  AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, Renderer2, TemplateRef, ViewChild
 } from '@angular/core';
 import {Pinable, Point} from "@shared/models/point";
-import * as THREE from 'three';
-import {OrbitControls} from "@three-ts/orbit-controls";
+// import * as Three from 'three';
+
+import {
+  PerspectiveCamera,
+  Raycaster,
+  WebGLRenderer,
+  Vector2,
+  Scene,
+  Vector3,
+  AudioListener,
+  AudioLoader,
+  Audio
+} from 'three';
+// import {OrbitControls} from "@three-ts/orbit-controls";
+import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {MenuItem} from "primeng/api/menuitem";
 import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {NotificationService} from "@core/services/notification.service";
@@ -22,7 +35,6 @@ import {AvatarMakerSetting, MediaService} from "@shared/services/media.service";
 import {getLinkDownload} from "@env";
 import {HelperService} from '@core/services/helper.service';
 
-
 export interface fileConvent {
   file: OvicFile;
   blob: Blob;
@@ -33,7 +45,8 @@ export interface fileConvent {
   templateUrl: './mediavr.component.html',
   styleUrls: ['./mediavr.component.css']
 })
-export class MediavrComponent implements OnInit, AfterViewInit {
+export class MediavrComponent implements OnInit, AfterViewInit, OnDestroy {
+
   @ViewChild('fromUpdate', {static: true}) formUpdate: TemplateRef<any>;
   @ViewChild('myCanvas', {static: false}) canvasRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('container', {static: true}) container: ElementRef<HTMLDivElement>;
@@ -77,11 +90,14 @@ export class MediavrComponent implements OnInit, AfterViewInit {
   // three js-----------------------------------------------------------------
   spriteActive = false;
   scene: any = [];
-  camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
+  // camera = new Three.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
+  camera = new PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
   controls: OrbitControls;
   // controls = new OrbitControls(this.camera, this.renderer.domElement);
-  rayCaster = new THREE.Raycaster();
-  renderer = new THREE.WebGLRenderer({antialias: true});
+  // rayCaster = new Three.Raycaster();
+  rayCaster = new Raycaster();
+  // renderer = new Three.WebGLRenderer({antialias: true});
+  renderer = new WebGLRenderer({antialias: true});
   intersectsVecter: any;
 
   // menu right click
@@ -121,6 +137,15 @@ export class MediavrComponent implements OnInit, AfterViewInit {
       }
     });
     // this.f['loaingulieu'].valueChanges.subscribe(res => console.log(res));
+  }
+
+  ngOnDestroy(): void {
+    if (this.renderer) {
+      this.renderer.dispose();
+    }
+    if (this.scene) {
+      this.scene.dispose();
+    }
   }
 
   ngAfterViewInit(): void {
@@ -211,10 +236,14 @@ export class MediavrComponent implements OnInit, AfterViewInit {
   }
 
   loadInit(image: string, audio?: string, datapoint?: Pinable[]) {
+
+    console.log('loadInit');
+
     //camera
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     //scene and controls
-    this.scene = new THREE.Scene();
+    // this.scene = new Three.Scene();
+    this.scene = new Scene();
     this.controls.rotateSpeed = -0.3;
     this.controls.enableZoom = false;
     // this.controls.enablePan = true;
@@ -223,7 +252,7 @@ export class MediavrComponent implements OnInit, AfterViewInit {
     // Sphere
     this.s = new sceneControl(image, this.camera, audio);
     // let s2 = new sceneControl('./assets/icon-png/pano1.jpg', this.camera,audio);
-    // this.s.addPoint( { position: new THREE.Vector3(14, 1.9, -47), name: 'Entrée', scene: s2 });
+    // this.s.addPoint( { position: new Three.Vector3(14, 1.9, -47), name: 'Entrée', scene: s2 });
 
     if (datapoint && datapoint.length) {
       this.addPointInScene(datapoint);
@@ -258,13 +287,13 @@ export class MediavrComponent implements OnInit, AfterViewInit {
       const locationY = info.location['y'];
       const locationZ = info.location['z'];
       this.s.addPoint({
-        position: new THREE.Vector3(locationX, locationY, locationZ),
+        // position: new Three.Vector3(locationX, locationY, locationZ),
+        position: new Vector3(locationX, locationY, locationZ),
         name: info.title,
         scene: newPoint,
         userData: {
           ovicPointId: info.id,
           iconPoint: info.icon
-
         }
       });
       if (type === "image") {
@@ -305,7 +334,8 @@ export class MediavrComponent implements OnInit, AfterViewInit {
     this.renderer.render(this.scene, this.camera)
   }
   onClick = (e: MouseEvent) => {
-    let mouse = new THREE.Vector2(
+    // let mouse = new Three.Vector2(
+    let mouse = new Vector2(
       (e.offsetX / this.container.nativeElement.clientWidth) * 2 - 1,
       -(e.offsetY / this.container.nativeElement.clientHeight) * 2 + 1,
     );
@@ -327,7 +357,8 @@ export class MediavrComponent implements OnInit, AfterViewInit {
     // }
   }
   onMouseMove = (e: MouseEvent) => {
-    let mouse = new THREE.Vector2(
+    // let mouse = new Three.Vector2(
+    let mouse = new Vector2(
       (e.offsetX / this.container.nativeElement.clientWidth) * 2 - 1,
       -(e.offsetY / this.container.nativeElement.clientHeight) * 2 + 1,
     );
@@ -362,7 +393,8 @@ export class MediavrComponent implements OnInit, AfterViewInit {
   }
   varMouseRight: any;
   @HostListener("contextmenu", ["$event"]) onRightClick = (e: MouseEvent) => {
-    let mouse = new THREE.Vector2(
+    // let mouse = new Three.Vector2(
+    let mouse = new Vector2(
       (e.offsetX / this.container.nativeElement.clientWidth) * 2 - 1,
       -(e.offsetY / this.container.nativeElement.clientHeight) * 2 + 1,
     );
@@ -455,7 +487,7 @@ export class MediavrComponent implements OnInit, AfterViewInit {
     }
   }
 
-  typeAdd: 'VITRI' |'THONGTIN';
+  typeAdd: 'VITRI' | 'THONGTIN';
 
   btnFormAdd(type: 'VITRI' | 'THONGTIN') {
     this.typeAdd = type;
@@ -581,9 +613,12 @@ export class MediavrComponent implements OnInit, AfterViewInit {
 
   btnVolume() {
     if (this.audioLink) {
-      const audioListener = new THREE.AudioListener();
-      const audioLoader = new THREE.AudioLoader();
-      var audio = new THREE.Audio(audioListener);
+      // const audioListener = new Three.AudioListener();
+      const audioListener = new AudioListener();
+      // const audioLoader = new Three.AudioLoader();
+      const audioLoader = new AudioLoader();
+      // var audio = new Three.Audio(audioListener);
+      var audio = new Audio(audioListener);
       this.camera.add(audioListener);
 
       this.sound = !this.sound;
@@ -656,7 +691,6 @@ export class MediavrComponent implements OnInit, AfterViewInit {
   }
 
   btnBackToScere(event: MouseEvent) {
-    console.log(event);
     this.startSeen();
     // this.s.backToScene();
   }

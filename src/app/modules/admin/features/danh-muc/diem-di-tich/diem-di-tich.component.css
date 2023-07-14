@@ -14,12 +14,12 @@
 }
 
 .ctn-right {
-  width: 60%;
+  width: 100%;
   margin: 0;
   padding: 0 20px ;
 }
 .datainfo-title {
-  display: flex;
+  ;
   justify-content: center;
   align-content: center;
 }
@@ -33,6 +33,13 @@
 .datainfo-title__p {
   font-size: 16px;
   font-weight: 600;
+  text-align: center;
+  width:60%;
+}
+.datainfo-body__img{
+  padding:10px;
+  width:600px;
+  background-size: contain;
 }
 .datainfo-body__dec {
   display: block;
@@ -48,12 +55,7 @@
   line-height: 1;
   margin: 5px;
 }
-.datainfo-body__img{
-  padding:0 10px 10px 10px;
-  width:100%;
-  /*max-width:300px;*/
-  background-size: contain;
-}
+
 .datainfo-body__audio{
   width:100%;
 }

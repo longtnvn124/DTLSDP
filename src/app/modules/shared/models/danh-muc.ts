@@ -52,6 +52,7 @@ export interface DmDiemDiTich extends DmChung {
   file_media: OvicFile[];
   file_audio?: OvicFile[];
   status: number; //1 Active; 0: inactive
+  total_ngulieu?:number;
 }
 
 

@@ -18,7 +18,7 @@
 </div>
 
 
-<input type="file" #fileChooser hidden="true" (change)="onInputAvatar($event , fileChooser)">
+<!--<input type="file" #fileChooser hidden="true" (change)="onInputAvatar($event , fileChooser)">-->
 <ng-template #fromUpdate>
   <div class="ovic-side-navigation-content">
     <div class="ovic-side-navigation-content__head">
@@ -68,27 +68,21 @@
             <div class="col-12">
               <p class="form-row">
                 <label>File media</label>
-<!--                <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"-->
-<!--                                     [formField]="f['file_media']" [multiple]="true"-->
-<!--                                     [accept]="['.jpg']"></app-file-list-local>-->
-                <button pRipple class="btn w-100 btn-ctm" (click)="fileChooser.click()">
-                  <img *ngIf="characterAvatar; else showIcon" [src]="characterAvatar | ovicSafeUrl" alt="">
-                  <ng-template #showIcon>
-                    <i class="pi pi-camera "></i>
-                  </ng-template>
-                </button>
+                <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"
+                                     [formField]="f['file_media']" [multiple]="true"
+                                     [state]="1" [accept]="['.jpg']"></app-file-list-local>
               </p>
             </div>
           </div>
-<!--          <div class="row">-->
-<!--            <div class="col-12">-->
-<!--              <p class="form-row">-->
-<!--                <label>File audio thuyết minh</label>-->
-<!--                <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"-->
-<!--                                     [formField]="f['file_audio']" [multiple]="true"></app-file-list-local>-->
-<!--              </p>-->
-<!--            </div>-->
-<!--          </div>-->
+          <div class="row">
+            <div class="col-12">
+              <p class="form-row">
+                <label>File audio(thuyết minh)</label>
+                <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"
+                                     [state]="1" [formField]="f['file_audio']" [multiple]="true"></app-file-list-local>
+              </p>
+            </div>
+          </div>
         </form>
       </div>
     </div>
@@ -102,44 +96,35 @@
   </div>
 </ng-template>
 
-<ng-template #formMedia>
-  <div class="ovic-side-navigation-content">
-    <div class="ovic-side-navigation-content__head">
-      <h4 class="ovic-side-navigation-content__head__title">Xem ngữ liệu media</h4>
-      <button (click)="closeForm()" pButton pRipple type="button" icon="pi pi-times"
-              class="p-button-rounded p-button-danger p-button-text close ovic-side-navigation-content__head__btn-close"></button>
-    </div>
-    <div class="ovic-side-navigation-content__body position-relative">
-      <media-vr-manager class="d-flex w-100 h-100" [dataPoint]="dataBinding"></media-vr-manager>
-    </div>
-    <div class="ovic-side-navigation-content__foot">
-      <button pButton pRipple type="button" label="Bật thuyết minh" class="p-button-help ml-3" icon="pi pi-volume-up"
-              (click)="btnControlVolume()"></button>
-      <button pButton pRipple type="button" label="Đóng" class="p-button-secondary ml-3" icon="pi pi-times"
-              (click)="closeForm()"></button>
-    </div>
-  </div>
-</ng-template>
+<!--<ng-template #formMedia>-->
+<!--  <div class="ovic-side-navigation-content">-->
+<!--    <div class="ovic-side-navigation-content__head">-->
+<!--      <h4 class="ovic-side-navigation-content__head__title">Xem ngữ liệu media</h4>-->
+<!--      <button (click)="closeForm()" pButton pRipple type="button" icon="pi pi-times"-->
+<!--              class="p-button-rounded p-button-danger p-button-text close ovic-side-navigation-content__head__btn-close"></button>-->
+<!--    </div>-->
+<!--    <div class="ovic-side-navigation-content__body position-relative">-->
+<!--      <media-vr-manager class="d-flex w-100 h-100" [dataPoint]="dataBinding"></media-vr-manager>-->
+<!--    </div>-->
+<!--    <div class="ovic-side-navigation-content__foot">-->
+<!--      <button pButton pRipple type="button" label="Bật thuyết minh" class="p-button-help ml-3" icon="pi pi-volume-up"-->
+<!--              (click)="btnControlVolume()"></button>-->
+<!--      <button pButton pRipple type="button" label="Đóng" class="p-button-secondary ml-3" icon="pi pi-times"-->
+<!--              (click)="closeForm()"></button>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</ng-template>-->
 
-<p-dialog header="Thông tin chi tiết" [(visible)]="visible" [modal]="true" [style]="{ width: '60vw' }"
+<p-dialog header="Thông tin chi tiết" [(visible)]="visible" [modal]="true" [style]="{ width: '70vw' }"
           [draggable]="false" [resizable]="false" class="m-0">
   <div class="w-100 d-flex">
-    <div class="ctn-left d-block">
-      <ng-container *ngIf="dataInformation">
-        <div id="media" class="w-100 text-center">
-          <img src="{{dataInformation['__fileMedia_converted']}}" class="datainfo-body__img">
-        </div>
-        <div *ngIf="dataInformation.file_audio" id="audio" class="w-100 text-center">
-          <!--          <audio src="{{dataInformation['audioLink']}}"></audio>-->
-          <audio controls>
-            <source src="{{dataInformation['__fileMeia']}}" type="audio/mpeg">
-          </audio>
-        </div>
-      </ng-container>
-    </div>
+
     <div class="ctn-right">
       <ng-container *ngIf="dataInformation">
         <div class="datainfo-title">
+          <div class="w-100 mx-auto d-flex justify-content-center">
+            <img src="{{dataInformation['__fileMedia_converted']}}" class="datainfo-body__img">
+          </div>
           <p class="datainfo-title__p m-auto">{{dataInformation.ten}}</p>
         </div>
         <div class="datainfo-body mt-1">

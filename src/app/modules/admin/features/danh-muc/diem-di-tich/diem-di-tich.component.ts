@@ -12,7 +12,6 @@ import {MediaVrManagerComponent} from "@shared/components/media-vr-manager/media
 import {AuthService} from "@core/services/auth.service";
 import {Router} from '@angular/router';
 import {AvatarMakerSetting, MediaService} from "@shared/services/media.service";
-import {fileConvent} from "@modules/admin/features/danh-muc/mediavr/mediavr.component";
 import {FileService} from "@core/services/file.service";
 import {HelperService} from "@core/services/helper.service";
 import {getLinkDownload} from "@env";
@@ -81,6 +80,13 @@ export class DiemDiTichComponent implements OnInit {
       sortable: false,
       headClass: 'ovic-w-180px text-center',
       buttons: [
+        {
+          tooltip: 'Truy cập Vr360',
+          label: '',
+          icon: 'pi pi-globe',
+          name: 'MEDIA_DECISION',
+          cssClass: 'btn-warning rounded'
+        },
         {
           tooltip: 'Thông tin chi tiết ',
           label: '',
@@ -198,13 +204,12 @@ export class DiemDiTichComponent implements OnInit {
         this.listData = data.map(m => {
           const sIndex = this.statusList.findIndex(i => i.value === m.status);
           m['__status'] = sIndex !== -1 ? this.statusList[sIndex].color : '';
-          m['__fileMedia_converted'] = m.file_media ? this.fileService.getPreviewLinkLocalFile(m.file_media[0]) : null;
+          m['__fileMedia_converted'] = m.file_media ==[] ||m.file_media == null?null :this.fileService.getPreviewLinkLocalFile(m.file_media[0]);
 
           // m['__ten_converted'] = `<b>${m.ten}</b> <br>` + m.mota;
           // m['__duongdan']=m.vitri_ggmap + ' ' + `<a href="${m.vitri_ggmap}" target="_blank"><i class="pi pi-map"></i></a>`;
           return m;
         })
-        console.log(this.listData);
         this.isLoading = false;
       }, error: () => {
         this.isLoading = false;
@@ -224,7 +229,7 @@ export class DiemDiTichComponent implements OnInit {
             mota: '',
             vitri_ggmap: '',
             status: '',
-            file_media:[],
+            file_media:null,
           });
         }
         this.notificationService.toastSuccess('Thao tác thành công', 'Thông báo');
@@ -275,10 +280,10 @@ export class DiemDiTichComponent implements OnInit {
           mota: '',
           vitri_ggmap: '',
           status: '',
-          file_media: [],
+          file_media: null,
 
         });
-        this.characterAvatar = ''
+        // this.characterAvatar = ''
         this.formActive = this.listForm[FormType.ADDITION];
         this.preSetupForm(this.menuName);
         break;
@@ -292,16 +297,39 @@ export class DiemDiTichComponent implements OnInit {
           file_media: object1.file_media,
 
         });
-        this.characterAvatar = object1.file_media ? getLinkDownload(object1.file_media['id']) : '';
+        // this.characterAvatar = object1.file_media ? getLinkDownload(object1.file_media['id']) : '';
         this.formActive = this.listForm[FormType.UPDATE];
         this.formActive.object = object1;
         this.preSetupForm(this.menuName);
         break;
+      case 'DELETE_DECISION':
+        const confirm = await this.notificationService.confirmDelete();
+        if (confirm) {
+          this.danhMucDiemDiTichService.delete(decision.id).subscribe({
+            next: () => {
+              this.page = Math.max(1, this.page - (this.listData.length > 1 ? 0 : 1));
+              this.notificationService.isProcessing(false);
+              this.notificationService.toastSuccess('Thao tác thành công');
+              this.loadData(this.page);
+
+            }, error: () => {
+              this.notificationService.isProcessing(false);
+              this.notificationService.toastError('Thao tác không thành công');
+            }
+          })
+        }
+        break;
       case 'INFORMATION_DECTISION':
         this.dataInformation = this.listData.find(u => u.id === decision.id);
-        console.log(this.dataInformation);
         this.visible =true;
         break;
+      case 'MEDIA_DECISION':
+        this.dataBinding = this.listData.find(u=>u.id ===decision.id);
+        // this.dataBinding = this.auth.encryptData(`${data}`);
+        // console.log(dataBinding);
+        const code = this.auth.encryptData(`${this.dataBinding.id}`);
+        this.router.navigate(['admin/danh-muc/media-vr-manager'], { queryParams: { code } });
+        break
       default:
         break;
     }
@@ -317,57 +345,57 @@ export class DiemDiTichComponent implements OnInit {
     }
   }
 
-  btnControlVolume() {
-    // this.MediaVr.toggleVolume();
-  }
+  // btnControlVolume() {
+  //   // this.MediaVr.toggleVolume();
+  // }
 
-  async makeCharacterAvatar(file: File, characterName: string): Promise<File> {
-    try {
-      const options: AvatarMakerSetting = {
-        aspectRatio: 3 / 2,
-        resizeToWidth: 300,
-        format: 'jpeg',
-        cropperMinWidth: 10,
-        dirRectImage: {
-          enable: true,
-          dataUrl: URL.createObjectURL(file)
-        }
-      };
-      const avatar = await this.mediaService.callAvatarMaker(options);
-      if (avatar && !avatar.error && avatar.data) {
-        const none = new Date().valueOf();
-        const fileName = characterName + none + '.jpg';
-        return Promise.resolve(this.fileService.base64ToFile(avatar.data.base64, fileName));
-      } else {
-        return Promise.resolve(null);
-      }
-    } catch (e) {
-      this.notificationService.isProcessing(false);
-      this.notificationService.toastError('Quá trình tạo avatar thất bại');
-      return Promise.resolve(null);
-    }
-  }
-
-  characterAvatar: string;
-
-  async onInputAvatar(event, fileChooser: HTMLInputElement) {
-    if (fileChooser.files && fileChooser.files.length) {
-      console.log(fileChooser.files);
-      const file = await this.makeCharacterAvatar(fileChooser.files[0], this.helperService.sanitizeVietnameseTitle(this.f['ten'].value));
-      console.log(file);
-      // upload file to server
-      this.fileService.uploadFile(file, 1).subscribe({
-        next: fileUl => {
-          this.formSave.get('file_media').setValue([fileUl]);
-        }, error: () => {
-          this.notificationService.toastError('Upload file không thành công');
-        }
-      })
-      // laasy thoong tin vaf update truongwf
-      this.characterAvatar = URL.createObjectURL(file);
-      console.log(this.characterAvatar);
-      // this.f['files'].setValue()
-    }
-  }
+  // async makeCharacterAvatar(file: File, characterName: string): Promise<File> {
+  //   try {
+  //     const options: AvatarMakerSetting = {
+  //       aspectRatio: 3 / 2,
+  //       resizeToWidth: 300,
+  //       format: 'jpeg',
+  //       cropperMinWidth: 10,
+  //       dirRectImage: {
+  //         enable: true,
+  //         dataUrl: URL.createObjectURL(file)
+  //       }
+  //     };
+  //     const avatar = await this.mediaService.callAvatarMaker(options);
+  //     if (avatar && !avatar.error && avatar.data) {
+  //       const none = new Date().valueOf();
+  //       const fileName = characterName + none + '.jpg';
+  //       return Promise.resolve(this.fileService.base64ToFile(avatar.data.base64, fileName));
+  //     } else {
+  //       return Promise.resolve(null);
+  //     }
+  //   } catch (e) {
+  //     this.notificationService.isProcessing(false);
+  //     this.notificationService.toastError('Quá trình tạo avatar thất bại');
+  //     return Promise.resolve(null);
+  //   }
+  // }
+  //
+  // characterAvatar: string;
+  //
+  // async onInputAvatar(event, fileChooser: HTMLInputElement) {
+  //   if (fileChooser.files && fileChooser.files.length) {
+  //     const file = await this.makeCharacterAvatar(fileChooser.files[0], this.helperService.sanitizeVietnameseTitle(this.f['ten'].value));
+  //     // upload file to server
+  //     this.fileService.uploadFile(file, 1).subscribe({
+  //       next: fileUl => {
+  //         if(fileUl != null){
+  //           this.formSave.get('file_media').setValue([fileUl]);
+  //         }else{
+  //           this.formSave.get('file_media').setValue(null);
+  //         }
+  //       }, error: () => {
+  //         this.notificationService.toastError('Upload file không thành công');
+  //       }
+  //     })
+  //     // laasy thoong tin vaf update truongwf
+  //     this.characterAvatar = URL.createObjectURL(file);;
+  //   }
+  // }
 
 }

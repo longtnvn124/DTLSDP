@@ -101,7 +101,7 @@ export class DanhMucChuyenMucService {
     }
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
     return this.http.get<Dto>(this.api, {params}).pipe(map(res => ({
-      recordsTotal: res.recordsFiltered,
+      recordsTotal: res.recordsTotal,
       data: res.data
     })));
   }

@@ -145,9 +145,6 @@
                     <i class="pi pi-camera "></i>
                   </ng-template>
                 </button>
-                <!--                <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"-->
-                <!--                                     [formField]="f['files']" [multiple]="true"-->
-                <!--                                     [accept]="['.jpg']"></app-file-list-local>-->
               </p>
             </div>
           </div>
@@ -178,7 +175,6 @@
         <div style="width :1000px;border:1px solid #bdbdbd;background-color: #fafafa">
           <div class="row mx-0 h-100">
             <div class="col-4 border-right h-100">
-<!--<div class="position-relative w-100 st-image img-child-max-width" [ovicLoadImageById]="infoNhanvalichsu.files ? infoNhanvalichsu.files : null"></div>-->
               <div *ngIf="infoNhanvalichsu.files,else imgPlachoder" class="position-relative w-100 st-image img-child-max-width">
                 <img [src]="infoNhanvalichsu['image_convenrted']">
               </div>
