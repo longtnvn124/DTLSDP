@@ -4,7 +4,7 @@ export const environment = {
 	production : true
 };
 
-const realm       = 'tdkt';
+const realm       = 'DTLSDP';
 const host        = [ 'h' , 't' , 't' , 'p' , 's' , ':' , '/' , '/' , 'a' , 'p' , 'i' , '-' , 'd' , 'e' , 'v' , '.' , 'i' , 'c' , 't' , 'u' , '.' , 'v' , 'n' ];
 const port        = '10091';
 const port_socket = '10092';

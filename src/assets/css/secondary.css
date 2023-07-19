@@ -27,3 +27,25 @@ p-calendar .p-calendar {
   width: 100%;
   height: 44px;
 }
+
+app-danh-sach-ngu-lieu{
+  height: 100%;
+}
+
+.ovic-prevent-disable-color .p-disabled,
+.ovic-prevent-disable-color .p-component:disabled {
+  opacity: 1;
+}
+
+.ovic-prevent-disable-color textarea:disabled,
+.ovic-prevent-disable-color input:disabled {
+  background-color: #ffffff;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  resize: none;
+}
+
+.ovic-prevent-disable-color .p-disabled .p-dropdown-trigger {
+  display: none;
+}

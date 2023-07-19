@@ -77,7 +77,6 @@ export class NhanVatLichSuComponent implements OnInit {
       nam: ['', Validators.required],
       gioitinh: [null, Validators.required],
       files: [],
-      giaidoan_lichsu: [''],
     });
     const observeProcessCloseForm = this.notificationService.onSideNavigationMenuClosed().pipe(filter(menuName => menuName === this.menuName && this.needUpdate)).subscribe(() => this.loadData(this.page));
     this.subscription.add(observeProcessCloseForm);
@@ -103,7 +102,6 @@ export class NhanVatLichSuComponent implements OnInit {
           return m;
         })
         this.notificationService.isProcessing(false);
-        console.log(this.listData);
       }, error: () => {
         this.notificationService.isProcessing(false);
         this.notificationService.toastError('Mất kết nối với máy chủ');
@@ -154,7 +152,6 @@ export class NhanVatLichSuComponent implements OnInit {
           gioitinh: null,
           nam: '',
           files: null,
-          giaidoan_lichsu: '',
 
         }
       )
@@ -169,7 +166,6 @@ export class NhanVatLichSuComponent implements OnInit {
           gioitinh: object.gioitinh,
           nam: object.nam,
           files: object.files,
-          giaidoan_lichsu: object.giaidoan_lichsu,
         }
       );
       this.characterAvatar = object.files ? getLinkDownload(object.files.id) : '';
@@ -201,7 +197,6 @@ export class NhanVatLichSuComponent implements OnInit {
               gioitinh: null,
               nam: '',
               files: null,
-              giaidoan_lichsu: '',
             });
           }, error: () => {
             this.notificationService.toastError("Thêm mới thất bại");
@@ -211,7 +206,6 @@ export class NhanVatLichSuComponent implements OnInit {
       } else {
         this.notificationService.isProcessing(false);
         const index = this.listData.findIndex(r => r.id === this.formState.object.id);
-        console.log(index);
         this.danhMucNhanVatLichSuService.update(this.listData[index].id, this.formSave.value).subscribe({
           next: () => {
             this.notificationService.isProcessing(false);
@@ -232,23 +226,6 @@ export class NhanVatLichSuComponent implements OnInit {
     this.notificationService.closeSideNavigationMenu();
     this.loadData(1);
   }
-
-  // loadFileMedia(data: DmNhanVatLichSu): Observable<{ file: OvicFile, blob: Blob }[]> {
-  //
-  //   console.log(data);
-  //
-  //   const ids: OvicFile[] = [].concat(
-  //     data.files != null ? [...data.files] : null
-  //   ).filter(Boolean);
-  //   let request: Observable<{ file: OvicFile, blob: Blob }>[] = ids.reduce((collector, file) => {
-  //     collector.push(
-  //       this.fileService.getFileAsBlobByName(file.id.toString(10)).pipe(map(blob => ({file, blob})))
-  //     )
-  //     return collector;
-  //   }, new Array<Observable<{ file: OvicFile, blob: Blob }>>())
-  //   return forkJoin<{ file: OvicFile, blob: Blob }[]>(request);
-  // }
-
   async makeCharacterAvatar(file: File, characterName: string): Promise<File> {
     try {
       const options: AvatarMakerSetting = {
@@ -278,9 +255,7 @@ export class NhanVatLichSuComponent implements OnInit {
 
   async onInputAvatar(event, fileChooser: HTMLInputElement) {
     if (fileChooser.files && fileChooser.files.length) {
-      console.log(fileChooser.files);
       const file = await this.makeCharacterAvatar(fileChooser.files[0], this.helperService.sanitizeVietnameseTitle(this.f['ten'].value));
-      console.log(file);
       // upload file to server
       this.fileService.uploadFile(file, 1).subscribe({
         next: fileUl => {
@@ -291,8 +266,6 @@ export class NhanVatLichSuComponent implements OnInit {
       })
       // laasy thoong tin vaf update truongwf
       this.characterAvatar = URL.createObjectURL(file);
-      console.log(this.characterAvatar);
-      // this.f['files'].setValue()
     }
   }
 
@@ -309,8 +282,5 @@ export class NhanVatLichSuComponent implements OnInit {
     }), 100);
     this.infoNhanvalichsu = this.listData.find(f => f.id === object.id)
     this.infoNhanvalichsu['image_convenrted'] =  this.infoNhanvalichsu.files ? this.fileService.getPreviewLinkLocalFile( this.infoNhanvalichsu.files) : null;
-
-    // this.infoNhanvalichsu['__giaidoan_lichsu_converted'] = unescape(this.infoNhanvalichsu.giaidoan_lichsu);
-    console.log(this.infoNhanvalichsu);
   }
 }

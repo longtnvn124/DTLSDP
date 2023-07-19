@@ -14,6 +14,10 @@ import {RippleModule} from "primeng/ripple";
 import {TableModule} from "primeng/table";
 import {InputMaskModule} from "primeng/inputmask";
 import { InputTextModule } from 'primeng/inputtext';
+import { DialogModule } from 'primeng/dialog';
+import {InputTextareaModule} from 'primeng/inputtextarea';
+
+
 @NgModule({
   declarations: [
     DanhSachNguLieuComponent,
@@ -31,7 +35,9 @@ import { InputTextModule } from 'primeng/inputtext';
     RippleModule,
     TableModule,
     InputMaskModule,
-    InputTextModule
+    InputTextModule,
+    DialogModule,
+    InputTextareaModule
   ]
 })
 export class QuanLyNguLieuModule { }

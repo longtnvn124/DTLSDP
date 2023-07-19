@@ -2,7 +2,6 @@ import {
   AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, Renderer2, TemplateRef, ViewChild
 } from '@angular/core';
 import {Pinable, Point} from "@shared/models/point";
-// import * as Three from 'three';
 
 import {
   PerspectiveCamera,
@@ -106,12 +105,11 @@ export class MediavrComponent implements OnInit, AfterViewInit, OnDestroy {
     title: ['', Validators.required],
     icon: ['', Validators.required],
     mota: [''],
-    loaingulieu: [''],
     location: ['', Validators.required], // vi tri vector3
     parent_id: [null, Validators.required],
     type: ['', Validators.required], //DIRECT | INFO
     file_media: [null, Validators.required], // ảnh 360 | video360
-    file_audio: [null], // audio thuyết minh
+    donvi_id: [null, Validators.required]
   })
 
 
@@ -136,16 +134,15 @@ export class MediavrComponent implements OnInit, AfterViewInit, OnDestroy {
         this.dataLoaiNguLieu = data;
       }
     });
-    // this.f['loaingulieu'].valueChanges.subscribe(res => console.log(res));
   }
 
   ngOnDestroy(): void {
-    if (this.renderer) {
-      this.renderer.dispose();
-    }
-    if (this.scene) {
-      this.scene.dispose();
-    }
+    // if (this.renderer) {
+    //   this.renderer.dispose();
+    // }
+    // if (this.scene) {
+    //   this.scene.dispose();
+    // }
   }
 
   ngAfterViewInit(): void {
@@ -163,6 +160,7 @@ export class MediavrComponent implements OnInit, AfterViewInit, OnDestroy {
   pointHover: boolean = false;
   video360: HTMLVideoElement;
   dataLoaiNguLieu: DmLoaiNguLieu[];
+
 
   ngOnInit() {
     this.iconList = this.typeAdd === 'THONGTIN' ?
@@ -183,57 +181,59 @@ export class MediavrComponent implements OnInit, AfterViewInit, OnDestroy {
 
   dataPoint: Pinable[];
   typeMedia: string;
+  mediaLink: string;
 
   startSeen() {
     this.backToScene = false;
     this.notificationService.isProcessing(true);
+    // const fileMedia = this.__ngulieu.file_media;
+    // this.mediaLink = fileMedia ? this.fileService.getPreviewLinkLocalFile(fileMedia) : null;
+    // console.log(this.mediaLink);
+    // this.typeMedia = this.__ngulieu.file_media.type.split("/")[0] === "video" ? "video" : 'image';
+    // console.log(this.typeMedia);
+    // this.pointsService.getDataByparentId(this.__ngulieu.id).subscribe({
+    //   next: dataPoint => {
+    //     this.dataPoint = dataPoint.map(m => {
+    //       const fileMedia= m.Ngulieu.find(f=>f.type.split('/')[0] === 'image' ||'video');
+    //       const fileAudio= m.Ngulieu.find(f=>f.type.split('/')[0] === 'audio');
+    //       m['imageLink'] =fileMedia ? this.fileService.getPreviewLinkLocalFile(fileMedia) : null;
+    //       m['audioLink']  =fileAudio ? this.fileService.getPreviewLinkLocalFile(fileAudio) : null;
+    //       return m;
+    //     });
+    //     this.loadInit(this.mediaLink, null, this.dataPoint);
+    //     this.notificationService.isProcessing(false);
+    //   }, error: (e) => {
+    //     this.notificationService.isProcessing(false);
+    //     this.notificationService.toastError('Mất kết nối với máy chủ')
+    //   }
+    // });
     this.danhMucDiemDiTichService.getDataById(this.idDitich).pipe(mergeMap(list => {
-      const paramId = list[0].id;
-      return list ? forkJoin<[DmDiemDiTich[], fileConvent[], Point[]]>([of(list), this.loadFileMedia(list[0]),
-        this.pointsService.getDataByparentId(paramId)]) : of([], [], []);
+      const parramId = list[0].id;
+      return list ? forkJoin<[DmDiemDiTich[], Point[]]>([of(list), this.pointsService.getDataByparentId(parramId)]) : of([], []);
     })).subscribe({
-      next: ([dmdiemDitich, files, dataPoint]) => {
-        this.dataDitich = dmdiemDitich[0];
-        // this.typeMedia = this.dataDitich.file_media[0].type.split("/")[0] === "video" ? "video" : 'image';
-        this.typeMedia = this.dataDitich.file_media[0].type.split("/")[0] === "video" ? "video" : 'image';
-        const imageObject = this.dataDitich.file_media[0] ? files.find(f => f.file.id === this.dataDitich.file_media[0].id).blob : null;
-        const audioObject = this.dataDitich.file_audio[0] ? files.find(f => f.file.id === this.dataDitich.file_audio[0].id).blob : null;
-        this.imageLink = imageObject ? URL.createObjectURL(imageObject) : '';
-        this.audioLink = audioObject ? URL.createObjectURL(audioObject) : '';
+      next: ([dataDiemditich, dataPoint]) => {
+        this.dataDitich = dataDiemditich;
+        const fileMedia = this.dataDitich.Ngulieu;
+        this.mediaLink = fileMedia ? this.fileService.getPreviewLinkLocalFile(fileMedia) : null;
+        this.typeMedia = this.dataDitich.Ngulieu.type.split("/")[0] === "video" ? "video" : 'image';
         this.dataPoint = dataPoint.map(m => {
-          m['imageLink'] = m.file_media ? this.fileService.getPreviewLinkLocalFile(m.file_media[0]) : null;
-          m['audioLink'] = m.file_audio ? this.fileService.getPreviewLinkLocalFile(m.file_audio[0]) : null;
+          const fileMedia = m.Ngulieu.find(f => f.type.split('/')[0] === 'image' || 'video');
+          const fileAudio = m.Ngulieu.find(f => f.type.split('/')[0] === 'audio');
+          m['imageLink'] = fileMedia ? this.fileService.getPreviewLinkLocalFile(fileMedia) : null;
+          m['audioLink'] = fileAudio ? this.fileService.getPreviewLinkLocalFile(fileAudio) : null;
           return m;
         });
+        this.loadInit(this.mediaLink, null, this.dataPoint);
+        this.notificationService.isProcessing(false);
 
-        this.loadInit(this.imageLink, this.audioLink, this.dataPoint);
+      }, error: () => {
         this.notificationService.isProcessing(false);
-      },
-      error: (error) => {
-        console.log(error)
-        // this.dataDitich['__media_info'] = [];
-        this.notificationService.isProcessing(false);
-        this.notificationService.toastError('Mất kết nối với máy chủ');
+        this.notificationService.toastError('Mất kết nối với máy chủ')
       }
     })
   }
 
   s: sceneControl;
-
-  loadFileMedia(dataditich): Observable<{ file: OvicFile, blob: Blob }[]> {
-    const ids: OvicFile[] = [].concat(
-      dataditich.file_media ? [...dataditich.file_media] : null,
-      dataditich.file_audio ? [...dataditich.file_audio] : null
-    ).filter(Boolean);
-
-    const request: Observable<{ file: OvicFile, blob: Blob }>[] = ids.reduce((collector, file) => {
-      collector.push(
-        this.fileService.getFileAsBlobByName(file.id.toString(10)).pipe(map(blob => ({file, blob})))
-      )
-      return collector;
-    }, new Array<Observable<{ file: OvicFile, blob: Blob }>>())
-    return forkJoin<{ file: OvicFile, blob: Blob }[]>(request);
-  }
 
   loadInit(image: string, audio?: string, datapoint?: Pinable[]) {
 
@@ -277,10 +277,11 @@ export class MediavrComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   pin(info: Pinable, renderSecene = true) {
-    const media = info.file_media ? this.fileService.getPreviewLinkLocalFile(info.file_media[0]) : null;
-    const audio = info.file_audio ? this.fileService.getPreviewLinkLocalFile(info.file_audio[0]) : null;
-    // this.typeMedia = this.dataDitich.file_media[0].type.split("/")[0] === "video" ? "video" : 'image';
-    const type = info.file_media[0].type.split('/',)[0] === "video" ? 'video' : 'image';
+    const fileMedia = info.ds_ngulieu.find(f => f.type.split('/')[0] === 'image' || 'video');
+    const fileAudio = info.ds_ngulieu.find(f => f.type.split('/')[0] === 'audio');
+    const media = fileMedia ? this.fileService.getPreviewLinkLocalFile(fileMedia) : null;
+    const audio = fileAudio ? this.fileService.getPreviewLinkLocalFile(fileAudio) : null;
+    const type = fileMedia.type.split('/')[0] === "video" ? 'video' : 'image';
     if (audio || media) {
       let newPoint = new sceneControl(media, this.camera, audio);
       const locationX = info.location['x'];
@@ -458,13 +459,12 @@ export class MediavrComponent implements OnInit, AfterViewInit, OnDestroy {
         {
           title: '',
           mota: '',
-          loaingulieu: [],
           icon: '',
           location: this.intersectsVecter[0].point,// vi tri vector3
           parent_id: this.dataDitich.id,
           type: 'INFO', //DIRECT | INFO
           file_media: null, // ảnh 360 | video360
-          file_audio: null, // audio thuyết minh
+
         }
       );
       this.characterAvatar = '';
@@ -475,15 +475,15 @@ export class MediavrComponent implements OnInit, AfterViewInit, OnDestroy {
           title: object.title,
           mota: object.mota,
           icon: object.icon,
-          loaingulieu: object.loaingulieu,
+
           location: object.location, // vi tri vector3
           parent_id: object.parent_id,
           type: object.type, //DIRECT | INFO
-          file_media: object.file_media, // ảnh 360 | video360
-          file_audio: object.file_audio, // audio thuyết minh
+          ds_ngulieu: object.ds_ngulieu, // ảnh 360 | video360
+
         }
       );
-      this.characterAvatar = object.file_media ? getLinkDownload(object.file_media[0].id) : '';//get media
+      // this.characterAvatar = object.file_media ? getLinkDownload(object.file_media[0].id) : '';//get media
     }
   }
 
@@ -538,12 +538,11 @@ export class MediavrComponent implements OnInit, AfterViewInit, OnDestroy {
         icon: this.f['icon'].value,
         title: this.f['title'].value,
         location: this.f['location'].value,
-        loaingulieu: this.f['loaingulieu'].value,
         type: this.f['type'].value,
-        file_media: this.f['file_media'].value,
-        file_audio: this.f['file_audio'].value,
+        ds_ngulieu: this.f['ds_ngulieu'].value,
         parent_id: this.f['parent_id'].value,
-        mota: this.f['mota'].value
+        mota: this.f['mota'].value,
+        donvi_id: this.f['donvi_id'].value
       }
       if (this.formState.formType === "add") {
         this.notificationService.isProcessing(true);

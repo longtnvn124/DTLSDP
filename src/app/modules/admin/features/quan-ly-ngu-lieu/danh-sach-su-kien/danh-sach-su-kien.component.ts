@@ -1,6 +1,6 @@
 import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {FormType, NgPaginateEvent, OvicForm, OvicTableStructure} from "@shared/models/ovic-models";
-import {DsSuKien} from "@shared/models/quan-ly-ngu-lieu";
+import {Ngulieu, SuKien} from "@shared/models/quan-ly-ngu-lieu";
 import {Paginator} from "primeng/paginator";
 import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {debounceTime, filter, forkJoin, Observable, Subject, Subscription} from "rxjs";
@@ -13,12 +13,18 @@ import {NotificationService} from "@core/services/notification.service";
 import {AuthService} from "@core/services/auth.service";
 import {HelperService} from "@core/services/helper.service";
 import {NguLieuDanhSachService} from "@shared/services/ngu-lieu-danh-sach.service";
-import {DmDiemDiTich, DmLinhVuc} from "@shared/models/danh-muc";
+import {DmDiemDiTich,DmNhanVatLichSu} from "@shared/models/danh-muc";
 import {OvicButton} from "@core/models/buttons";
 import {NguLieuSuKienService} from "@shared/services/ngu-lieu-su-kien.service";
-interface FormDsSuKien extends OvicForm {
-  object: DsSuKien;
+import {DanhMucNhanVatLichSuService} from "@shared/services/danh-muc-nhan-vat-lich-su.service";
+
+import { EmployeesPickerService } from '@modules/shared/services/employees-picker.service';
+import { FileService } from '@core/services/file.service';
+
+interface FormSuKien extends OvicForm {
+  object: SuKien;
 }
+
 @Component({
   selector: 'app-danh-sach-su-kien',
   templateUrl: './danh-sach-su-kien.component.html',
@@ -29,7 +35,7 @@ export class DanhSachSuKienComponent implements OnInit {
   @ViewChild('formInformation', {static: true}) formInformation: TemplateRef<any>;
   @ViewChild(Paginator) paginator: Paginator;
 
-  listData: DsSuKien[];
+  listData: SuKien[];
 
   filePermission = {
     canDelete: true,
@@ -109,10 +115,10 @@ export class DanhSachSuKienComponent implements OnInit {
     [FormType.ADDITION]: {type: FormType.ADDITION, title: 'Thêm mới sự kiện ', object: null, data: null},
     [FormType.UPDATE]: {type: FormType.UPDATE, title: 'Cập nhật sự kiện ', object: null, data: null}
   };
-  formActive: FormDsSuKien;
+  formActive: FormSuKien;
   formSave: FormGroup;
 
-  private OBSERVE_PROCESS_FORM_DATA = new Subject<FormDsSuKien>();
+  private OBSERVE_PROCESS_FORM_DATA = new Subject<FormSuKien>();
 
   rows = this.themeSettingsService.settings.rows;
   loadInitFail = false;
@@ -139,17 +145,21 @@ export class DanhSachSuKienComponent implements OnInit {
     private auth: AuthService,
     private helperService: HelperService,
     private nguLieuDanhSachService: NguLieuDanhSachService,
-    private nguLieuSuKienService:NguLieuSuKienService
+    private nguLieuSuKienService: NguLieuSuKienService,
+    private danhMucNhanVatLichSuService: DanhMucNhanVatLichSuService,
+    private employeesPickerService:EmployeesPickerService,
+    private fileService:FileService,
   ) {
     this.formSave = this.fb.group({
       title: ['', Validators.required],
       mota: [''],
-      linhvuc: ['', Validators.required],
-      diemditich_id: [null, Validators.required],
-      thoigian_batdau:['',Validators.required],
-      thoigian_ketthuc:['',Validators.required],
-      file_quyetdinh: [null],
-
+      diemditich_ids: [null,],
+      thoigian_batdau: ['', Validators.required],
+      thoigian_ketthuc: ['', Validators.required],
+      files: [null],
+      nhanvat_ids: [null],
+      ngulieu_ids: [[]],
+      donvi_id: [null, Validators.required]
     });
 
     const observeProcessFormData = this.OBSERVE_PROCESS_FORM_DATA.asObservable().pipe(debounceTime(100)).subscribe(form => this.__processFrom(form));
@@ -161,17 +171,20 @@ export class DanhSachSuKienComponent implements OnInit {
   }
 
   dataDiemditich: DmDiemDiTich[];
-  dataLinhvuc: DmLinhVuc[];
+  dataNhanvatlichsu: DmNhanVatLichSu[];
 
   ngOnInit(): void {
-    forkJoin<[DmDiemDiTich[], DmLinhVuc[]]>(
+    this.notificationService.isProcessing(true);
+    forkJoin<[DmDiemDiTich[], DmNhanVatLichSu[]]>(
       this.danhMucDiemDiTichService.getDataUnlimit(),
-      this.danhMucLinhVucService.getDataUnlimit()
+      this.danhMucNhanVatLichSuService.getDataUnlimit()
     ).subscribe({
-      next: ([dataDiemditich, dataLinhvuc]) => {
+      next: ([dataDiemditich, dataNhanvatlichsu]) => {
         this.dataDiemditich = dataDiemditich;
-        this.dataLinhvuc = dataLinhvuc;
+        this.dataNhanvatlichsu = dataNhanvatlichsu;
         this.loadInit();
+        this.notificationService.isProcessing(false);
+
       },
       error: () => {
         this.notificationService.isProcessing(false);
@@ -187,6 +200,10 @@ export class DanhSachSuKienComponent implements OnInit {
     this.loadData(1);
   }
 
+  isArray(input: any): boolean {
+    return Array.isArray(input);
+  }
+
   loadData(page) {
     const limit = this.themeSettingsService.settings.rows;
     this.index = (page * limit) - limit + 1;
@@ -194,12 +211,22 @@ export class DanhSachSuKienComponent implements OnInit {
     this.nguLieuSuKienService.searchData(page, this.search).subscribe({
       next: ({data, recordsTotal}) => {
         this.recordsTotal = recordsTotal;
-       this.listData =data.map(m =>{
-         m['__title_converted'] = m.title;
-         m['__time_converted'] = m.thoigian_batdau +' - ' +m.thoigian_ketthuc;
-         m['__diemditich_converted'] =this.dataDiemditich && m.diemditich_id ? this.dataDiemditich.find(f=>f.id === m.diemditich_id).ten : null;
-         return m ;
-       })
+        this.listData = data.map(m => {
+          let nhanvatId = m.nhanvat_ids;
+          let nhanvat = [];
+          nhanvatId.forEach(f => {
+            nhanvat.push(this.dataNhanvatlichsu.find(m => m.id === f));
+          })
+          let ditich = [];
+          m.diemditich_ids.forEach(f => {
+            ditich.push(this.dataDiemditich.find(m => m.id === f));
+          })
+          m['__title_converted'] = `<b>${m.title}</b>`;
+          m['__time_converted'] = m.thoigian_batdau + ' - ' + m.thoigian_ketthuc;
+          m['__nhanvat_converted'] = nhanvat;
+          m['__diemditich_ids_coverted'] = ditich;
+          return m;
+        })
         this.isLoading = false;
         this.notificationService.isProcessing(false);
       },
@@ -211,19 +238,20 @@ export class DanhSachSuKienComponent implements OnInit {
     })
   }
 
-  private __processFrom({data, object, type}: FormDsSuKien) {
+  private __processFrom({data, object, type}: FormSuKien) {
     const observer$: Observable<any> = type === FormType.ADDITION ? this.nguLieuSuKienService.create(data) : this.nguLieuSuKienService.update(object.id, data);
     observer$.subscribe({
       next: () => {
-        if(type === FormType.ADDITION){
+        if (type === FormType.ADDITION) {
           this.formSave.reset({
             title: '',
             mota: '',
-            linhvuc: '',
-            diemditich_id: null,
-            thoigian_batdau:'',
-            thoigian_ketthuc:'',
-            file_quyetdinh: null,
+            diemditich_ids: null,
+            thoigian_batdau: '',
+            thoigian_ketthuc: '',
+            files: null,
+            nhanvat_id: null,
+            donvi_id: null
           });
         }
         this.needUpdate = true;
@@ -252,9 +280,9 @@ export class DanhSachSuKienComponent implements OnInit {
   private preSetupForm(name: string) {
     this.notificationService.isProcessing(false);
     this.notificationService.openSideNavigationMenu({
-      name,
+      name: name,
       template: this.template,
-      size: 700,
+      size: 600,
       offsetTop: '0px'
     });
   }
@@ -274,28 +302,31 @@ export class DanhSachSuKienComponent implements OnInit {
         this.formSave.reset({
           title: '',
           mota: '',
-          linhvuc: '',
-          diemditich_id: null,
-          thoigian_batdau:'',
-          thoigian_ketthuc:'',
-          file_quyetdinh: null,
-
+          diemditich_ids: null,
+          thoigian_batdau: '',
+          thoigian_ketthuc: '',
+          files: null,
+          nhanvat_ids: null,
+          donvi_id: this.auth.userDonViId
         });
         this.formActive = this.listForm[FormType.ADDITION];
         this.preSetupForm(this.menuName);
         break;
       case 'EDIT_DECISION':
-        console.log(decision.id)
         const object1 = this.listData.find(u => u.id === decision.id);
         this.formSave.reset({
           title: object1.title,
           mota: object1.mota,
-          linhvuc: object1.linhvuc,
-          diemditich_id:object1.diemditich_id,
-          thoigian_batdau:object1.thoigian_batdau,
-          thoigian_ketthuc:object1.thoigian_ketthuc,
-          file_quyetdinh: object1.file_quyetdinh,
+          diemditich_ids: object1.diemditich_ids,
+          thoigian_batdau: object1.thoigian_batdau,
+          thoigian_ketthuc: object1.thoigian_ketthuc,
+          files: object1.files,
+          nhanvat_ids: object1.nhanvat_ids,
+          donvi_id: object1.donvi_id,
+          ngulieu_ids: object1.ngulieu_ids,
         })
+
+        this.formSave.enable();
         this.formActive = this.listForm[FormType.UPDATE];
         this.formActive.object = object1;
         this.preSetupForm(this.menuName);
@@ -318,8 +349,21 @@ export class DanhSachSuKienComponent implements OnInit {
         }
         break;
       case 'INFO_DECISION':
-        this.dataInfo = this.listData.find(f =>f.id === decision.id);
+        this.dataInfo = this.listData.find(f => f.id === decision.id);
         console.log(this.dataInfo);
+        this.formSave.reset({
+          title: this.dataInfo.title,
+          mota: this.dataInfo.mota,
+          diemditich_ids: this.dataInfo.diemditich_ids,
+          thoigian_batdau: this.dataInfo.thoigian_batdau,
+          thoigian_ketthuc: this.dataInfo.thoigian_ketthuc,
+          files: this.dataInfo.files,
+          nhanvat_ids: this.dataInfo.nhanvat_ids,
+          donvi_id: this.dataInfo.donvi_id,
+          ngulieu_ids:this.dataInfo.ngulieu_ids
+        });
+        // this.formActive.object = this.dataInfo;
+        this.formSave.disable();
         setTimeout(() => this.notificationService.openSideNavigationMenu({
           name: this.menuName,
           template: this.formInformation,
@@ -332,7 +376,9 @@ export class DanhSachSuKienComponent implements OnInit {
         break;
     }
   }
-  dataInfo:DsSuKien;
+
+  dataInfo: SuKien;
+
   saveForm() {
     if (this.formSave.valid) {
       this.formActive.data = this.formSave.value;
@@ -343,4 +389,23 @@ export class DanhSachSuKienComponent implements OnInit {
     }
   }
 
+  dsNgulieu:Ngulieu[];
+  async btnAddNgulieu(){
+    const result = await this.employeesPickerService.pickerNgulieu([], '');
+    this.f['ngulieu_ids'].setValue(result);
+    this.dsNgulieu = result;
+  }
+
+  btnDowloadNgulieu(btn){
+    const file= btn.file_media && btn.file_media[0] ?  this.fileService.getPreviewLinkLocalFile(btn.file_media[0]) :null;
+    if(file){
+      window.open(file, '_self');
+    }else{
+      this.notificationService.toastError('Ngữ liệu chưa được gắn file đính kèm');
+    }
+  }
+  btnDeleteNgulieu(id:number){
+    const object= this.f['ngulieu_ids'].value;
+    this.f['ngulieu_ids'].reset(object.filter(f=>f.id !=id));
+  }
 }

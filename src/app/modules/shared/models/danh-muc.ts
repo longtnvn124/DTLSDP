@@ -40,7 +40,6 @@ export interface DmNhanVatLichSu extends DmChung {
   mota: string;
   nam: string;
   gioitinh: number;
-  giaidoan_lichsu: string;
   files: OvicFile;
 }
 
@@ -50,7 +49,6 @@ export interface DmDiemDiTich extends DmChung {
   mota: string;
   vitri_ggmap: string;
   file_media: OvicFile[];
-  file_audio?: OvicFile[];
   status: number; //1 Active; 0: inactive
   total_ngulieu?:number;
 }

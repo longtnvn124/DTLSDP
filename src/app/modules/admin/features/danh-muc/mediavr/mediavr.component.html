@@ -132,12 +132,12 @@
         <div id="media" class="w-100 text-center">
           <img src="{{dataInformation['imageLink']}}" class="datainfo-body__img">
         </div>
-        <div *ngIf="dataInformation.file_audio" id="audio" class="w-100 text-center">
+<!--        <div *ngIf="dataInformation.file_audio" id="audio" class="w-100 text-center">-->
 <!--          <audio src="{{dataInformation['audioLink']}}"></audio>-->
-          <audio controls>
-            <source src="{{dataInformation['audioLink']}}" type="audio/mpeg">
-          </audio>
-        </div>
+<!--          <audio controls>-->
+<!--            <source src="{{dataInformation['audioLink']}}" type="audio/mpeg">-->
+<!--          </audio>-->
+<!--        </div>-->
       </ng-container>
     </div>
     <div class="ctn-right">
@@ -147,9 +147,9 @@
         </div>
         <div class="datainfo-body mt-1">
           <div class="datainfo-body__dec">{{dataInformation.mota}}</div>
-          <div class="datainfo-body__tag --fs-14 font-weight-bold" >Tag:
-              <div class="d-inline-block datainfo-body__tag--item" *ngFor="let item of dataInformation.loaingulieu">{{item}}</div>
-          </div>
+<!--          <div class="datainfo-body__tag &#45;&#45;fs-14 font-weight-bold" >Tag:-->
+<!--              <div class="d-inline-block datainfo-body__tag&#45;&#45;item" *ngFor="let item of dataInformation.loaingulieu">{{item}}</div>-->
+<!--          </div>-->
         </div>
 
       </ng-container>

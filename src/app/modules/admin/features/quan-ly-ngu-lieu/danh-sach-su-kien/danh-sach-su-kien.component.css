@@ -1,0 +1,11 @@
+.nhom-ngu-lieu-su-kien{
+  width: 100%;
+  max-width: 100%;
+  min-height: 56px;
+  display: block;
+  background: #ffffff;
+  overflow: hidden;
+  padding: 10px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+}

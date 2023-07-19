@@ -16,7 +16,7 @@ import { LoaiNguLieuComponent } from './loai-ngu-lieu/loai-ngu-lieu.component';
 import { DiemDiTichComponent } from './diem-di-tich/diem-di-tich.component';
 import { NhanVatLichSuComponent } from './nhan-vat-lich-su/nhan-vat-lich-su.component';
 import {DialogModule} from 'primeng/dialog';
-import { EditorModule } from 'primeng/editor';
+import { EditorModule } from 'primeng/editor'
 import { ContextMenuModule } from 'primeng/contextmenu';
 import { MediavrComponent } from './mediavr/mediavr.component';
 import { MultiSelectModule } from 'primeng/multiselect';

@@ -14,12 +14,12 @@ import {
 
 const routes: Routes = [
   {
-    path: 'danh-sach-ngu-lieu',
+    path: 'danh-sach',
     component: DanhSachNguLieuComponent,
     data: {state: 'quan-ly-ngu-lieu--danhsach'}
   },
   {
-    path: 'danh-sach-su-kien',
+    path: 'su-kien',
     component: DanhSachSuKienComponent,
     data: {state: 'quan-ly-ngu-lieu--sukien'}
   },

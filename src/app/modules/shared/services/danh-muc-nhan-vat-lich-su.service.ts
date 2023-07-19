@@ -95,4 +95,21 @@ export class DanhMucNhanVatLichSuService {
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data ));
   }
+  getDataUnlimit():Observable<DmNhanVatLichSu[]>{
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'is_deleted',
+        condition: OvicQueryCondition.equal,
+        value: '0'
+      },
+    ];
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+      orderby: 'bietdanh',
+      order: 'ASC'
+    };
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data ));
+  }
 }

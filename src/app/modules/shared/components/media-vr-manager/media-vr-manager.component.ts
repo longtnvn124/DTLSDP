@@ -3,108 +3,118 @@ import {
   Component,
   ElementRef,
   HostListener,
-  Input,
+  Input, OnDestroy,
   OnInit,
   Renderer2,
   TemplateRef,
   ViewChild
 } from '@angular/core';
-import * as THREE from 'three';
+
 import {OrbitControls} from '@three-ts/orbit-controls';
 import {NotificationService} from '@core/services/notification.service';
-import {DmDiemDiTich} from "@shared/models/danh-muc";
+import {DmDiemDiTich, DmLoaiNguLieu} from "@shared/models/danh-muc";
 import {FileService} from "@core/services/file.service";
 import {sceneControl} from "@shared/models/sceneVr";
-import {forkJoin, map, Observable} from 'rxjs';
+import {forkJoin, map, mergeMap, Observable, of} from 'rxjs';
 import {OvicFile} from '@core/models/file';
 import {AuthService} from "@core/services/auth.service";
-import { MenuItem } from 'primeng/api/menuitem';
+import {MenuItem} from 'primeng/api/menuitem';
 import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {Point} from "@shared/models/point";
+import {Pinable, Point} from "@shared/models/point";
 import {PointsService} from "@shared/services/points.service";
+import {
+  Audio,
+  AudioListener,
+  AudioLoader,
+  PerspectiveCamera,
+  Raycaster,
+  Scene,
+  Vector2,
+  Vector3,
+  WebGLRenderer
+} from "three";
+import {ActivatedRoute, Router} from "@angular/router";
+import {DanhMucDiemDiTichService} from "@shared/services/danh-muc-diem-di-tich.service";
+import {DanhMucLoaiNguLieuService} from "@shared/services/danh-muc-loai-ngu-lieu.service";
+import {AvatarMakerSetting, MediaService} from "@shared/services/media.service";
+import {HelperService} from "@core/services/helper.service";
+import {getLinkDownload} from "@env";
+import {Ngulieu} from "@shared/models/quan-ly-ngu-lieu";
 
 @Component({
   selector: 'media-vr-manager',
   templateUrl: './media-vr-manager.component.html',
   styleUrls: ['./media-vr-manager.component.css']
 })
-export class MediaVrManagerComponent implements OnInit,AfterViewInit {
+export class MediaVrManagerComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('fromUpdate', {static: true}) formUpdate: TemplateRef<any>;
   @ViewChild('myCanvas', {static: false}) canvasRef!: ElementRef<HTMLCanvasElement>;
-  @Input() dataPoint: DmDiemDiTich;
-  //khai bao
+  @ViewChild('container', {static: true}) container: ElementRef<HTMLDivElement>;
+  // @ViewChild('video360', {static: true}) video360: ElementRef<HTMLVideoElement>;
+  @ViewChild('tooltip', {static: true}) tooltip: ElementRef<HTMLDivElement>;
+  @ViewChild('fileChooser', {static: true}) fileChooser: TemplateRef<any>;
+
+  @Input() __ngulieu: Ngulieu;
+
+  //khai bao.nativeElement
   formState: {
     formType: 'add' | 'edit',
     showForm: boolean,
     formTitle: string,
-    object: Point | null
+    object: Pinable | null
   } = {
     formType: 'add',
     showForm: false,
     formTitle: '',
     object: null
   }
-  menuName:'Point-location';
+  menuName: 'Point-location';
 
-  filePermission         = {
-    canDelete   : true ,
-    canDownload : true ,
-    canUpload   : true
+  filePermission = {
+    canDelete: true,
+    canDownload: true,
+    canUpload: true
   };
-  filePermistionOnlyShow = { canDelete : false , canDownload : true , canUpload : false };
-
-  iconList =[
-    {name:'vị trí mới', path:'assets/icon-png/infomation.png'},
-    {name:'Thông tin chi tiết ', path:'assets/icon-png/location.png'},
+  iconList: { name: string, path: string }[];
+  viewMode = [
+    {label: 'Truy cập trực tiếp', value: 'DIRECT'},
+    {label: 'Thông tin trực tiếp', value: 'info'},
   ]
+
+  permission = {
+    isExpert: false,
+    canAdd: false,
+    canEdit: false,
+    canDelete: false,
+  }
+  characterAvatar: string;
+  backToScene: boolean = false;
   // three js-----------------------------------------------------------------
-  container = this.renderer2.createElement('div');
-  tooltip = this.renderer2.createElement('div');
   spriteActive = false;
   scene: any = [];
-  camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
-  controls = new OrbitControls(this.camera);
-  rayCaster = new THREE.Raycaster();
-  renderer = new THREE.WebGLRenderer();
+  // camera = new Three.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
+  camera = new PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
+  controls: OrbitControls;
+  // controls = new OrbitControls(this.camera, this.renderer.domElement);
+  // rayCaster = new Three.Raycaster();
+  rayCaster = new Raycaster();
+  // renderer = new Three.WebGLRenderer({antialias: true});
+  renderer = new WebGLRenderer({antialias: true});
+  intersectsVecter: any;
 
-  //menu right click
-  items: MenuItem[] = [
-    {
-      label: 'Thêm vị trí',
-      icon: 'pi pi-plus',
-      command: ($event?: any) => this.btnFormAdd()
-
-    },
-    {
-      label: 'Cập nhật vị trí',
-      icon: 'pi pi-file-edit',
-      command: ($event?: any) => this.btnFormEdit()
-
-    },
-    {
-      label: 'Xoá vị trí',
-      icon: 'pi pi-trash',
-      command: ($event?: any) => this.btnFormDelete($event)
-
-    },
-    {
-      label: 'Thông tin chi tiết',
-      icon: 'pi pi-info-circle',
-      command: ($event?: any) => this.btnShowInfo(),
-
-    },
-  ];
-  formSave :FormGroup = this.fb.group({
-    title:['',Validators.required],
-    icon:['',Validators.required],
-    mota: ['',Validators.required],
-    loaingulieu:['',Validators.required],
-    location:['',Validators.required], // vi tri vector3
-    parent_id:['',Validators.required],
-    type:['',Validators.required], //DIRECT | INFO
-    media:['',Validators.required], // ảnh 360 | video360
-    audio:['',Validators.required], // audio thuyết minh
+  // menu right click
+  items: MenuItem[];
+  formSave: FormGroup = this.fb.group({
+    title: ['', Validators.required],
+    icon: ['', Validators.required],
+    mota: [''],
+    loaingulieu: [''],
+    location: ['', Validators.required], // vi tri vector3
+    parent_id: [null, Validators.required],
+    type: ['', Validators.required], //DIRECT | INFO
+    file_media: [null, Validators.required], // ảnh 360 | video360// audio thuyết minh
   })
+
 
   constructor(
     private notificationService: NotificationService,
@@ -112,241 +122,366 @@ export class MediaVrManagerComponent implements OnInit,AfterViewInit {
     private renderer2: Renderer2,
     private fileService: FileService,
     private auth: AuthService,
-    private fb : FormBuilder,
-    private pointsService:PointsService
+    private fb: FormBuilder,
+    private pointsService: PointsService,
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
+    private danhMucDiemDiTichService: DanhMucDiemDiTichService,
+    private danhMucLoaiNguLieuService: DanhMucLoaiNguLieuService,
+    private mediaService: MediaService,
+    private helperService: HelperService
   ) {
+    this.video360 = this.renderer2.createElement('video');
+    // this.danhMucLoaiNguLieuService.getData(this.auth.userDonViId).subscribe({
+    //   next: (data) => {
+    //     this.dataLoaiNguLieu = data;
+    //   }
+    // });
+    // this.f['loaingulieu'].valueChanges.subscribe(res => console.log(res));
+    // console.log(this.__ngulieu);
+  }
+
+  ngOnDestroy(): void {
+    // if (this.renderer) {
+    //   this.renderer.dispose();
+    // }
+    // if (this.scene) {
+    //   this.scene.dispose();
+    // }
   }
 
   ngAfterViewInit(): void {
-    const tooltipElement: HTMLElement = this.tooltip.nativeElement;
-    // Sử dụng tooltipElement như bạn muốn;
-    console.log(tooltipElement);
+    this.container.nativeElement.addEventListener('resize', this.onResize);
+    this.container.nativeElement.addEventListener('click', this.onClick);
+    this.container.nativeElement.addEventListener('mousemove', this.onMouseMove);
+    this.container.nativeElement.addEventListener('contextmenu', this.onRightClick);
   }
 
   imageLink: string;
   audioLink: string;
+  dataDitich: any;
+  idDitich: string;
 
+  pointHover: boolean = false;
+  video360: HTMLVideoElement;
+  dataLoaiNguLieu: DmLoaiNguLieu[];
 
   ngOnInit() {
-    this.renderer2.addClass(this.container, 'ctn_body');
-    this.renderer2.addClass(this.tooltip,'tooltip');
-    // //setdata
-    this.loadFileMedia().subscribe({
-      next: files => {
-        const imageObject = this.dataPoint.file_media[0] ? files.find(f => f.file.id === this.dataPoint.file_media[0].id).blob : null;
-        const audioObject = this.dataPoint.file_audio ? files.find(f => f.file.id === this.dataPoint.file_audio[0].id).blob : null;
-        this.imageLink = imageObject ? URL.createObjectURL(imageObject) : '';
-        this.audioLink = audioObject ? URL.createObjectURL(audioObject) : '';
-        this.renderer2.appendChild(this.element.nativeElement, this.container);
-        this.loadInit(this.imageLink, this.audioLink, this.dataPoint.id);
-      },
-      error: () => {
-        this.dataPoint['__media_info'] = [];
-      },
-    })
+    this.iconList = this.typeAdd === 'THONGTIN' ?
+      [{name: 'Thông tin chi tiết ', path: './assets/icon-png/infomation.png'}] :
+      [
+        {name: 'vị trí mới', path: './assets/icon-png/location.png'},
+        {name: 'Chuyển cảnh', path: './assets/icon-png/chuyencanh.png'},
+      ];
+    this.startSeen();
   }
-  s: any;
-  loadInit(image: string, audio: string,idPoint) {
-    //scene and controls
-    this.scene = new THREE.Scene();
-    this.controls.rotateSpeed = -0.2
-    this.controls.enableZoom = false
-    this.controls.enablePan = false
-    this.controls.enableZoom = false
-    this.camera.position.set(-0.1, 0, 0.1)
-    this.controls.update()
 
+
+  dataPoint: Pinable[];
+  typeMedia: string;
+  mediaLink: string;
+
+  startSeen() {
+    this.backToScene = false;
+    this.notificationService.isProcessing(true);
+    const fileMedia = this.__ngulieu.file_media[0];
+    this.mediaLink = fileMedia ? this.fileService.getPreviewLinkLocalFile(fileMedia) : null;
+    this.typeMedia = this.__ngulieu.file_media[0].type.split("/")[0] === "video" ? "video" : 'image';
+    this.pointsService.getDataByparentId(this.__ngulieu.id).subscribe({
+      next: (dataPoint) => {
+        this.dataPoint = dataPoint.map(m => {
+          const fileMedia=m.ds_ngulieu && m.ds_ngulieu.length ? m.ds_ngulieu.find(f=>f.type.split('/')[0] === 'image' ||'video') : null;
+          const fileAudio=m.ds_ngulieu && m.ds_ngulieu.length ? m.ds_ngulieu.find(f=>f.type.split('/')[0] === 'audio') : null;
+          m['imageLink'] =fileMedia ? this.fileService.getPreviewLinkLocalFile(fileMedia) : null;
+          m['audioLink']  =fileAudio ? this.fileService.getPreviewLinkLocalFile(fileAudio) : null;
+          return m;
+        });
+        this.loadInit(this.mediaLink, null, this.dataPoint);
+        this.notificationService.isProcessing(false);
+      }, error: (e) => {
+        this.notificationService.isProcessing(false);
+        this.notificationService.toastError('Mất kết nối với máy chủ')
+      }
+    });
+
+  }
+
+  s: sceneControl;
+
+  loadInit(image: string, audio?: string, datapoint?: Pinable[]) {
+    //camera
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    //scene and controls
+    // this.scene = new Three.Scene();
+    this.scene = new Scene();
+    this.controls.rotateSpeed = -0.3;
+    this.controls.enableZoom = false;
+    this.camera.position.set(-0.1, 0, 0.1);
     // Sphere
     this.s = new sceneControl(image, this.camera, audio);
-    // let s2 = new Scene('3602.jpg', camera)
-    // s.addPoint( { position: new THREE.Vector3(14, 1.9, -47), name: 'Entrée', scene: s2 })
-    // s2.addPoint( { position: new THREE.Vector3(-1, 2, 49.8), name: 'Sortie', scene: s })
-    this.s.createScrene(this.scene)
+    // let s2 = new sceneControl('./assets/icon-png/pano1.jpg', this.camera,audio);
+    // this.s.addPoint( { position: new Three.Vector3(14, 1.9, -47), name: 'Entrée', scene: s2 });
+
+    if (datapoint && datapoint.length) {
+      this.addPointInScene(datapoint);
+    } else {
+      if (this.typeMedia == "video") {
+        this.renderer2.setAttribute(this.video360, 'src', image);
+        this.renderer2.setAttribute(this.video360, 'loop', 'true');
+        this.renderer2.setAttribute(this.video360, 'autoplay', 'true');
+        this.renderer2.setAttribute(this.video360, 'playsinline', 'true');
+        this.s.createMovie(this.scene, this.video360);
+      } else {
+        this.s.createScrene(this.scene, this.dataDitich.id);
+      }
+      this.renderSecene();
+    }
     // Render
-    this.renderer.setSize(this.element.nativeElement.offsetWidth, this.element.nativeElement.offsetHeight);
-    this.container.appendChild(this.renderer.domElement)
+  }
+
+  addPointInScene(dataPoint: Pinable[]) {
+    dataPoint.forEach(f => this.pin(f, false));
+    this.renderSecene();
+  }
+
+  pin(info: Pinable, renderSecene = true) {
+    const fileMedia= info.ds_ngulieu.find(f=>f.type.split('/')[0] === 'image' ||'video');
+    const fileAudio= info.ds_ngulieu.find(f=>f.type.split('/')[0] === 'audio');
+    const media =fileMedia ? this.fileService.getPreviewLinkLocalFile(fileMedia) : null;
+    const audio =fileAudio ? this.fileService.getPreviewLinkLocalFile(fileAudio) : null;
+    const type = fileMedia.type.split('/')[0] === "video" ? 'video' : 'image';
+    if (audio || media) {
+      let newPoint = new sceneControl(media, this.camera, audio);
+      const locationX = info.location['x'];
+      const locationY = info.location['y'];
+      const locationZ = info.location['z'];
+      this.s.addPoint({
+        position: new Vector3(locationX, locationY, locationZ),
+        name: info.title,
+        scene: newPoint,
+        userData: {
+          ovicPointId: info.id,
+          iconPoint: info.icon
+        }
+      });
+      if (type === "image") {
+        this.s.createScrene(this.scene, info.id);
+      } else {
+        this.s.createMovie(this.scene, this.video360);
+      }
+      this.s.appear();
+    }
+    if (renderSecene) {
+      this.renderSecene();
+    }
+  }
+
+  renderSecene() {
+    // Render
+    this.renderer.setSize(this.container.nativeElement.clientWidth, this.container.nativeElement.clientHeight);
+    this.renderer2.appendChild(this.container.nativeElement, this.renderer.domElement);
     const animate = () => {
       requestAnimationFrame(animate);
+      this.controls.update();
       this.renderer.render(this.scene, this.camera);
     }
     animate()
-    this.container.addEventListener('resize', this.onResize)
-    this.container.addEventListener('click', this.onClick)
-    this.container.addEventListener('mousemove', this.onMouseMove)
   }
-  get f() : { [ key : string ] : AbstractControl<any> } {
+
+  get f(): { [key: string]: AbstractControl<any> } {
     return this.formSave.controls;
   }
+
   onResize = () => {
-    let width = this.element.nativeElement.offsetWidth;
-    let height = this.element.nativeElement.offsetHeight;
-    this.camera.aspect = width / height;
+    let width = this.container.nativeElement.clientWidth;
+    let height = this.container.nativeElement.clientHeight;
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, height);
     this.renderer.render(this.scene, this.camera)
   }
-
-  onClick = (e: any) => {
-    const mouse = new THREE.Vector2(
-      (e.clientX / window.innerWidth) * 2 - 1,
-      -(e.clientY / window.innerHeight) * 2 + 1,
+  onClick = (e: MouseEvent) => {
+    // let mouse = new Three.Vector2(
+    let mouse = new Vector2(
+      (e.offsetX / this.container.nativeElement.clientWidth) * 2 - 1,
+      -(e.offsetY / this.container.nativeElement.clientHeight) * 2 + 1,
     );
     this.rayCaster.setFromCamera(mouse, this.camera);
     let intersects = this.rayCaster.intersectObjects(this.scene.children);
-    console.log(intersects);
     intersects.forEach((intersect: any) => {
       if (intersect.object.type === "Sprite") {
         intersect.object.onClick();
+        this.backToScene = true;
+        if (this.spriteActive) {
+          this.tooltip.nativeElement.classList.remove('is-active');
+          this.spriteActive = false;
+        }
       }
     });
+    // intersects = this.rayCaster.intersectObject(this.s.sphere);
+    // if (intersects.length > 0) {
+    // console.log(intersects[0].point);
+    // }
   }
-
-  onMouseMove = (e: any) => {
-    const mouse = new THREE.Vector2(
-      (e.clientX / window.innerWidth) * 2 - 1,
-      -(e.clientY / window.innerHeight) * 2 + 1,
+  onMouseMove = (e: MouseEvent) => {
+    // let mouse = new Three.Vector2(
+    let mouse = new Vector2(
+      (e.offsetX / this.container.nativeElement.clientWidth) * 2 - 1,
+      -(e.offsetY / this.container.nativeElement.clientHeight) * 2 + 1,
     );
     this.rayCaster.setFromCamera(mouse, this.camera);
     let foundSprite = false;
     let intersects = this.rayCaster.intersectObjects(this.scene.children);
-    const tooltip   = this.tooltip.nativeElement;
+
     intersects.forEach((intersect: any) => {
       if (intersect.object.type === "Sprite") {
         let p = intersect.object.position.clone().project(this.camera);
-        tooltip.style.top = ((-1 * p.y + 0.85) * window.innerHeight / 2) + 'px';
-        tooltip.style.left = ((p.x + 1) * window.innerWidth / 2) + 'px';
-        tooltip.classList.add('is-active');
-        tooltip.innerHTML = intersect.object.name;
+        this.tooltip.nativeElement.style.top = ((-1 * p.y + 0.9) * this.container.nativeElement.offsetHeight / 2) + 'px';
+        this.tooltip.nativeElement.style.left = ((p.x + 1) * this.container.nativeElement.offsetWidth / 2) + 'px';
+        // this.tooltip.classList.add('is-active');
+        this.tooltip.nativeElement.classList.add('is-active');
+
+        this.tooltip.nativeElement.innerHTML = intersect.object.name;
         this.spriteActive = intersect.object;
         foundSprite = true;
+        this.pointHover = true;
       }
     });
-    if (foundSprite === false && this.spriteActive) {
-      tooltip.classList.remove('is-active');
-      this.spriteActive = false;
-    }
-    e.preventDefault();
-  }
-
-  loadFileMedia(): Observable<{ file: OvicFile, blob: Blob }[]> {
-    const ids: OvicFile[] = [].concat(
-      this.dataPoint.file_media ? [...this.dataPoint.file_media] : null,
-      this.dataPoint.file_audio ? [...this.dataPoint.file_audio] : null
-    ).filter(Boolean);
-
-    const request: Observable<{ file: OvicFile, blob: Blob }>[] = ids.reduce((collector, file) => {
-      collector.push(
-        this.fileService.getFileAsBlobByName(file.id.toString(10)).pipe(map(blob => ({file, blob})))
-      )
-      return collector;
-    }, new Array<Observable<{ file: OvicFile, blob: Blob }>>())
-
-    return forkJoin<{ file: OvicFile, blob: Blob }[]>(request);
-  }
-
-  isVolumeOn = false;
-
-  toggleVolume() {
-    this.isVolumeOn = !this.isVolumeOn;
-    if (this.isVolumeOn) {
-      this.s.addAudio(this.audioLink);
-      console.log('play');
+    if (foundSprite) {
+      this.renderer2.addClass(this.container.nativeElement, 'hover');
     } else {
-      this.s.pauseAudio(this.audioLink);
-      console.log('pause');
+      this.renderer2.removeClass(this.container.nativeElement, 'hover');
+    }
+    if (foundSprite === false && this.spriteActive) {
+      this.tooltip.nativeElement.classList.remove('is-active');
+      this.spriteActive = false;
+      this.pointHover = false;
     }
   }
-  mouseEvent: PointerEvent;
-  intersectsVecter:any;
-  @HostListener("contextmenu", ["$event"]) onRightClick = (event: PointerEvent) => {
-    // event.stopPropagation();
-    console.log('log on right click');
-    const mouse = new THREE.Vector2((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1,);
+  varMouseRight: any;
+  @HostListener("contextmenu", ["$event"]) onRightClick = (e: MouseEvent) => {
+    // let mouse = new Three.Vector2(
+    let mouse = new Vector2(
+      (e.offsetX / this.container.nativeElement.clientWidth) * 2 - 1,
+      -(e.offsetY / this.container.nativeElement.clientHeight) * 2 + 1,
+    );
     this.rayCaster.setFromCamera(mouse, this.camera);
-    let intersects = this.rayCaster.intersectObject(this.s.sphere);
-    this.intersectsVecter = intersects;
-    console.log(this.intersectsVecter);
-    console.log(intersects[0].point.x);
-    console.log(intersects[0].point.y);
-    console.log(intersects[0].point.z);
-    this.mouseEvent = event;
+    let intersectss = this.rayCaster ? this.rayCaster.intersectObject(this.s.sphere) : [];
+    this.intersectsVecter = intersectss;
+    this.rayCaster.setFromCamera(mouse, this.camera);
+    let point = this.rayCaster.intersectObjects(this.scene.children);
+    this.varMouseRight = point[0].object.userData['ovicPointId'];
+    if (point[0].object.name == '') {
+      this.items = [
+        {
+          label: 'Thêm mới vị trí mới',
+          icon: 'pi pi-plus',
+          command: () => this.btnFormAdd('VITRI')
+        },
+        {
+          label: 'Thêm mới thông tin ',
+          icon: 'pi pi-plus',
+          command: () => this.btnFormAdd('THONGTIN')
+        },
+      ]
+    } else {
+      this.items = [
+        {
+          label: 'Cập nhật vị trí',
+          icon: 'pi pi-file-edit',
+          command: () => this.btnFormEdit()
+        },
+        {
+          label: 'Xoá vị trí',
+          icon: 'pi pi-trash',
+          command: () => this.btnFormDelete()
+          // command: () => this.btnDelete1()
+        },
+        {
+          label: 'Thông tin chi tiết',
+          icon: 'pi pi-info-circle',
+          command: () => this.btnFormInformation()
+        },
+      ];
+    }
+
   }
 
   // su ly Point
-
-  danhsachPoint: Point[];
-  loadPoint(){
-    this.notificationService.isProcessing(true);
-    this.pointsService.load().subscribe({
-      next: data=>{
-        this.danhsachPoint = data.filter(f => f.parent_id === this.dataPoint.id);
-        console.log(this.danhsachPoint);
-        this.notificationService.isProcessing(false);
-      },
-      error: ()=>{
-        this.notificationService.isProcessing(false);
-        this.notificationService.toastError('Mất kết nối với máy chủ');
-      }
-    })
-  }
-
   onOpenFormEdit() {
-    setTimeout(() => this.notificationService.openSideNavigationMenu({ template: this.formUpdate, size: 600 }), 100);
+    setTimeout(() => this.notificationService.openSideNavigationMenu({
+      template: this.formUpdate,
+      size: 600,
+      offsetTop: '0'
+    }), 100);
+    this.controls.saveState();
   }
 
-  changeInputMode(formType: 'add' | 'edit', object: Point | null = null) {
+  changeInputMode(formType: 'add' | 'edit', object: Pinable | null = null) {
     this.formState.formTitle = formType === 'add' ? 'Thêm điểm truy cập mới ' : 'Cập nhật điểm truy cập';
     this.formState.formType = formType;
     if (formType === 'add') {
       this.formSave.reset(
         {
-          title:'',
+          title: '',
           mota: '',
-          loaingulieu:'',
-          icon:'',
-          location:this.intersectsVecter[0].point.x+','+this.intersectsVecter[0].point.y+','+this.intersectsVecter[0].point.z, // vi tri vector3
-          parent_id:this.dataPoint.id,
-          type:'', //DIRECT | INFO
-          file_media:null, // ảnh 360 | video360
-          file_audio:null, // audio thuyết minh
+          loaingulieu: [],
+          icon: '',
+          location: this.intersectsVecter[0].point,// vi tri vector3
+          parent_id: this.dataDitich.id,
+          type: 'INFO', //DIRECT | INFO
+          file_media: null, // ảnh 360 | video360
+          file_audio: null, // audio thuyết minh
         }
       );
+      this.characterAvatar = '';
     } else {
       this.formState.object = object;
       this.formSave.reset(
         {
-          title:object.title,
+          title: object.title,
           mota: object.mota,
-          icon:object.icon,
-          loaingulieu:object.loaingulieu,
-          location:object.location, // vi tri vector3
-          parent_id:object.parent_id,
-          type:object.type, //DIRECT | INFO
-          file_media:object.file_media, // ảnh 360 | video360
-          file_audio:object.file_audio, // audio thuyết minh
+          icon: object.icon,
+
+          location: object.location, // vi tri vector3
+          parent_id: object.parent_id,
+          type: object.type, //DIRECT | INFO
+          ds_ngulieu: object.ds_ngulieu, // ảnh 360 | video360
+
         }
       );
+
+      // this.characterAvatar = object.file_media ? getLinkDownload(object.file_media[0].id) : '';//get media
     }
   }
-  btnFormAdd(){
+
+  typeAdd: 'VITRI' | 'THONGTIN';
+
+  btnFormAdd(type: 'VITRI' | 'THONGTIN') {
+    this.typeAdd = type;
     this.onOpenFormEdit();
+    this.f['type'].setValue(type === 'VITRI' ? 'DIRECT ' : 'INFO');
     this.changeInputMode("add");
   }
-  btnFormEdit(){
+
+  btnFormEdit() {
+    const object = this.dataPoint.find(f => f.id === this.varMouseRight);
+    this.typeAdd = object.type === 'INFO' ? 'THONGTIN' : 'VITRI';
     this.onOpenFormEdit();
-    this.changeInputMode("edit");
+    this.changeInputMode("edit", object);
   }
 
-  async btnFormDelete(point: Point) {
+  async btnFormDelete() {
+    // const idDelete = this.dataPoint.find(f => f.id === this.varMouseRight).id;
+    const idDelete = this.varMouseRight;
     const xacNhanXoa = await this.notificationService.confirmDelete();
     if (xacNhanXoa) {
       this.notificationService.isProcessing(true);
-      this.pointsService.delete(point.id).subscribe({
+      this.pointsService.delete(idDelete).subscribe({
         next: () => {
+          this.s.deletePoint(idDelete);
           this.notificationService.isProcessing(false);
           this.notificationService.toastSuccess('Thao tác thành công');
-          this.loadPoint();
         },
         error: () => {
           this.notificationService.isProcessing(false);
@@ -356,42 +491,63 @@ export class MediaVrManagerComponent implements OnInit,AfterViewInit {
     }
   }
 
+  visible: boolean = false;
+  dataInformation: Pinable;
+
+  btnFormInformation() {
+    this.visible = true;
+    this.dataInformation = this.dataPoint.find(f => f.id === this.varMouseRight);
+  }
+
   saveForm() {
     if (this.formSave.valid) {
-      // const getMa_ns = 'ns'+ {''}
-      // this.formSave.get('ma_ns').setValue(getMa_ns)
+      const newPin: Pinable = {
+        id: 0,
+        icon: this.f['icon'].value,
+        title: this.f['title'].value,
+        location: this.f['location'].value,
+        type: this.f['type'].value,
+        ds_ngulieu: this.f['ds_ngulieu'].value,
+        donvi_id:this.f['donvi_id'].value,
+        parent_id: this.f['parent_id'].value,
+        mota: this.f['mota'].value
+      }
       if (this.formState.formType === "add") {
         this.notificationService.isProcessing(true);
         this.pointsService.create(this.formSave.value).subscribe({
-          next: () => {
-            this.notificationService.isProcessing(false);
-            this.notificationService.toastSuccess("Thành công");
+          next: (id) => {
+            // this.typeMedia = this.dataDitich.file_media[0].type.split("/")[0] === "video" ? "video" : 'image';
+            newPin.id = id;
+            this.pin(newPin);
+            this.dataPoint.push(newPin)
             this.formSave.reset({
-              title:'',
+              title: '',
               mota: '',
-              loaingulieu:'',
-              location:this.intersectsVecter, // vi tri vector3
-              parent_id:this.dataPoint.id,
-              type:'', //DIRECT | INFO
-              file_media:null, // ảnh 360 | video360
-              file_audio:null, // audio thuyết minh
+              loaingulieu: '',
+              location: this.intersectsVecter, // vi tri vector3
+              parent_id: this.dataDitich.id,
+              type: '', //DIRECT | INFO
+              file_media: null, // ảnh 360 | video360
+              file_audio: null, // audio thuyết minh
             });
-            this.loadPoint();
+            this.characterAvatar = '';
+            this.notificationService.isProcessing(false);
+            this.notificationService.toastSuccess("Thêm mới thành công");
           }, error: () => {
-            this.notificationService.toastError("Thêm nhân sự thất bại");
+            this.notificationService.toastError("Thêm mới thất bại");
             this.notificationService.isProcessing(false);
           }
         })
-
       } else {
         this.notificationService.isProcessing(true);
-        const index = this.danhsachPoint.findIndex(r => r.id === this.formState.object.id);
-        console.log(this.danhsachPoint[index].id);
-        this.pointsService.update(this.danhsachPoint[index].id, this.formSave.value).subscribe({
+        this.pointsService.update(this.formState.object.id, this.formSave.value).subscribe({
           next: () => {
+            this.s.deletePoint(this.formState.object.id);
+            this.pin(this.formState.object, false);
+            this.renderSecene();
             this.notificationService.isProcessing(false);
             this.notificationService.toastSuccess('Cập nhật thành công');
-            this.loadPoint();
+
           }, error: () => {
             this.notificationService.isProcessing(false);
             this.notificationService.toastError("Cập nhật thất bại");
@@ -400,18 +556,109 @@ export class MediaVrManagerComponent implements OnInit,AfterViewInit {
       }
     } else {
       this.notificationService.toastError("Lỗi nhập liệu");
-
     }
   }
-  closeForm(){
-      this.loadPoint();
-      this.notificationService.closeSideNavigationMenu(this.menuName);
-  }
-  visible: boolean;
-  btnShowInfo() {
-    this.visible = true;
+
+  closeForm() {
+    this.notificationService.closeSideNavigationMenu(this.menuName);
   }
 
+  rotate: boolean = false;
+  sound: boolean = false;
 
+  btnRotate() {
+    this.rotate = !this.rotate;
+    if (this.rotate) {
+      this.controls.autoRotate = true;
+      this.controls.autoRotateSpeed = 0.8; // Tốc độ quay (đơn 2 vị là radian/giây)
+      this.renderSecene()
+    } else {
+      this.controls.autoRotate = false;
+      this.controls.update();
+    }
+  }
 
+  btnVolume() {
+    if (this.audioLink) {
+      // const audioListener = new Three.AudioListener();
+      const audioListener = new AudioListener();
+      // const audioLoader = new Three.AudioLoader();
+      const audioLoader = new AudioLoader();
+      // var audio = new Three.Audio(audioListener);
+      var audio = new Audio(audioListener);
+      this.camera.add(audioListener);
+
+      this.sound = !this.sound;
+
+      if (this.sound == true) {
+        audioLoader.load(this.audioLink, function (buffer) {
+          audio.setBuffer(buffer);
+          audio.setLoop(true);
+          audio.setVolume(0.5);
+          audio.play();
+        });
+      } else {
+        audio.stop();
+      }
+    } else {
+      this.notificationService.toastWarning('Bạn chưa lưu audio thuyết minh');
+    }
+  }
+
+  btnPausePlay() {
+    if (this.video360.paused) {
+      this.video360.play();
+    } else {
+      this.video360.pause();
+    }
+  }
+
+  //file information
+  async makeCharacterAvatar(file: File, characterName: string): Promise<File> {
+    try {
+      const options: AvatarMakerSetting = {
+        aspectRatio: 3 / 2,
+        resizeToWidth: 200,
+        format: 'jpeg',
+        cropperMinWidth: 10,
+        dirRectImage: {
+          enable: true,
+          dataUrl: URL.createObjectURL(file)
+        }
+      };
+      const avatar = await this.mediaService.callAvatarMaker(options);
+      if (avatar && !avatar.error && avatar.data) {
+        const none = new Date().valueOf();
+        const fileName = characterName + none + '.jpg';
+        return Promise.resolve(this.fileService.base64ToFile(avatar.data.base64, fileName));
+      } else {
+        return Promise.resolve(null);
+      }
+    } catch (e) {
+      this.notificationService.isProcessing(false);
+      this.notificationService.toastError('Quá trình tạo avatar thất bại');
+      return Promise.resolve(null);
+    }
+  }
+
+  async onInputAvatar(event, fileChooser: HTMLInputElement) {
+    if (fileChooser.files && fileChooser.files.length) {
+      const file = await this.makeCharacterAvatar(fileChooser.files[0], fileChooser.files[0].name);
+      // upload file to server
+      this.fileService.uploadFile(file, 1).subscribe({
+        next: fileUl => {
+          this.formSave.get('file_media').setValue([fileUl]);
+        }, error: () => {
+          this.notificationService.toastError('Upload file không thành công');
+        }
+      })
+      // laasy thoong tin vaf update truongwf
+      this.characterAvatar = URL.createObjectURL(file);
+    }
+  }
+
+  btnBackToScere(event: MouseEvent) {
+    this.startSeen();
+    // this.s.backToScene();
+  }
 }

@@ -5,13 +5,14 @@ import {HttpParamsHeplerService} from "@core/services/http-params-hepler.service
 import {ThemeSettingsService} from "@core/services/theme-settings.service";
 import {AuthService} from "@core/services/auth.service";
 import {map, Observable} from "rxjs";
-import { DsSuKien} from "@shared/models/quan-ly-ngu-lieu";
+import {Ngulieu, SuKien} from "@shared/models/quan-ly-ngu-lieu";
 import {Dto, OvicConditionParam, OvicQueryCondition} from "@core/models/dto"
+import {DonVi} from "@shared/models/danh-muc";
 @Injectable({
   providedIn: 'root'
 })
 export class NguLieuSuKienService {
-  private readonly api = getRoute('danh-sach-su-kien/');
+  private readonly api = getRoute('su-kien/');
   constructor(
     private http: HttpClient,
     private httpParamsHelper: HttpParamsHeplerService,
@@ -20,7 +21,7 @@ export class NguLieuSuKienService {
   ) {
   }
 
-  load(page:number): Observable<DsSuKien[]> {
+  load(page:number): Observable<SuKien[]> {
     const conditions: OvicConditionParam[] = [
       {
         conditionName: 'is_deleted',
@@ -54,7 +55,7 @@ export class NguLieuSuKienService {
     return this.update(id, {is_deleted, deleted_by});
   }
 
-  searchData(page:number, search?: string, linhvuc?:string): Observable<{ recordsTotal: number, data: DsSuKien[] }> {
+  searchData(page:number, search?: string, linhvuc?:string): Observable<{ recordsTotal: number, data: SuKien[] }> {
     const conditions: OvicConditionParam[] = [
       {
         conditionName: 'is_deleted',
@@ -84,7 +85,7 @@ export class NguLieuSuKienService {
     const fromObject = {
       paged: page,
       limit: this.themeSettingsService.settings.rows,
-      orderby: 'diemditich_id',
+      orderby: 'title',
       order: "ASC"
     }
 
@@ -94,4 +95,5 @@ export class NguLieuSuKienService {
       data: res.data
     })));
   }
+
 }

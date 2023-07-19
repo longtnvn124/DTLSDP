@@ -117,6 +117,8 @@ import { EditorModule } from 'primeng/editor';
 import { OvicHtmlDecodePipe } from './pipes/ovic-html-decode.pipe';
 import {ContextMenuModule} from "primeng/contextmenu";
 import {DialogModule} from "primeng/dialog";
+import { OvicPickerNgulieuComponent } from './components/ovic-picker-ngulieu/ovic-picker-ngulieu.component';
+import {OrganizationPickerComponent} from "@shared/components/organization-picker/organization-picker.component";
 
 
 @NgModule({
@@ -196,6 +198,8 @@ import {DialogModule} from "primeng/dialog";
     MediaVrManagerComponent,
     OvicLoadImageByIdDirective,
     OvicHtmlDecodePipe,
+    OvicPickerNgulieuComponent,
+    OrganizationPickerComponent
   ],
     imports: [
         EditorModule,

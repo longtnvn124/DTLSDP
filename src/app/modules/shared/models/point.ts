@@ -4,13 +4,13 @@ export interface Pinable {
   id: number;
   icon: string;
   title: string;
-  loaingulieu: string[];
+  mota:string;
   location: number[]; // vi tri vector3
   type: string; //DIRECT | INFO
-  file_media: OvicFile[]; // ảnh 360 | video360
-  file_audio: OvicFile[]; // audio thuyết minh
-  mota: string;
   parent_id: number;
+  donvi_id:number;
+  ds_ngulieu: OvicFile[]; //danh sách audio,hảnh 360 | video360
+
 }
 
 export interface Point extends Pinable {

@@ -109,16 +109,6 @@
 
           </div>
           <div class="row">
-            <div class="col-12">
-              <p class="form-row">
-                <label for="mota">Giai đoạn lịch sử</label>
-                <ovic-editor [formField]="f['giaidoan_lichsu']" [readonly]="true" height='150px'
-                             [default]="f['giaidoan_lichsu'].value"></ovic-editor>
-              </p>
-            </div>
-
-          </div>
-          <div class="row">
             <div class="col-6">
               <p class="form-row">
                 <label>Năm sinh - Năm mất <span class="ovic-mark">*</span></label>
@@ -197,9 +187,6 @@
             <div class="col-8 scroll-ctn-right">
               <div class="mt-2 font-weight-normal" style="font-size: 16px"><b>Thông tin chi tiết:</b>
                 <br><span>{{infoNhanvalichsu.mota}}</span></div>
-              <div class="mt-2 font-weight-normal" style="font-size: 16px"><b>Giai đoạn lịch sử:</b> <br>
-                <div [innerHTML]="infoNhanvalichsu['giaidoan_lichsu'] | htmlDecode"></div>
-              </div>
             </div>
           </div>
         </div>
