@@ -33,8 +33,7 @@
             <div class="col-6">
               <p class="form-row">
                 <label>Tên di tích <span class="ovic-mark">*</span></label>
-                <input type="text" placeholder="Tên di tích..." formControlName="ten"
-                       autocomplete="off">
+                <input type="text" placeholder="Tên di tích..." formControlName="ten" autocomplete="off">
               </p>
             </div>
             <div class="col-6">
@@ -55,34 +54,34 @@
               </p>
             </div>
           </div>
-          <div class="row">
-            <div class="col-12">
-              <p class="form-row">
-                <label>Đường dẫn google map <span class="ovic-mark">*</span></label>
-                <input type="text" placeholder="dường dẫn ..." formControlName="vitri_ggmap"
-                       autocomplete="off">
-              </p>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12">
-              <p class="form-row">
-                <label>File media</label>
-                <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"
-                                     [formField]="f['file_media']" [multiple]="true"
-                                     [state]="1" [accept]="['.jpg']"></app-file-list-local>
-              </p>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12">
-              <p class="form-row">
-                <label>File audio(thuyết minh)</label>
-                <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"
-                                     [state]="1" [formField]="f['file_audio']" [multiple]="true"></app-file-list-local>
-              </p>
-            </div>
-          </div>
+<!--          <div class="row">-->
+<!--            <div class="col-12">-->
+<!--              <p class="form-row">-->
+<!--                <label>Đường dẫn google map <span class="ovic-mark">*</span></label>-->
+<!--                <input type="text" placeholder="dường dẫn ..." formControlName="vitri_ggmap"-->
+<!--                       autocomplete="off">-->
+<!--              </p>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--          <div class="row">-->
+<!--            <div class="col-12">-->
+<!--              <p class="form-row">-->
+<!--                <label>File media</label>-->
+<!--                <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"-->
+<!--                                     [formField]="f['file_media']" [multiple]="true"-->
+<!--                                     [state]="1" [accept]="['.jpg']"></app-file-list-local>-->
+<!--              </p>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--          <div class="row">-->
+<!--            <div class="col-12">-->
+<!--              <p class="form-row">-->
+<!--                <label>File audio(thuyết minh)</label>-->
+<!--                <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"-->
+<!--                                     [state]="1" [formField]="f['file_audio']" [multiple]="true"></app-file-list-local>-->
+<!--              </p>-->
+<!--            </div>-->
+<!--          </div>-->
         </form>
       </div>
     </div>

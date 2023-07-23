@@ -1,6 +1,6 @@
 import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {FormType, NgPaginateEvent, OvicForm, OvicTableStructure} from "@shared/models/ovic-models";
-import {DmLoaiNguLieu} from "@shared/models/danh-muc";
+import {DmLoaiNguLieu, KieuDuLieuNguLieu} from "@shared/models/danh-muc";
 import {Paginator} from "primeng/paginator";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {debounceTime, filter, Observable, Subject, Subscription} from "rxjs";
@@ -126,6 +126,8 @@ export class LoaiNguLieuComponent implements OnInit {
   filter = {
     search: ''
   }
+
+  kieuNguLieuOption = KieuDuLieuNguLieu;
 
   listData:DmLoaiNguLieu[];
   constructor(

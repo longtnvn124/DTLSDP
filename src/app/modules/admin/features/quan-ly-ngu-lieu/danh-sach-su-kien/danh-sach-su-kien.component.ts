@@ -42,67 +42,6 @@ export class DanhSachSuKienComponent implements OnInit {
     canDownload: true,
     canUpload: true
   };
-  tblStructure: OvicTableStructure[] = [
-    {
-      fieldType: 'normal',
-      field: ['__title_converted'],
-      innerData: true,
-      header: 'Tên sự kiện lịch sử, văn hoá địa phương',
-      sortable: false,
-    },
-    {
-      fieldType: 'normal',
-      field: ['__diemditich_converted'],
-      innerData: true,
-      header: 'Diễn ra tại',
-      sortable: false,
-      headClass: 'ovic-w-250px text-left',
-      rowClass: 'ovic-w-250px text-left'
-    },
-    {
-      fieldType: 'normal',
-      field: ['__time_converted'],
-      innerData: false,
-      header: 'Thời gian diễn ra',
-      sortable: false,
-      headClass: 'ovic-w-200px text-center',
-      rowClass: 'ovic-w-200px text-center'
-    },
-    {
-      tooltip: '',
-      fieldType: 'buttons',
-      field: [],
-      rowClass: 'ovic-w-110px text-center',
-      checker: 'fieldName',
-      header: 'Thao tác',
-      sortable: false,
-      headClass: 'ovic-w-120px text-center',
-      buttons: [
-        {
-          tooltip: 'Chi tiết',
-          label: '',
-          icon: 'pi pi-file',
-          name: 'INFO_DECISION',
-          cssClass: 'btn-warning rounded'
-        },
-        {
-          tooltip: 'Sửa',
-          label: '',
-          icon: 'pi pi-file-edit',
-          name: 'EDIT_DECISION',
-          cssClass: 'btn-primary rounded'
-        },
-        {
-          tooltip: 'Xoá',
-          label: '',
-          icon: 'pi pi-trash',
-          name: 'DELETE_DECISION',
-          cssClass: 'btn-danger rounded'
-        }
-      ]
-    }
-  ];
-
   headButtons = [
     {
       label: 'Thêm sự kiện',
@@ -205,11 +144,12 @@ export class DanhSachSuKienComponent implements OnInit {
   }
 
   loadData(page) {
-    const limit = this.themeSettingsService.settings.rows;
-    this.index = (page * limit) - limit + 1;
+    // const limit = this.themeSettingsService.settings.rows;
+    // this.index = (page * limit) - limit + 1;
     this.page = page;
     this.nguLieuSuKienService.searchData(page, this.search).subscribe({
       next: ({data, recordsTotal}) => {
+        let index=1;
         this.recordsTotal = recordsTotal;
         this.listData = data.map(m => {
           let nhanvatId = m.nhanvat_ids;
@@ -221,12 +161,14 @@ export class DanhSachSuKienComponent implements OnInit {
           m.diemditich_ids.forEach(f => {
             ditich.push(this.dataDiemditich.find(m => m.id === f));
           })
+          m['__indexTable']= index++;
           m['__title_converted'] = `<b>${m.title}</b>`;
           m['__time_converted'] = m.thoigian_batdau + ' - ' + m.thoigian_ketthuc;
           m['__nhanvat_converted'] = nhanvat;
           m['__diemditich_ids_coverted'] = ditich;
           return m;
         })
+        console.log(this.listData);
         this.isLoading = false;
         this.notificationService.isProcessing(false);
       },
@@ -291,7 +233,11 @@ export class DanhSachSuKienComponent implements OnInit {
     this.loadInit();
     this.notificationService.closeSideNavigationMenu(this.menuName);
   }
-
+  changeInput(event: string) {
+    setTimeout(()=>{
+      this.loadData(1);
+    },1000);
+  }
   async handleClickOnTable(button: OvicButton) {
     if (!button) {
       return;
@@ -377,6 +323,81 @@ export class DanhSachSuKienComponent implements OnInit {
     }
   }
 
+  btnAdd(){
+    this.formSave.reset({
+      title: '',
+      mota: '',
+      diemditich_ids: null,
+      thoigian_batdau: '',
+      thoigian_ketthuc: '',
+      files: null,
+      nhanvat_ids: null,
+      donvi_id: this.auth.userDonViId
+    });
+    this.formActive = this.listForm[FormType.ADDITION];
+    this.preSetupForm(this.menuName);
+  }
+  btnInformation(id:number){
+    this.dataInfo = this.listData.find(f => f.id === id);
+    console.log(this.dataInfo);
+    this.formSave.reset({
+      title: this.dataInfo.title,
+      mota: this.dataInfo.mota,
+      diemditich_ids: this.dataInfo.diemditich_ids,
+      thoigian_batdau: this.dataInfo.thoigian_batdau,
+      thoigian_ketthuc: this.dataInfo.thoigian_ketthuc,
+      files: this.dataInfo.files,
+      nhanvat_ids: this.dataInfo.nhanvat_ids,
+      donvi_id: this.dataInfo.donvi_id,
+      ngulieu_ids:this.dataInfo.ngulieu_ids
+    });
+    // this.formActive.object = this.dataInfo;
+    // this.formSave.disable();
+    setTimeout(() => this.notificationService.openSideNavigationMenu({
+      name: this.menuName,
+      template: this.formInformation,
+      size: this.sizeFullWidth,
+      offsetTop: '0px',
+      offCanvas: false
+    }), 100);
+  }
+  btnEdit(object1:SuKien){
+    // const object1 = this.listData.find(u => u.id === decision.id);
+    this.formSave.reset({
+      title: object1.title,
+      mota: object1.mota,
+      diemditich_ids: object1.diemditich_ids,
+      thoigian_batdau: object1.thoigian_batdau,
+      thoigian_ketthuc: object1.thoigian_ketthuc,
+      files: object1.files,
+      nhanvat_ids: object1.nhanvat_ids,
+      donvi_id: object1.donvi_id,
+      ngulieu_ids: object1.ngulieu_ids,
+    })
+
+    this.formSave.enable();
+    this.formActive = this.listForm[FormType.UPDATE];
+    this.formActive.object = object1;
+    this.preSetupForm(this.menuName);
+
+  }
+  async btnDelete(id:number){
+    const confirm = await this.notificationService.confirmDelete();
+    if (confirm) {
+      this.nguLieuDanhSachService.delete(id).subscribe({
+        next: () => {
+          this.page = Math.max(1, this.page - (this.listData.length > 1 ? 0 : 1));
+          this.notificationService.isProcessing(false);
+          this.notificationService.toastSuccess('Thao tác thành công');
+          this.loadData(this.page);
+
+        }, error: () => {
+          this.notificationService.isProcessing(false);
+          this.notificationService.toastError('Thao tác không thành công');
+        }
+      })
+    }
+  }
   dataInfo: SuKien;
 
   saveForm() {
@@ -392,6 +413,7 @@ export class DanhSachSuKienComponent implements OnInit {
   dsNgulieu:Ngulieu[];
   async btnAddNgulieu(){
     const result = await this.employeesPickerService.pickerNgulieu([], '');
+    console.log(result);
     this.f['ngulieu_ids'].setValue(result);
     this.dsNgulieu = result;
   }

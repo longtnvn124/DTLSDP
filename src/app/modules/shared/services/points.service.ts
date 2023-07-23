@@ -21,21 +21,44 @@ export class PointsService {
     private auth: AuthService
   ) {
   }
-   load(): Observable<Point[]>{
-     const conditions: OvicConditionParam[] = [
-       {
-         conditionName: 'is_deleted',
-         condition: OvicQueryCondition.equal,
-         value: '0'
-       },
-     ];
-     const fromObject = {
-       paged:1,
-       limit:-1,
-     }
-     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
-     return this.http.get<Dto>(this.api, {params}).pipe(map(res =>res.data));
-   }
+
+  loadPage(paged: number): Observable<{ data: Point[], recordsTotal: number }> {
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'is_deleted',
+        condition: OvicQueryCondition.equal,
+        value: '0'
+      },
+    ];
+    const fromObject = {
+      paged,
+      limit: this.themeSettingsService.settings.rows,
+      order: 'DESC',
+      orderby: 'root'
+    }
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
+    return this.http.get<Dto>(this.api, {params}).pipe(map(res => ({
+      data: res.data,
+      recordsTotal: res.recordsFiltered
+    })));
+  }
+
+  load(): Observable<Point[]> {
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'is_deleted',
+        condition: OvicQueryCondition.equal,
+        value: '0'
+      },
+    ];
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+    }
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
+    return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
+  }
+
   create(data: any): Observable<number> {
     data['created_by'] = this.auth.user.id;
     return this.http.post<Dto>(this.api, data).pipe(map(res => res.data));
@@ -51,8 +74,9 @@ export class PointsService {
     const deleted_by = this.auth.user.id;
     return this.update(id, {is_deleted, deleted_by});
   }
-  getDataByparentId(parentId:number):Observable<Point[]>{
-    const conditions:OvicConditionParam[]=[
+
+  getDataByparentId(parentId: number): Observable<Point[]> {
+    const conditions: OvicConditionParam[] = [
 
       {
         conditionName: 'is_deleted',
@@ -63,15 +87,15 @@ export class PointsService {
         conditionName: 'parent_id',
         condition: OvicQueryCondition.equal,
         value: parentId.toString(10),
-        orWhere:"and"
+        orWhere: "and"
       },
     ];
     const fromObject = {
-      paged:1,
-      limit:-1,
+      paged: 1,
+      limit: -1,
     }
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
-    return this.http.get<Dto>(this.api, {params}).pipe(map(res =>res.data));
+    return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
   }
 
 }

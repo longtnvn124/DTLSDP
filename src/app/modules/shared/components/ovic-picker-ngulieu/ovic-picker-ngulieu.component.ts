@@ -90,7 +90,7 @@ export class OvicPickerNgulieuComponent implements OnInit {
     this.nguLieuDanhSachService.getdataBydonviIdandSelect(this.auth.userDonViId,'').subscribe({
       next:(data)=>{
         this.data= data.map(m=>{
-          m['__loaingulieu_converted'] =this.dataLoaingulieu && m.loaingulieu ? this.dataLoaingulieu.find(f=>f.id === m.loaingulieu).ten :'';
+          m['__loaingulieu_converted'] =this.dataLoaingulieu && m.loaingulieu ? this.dataLoaingulieu.find(f=>f.kyhieu === m.loaingulieu).ten :'';
           m['__linhvuc_converted'] =this.dataLinhvuc && m.linhvuc ? this.dataLinhvuc.find(f=>f.id === m.linhvuc).ten :'';
           return m;
         })

@@ -6,7 +6,7 @@ import {
   TextureLoader,
   SpriteMaterial,
   Sprite, RepeatWrapping, DoubleSide, VideoTexture, AudioLoader,
-  Vector3
+  Vector3, LinearFilter
 } from "three";
 import TweenLite from "gsap";
 
@@ -74,29 +74,12 @@ export class sceneControl {
   }
 
   deletePoint(ovicPointId: number) {
-    // this.points = this.points.filter(u => u.userData.ovicPointId !== ovicPointId);
-    // let object3d = this.spheres.find(f => f.userData.ovicPointId === ovicPointId)
-    // this.scene.remove(object3d);
-    // object3d.geometry.dispose();
-    // object3d.material.dispose();
-    // object3d = undefined;
-    // console.log(this.scene);
-    // console.log(this.spheres);
-    // console.log(this.sprites);
-    // ovicPointId: 27
-    // console.log(this.sprites.filter(f=>f.userData['ovicPointId'] === ovicPointId));
-    // console.log(this.spheres.filter(f=>f.userData['ovicPointId'] === ovicPointId));
     let spritesRemove = this.sprites.filter(f => f.userData['ovicPointId'] === ovicPointId)
     spritesRemove.forEach(f => {
-        // sprite.material.dispose();
-        // sprite.material.map.dispose();
-        // sprite.texture.dispose();
-        f.material.dispose();
-        f.material.map.dispose();
-        this.scene.remove(f);
-      }
-    )
-
+      f.material.dispose();
+      f.material.map.dispose();
+      this.scene.remove(f);
+    })
   }
 
 
@@ -151,16 +134,20 @@ export class sceneControl {
 
   createMovie(scene, videoDom: HTMLVideoElement) {
     this.scene = scene;
-    const geometry = new SphereGeometry(50, 32, 32);
+    //=========================create videoTexture======================
     const videoTexture = new VideoTexture(videoDom);
-    const material = new MeshBasicMaterial({map: videoTexture, side: DoubleSide});
-    material.needsUpdate = true;
-    // material.transparent = true;
-    this.sphere = new Mesh(geometry, material);
-    scene.add(this.sphere);
+    console.log(videoTexture)
+    const geometry = new SphereGeometry(50, 32, 32);
+    const sphereMaterial = new MeshBasicMaterial({map: videoTexture, side: DoubleSide});
+    sphereMaterial.needsUpdate = true;
+    console.log(sphereMaterial)
+    this.sphere = new Mesh(geometry, sphereMaterial);
+    this.scene.add(this.sphere);
+    videoTexture.needsUpdate = true;
     this.points.forEach((f) => {
       this.addTooltip(f);
     });
+    console.log(this.scene);
   }
 
   addAudio(audio) {

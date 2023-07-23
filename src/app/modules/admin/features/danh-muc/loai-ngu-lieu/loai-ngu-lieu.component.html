@@ -40,9 +40,10 @@
           <div class="row">
             <div class="col-6">
               <p class="form-row" >
-                <label>Kí hiệu<span class="ovic-mark">*</span></label>
-                <input  type="text" placeholder="kí hiệu..." formControlName="kyhieu"
-                       autocomplete="off">
+                <label>Kiểu dữ liệu<span class="ovic-mark">*</span></label>
+                <p-dropdown placeholder="Chọn..." class="w-100" [options]="kieuNguLieuOption" optionLabel="label"
+                            optionValue="value"
+                            formControlName='kyhieu'></p-dropdown>
               </p>
             </div>
             <div class="col-6">

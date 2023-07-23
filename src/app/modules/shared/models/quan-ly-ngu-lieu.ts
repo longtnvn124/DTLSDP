@@ -13,7 +13,7 @@ export interface NguLieuChung {
 }
 
 export interface Ngulieu extends NguLieuChung {
-  loaingulieu: number;
+  loaingulieu: string;
   linhvuc: number;
   chuyenmuc: string;
   diemditich_id: number;

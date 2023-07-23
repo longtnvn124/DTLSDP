@@ -1,6 +1,3 @@
-html{
-  height:100%;
-}
 
 .ovic-side-navigation-content__body {
   max-height: calc(var(--max-screen-height, 100vh) - var(--side-navigation-offset-top, 60px) - 60px - 60px);

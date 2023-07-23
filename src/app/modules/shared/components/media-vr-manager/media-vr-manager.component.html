@@ -3,116 +3,104 @@
 <div #container class="container-vr ctn_body">
 
 </div>
-<!--<div>-->
-<!--  <button pRipple pButton class="pi pi-volume-ap" (click)="btnUnmute()" label="Tắt thuyết minh"></button>-->
 
-<!--  <button pRipple pButton class="pi pi-volume-off" (click)="btnMute()" label="Bật thuyết minh"></button>-->
-
-<!--  <button (click)="toggleVolume()">-->
-<!--    <span *ngIf="isVolumeOn"><i class="pi pi-volume-up"></i></span>-->
-<!--    <span *ngIf="!isVolumeOn"><i class="pi pi-volume-off"></i></span>-->
-<!--  </button>-->
-<!--</div>-->
-
-<input type="file" #fileChooser hidden="true" (change)="onInputAvatar($event , fileChooser)">
-<p-contextMenu [target]="container" [model]="items" appendTo="body"></p-contextMenu>
+<p-contextMenu [target]="container" [model]="items" appendTo="body" *ngIf="!showOnly"></p-contextMenu>
 <ng-template #fromUpdate>
-    <div class="ovic-side-navigation-content h-100">
-      <div class="ovic-side-navigation-content__head">
-        <h4 class="ovic-side-navigation-content__head__title">{{formState ? formState.formTitle : ''}}</h4>
-        <button (click)="closeForm()" pButton pRipple type="button" icon="pi pi-times"
-                class="p-button-rounded p-button-danger p-button-text close ovic-side-navigation-content__head__btn-close"></button>
-      </div>
-      <div class="ovic-side-navigation-content__body ovic-scroll-style">
-        <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
-          <form [formGroup]="formSave" autocomplete="off">
-            <div class="row">
-              <div class="col-6">
-                <p class="form-row">
-                  <label>Tên vị trí <span class="ovic-mark">*</span></label>
-                  <input type="text" placeholder="Tên vị trí..." formControlName="title"
-                         autocomplete="off">
-                </p>
-              </div>
-              <div class="col-6">
-                <p class="form-row">
-                  <label>Icon<span class="ovic-mark">*</span></label>
-                  <p-dropdown [options]="iconList" optionLabel="name" formControlName="icon" optionValue="path"
-                              class="w-100" placeholder="chọn...">
-                  </p-dropdown>
-                </p>
+  <div class="ovic-side-navigation-content h-100">
+    <div class="ovic-side-navigation-content__head">
+      <h4 class="ovic-side-navigation-content__head__title">{{formState ? formState.formTitle : ''}}</h4>
+      <button (click)="closeForm()" pButton pRipple type="button" icon="pi pi-times"
+              class="p-button-rounded p-button-danger p-button-text close ovic-side-navigation-content__head__btn-close"></button>
+    </div>
+    <div class="ovic-side-navigation-content__body ovic-scroll-style">
+      <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
+        <form [formGroup]="formSave" autocomplete="off">
+          <div class="row">
+            <div class="col-6">
+              <p class="form-row">
+                <label>Tên vị trí <span class="ovic-mark">*</span></label>
+                <input type="text" placeholder="Tên vị trí..." formControlName="title"
+                       autocomplete="off">
+              </p>
+            </div>
+            <div class="col-6">
+              <p class="form-row">
+                <label>Icon<span class="ovic-mark">*</span></label>
+                <p-dropdown [options]="iconList" optionLabel="name" formControlName="icon" optionValue="path"
+                            class="w-100" placeholder="chọn...">
+                </p-dropdown>
+              </p>
 
-              </div>
             </div>
-            <div class="row">
-              <div class="col-12">
-                <p class="form-row">
-                  <label>Mô tả</label>
-                  <textarea formControlName="mota" placeholder="Mô tả..." autocomplete="off" cols="30"
-                            rows="5"></textarea>
-                </p>
-              </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <p class="form-row">
+                <label>Mô tả</label>
+                <textarea formControlName="mota" placeholder="Mô tả..." autocomplete="off" cols="30"
+                          rows="5"></textarea>
+              </p>
             </div>
-            <div class="row">
-              <div class="col-12">
-                <p class="form-row">
-                  <label>Loại ngữ liệu</label>
-                  <p-multiSelect class="custom-multiselect w-100" [options]="dataLoaiNguLieu"
-                                 formControlName="loaingulieu" optionValue="ten" optionLabel="ten" placeholder="Chọn..."></p-multiSelect>
-                </p>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-12">
-                <p class="form-row">
-                  <label>File media <span class="ovic-mark">*</span></label>
-                  <ng-container *ngIf="typeAdd === 'VITRI'">
-                    <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"
-                                       [formField]="f['file_media']" [multiple]="true"
-                                       [accept]="['.jpg']" [state]="1"></app-file-list-local>
-                  </ng-container>
+          </div>
 
-                  <ng-container *ngIf="typeAdd === 'THONGTIN'">
-
-                    <button pRipple class="btn w-100 btn-ctm" (click)="fileChooser.click()">
-                      <img *ngIf="characterAvatar; else showIcon" [src]="characterAvatar | ovicSafeUrl" alt="">
-                      <ng-template #showIcon>
-                        <i class="pi pi-camera "></i>
-                      </ng-template>
-                    </button>
-                  </ng-container>
-
-                </p>
+          <div class="ovic-ui-table position-relative w-100 " style="margin-top:15px">
+            <div class="wrap-table">
+              <div class="p-datatable-header">
+                <h3 class="tbl-title ng-star-inserted">DM Ngữ liệu</h3>
+                <button type="button" pButton pRipple class="lgp__button-add p-button-success ml-2" label="Thêm mới"
+                        icon="pi pi-plus" matTooltip="Thêm mới ngữ liệu" matTooltipPosition="above"
+                        matTooltipClass="ovic-table--tooltip" (click)="btnAddNgulieu()"></button>
               </div>
+              <table class="tbl w-100">
+                <thead class="p-datatable-thead">
+                <tr>
+                  <th class="ovic-w-50px text-center">#</th>
+                  <th> Tiêu đề ngữ liệu</th>
+                  <th>Loại ngữ liệu</th>
+                  <th class="ovic-w-110px text-center">Thao tác</th>
+                </tr>
+                </thead>
+                <tbody class="p-datatable-tbody">
+                <tr *ngIf="!f['ds_ngulieu'].value || f['ds_ngulieu'].value.length === 0">
+                  <td [attr.colspan]="4">Không có ngữ liệu</td>
+                </tr>
+                <tr *ngFor="let r of f['ds_ngulieu'].value; index as i">
+                  <td class="ovic-w-50px text-center">{{ index + i }}</td>
+                  <td>{{r.title}}</td>
+                  <td>{{r['__loaingulieu_converted']}}</td>
+                  <td class="ovic-w-110px text-center">
+                    <button type="button" pButton pRipple class="lgp__button" icon="pi pi-download"
+                            matTooltip="Cập nhật thông tin" matTooltipPosition="above"
+                            matTooltipClass="ovic-table--tooltip" (click)="btnDowloadNgulieu(r)"></button>
+                    <button type="button" pButton pRipple class="lgp__button p-button-danger ml-2" icon="pi pi-trash"
+                            matTooltip="Xóa " matTooltipPosition="above" matTooltipClass="ovic-table--tooltip"
+                            (click)="btnDeleteNgulieu(r.id)"></button>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
             </div>
-            <div class="row">
-              <div class="col-12">
-                <p class="form-row">
-                  <label>File audio thuyết minh</label>
-                  <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"
-                                       [formField]="f['file_audio']" [multiple]="true" [state]="1"></app-file-list-local>
-                </p>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-      <div class="ovic-side-navigation-content__foot">
-        <span class="ovic-side-navigation-content__foot__notice mr-auto"><mark>(*)</mark> bắt buộc phải nhập</span>
-        <button pButton pRipple type="button" label="Cập nhật" icon="pi pi-save" (click)="saveForm()"
-                class="p-button-success"></button>
-        <button pButton pRipple type="button" label="Đóng" class="p-button-secondary ml-3" icon="pi pi-times"
-                (click)="closeForm()"></button>
+          </div>
+        </form>
       </div>
     </div>
+    <div class="ovic-side-navigation-content__foot">
+      <span class="ovic-side-navigation-content__foot__notice mr-auto"><mark>(*)</mark> bắt buộc phải nhập</span>
+      <button pButton pRipple type="button" label="Cập nhật" icon="pi pi-save" (click)="saveForm()"
+              class="p-button-success"></button>
+      <button pButton pRipple type="button" label="Đóng" class="p-button-secondary ml-3" icon="pi pi-times"
+              (click)="closeForm()"></button>
+    </div>
+  </div>
 </ng-template>
 
 
 <div class="onRight-bottom">
   <p-button class="m-2" [icon]="rotate ? 'pi pi-spin pi-spinner':'pi pi-refresh'" (onClick)="btnRotate()"></p-button>
-  <p-button class="m-2" icon="pi pi-volume-up" styleClass="p-button-secondary" (onClick)="btnVolume()"></p-button>
-  <!--  <p-button class="m-2" icon="pi pi-minus" styleClass="p-button-success" ></p-button>-->
-  <ng-template [ngIf]="typeMedia === 'video'">
+  <ng-template [ngIf]="isAudio">
+    <p-button class="m-2" icon="pi pi-volume-up" styleClass="p-button-secondary" (onClick)="btnVolume()"></p-button>
+  </ng-template>
+  <ng-template [ngIf]="typeNgulieu === 'video'">
     <p-button class="m-2" [icon]="video360.paused ? 'pi pi-play' : 'pi pi-pause'" styleClass="p-button-warning"
               (onClick)="btnPausePlay()"></p-button>
   </ng-template>
@@ -132,12 +120,12 @@
         <div id="media" class="w-100 text-center">
           <img src="{{dataInformation['imageLink']}}" class="datainfo-body__img">
         </div>
-<!--        <div *ngIf="dataInformation.file_audio" id="audio" class="w-100 text-center">-->
-<!--          &lt;!&ndash;          <audio src="{{dataInformation['audioLink']}}"></audio>&ndash;&gt;-->
-<!--          <audio controls>-->
-<!--            <source src="{{dataInformation['audioLink']}}" type="audio/mpeg">-->
-<!--          </audio>-->
-<!--        </div>-->
+        <!--        <div *ngIf="dataInformation.file_audio" id="audio" class="w-100 text-center">-->
+        <!--          &lt;!&ndash;          <audio src="{{dataInformation['audioLink']}}"></audio>&ndash;&gt;-->
+        <!--          <audio controls>-->
+        <!--            <source src="{{dataInformation['audioLink']}}" type="audio/mpeg">-->
+        <!--          </audio>-->
+        <!--        </div>-->
       </ng-container>
     </div>
     <div class="ctn-right">
@@ -147,9 +135,6 @@
         </div>
         <div class="datainfo-body mt-1">
           <div class="datainfo-body__dec">{{dataInformation.mota}}</div>
-<!--          <div class="datainfo-body__tag &#45;&#45;fs-14 font-weight-bold" >Tag:-->
-<!--            <div class="d-inline-block datainfo-body__tag&#45;&#45;item" *ngFor="let item of dataInformation.loaingulieu">{{item}}</div>-->
-<!--          </div>-->
         </div>
 
       </ng-container>
@@ -158,7 +143,7 @@
 </p-dialog>
 
 <ng-template [ngIf]="backToScene">
-  <!--  <p-button icon="pi pi-chevron-left" label="Thoát" class=" btn-backtoScene p-button-secondary" (click)="btnBackToScere($event)"></p-button>-->
   <button pButton pRipple type="button" label="Thoát" icon="pi pi-chevron-left" (click)="btnBackToScere($event)"
           class="btn-backtoScene p-button-secondary"></button>
 </ng-template>
+

@@ -117,7 +117,7 @@ export class DanhSachNguLieuComponent implements OnInit {
         this.recordsTotal = recordsTotal;
         this.listData = data.map(m => {
           const linhvuc = this.dataLinhvuc && m.linhvuc ? this.dataLinhvuc.find(f => f.id === m.linhvuc) : null;
-          const loaingulieu = this.dataLoaingulieu && m.loaingulieu ? this.dataLoaingulieu.find(f => f.id === m.loaingulieu) : null;
+          const loaingulieu = this.dataLoaingulieu && m.loaingulieu ? this.dataLoaingulieu.find(f => f.kyhieu === m.loaingulieu) : null;
 
           m['indexTable'] = i++;
           m['__ten_converted'] = `<b>${m.title}</b><br>`;

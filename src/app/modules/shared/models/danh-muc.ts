@@ -1,4 +1,5 @@
 import {OvicFile} from "@core/models/file";
+import {Ngulieu} from "@shared/models/quan-ly-ngu-lieu";
 
 export interface DmChung {
   is_deleted: number; //1: deleted; 0: not deleted
@@ -21,8 +22,8 @@ export interface DmLoaiNguLieu extends DmChung {
   id: number;
   ten: string;
   mota: string;
-  donvi_id:number;
-  kihieu: string;
+  donvi_id: number;
+  kyhieu: string;
   status: number; //1 Active; 0: inactive
 }
 
@@ -48,9 +49,8 @@ export interface DmDiemDiTich extends DmChung {
   ten: string;
   mota: string;
   vitri_ggmap: string;
-  file_media: OvicFile[];
+  ds_ngulieu: Ngulieu[];
   status: number; //1 Active; 0: inactive
-  total_ngulieu?:number;
 }
 
 
@@ -61,3 +61,14 @@ export interface DonVi {
   description: string;
   status: number; //1 Active; 0: inactive
 }
+
+
+export const KieuDuLieuNguLieu: { label: string, value: string }[] = [
+  {label: 'Hình ảnh', value: 'image'},
+  {label: 'Video', value: 'video'},
+  {label: 'Âm thanh', value: 'audio'},
+  {label: 'Video 360', value: 'video360'},
+  {label: 'Hình ảnh 360', value: 'image360'},
+  {label: 'Text', value: 'text'},
+  {label: 'Tài liệu', value: 'others'},
+]

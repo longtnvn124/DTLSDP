@@ -119,6 +119,8 @@ import {ContextMenuModule} from "primeng/contextmenu";
 import {DialogModule} from "primeng/dialog";
 import { OvicPickerNgulieuComponent } from './components/ovic-picker-ngulieu/ovic-picker-ngulieu.component';
 import {OrganizationPickerComponent} from "@shared/components/organization-picker/organization-picker.component";
+import { OvicInputVrMediaComponent } from './components/ovic-input-vr-media/ovic-input-vr-media.component';
+import { OvicFileCorpusComponent } from './components/ovic-file-corpus/ovic-file-corpus.component';
 
 
 @NgModule({
@@ -199,7 +201,9 @@ import {OrganizationPickerComponent} from "@shared/components/organization-picke
     OvicLoadImageByIdDirective,
     OvicHtmlDecodePipe,
     OvicPickerNgulieuComponent,
-    OrganizationPickerComponent
+    OrganizationPickerComponent,
+    OvicInputVrMediaComponent,
+    OvicFileCorpusComponent
   ],
     imports: [
         EditorModule,

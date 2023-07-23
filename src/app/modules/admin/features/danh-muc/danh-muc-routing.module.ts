@@ -36,15 +36,16 @@ const routes: Routes = [
     data: {state: 'danh-muc--nhan-vat-lich-su'}
   },
   {
-    path: '',
-    redirectTo: 'admin/dashboard',
-    pathMatch: 'full'
+    path: 'media-vr-manager',
+    component: MediavrComponent,
+    data: {state: 'danh-muc--media-vr'}
   },
   {
-    path: 'media-vr-manager',
-    component:MediavrComponent,
-    data: {state: 'danh-muc--media-vr'}
-  }
+    path: '',
+    redirectTo: 'chuyen-muc',
+    pathMatch: 'full'
+  },
+
 ];
 
 @NgModule({

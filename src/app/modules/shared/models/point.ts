@@ -1,4 +1,5 @@
 import {OvicFile} from "@core/models/file";
+import {Ngulieu} from "@shared/models/quan-ly-ngu-lieu";
 
 export interface Pinable {
   id: number;
@@ -7,14 +8,15 @@ export interface Pinable {
   mota:string;
   location: number[]; // vi tri vector3
   type: string; //DIRECT | INFO
-  parent_id: number;
+  parent_id: number; //ngulieu_id
+
   donvi_id:number;
-  ds_ngulieu: OvicFile[]; //danh sách audio,hảnh 360 | video360
+  ds_ngulieu: Ngulieu[]; //danh sách audio | hảnh 360 | video360 ;
 
 }
 
 export interface Point extends Pinable {
-
+  ditich_id:number;// thay thế parent_id
   is_deleted: number; //1: deleted; 0: not deleted
   deleted_by: number;
   created_by: number;
@@ -22,3 +24,6 @@ export interface Point extends Pinable {
   created_at: string; // sql timestamp
   updated_at: string; // sql timestamp
 }
+
+
+

@@ -1,31 +1,33 @@
 import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
-import {FormType, NgPaginateEvent, OvicForm, OvicTableStructure} from "@shared/models/ovic-models";
-import {DmDiemDiTich} from "@shared/models/danh-muc";
 import {Paginator} from "primeng/paginator";
+import {MediaVrManagerComponent} from "@shared/components/media-vr-manager/media-vr-manager.component";
+import {FormType, NgPaginateEvent, OvicForm, OvicTableStructure} from "@shared/models/ovic-models";
 import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {debounceTime, filter, Observable, Subject, Subscription} from "rxjs";
+import {DmDiemDiTich} from "@shared/models/danh-muc";
 import {ThemeSettingsService} from "@core/services/theme-settings.service";
-import {DanhMucDiemDiTichService} from "@shared/services/danh-muc-diem-di-tich.service";
 import {NotificationService} from "@core/services/notification.service";
-import {OvicButton} from "@core/models/buttons";
-import {MediaVrManagerComponent} from "@shared/components/media-vr-manager/media-vr-manager.component";
+import {DanhMucDiemDiTichService} from "@shared/services/danh-muc-diem-di-tich.service";
 import {AuthService} from "@core/services/auth.service";
-import {Router} from '@angular/router';
+import {Router} from "@angular/router";
 import {MediaService} from "@shared/services/media.service";
 import {FileService} from "@core/services/file.service";
 import {HelperService} from "@core/services/helper.service";
+import {OvicButton} from "@core/models/buttons";
+import {Point} from "@shared/models/point";
+import {PointsService} from "@shared/services/points.service";
 
-
-interface FormDmDiemDiTich extends OvicForm {
-  object: DmDiemDiTich;
+interface FormDiemTruyCap extends OvicForm {
+  object: Point;
 }
 
 @Component({
-  selector: 'app-diem-di-tich',
-  templateUrl: './diem-di-tich.component.html',
-  styleUrls: ['./diem-di-tich.component.css']
+  selector: 'app-danh-sach-diem-truy-cap',
+  templateUrl: './danh-sach-diem-truy-cap.component.html',
+  styleUrls: ['./danh-sach-diem-truy-cap.component.css']
 })
-export class DiemDiTichComponent implements OnInit {
+export class DanhSachDiemTruyCapComponent implements OnInit {
+
   @ViewChild('fromUpdate', {static: true}) template: TemplateRef<any>;
   @ViewChild('formMedia') formMedia: TemplateRef<any>;
   @ViewChild(Paginator) paginator: Paginator;
@@ -51,6 +53,13 @@ export class DiemDiTichComponent implements OnInit {
       header: 'Tên',
       sortable: false,
 
+    },
+    {
+      fieldType: 'normal',
+      field: ['type'],
+      innerData: true,
+      header: 'loai',
+      sortable: false,
     },
     // {
     //   fieldType: 'normal',
@@ -85,7 +94,18 @@ export class DiemDiTichComponent implements OnInit {
           label: '',
           icon: 'pi pi-globe',
           name: 'MEDIA_DECISION',
-          cssClass: 'btn-warning rounded'
+          cssClass: 'btn-warning rounded',
+          conditionField: 'type',
+          conditionValue: 'DIRECT'
+        },
+        {
+          tooltip: 'Truy cập Vr360',
+          label: '',
+          icon: 'pi pi-globe',
+          name: '__no_actions',
+          cssClass: 'btn-secondary ovic-button--invisible rounded',
+          conditionField: 'type',
+          conditionValue: 'INFO'
         },
         {
           tooltip: 'Thông tin chi tiết ',
@@ -114,10 +134,10 @@ export class DiemDiTichComponent implements OnInit {
 
   headButtons = [
     {
-      label: 'Thêm di tích',
+      label: 'Thêm điểm truy cập',
       name: 'BUTTON_ADD_NEW',
       icon: 'pi-plus pi',
-      class: 'p-button-rounded p-button-success ml-3 mr-2'
+      class: 'p-button-rounded p-button-success ml-3'
     },
   ];
 
@@ -126,54 +146,45 @@ export class DiemDiTichComponent implements OnInit {
     [FormType.UPDATE]: {type: FormType.UPDATE, title: 'Cập nhật di tích', object: null, data: null}
   };
 
-  formActive: FormDmDiemDiTich;
   formSave: FormGroup;
 
-  private OBSERVE_PROCESS_FORM_DATA = new Subject<FormDmDiemDiTich>();
+  private OBSERVE_PROCESS_FORM_DATA = new Subject<FormDiemTruyCap>();
 
-  listData: DmDiemDiTich[];
+  data: Point[];
   rows = this.themeSettingsService.settings.rows;
-  loadInitFail = false;
   subscription = new Subscription();
   sizeFullWidth = 1024;
   isLoading = true;
+
+  error = false;
   needUpdate = false;
-  menuName: 'diem-truy-cap';
-
+  menuName: 'dm_diem-truy-cap';
   page = 1;
-
   recordsTotal = 0;
-
   index = 1;
   filter = {
     search: ''
   }
-
-  dataBinding: any;
-
-  filePermission = {
-    canDelete: true,
-    canDownload: true,
-    canUpload: true
-  };
-  filePermistionOnlyShow = {canDelete: false, canDownload: true, canUpload: false};
-  visible: boolean = false;
 
   constructor(
     private themeSettingsService: ThemeSettingsService,
     private fb: FormBuilder,
     private notificationService: NotificationService,
     private danhMucDiemDiTichService: DanhMucDiemDiTichService,
+    private pointsService: PointsService,
     private auth: AuthService,
-    private router: Router,
-    private mediaService: MediaService,
     private fileService: FileService,
-    private helperService: HelperService,
   ) {
     this.formSave = this.fb.group({
-      ten: ['', Validators.required],
-      mota: [''],
-      status: ['', Validators.required]
+      icon: ['', Validators.required],
+      title: ['', Validators.required],
+      mota: ['',],
+      location: [''],
+      type: ['', Validators.required],
+      ds_ngulieu: [[],],
+      parent_id: ['', Validators.required],
+      donvi_id: [null, Validators.required],
+      ditich_id: [null, Validators.required]
     });
 
     const observeProcessFormData = this.OBSERVE_PROCESS_FORM_DATA.asObservable().pipe(debounceTime(100)).subscribe(form => this.__processFrom(form));
@@ -196,27 +207,42 @@ export class DiemDiTichComponent implements OnInit {
   loadData(page) {
     const limit = this.themeSettingsService.settings.rows;
     this.index = (page * limit) - limit + 1;
-    this.danhMucDiemDiTichService.search(page, null, this.filter.search).subscribe({
+    this.isLoading = true;
+    this.pointsService.loadPage(this.page).subscribe({
       next: ({data, recordsTotal}) => {
+        this.data = data;
         this.recordsTotal = recordsTotal;
-        this.listData = data.map(m => {
-          const sIndex = this.statusList.findIndex(i => i.value === m.status);
-          m['__status'] = sIndex !== -1 ? this.statusList[sIndex].color : '';
-          // m['__fileMedia_converted'] = m.ds_ngulieu ==[] ||m.ds_ngulieu == null?null :this.fileService.getPreviewLinkLocalFile(m.ds_ngulieu[0]);
-
-          // m['__ten_converted'] = `<b>${m.ten}</b> <br>` + m.mota;
-          // m['__duongdan']=m.vitri_ggmap + ' ' + `<a href="${m.vitri_ggmap}" target="_blank"><i class="pi pi-map"></i></a>`;
-          return m;
-        })
+        console.log(this.recordsTotal)
         this.isLoading = false;
-      }, error: () => {
+        this.error = false;
+      },
+      error: () => {
+        this.error = true;
         this.isLoading = false;
-        this.notificationService.toastError('Mất kết nối với máy chủ');
-      }
-    })
+        this.notificationService.toastError('Mất kết nối mạng');
+      },
+    });
+    // this.danhMucDiemDiTichService.search(page, null, this.filter.search).subscribe({
+    //   next: ({data, recordsTotal}) => {
+    //     this.recordsTotal = recordsTotal;
+    //     this.listData = data.map(m => {
+    //       const sIndex = this.statusList.findIndex(i => i.value === m.status);
+    //       m['__status'] = sIndex !== -1 ? this.statusList[sIndex].color : '';
+    //       // m['__fileMedia_converted'] = m.ds_ngulieu ==[] ||m.ds_ngulieu == null?null :this.fileService.getPreviewLinkLocalFile(m.ds_ngulieu[0]);
+    //
+    //       // m['__ten_converted'] = `<b>${m.ten}</b> <br>` + m.mota;
+    //       // m['__duongdan']=m.vitri_ggmap + ' ' + `<a href="${m.vitri_ggmap}" target="_blank"><i class="pi pi-map"></i></a>`;
+    //       return m;
+    //     })
+    //     this.isLoading = false;
+    //   }, error: () => {
+    //     this.isLoading = false;
+    //     this.notificationService.toastError('Mất kết nối với máy chủ');
+    //   }
+    // })
   }
 
-  private __processFrom({data, object, type}: FormDmDiemDiTich) {
+  private __processFrom({data, object, type}: FormDiemTruyCap) {
     const observer$: Observable<any> = type === FormType.ADDITION ? this.danhMucDiemDiTichService.create(data) : this.danhMucDiemDiTichService.update(object.id, data);
     observer$.subscribe({
       next: () => {
@@ -252,7 +278,7 @@ export class DiemDiTichComponent implements OnInit {
   private preSetupForm(name: string) {
     this.notificationService.isProcessing(false);
     this.notificationService.openSideNavigationMenu({
-      name:this.menuName,
+      name,
       template: this.template,
       size: 600,
       offsetTop: '0px'
@@ -268,79 +294,76 @@ export class DiemDiTichComponent implements OnInit {
     if (!button) {
       return;
     }
-    const decision = button.data && this.listData ? this.listData.find(u => u.id === button.data) : null;
-    switch (button.name) {
-      case 'BUTTON_ADD_NEW':
-        console.log(123);
-        this.formSave.reset({
-          ten: '',
-          mota: '',
-          vitri_ggmap: '',
-          status: null,
-          ds_ngulieu: null,
-        });
-        // this.characterAvatar = ''
-        this.formActive = this.listForm[FormType.ADDITION];
-        this.preSetupForm(this.menuName);
-        break;
-      case 'EDIT_DECISION':
-        const object1 = this.listData.find(u => u.id === decision.id);
-        this.formSave.reset({
-          ten: object1.ten,
-          mota: object1.mota,
-          vitri_ggmap: object1.vitri_ggmap,
-          status: object1.status,
-          ds_ngulieu: object1.ds_ngulieu,
-
-        });
-        // this.characterAvatar = object1.ds_ngulieu ? getLinkDownload(object1.ds_ngulieu['id']) : '';
-        this.formActive = this.listForm[FormType.UPDATE];
-        this.formActive.object = object1;
-        this.preSetupForm(this.menuName);
-        break;
-      case 'DELETE_DECISION':
-        const confirm = await this.notificationService.confirmDelete();
-        if (confirm) {
-          this.danhMucDiemDiTichService.delete(decision.id).subscribe({
-            next: () => {
-              this.page = Math.max(1, this.page - (this.listData.length > 1 ? 0 : 1));
-              this.notificationService.isProcessing(false);
-              this.notificationService.toastSuccess('Thao tác thành công');
-              this.loadData(this.page);
-
-            }, error: () => {
-              this.notificationService.isProcessing(false);
-              this.notificationService.toastError('Thao tác không thành công');
-            }
-          })
-        }
-        break;
-      case 'INFORMATION_DECTISION':
-        this.dataInformation = this.listData.find(u => u.id === decision.id);
-        this.visible = true;
-        break;
-      case 'MEDIA_DECISION':
-        this.dataBinding = this.listData.find(u => u.id === decision.id);
-        // this.dataBinding = this.auth.encryptData(`${data}`);
-        // console.log(dataBinding);
-        const code = this.auth.encryptData(`${this.dataBinding.id}`);
-        this.router.navigate(['admin/danh-muc/media-vr-manager'], {queryParams: {code}});
-        break
-      default:
-        break;
-    }
+    // const decision = button.data && this.listData ? this.listData.find(u => u.id === button.data) : null;
+    // switch (button.name) {
+    //   case 'BUTTON_ADD_NEW':
+    //     this.formSave.reset({
+    //       ten: '',
+    //       mota: '',
+    //       status: '',
+    //     });
+    //     // this.characterAvatar = ''
+    //     this.formActive = this.listForm[FormType.ADDITION];
+    //     this.preSetupForm(this.menuName);
+    //     break;
+    //   case 'EDIT_DECISION':
+    //     const object1 = this.listData.find(u => u.id === decision.id);
+    //     this.formSave.reset({
+    //       ten: object1.ten,
+    //       mota: object1.mota,
+    //       vitri_ggmap: object1.vitri_ggmap,
+    //       status: object1.status,
+    //       ds_ngulieu: object1.ds_ngulieu,
+    //
+    //     });
+    //     // this.characterAvatar = object1.ds_ngulieu ? getLinkDownload(object1.ds_ngulieu['id']) : '';
+    //     this.formActive = this.listForm[FormType.UPDATE];
+    //     this.formActive.object = object1;
+    //     this.preSetupForm(this.menuName);
+    //     break;
+    //   case 'DELETE_DECISION':
+    //     const confirm = await this.notificationService.confirmDelete();
+    //     if (confirm) {
+    //       this.danhMucDiemDiTichService.delete(decision.id).subscribe({
+    //         next: () => {
+    //           this.page = Math.max(1, this.page - (this.listData.length > 1 ? 0 : 1));
+    //           this.notificationService.isProcessing(false);
+    //           this.notificationService.toastSuccess('Thao tác thành công');
+    //           this.loadData(this.page);
+    //
+    //         }, error: () => {
+    //           this.notificationService.isProcessing(false);
+    //           this.notificationService.toastError('Thao tác không thành công');
+    //         }
+    //       })
+    //     }
+    //     break;
+    //   case 'INFORMATION_DECTISION':
+    //     this.dataInformation = this.listData.find(u => u.id === decision.id);
+    //     this.visible = true;
+    //     break;
+    //   case 'MEDIA_DECISION':
+    //     this.dataBinding = this.listData.find(u => u.id === decision.id);
+    //     // this.dataBinding = this.auth.encryptData(`${data}`);
+    //     // console.log(dataBinding);
+    //     const code = this.auth.encryptData(`${this.dataBinding.id}`);
+    //     this.router.navigate(['admin/danh-muc/media-vr-manager'], {queryParams: {code}});
+    //     break
+    //   default:
+    //     break;
+    // }
   }
 
   dataInformation: DmDiemDiTich;
 
   saveForm() {
-    if (this.formSave.valid) {
-      this.formActive.data = this.formSave.value;
-      this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
-    } else {
-      this.formSave.markAllAsTouched();
-      this.notificationService.toastError('Vui lòng điền đầy đủ thông tin');
-    }
+    // if (this.formSave.valid) {
+    //   this.formActive.data = this.formSave.value;
+    //   this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
+    // } else {
+    //   this.formSave.markAllAsTouched();
+    //   this.notificationService.toastError('Vui lòng điền đầy đủ thông tin');
+    // }
   }
 
   // btnControlVolume() {
@@ -395,5 +418,4 @@ export class DiemDiTichComponent implements OnInit {
   //     this.characterAvatar = URL.createObjectURL(file);;
   //   }
   // }
-
 }

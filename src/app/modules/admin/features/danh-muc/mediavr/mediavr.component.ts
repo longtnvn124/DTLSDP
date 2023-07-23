@@ -2,18 +2,8 @@ import {
   AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, Renderer2, TemplateRef, ViewChild
 } from '@angular/core';
 import {Pinable, Point} from "@shared/models/point";
-
-import {
-  PerspectiveCamera,
-  Raycaster,
-  WebGLRenderer,
-  Vector2,
-  Scene,
-  Vector3,
-  AudioListener,
-  AudioLoader,
-  Audio
-} from 'three';
+import {PerspectiveCamera, Raycaster, WebGLRenderer, Vector2, Scene,
+  Vector3, AudioListener, AudioLoader, Audio} from 'three';
 // import {OrbitControls} from "@three-ts/orbit-controls";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {MenuItem} from "primeng/api/menuitem";
@@ -24,7 +14,7 @@ import {AuthService} from "@core/services/auth.service";
 import {PointsService} from "@shared/services/points.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {DanhMucDiemDiTichService} from "@shared/services/danh-muc-diem-di-tich.service";
-import {forkJoin, map, mergeMap, Observable, of} from "rxjs";
+import {forkJoin,mergeMap,of} from "rxjs";
 import {OvicFile} from "@core/models/file";
 import {sceneControl} from "@shared/models/sceneVr";
 import {DmDiemDiTich, DmLoaiNguLieu} from "@shared/models/danh-muc";
@@ -186,41 +176,21 @@ export class MediavrComponent implements OnInit, AfterViewInit, OnDestroy {
   startSeen() {
     this.backToScene = false;
     this.notificationService.isProcessing(true);
-    // const fileMedia = this.__ngulieu.file_media;
-    // this.mediaLink = fileMedia ? this.fileService.getPreviewLinkLocalFile(fileMedia) : null;
-    // console.log(this.mediaLink);
-    // this.typeMedia = this.__ngulieu.file_media.type.split("/")[0] === "video" ? "video" : 'image';
-    // console.log(this.typeMedia);
-    // this.pointsService.getDataByparentId(this.__ngulieu.id).subscribe({
-    //   next: dataPoint => {
-    //     this.dataPoint = dataPoint.map(m => {
-    //       const fileMedia= m.Ngulieu.find(f=>f.type.split('/')[0] === 'image' ||'video');
-    //       const fileAudio= m.Ngulieu.find(f=>f.type.split('/')[0] === 'audio');
-    //       m['imageLink'] =fileMedia ? this.fileService.getPreviewLinkLocalFile(fileMedia) : null;
-    //       m['audioLink']  =fileAudio ? this.fileService.getPreviewLinkLocalFile(fileAudio) : null;
-    //       return m;
-    //     });
-    //     this.loadInit(this.mediaLink, null, this.dataPoint);
-    //     this.notificationService.isProcessing(false);
-    //   }, error: (e) => {
-    //     this.notificationService.isProcessing(false);
-    //     this.notificationService.toastError('Mất kết nối với máy chủ')
-    //   }
-    // });
     this.danhMucDiemDiTichService.getDataById(this.idDitich).pipe(mergeMap(list => {
       const parramId = list[0].id;
       return list ? forkJoin<[DmDiemDiTich[], Point[]]>([of(list), this.pointsService.getDataByparentId(parramId)]) : of([], []);
     })).subscribe({
       next: ([dataDiemditich, dataPoint]) => {
+
         this.dataDitich = dataDiemditich;
-        const fileMedia = this.dataDitich.Ngulieu;
-        this.mediaLink = fileMedia ? this.fileService.getPreviewLinkLocalFile(fileMedia) : null;
-        this.typeMedia = this.dataDitich.Ngulieu.type.split("/")[0] === "video" ? "video" : 'image';
+        const fileMedia = this.dataDitich.file_media;
+        this.mediaLink = fileMedia ? this.fileService.getPreviewLinkLocalFile(fileMedia[0]) : null;
+        this.typeMedia = this.dataDitich.file_media.type.split("/")[0] === "video" ? "video" : 'image';
         this.dataPoint = dataPoint.map(m => {
-          const fileMedia = m.Ngulieu.find(f => f.type.split('/')[0] === 'image' || 'video');
-          const fileAudio = m.Ngulieu.find(f => f.type.split('/')[0] === 'audio');
-          m['imageLink'] = fileMedia ? this.fileService.getPreviewLinkLocalFile(fileMedia) : null;
-          m['audioLink'] = fileAudio ? this.fileService.getPreviewLinkLocalFile(fileAudio) : null;
+          const Mediafile = fileMedia.find(f => f.type.split('/')[0] === 'image' || 'video');
+          const Audiofile = fileMedia.find(f => f.type.split('/')[0] === 'audio');
+          m['imageLink'] = fileMedia ? this.fileService.getPreviewLinkLocalFile(Mediafile) : null;
+          m['audioLink'] = Audiofile ? this.fileService.getPreviewLinkLocalFile(Audiofile) : null;
           return m;
         });
         this.loadInit(this.mediaLink, null, this.dataPoint);
@@ -277,8 +247,10 @@ export class MediavrComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   pin(info: Pinable, renderSecene = true) {
-    const fileMedia = info.ds_ngulieu.find(f => f.type.split('/')[0] === 'image' || 'video');
-    const fileAudio = info.ds_ngulieu.find(f => f.type.split('/')[0] === 'audio');
+
+    const dataNgulieu= info.ds_ngulieu;
+    const fileMedia  =dataNgulieu && dataNgulieu.find( nl => nl.loaingulieu === 'video360') ? dataNgulieu[0].file_media.find(f => f.type.split('/')[0] === 'image' || 'video'): null;
+    const fileAudio =dataNgulieu && dataNgulieu[0] ? dataNgulieu[0].file_media.find(f => f.type.split('/')[0] === 'audio'): null;
     const media = fileMedia ? this.fileService.getPreviewLinkLocalFile(fileMedia) : null;
     const audio = fileAudio ? this.fileService.getPreviewLinkLocalFile(fileAudio) : null;
     const type = fileMedia.type.split('/')[0] === "video" ? 'video' : 'image';
@@ -313,7 +285,6 @@ export class MediavrComponent implements OnInit, AfterViewInit, OnDestroy {
     // Render
     this.renderer.setSize(this.container.nativeElement.clientWidth, this.container.nativeElement.clientHeight);
     this.renderer2.appendChild(this.container.nativeElement, this.renderer.domElement);
-
     const animate = () => {
       requestAnimationFrame(animate);
       this.controls.update();

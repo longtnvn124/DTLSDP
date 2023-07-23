@@ -50,6 +50,10 @@ const routes : Routes = [
 				path         : 'quan-ly-dot-thi' ,
 				loadChildren : () => import('@modules/admin/features/quan-ly-dot-thi/quan-ly-dot-thi.module').then( m => m.QuanLyDotThiModule )
 			} ,
+      {
+        path         : 'diem-truy-cap' ,
+        loadChildren : () => import('@modules/admin/features/diem-truy-cap/diem-truy-cap.module').then( m => m.DiemTruyCapModule )
+      } ,
 			// {
 			// 	path         : 'khoi-cum' ,
 			// 	loadChildren : () => import('@modules/admin/features/khoi-cum/khoi-cum.module').then( m => m.KhoiCumModule )
