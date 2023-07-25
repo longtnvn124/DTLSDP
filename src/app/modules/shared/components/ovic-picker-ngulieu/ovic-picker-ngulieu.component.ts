@@ -19,7 +19,7 @@ import {NotificationService} from "@core/services/notification.service";
 })
 export class OvicPickerNgulieuComponent implements OnInit {
   @Input() select = 'id,donvi_id,title,loaingulieu,linhvuc,chuyenmuc,file_media';
-
+  @Input() type: 'DIRECT' | 'INFO';
   // loaingulieu:number;
   // linhvuc:number;
   // chuyenmuc:string;
@@ -38,8 +38,9 @@ export class OvicPickerNgulieuComponent implements OnInit {
   };
   recordsTotal: number;
   rows: number;
-  dataLoaingulieu:DmLoaiNguLieu[];
-  dataLinhvuc:DmLinhVuc[];
+  dataLoaingulieu: DmLoaiNguLieu[];
+  dataLinhvuc: DmLinhVuc[];
+
   constructor(
     private fb: FormBuilder,
     private activeModal: NgbActiveModal,
@@ -49,7 +50,7 @@ export class OvicPickerNgulieuComponent implements OnInit {
     private nguLieuDanhSachService: NguLieuDanhSachService,
     private danhMucLoaiNguLieuService: DanhMucLoaiNguLieuService,
     private danhMucLinhVucService: DanhMucLinhVucService,
-    private notificationService:NotificationService
+    private notificationService: NotificationService
   ) {
     this.formGroup = this.fb.group({search: ''});
     this.rows = this.themeSettingsService.settings.rows;
@@ -63,7 +64,7 @@ export class OvicPickerNgulieuComponent implements OnInit {
       this.danhMucLoaiNguLieuService.getDataUnlimit(),
       this.danhMucLinhVucService.getDataUnlimit(),
     ).subscribe({
-      next: ([dataLoaingulieu,dataLinhvuc]) => {
+      next: ([dataLoaingulieu, dataLinhvuc]) => {
         this.dataLoaingulieu = dataLoaingulieu;
         this.dataLinhvuc = dataLinhvuc;
         this.loadData();
@@ -87,49 +88,72 @@ export class OvicPickerNgulieuComponent implements OnInit {
     //   const ids = data.map(({id}) => id);
     //   return ids && ids.length ? forkJoin<[DonVi[], DonVi[]]>([of(data), this.donViService.getChildrenFromListParent(ids)]) : of([data, []]);
     // }))
-    this.nguLieuDanhSachService.getdataBydonviIdandSelect(this.auth.userDonViId,'').subscribe({
-      next:(data)=>{
-        this.data= data.map(m=>{
-          m['__loaingulieu_converted'] =this.dataLoaingulieu && m.loaingulieu ? this.dataLoaingulieu.find(f=>f.kyhieu === m.loaingulieu).ten :'';
-          m['__linhvuc_converted'] =this.dataLinhvuc && m.linhvuc ? this.dataLinhvuc.find(f=>f.id === m.linhvuc).ten :'';
-          return m;
-        })
+    this.nguLieuDanhSachService.getdataBydonviIdandSelect(this.auth.userDonViId, '').subscribe({
+      next: (data) => {
+        if (this.type === 'DIRECT') {
+          // "video360"
+          this.data = data.filter(f => f.loaingulieu === 'video360' || f.loaingulieu === 'image360').map(m => {
+            m['__loaingulieu_converted'] = this.dataLoaingulieu && m.loaingulieu ? this.dataLoaingulieu.find(f => f.kyhieu === m.loaingulieu).ten : '';
+            m['__linhvuc_converted'] = this.dataLinhvuc && m.linhvuc ? this.dataLinhvuc.find(f => f.id === m.linhvuc).ten : '';
+            return m;
+          })
+          console.log(this.data);
+        } else {
+          this.data = data.filter(f => f.loaingulieu !== 'video360' && f.loaingulieu !== 'image360').map(m => {
+            m['__loaingulieu_converted'] = this.dataLoaingulieu && m.loaingulieu ? this.dataLoaingulieu.find(f => f.kyhieu === m.loaingulieu).ten : '';
+            m['__linhvuc_converted'] = this.dataLinhvuc && m.linhvuc ? this.dataLinhvuc.find(f => f.id === m.linhvuc).ten : '';
+            return m;
+          })
+          console.log(this.data);
+        }
         this.isLoading = false;
         this.loadFail = false;
 
       },
-      error:()=>{
+      error: () => {
         this.isLoading = false;
         this.loadFail = false;
       }
     })
   }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['select']) {
       this.filter.select = changes['select'].currentValue;
     }
   }
+
   close() {
     this.activeModal.close([]);
   }
+
   paginate({page}: { page: number }) {
     this.page = page + 1;
     this.loadData();
   }
+
+  selectedRow: any = null;
+
   checkElement(row: Ngulieu) {
-    if (this._selected) {
-      if (-1 !== this._selected.findIndex(u => u.id === row.id)) {
-        this._selected = this._selected.filter(u => u.id !== row.id);
-        row['check'] = false;
+    if (this.type === 'DIRECT') {
+          this.selectedRow = row;
+          this._selected =[row];
+    } else {
+      if (this._selected) {
+        if (-1 !== this._selected.findIndex(u => u.id === row.id)) {
+          this._selected = this._selected.filter(u => u.id !== row.id);
+          row['check'] = false;
+        } else {
+          this._selected.push(row);
+          row['check'] = true;
+        }
       } else {
-        this._selected.push(row);
+        this._selected = [row];
         row['check'] = true;
       }
-    } else {
-      this._selected = [row];
-      row['check'] = true;
     }
   }
+
   save() {
     this.activeModal.close(this._selected);
   }

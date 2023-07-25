@@ -1,11 +1,12 @@
 import {ChangeDetectorRef, Component, Input, OnInit, SimpleChanges} from '@angular/core';
-import {FileLocalPermission, SimpleFileLocal} from "@core/models/file";
+import {FileLocalPermission, OvicFile, SimpleFileLocal} from "@core/models/file";
 import {AbstractControl} from "@angular/forms";
 import {FileService} from "@core/services/file.service";
 import {MediaService} from "@shared/services/media.service";
 import {AuthService} from "@core/services/auth.service";
 import {NotificationService} from "@core/services/notification.service";
 import {map} from "rxjs/operators";
+import {DownloadProcess} from "@shared/components/ovic-download-progress/ovic-download-progress.component";
 
 
 @Component({
@@ -25,6 +26,7 @@ export class OvicFileCorpusComponent implements OnInit {
   @Input() accept = []; // only file extension eg. .jpg, .png, .jpeg, .gif, .pdf
 
   @Input() multiple = true;
+
 
   @Input() state = 0;
 
@@ -141,6 +143,16 @@ export class OvicFileCorpusComponent implements OnInit {
       const value = JSON.parse(JSON.stringify(this.formField.value)).filter(f => f.id !== file.id);
       this.formField.setValue(value);
     }
-
+  }
+  async btnDownloadFile(file: SimpleFileLocal) {
+    const result = await this.mediaService.tplDownloadFile(file as OvicFile);
+    switch (result) {
+      case DownloadProcess.rejected:
+        this.notificationService.toastInfo('Chưa hỗ trợ tải xuống thư mục');
+        break;
+      case DownloadProcess.error:
+        this.notificationService.toastError('Tải xuống thất bại');
+        break;
+    }
   }
 }

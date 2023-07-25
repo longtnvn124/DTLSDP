@@ -60,7 +60,7 @@ export class EmployeesPickerService {
     return modal.result;
   }
 
-  pickerNgulieu(selected: Ngulieu[] = [], select: string = null) : Promise<Ngulieu[]>{
+  pickerNgulieu(selected: Ngulieu[] = [], select: string = null, type:string) : Promise<Ngulieu[]>{
     const options : NgbModalOptions  = {
       scrollable  : true ,
       size        : 'md' ,
@@ -73,6 +73,10 @@ export class EmployeesPickerService {
     if ( select ) {
       modal.componentInstance.select = select;
     }
+    if(type){
+      modal.componentInstance.type = type;
+    }
+
     return modal.result;
   }
 }

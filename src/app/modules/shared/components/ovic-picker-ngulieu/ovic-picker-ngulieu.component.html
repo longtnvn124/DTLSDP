@@ -22,7 +22,7 @@
       <tr *ngIf="!data || !data.length">
         <td colspan="4">Không có ngữ liệu</td>
       </tr>
-      <ng-container *ngIf="data && data.length">
+      <ng-container *ngIf="data && data.length && type ==='INFO'">
         <tr *ngFor="let d of data" class="tbl-row" [class.tbl-row--active]="d['check']" (click)="checkElement(d)">
           <td class="ost-w-30px text-center">
             <i class="pi pi-stop" [class.pi-check-square]="d['check']"></i>
@@ -31,6 +31,17 @@
           <td class="ovic-w-300px">{{d['__loaingulieu_converted']}}</td>
           <td class="ovic-w-300px">{{d['__linhvuc_converted']}}</td>
 <!--          <td class="ovic-w-120px" [innerHTML]="d[ '__status_transference' ] | ovicSafeHtml"></td>-->
+        </tr>
+      </ng-container>
+      <ng-container *ngIf="data && data.length && type ==='DIRECT'">
+        <tr *ngFor="let d of data" class="tbl-row" [class.tbl-row--active]="d ===selectedRow" (click)="checkElement(d)">
+          <td class="ost-w-30px text-center">
+            <i class="pi pi-stop" [class.pi-check-square]="d === selectedRow"></i>
+          </td>
+          <td>{{d.title}}</td>
+          <td class="ovic-w-300px">{{d['__loaingulieu_converted']}}</td>
+          <td class="ovic-w-300px">{{d['__linhvuc_converted']}}</td>
+          <!--          <td class="ovic-w-120px" [innerHTML]="d[ '__status_transference' ] | ovicSafeHtml"></td>-->
         </tr>
       </ng-container>
       </tbody>
@@ -45,3 +56,4 @@
   <button (click)="save()" pButton pRipple type="button" class="p-button p-button-success" icon="pi pi-save" label="Chọn"></button>
   <button (click)="close()" pButton pRipple type="button" class="p-button p-button-secondary ml-3" icon="pi pi-times" label="Đóng"></button>
 </div>
+

@@ -623,7 +623,7 @@ export class MediaVrManagerComponent implements OnInit, AfterViewInit, OnDestroy
   dsNgulieu: Ngulieu[];
 
   async btnAddNgulieu() {
-    const result = await this.employeesPickerService.pickerNgulieu([], '');
+    const result = await this.employeesPickerService.pickerNgulieu([], '','DIRECT');
     this.f['ds_ngulieu'].setValue(result);
     this.dsNgulieu = result;
   }

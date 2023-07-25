@@ -300,7 +300,6 @@ import { OvicFileCorpusComponent } from './components/ovic-file-corpus/ovic-file
     OvicSafeHtmlPipe,
     OvicDateToUtcPipe,
     OvicHtmlDecodePipe,
-
     OvicYoutubeThumbnailDirective,
     OvicVideoAspectRatio16x9Directive,
     OvicLoaderDirective,
@@ -312,7 +311,9 @@ import { OvicFileCorpusComponent } from './components/ovic-file-corpus/ovic-file
     GetUserinfoDirective,
     UserInfoComponent,
     OvicLoadImageByIdDirective,
-    MediaVrManagerComponent
+    MediaVrManagerComponent,
+    OvicFileCorpusComponent,
+    OvicInputVrMediaComponent
   ]
 })
 export class SharedModule {

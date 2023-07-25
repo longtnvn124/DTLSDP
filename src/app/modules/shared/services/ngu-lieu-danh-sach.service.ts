@@ -187,7 +187,7 @@ export class NguLieuDanhSachService {
     })));
   }
 
-  getdataBydonviIdandSelect(donvi_id: number, select = '', isPer = false): Observable<Ngulieu[]> {
+  getdataBydonviIdandSelect(donvi_id: number, select = '', isPer = false, loaingulieu?:string): Observable<Ngulieu[]> {
     const fromObject = { limit: -1, orderby: 'title', order: 'ASC' };
     if (select) {
       Object.assign(fromObject, { select });
@@ -203,6 +203,14 @@ export class NguLieuDanhSachService {
       orWhere: 'and'
     }
     ];
+    if(loaingulieu){
+      const condition:OvicConditionParam[]=[{
+        conditionName:'loaingulieu',
+        condition: OvicQueryCondition.equal,
+        value:loaingulieu,
+        orWhere:"and"
+      }]
+    }
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
   }

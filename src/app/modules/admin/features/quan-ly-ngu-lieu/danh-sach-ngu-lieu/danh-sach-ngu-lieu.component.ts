@@ -15,6 +15,7 @@ import {DmChuyenMuc, DmLinhVuc, DmLoaiNguLieu} from "@shared/models/danh-muc";
 import {Ngulieu} from "@shared/models/quan-ly-ngu-lieu";
 import {FileType} from "@shared/utils/syscat";
 import {FileService} from "@core/services/file.service";
+import {AuthService} from "@core/services/auth.service";
 
 interface FormNgulieu extends OvicForm {
   object: Ngulieu;
@@ -58,6 +59,7 @@ export class DanhSachNguLieuComponent implements OnInit {
     loaingulieu: ['', Validators.required],
     linhvuc: ['', Validators.required],
     file_media: [null],
+    donvi_id:[null, Validators.required]
   });
   dataChuyemuc: DmChuyenMuc[];
   dataLoaingulieu: DmLoaiNguLieu[];
@@ -72,6 +74,7 @@ export class DanhSachNguLieuComponent implements OnInit {
     private danhMucLinhVucService: DanhMucLinhVucService,
     private danhMucDiemDiTichService: DanhMucDiemDiTichService,
     private fileService:FileService,
+    private auth:AuthService
   ) {
     const observeProcessFormData = this.OBSERVE_PROCESS_FORM_DATA.asObservable().pipe(debounceTime(100)).subscribe(form => this.__processFrom(form));
     this.subscription.add(observeProcessFormData);
@@ -124,7 +127,7 @@ export class DanhSachNguLieuComponent implements OnInit {
           m['linhvuc_converted'] = linhvuc ? linhvuc.ten : '';
           m['loaingulieu_converted'] = loaingulieu ? loaingulieu.ten : '';
           m['fileType'] = m.file_media && m.file_media[0] && FileType.has(m.file_media[0].type) && (FileType.get(m.file_media[0].type)==='img'|| FileType.get(m.file_media[0].type)==='mp4') ? 'mediaVr' : 'info';
-          m['__media_link']= this.fileService.getPreviewLinkLocalFile(m.file_media[0]);
+          m['__media_link']=m.file_media&& m.file_media[0] ? this.fileService.getPreviewLinkLocalFile(m.file_media[0]) :null;
           return m;
         });
 
@@ -162,6 +165,7 @@ export class DanhSachNguLieuComponent implements OnInit {
       diemditich_id: null,
       linhvuc: '',
       file_media: null,
+      donvi_id:this.auth.userDonViId
     });
 
     this.formActive = this.listForm[FormType.ADDITION];
@@ -187,6 +191,7 @@ export class DanhSachNguLieuComponent implements OnInit {
       diemditich_id: object.diemditich_id,
       linhvuc: object.linhvuc,
       file_media: object.file_media,
+      donvi_id:object.donvi_id
     });
     this.formActive = this.listForm[FormType.UPDATE];
     this.formActive.object = object;

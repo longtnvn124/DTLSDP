@@ -28,7 +28,7 @@ p-calendar .p-calendar {
   height: 44px;
 }
 
-app-danh-sach-ngu-lieu{
+app-danh-sach-ngu-lieu {
   height: 100%;
 }
 
@@ -48,4 +48,101 @@ app-danh-sach-ngu-lieu{
 
 .ovic-prevent-disable-color .p-disabled .p-dropdown-trigger {
   display: none;
+}
+
+.btn-vr-chooser {
+  display: flex;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  box-shadow: none !important;
+  outline: none !important;
+  padding: 5px 10px;
+  font-size: 14px;
+  line-height: 24px;
+  height: auto;
+  width: 100%;
+  align-items: center;
+  background-color: #ffffff;
+}
+
+.btn-vr-chooser__icon {
+  width: 30px;
+  height: 30px;
+  background: transparent url('../../assets/svg/360-degrees.svg') no-repeat center;
+  background-size: contain;
+}
+
+.btn-vr-chooser__icon--video360 {
+
+}
+
+.btn-vr-chooser__icon--image {
+  background-image: url('../../assets/svg/photo.svg');
+}
+
+.btn-vr-chooser__icon--image360 {
+  background-image: url('../../assets/svg/360-image.svg');
+}
+
+.btn-vr-chooser__icon--video {
+  background-image: url('../../assets/svg/video.svg');
+}
+
+.btn-vr-chooser__icon--audio {
+  background-image: url('../../assets/svg/volume.svg');
+}
+
+.btn-vr-chooser__name {
+  margin: 0;
+  padding: 0 0 0 5px;
+  max-width: calc(100% - 30px);
+  font-size: 14px;
+  line-height: 1.5;
+  display: block;
+  color: #444;
+}
+
+.list-vr-chooser {
+  display: flex;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  box-shadow: none !important;
+  outline: none !important;
+  padding: 10px;
+  font-size: 14px;
+  line-height: 24px;
+  height: auto;
+  width: 100%;
+  align-items: center;
+  background-color: #ffffff;
+  flex-wrap: wrap;
+}
+
+.btn-vr-chooser--single {
+  display: flex;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  box-shadow: none !important;
+  outline: none !important;
+  padding: 10px;
+  font-size: 14px;
+  line-height: 24px;
+  height: auto;
+  align-items: center;
+  background-color: #ffffff;
+}
+
+.btn-vr-chooser__control {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+}
+
+.btn-vr-chooser--single {
+  width: calc(100% - 36px - 36px);
+}
+
+.list-vr-chooser > * + * {
+  border-top: 1px dashed #ced4da;
 }

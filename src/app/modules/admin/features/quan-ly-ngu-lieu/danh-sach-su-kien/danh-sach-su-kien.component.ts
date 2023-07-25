@@ -411,8 +411,8 @@ export class DanhSachSuKienComponent implements OnInit {
   }
 
   dsNgulieu:Ngulieu[];
-  async btnAddNgulieu(){
-    const result = await this.employeesPickerService.pickerNgulieu([], '');
+  async btnAddNgulieu(type:'DIRECT'|'INFO'){
+    const result = await this.employeesPickerService.pickerNgulieu([], '',type);
     console.log(result);
     this.f['ngulieu_ids'].setValue(result);
     this.dsNgulieu = result;

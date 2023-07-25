@@ -275,9 +275,7 @@ export class DiemDiTichComponent implements OnInit {
         this.formSave.reset({
           ten: '',
           mota: '',
-          vitri_ggmap: '',
           status: null,
-          ds_ngulieu: null,
         });
         // this.characterAvatar = ''
         this.formActive = this.listForm[FormType.ADDITION];
@@ -288,10 +286,7 @@ export class DiemDiTichComponent implements OnInit {
         this.formSave.reset({
           ten: object1.ten,
           mota: object1.mota,
-          vitri_ggmap: object1.vitri_ggmap,
           status: object1.status,
-          ds_ngulieu: object1.ds_ngulieu,
-
         });
         // this.characterAvatar = object1.ds_ngulieu ? getLinkDownload(object1.ds_ngulieu['id']) : '';
         this.formActive = this.listForm[FormType.UPDATE];

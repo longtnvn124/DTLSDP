@@ -2,23 +2,37 @@ import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {Paginator} from "primeng/paginator";
 import {MediaVrManagerComponent} from "@shared/components/media-vr-manager/media-vr-manager.component";
 import {FormType, NgPaginateEvent, OvicForm, OvicTableStructure} from "@shared/models/ovic-models";
-import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {debounceTime, filter, Observable, Subject, Subscription} from "rxjs";
-import {DmDiemDiTich} from "@shared/models/danh-muc";
+import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from "@angular/forms";
+import {debounceTime, filter, forkJoin, Observable, Subject, Subscription} from "rxjs";
+import {DmDiemDiTich,DmLoaiNguLieu} from "@shared/models/danh-muc";
 import {ThemeSettingsService} from "@core/services/theme-settings.service";
 import {NotificationService} from "@core/services/notification.service";
 import {DanhMucDiemDiTichService} from "@shared/services/danh-muc-diem-di-tich.service";
 import {AuthService} from "@core/services/auth.service";
-import {Router} from "@angular/router";
-import {MediaService} from "@shared/services/media.service";
 import {FileService} from "@core/services/file.service";
-import {HelperService} from "@core/services/helper.service";
 import {OvicButton} from "@core/models/buttons";
 import {Point} from "@shared/models/point";
 import {PointsService} from "@shared/services/points.service";
+import {DanhMucLinhVucService} from "@shared/services/danh-muc-linh-vuc.service";
+import {DanhMucLoaiNguLieuService} from "@shared/services/danh-muc-loai-ngu-lieu.service";
+import {Ngulieu} from "@shared/models/quan-ly-ngu-lieu";
+import {EmployeesPickerService} from "@shared/services/employees-picker.service";
+import {TypeOptions} from "@shared/utils/syscat";
 
 interface FormDiemTruyCap extends OvicForm {
   object: Point;
+}
+
+const PinableValidator = (control: AbstractControl): ValidationErrors | null => {
+  if (control.get('type').valid && control.get('type').value) {
+    if (control.get('type').value === 'DIRECT') {
+      return control.get('ds_ngulieu').value && Array.isArray(control.get('ds_ngulieu').value) && control.get('ds_ngulieu').value.some(nl => ['image360', 'video360'].includes(nl['loaingulieu'])) ? null : {invalidPinable: true}
+    } else {
+      return null;
+    }
+  } else {
+    return {invalid: true};
+  }
 }
 
 @Component({
@@ -32,6 +46,12 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
   @ViewChild('formMedia') formMedia: TemplateRef<any>;
   @ViewChild(Paginator) paginator: Paginator;
   @ViewChild(MediaVrManagerComponent) MediaVr: MediaVrManagerComponent;
+
+  filePermission = {
+    canDelete: true,
+    canDownload: true,
+    canUpload: true
+  };
   statusList = [
     {
       value: 1,
@@ -44,13 +64,18 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
       color: '<span class="badge badge--size-normal badge-danger w-100">Inactive</span>'
     }
   ];
+  typeOptions = TypeOptions;
+
+  destination: Ngulieu;
+
+  otherInfo: Ngulieu[];
 
   tblStructure: OvicTableStructure[] = [
     {
       fieldType: 'normal',
-      field: ['ten'],
+      field: ['__diemditich_converted'],
       innerData: true,
-      header: 'Tên',
+      header: 'Tiêu đề điểm  truy cập',
       sortable: false,
 
     },
@@ -60,24 +85,6 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
       innerData: true,
       header: 'loai',
       sortable: false,
-    },
-    // {
-    //   fieldType: 'normal',
-    //   field: ['__duongdan'],
-    //   innerData: true,
-    //   header: 'Đường dẫn di tích ',
-    //   sortable: false,
-    //   headClass: 'ovic-w-350px text-left',
-    //   rowClass: 'ovic-w-350px text-left'
-    // },
-    {
-      fieldType: 'normal',
-      field: ['__status'],
-      innerData: true,
-      header: 'Trạng thái',
-      sortable: false,
-      headClass: 'ovic-w-110px text-center',
-      rowClass: 'ovic-w-110px text-center'
     },
     {
       tooltip: '',
@@ -149,7 +156,7 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
   formSave: FormGroup;
 
   private OBSERVE_PROCESS_FORM_DATA = new Subject<FormDiemTruyCap>();
-
+  formActive: FormDiemTruyCap;
   data: Point[];
   rows = this.themeSettingsService.settings.rows;
   subscription = new Subscription();
@@ -174,17 +181,54 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
     private pointsService: PointsService,
     private auth: AuthService,
     private fileService: FileService,
+    private danhMucLoaiNguLieuService: DanhMucLoaiNguLieuService,
+    private danhMucLinhVucService: DanhMucLinhVucService,
+    private employeesPickerService: EmployeesPickerService
   ) {
     this.formSave = this.fb.group({
       icon: ['', Validators.required],
       title: ['', Validators.required],
       mota: ['',],
-      location: [''],
+      vitri_ggmap: [''],
       type: ['', Validators.required],
-      ds_ngulieu: [[],],
+      ds_ngulieu: [[], Validators.required],
       parent_id: ['', Validators.required],
       donvi_id: [null, Validators.required],
-      ditich_id: [null, Validators.required]
+      ditich_id: [null, Validators.required],
+      root: [null, Validators.required],
+    }, {
+      validators: PinableValidator
+    });
+
+    this.formSave.get('type').valueChanges.subscribe(value => {
+      if (this.f['ds_ngulieu'].value && Array.isArray(this.f['ds_ngulieu'].value)) {
+        if (value === 'DIRECT') {
+          this.destination = this.f['ds_ngulieu'].value.find(n => ['image360', 'video360'].includes(n['loaingulieu']));
+          this.otherInfo = this.f['ds_ngulieu'].value.filter(n => !['image360', 'video360'].includes(n['loaingulieu']));
+        } else {
+          this.destination = null;
+          this.otherInfo = this.f['ds_ngulieu'].value;
+        }
+      } else {
+        this.destination = null;
+        this.otherInfo = [];
+      }
+    });
+
+
+    this.formSave.get('ds_ngulieu').valueChanges.subscribe(value => {
+      if (value && Array.isArray(value)) {
+        if (this.formSave.get('type').value === 'DIRECT') {
+          this.destination = this.f['ds_ngulieu'].value.find(n => ['image360', 'video360'].includes(n['loaingulieu']));
+          this.otherInfo = this.f['ds_ngulieu'].value.filter(n => !['image360', 'video360'].includes(n['loaingulieu']));
+        } else {
+          this.destination = null;
+          this.otherInfo = this.f['ds_ngulieu'].value;
+        }
+      } else {
+        this.destination = null;
+        this.otherInfo = [];
+      }
     });
 
     const observeProcessFormData = this.OBSERVE_PROCESS_FORM_DATA.asObservable().pipe(debounceTime(100)).subscribe(form => this.__processFrom(form));
@@ -199,9 +243,25 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
     this.loadInit()
   }
 
+  dataLoaingulieu: DmLoaiNguLieu[];
+  dataDiemditich: DmDiemDiTich[];
+
   loadInit() {
     this.isLoading = true;
-    this.loadData(1);
+    forkJoin<[DmLoaiNguLieu[], DmDiemDiTich[]]>(
+      this.danhMucLoaiNguLieuService.getDataUnlimit(),
+      this.danhMucDiemDiTichService.getDataUnlimit(),
+    ).subscribe({
+      next: ([dataLoaingulieu, dataDiemditich]) => {
+        this.dataLoaingulieu = dataLoaingulieu;
+        this.dataDiemditich = dataDiemditich;
+        this.loadData(1);
+      },
+      error: () => {
+        this.notificationService.isProcessing(false);
+        this.notificationService.toastError('Mất kết nối với máy chủ');
+      }
+    })
   }
 
   loadData(page) {
@@ -210,9 +270,11 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
     this.isLoading = true;
     this.pointsService.loadPage(this.page).subscribe({
       next: ({data, recordsTotal}) => {
-        this.data = data;
+        this.data = data.map(m => {
+          m['__diemditich_converted'] = m.ditich_id ? this.dataDiemditich.find(f => f.id === m.ditich_id).ten : m.title;
+          return m;
+        });
         this.recordsTotal = recordsTotal;
-        console.log(this.recordsTotal)
         this.isLoading = false;
         this.error = false;
       },
@@ -222,24 +284,7 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
         this.notificationService.toastError('Mất kết nối mạng');
       },
     });
-    // this.danhMucDiemDiTichService.search(page, null, this.filter.search).subscribe({
-    //   next: ({data, recordsTotal}) => {
-    //     this.recordsTotal = recordsTotal;
-    //     this.listData = data.map(m => {
-    //       const sIndex = this.statusList.findIndex(i => i.value === m.status);
-    //       m['__status'] = sIndex !== -1 ? this.statusList[sIndex].color : '';
-    //       // m['__fileMedia_converted'] = m.ds_ngulieu ==[] ||m.ds_ngulieu == null?null :this.fileService.getPreviewLinkLocalFile(m.ds_ngulieu[0]);
-    //
-    //       // m['__ten_converted'] = `<b>${m.ten}</b> <br>` + m.mota;
-    //       // m['__duongdan']=m.vitri_ggmap + ' ' + `<a href="${m.vitri_ggmap}" target="_blank"><i class="pi pi-map"></i></a>`;
-    //       return m;
-    //     })
-    //     this.isLoading = false;
-    //   }, error: () => {
-    //     this.isLoading = false;
-    //     this.notificationService.toastError('Mất kết nối với máy chủ');
-    //   }
-    // })
+
   }
 
   private __processFrom({data, object, type}: FormDiemTruyCap) {
@@ -249,9 +294,16 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
         this.needUpdate = true;
         if (type === FormType.ADDITION) {
           this.formSave.reset({
-            ten: '',
+            icon: '',
+            title: '',
             mota: '',
-            status: ''
+            vitri_ggmap: '',
+            type: '',
+            ds_ngulieu: [],
+            parent_id: null,
+            donvi_id: this.auth.userDonViId,
+            ditich_id: null,
+            root: 0
           });
         }
         this.notificationService.toastSuccess('Thao tác thành công', 'Thông báo');
@@ -280,7 +332,7 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
     this.notificationService.openSideNavigationMenu({
       name,
       template: this.template,
-      size: 600,
+      size: 700,
       offsetTop: '0px'
     });
   }
@@ -294,128 +346,108 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
     if (!button) {
       return;
     }
-    // const decision = button.data && this.listData ? this.listData.find(u => u.id === button.data) : null;
-    // switch (button.name) {
-    //   case 'BUTTON_ADD_NEW':
-    //     this.formSave.reset({
-    //       ten: '',
-    //       mota: '',
-    //       status: '',
-    //     });
-    //     // this.characterAvatar = ''
-    //     this.formActive = this.listForm[FormType.ADDITION];
-    //     this.preSetupForm(this.menuName);
-    //     break;
-    //   case 'EDIT_DECISION':
-    //     const object1 = this.listData.find(u => u.id === decision.id);
-    //     this.formSave.reset({
-    //       ten: object1.ten,
-    //       mota: object1.mota,
-    //       vitri_ggmap: object1.vitri_ggmap,
-    //       status: object1.status,
-    //       ds_ngulieu: object1.ds_ngulieu,
-    //
-    //     });
-    //     // this.characterAvatar = object1.ds_ngulieu ? getLinkDownload(object1.ds_ngulieu['id']) : '';
-    //     this.formActive = this.listForm[FormType.UPDATE];
-    //     this.formActive.object = object1;
-    //     this.preSetupForm(this.menuName);
-    //     break;
-    //   case 'DELETE_DECISION':
-    //     const confirm = await this.notificationService.confirmDelete();
-    //     if (confirm) {
-    //       this.danhMucDiemDiTichService.delete(decision.id).subscribe({
-    //         next: () => {
-    //           this.page = Math.max(1, this.page - (this.listData.length > 1 ? 0 : 1));
-    //           this.notificationService.isProcessing(false);
-    //           this.notificationService.toastSuccess('Thao tác thành công');
-    //           this.loadData(this.page);
-    //
-    //         }, error: () => {
-    //           this.notificationService.isProcessing(false);
-    //           this.notificationService.toastError('Thao tác không thành công');
-    //         }
-    //       })
-    //     }
-    //     break;
-    //   case 'INFORMATION_DECTISION':
-    //     this.dataInformation = this.listData.find(u => u.id === decision.id);
-    //     this.visible = true;
-    //     break;
-    //   case 'MEDIA_DECISION':
-    //     this.dataBinding = this.listData.find(u => u.id === decision.id);
-    //     // this.dataBinding = this.auth.encryptData(`${data}`);
-    //     // console.log(dataBinding);
-    //     const code = this.auth.encryptData(`${this.dataBinding.id}`);
-    //     this.router.navigate(['admin/danh-muc/media-vr-manager'], {queryParams: {code}});
-    //     break
-    //   default:
-    //     break;
-    // }
-  }
+    const decision = button.data && this.data ? this.data.find(u => u.id === button.data) : null;
+    switch (button.name) {
+      case 'BUTTON_ADD_NEW':
+        this.formSave.reset({
+          icon: '',
+          title: '',
+          mota: '',
+          vitri_ggmap: '',
+          type: '',
+          ds_ngulieu: [],
+          parent_id: null,
+          donvi_id: this.auth.userDonViId,
+          ditich_id: null,
+          root: 0
+        });
+        // this.characterAvatar = ''
+        this.formActive = this.listForm[FormType.ADDITION];
+        this.preSetupForm(this.menuName);
+        break;
+      case 'EDIT_DECISION':
+        const object1 = this.data.find(u => u.id === decision.id);
+        this.formSave.reset({
+          icon: object1.icon,
+          title: object1.title,
+          mota: object1.mota,
+          vitri_ggmap: object1.vitri_ggmap,
+          donvi_id: object1.donvi_id,
+          parrent_id: object1.parent_id,
+          ds_ngulieu: object1.ds_ngulieu,
+          ditich_id: object1.ditich_id,
+          root: object1.root
+        });
+        // this.characterAvatar = object1.ds_ngulieu ? getLinkDownload(object1.ds_ngulieu['id']) : '';
+        this.formActive = this.listForm[FormType.UPDATE];
+        this.formActive.object = object1;
+        this.preSetupForm(this.menuName);
+        break;
+      case 'DELETE_DECISION':
+        const confirm = await this.notificationService.confirmDelete();
+        if (confirm) {
+          this.danhMucDiemDiTichService.delete(decision.id).subscribe({
+            next: () => {
+              this.page = Math.max(1, this.page - (this.data.length > 1 ? 0 : 1));
+              this.notificationService.isProcessing(false);
+              this.notificationService.toastSuccess('Thao tác thành công');
+              this.loadData(this.page);
 
-  dataInformation: DmDiemDiTich;
+            }, error: () => {
+              this.notificationService.isProcessing(false);
+              this.notificationService.toastError('Thao tác không thành công');
+            }
+          })
+        }
+        break;
+      default:
+        break;
+    }
+  }
 
   saveForm() {
-    // if (this.formSave.valid) {
-    //   this.formActive.data = this.formSave.value;
-    //   this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
-    // } else {
-    //   this.formSave.markAllAsTouched();
-    //   this.notificationService.toastError('Vui lòng điền đầy đủ thông tin');
-    // }
+    if (this.formSave.valid) {
+      this.formActive.data = this.formSave.value;
+      this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
+    } else {
+      this.formSave.markAllAsTouched();
+      this.notificationService.toastError('Vui lòng điền đầy đủ thông tin');
+    }
   }
 
-  // btnControlVolume() {
-  //   // this.MediaVr.toggleVolume();
-  // }
+  onChangeDitich(event) {
+    const value = event.value;
+    const ditich = this.dataDiemditich.find(f => f.id === value);
+    console.log(ditich);
+    if (value) {
+      this.f['title'].setValue(ditich.ten);
+      this.f['mota'].setValue(ditich.mota);
+    } else {
+      this.f['title'].setValue('');
+      this.f['mota'].setValue('');
+    }
+  }
 
-  // async makeCharacterAvatar(file: File, characterName: string): Promise<File> {
-  //   try {
-  //     const options: AvatarMakerSetting = {
-  //       aspectRatio: 3 / 2,
-  //       resizeToWidth: 300,
-  //       format: 'jpeg',
-  //       cropperMinWidth: 10,
-  //       dirRectImage: {
-  //         enable: true,
-  //         dataUrl: URL.createObjectURL(file)
-  //       }
-  //     };
-  //     const avatar = await this.mediaService.callAvatarMaker(options);
-  //     if (avatar && !avatar.error && avatar.data) {
-  //       const none = new Date().valueOf();
-  //       const fileName = characterName + none + '.jpg';
-  //       return Promise.resolve(this.fileService.base64ToFile(avatar.data.base64, fileName));
-  //     } else {
-  //       return Promise.resolve(null);
-  //     }
-  //   } catch (e) {
-  //     this.notificationService.isProcessing(false);
-  //     this.notificationService.toastError('Quá trình tạo avatar thất bại');
-  //     return Promise.resolve(null);
-  //   }
-  // }
-  //
-  // characterAvatar: string;
-  //
-  // async onInputAvatar(event, fileChooser: HTMLInputElement) {
-  //   if (fileChooser.files && fileChooser.files.length) {
-  //     const file = await this.makeCharacterAvatar(fileChooser.files[0], this.helperService.sanitizeVietnameseTitle(this.f['ten'].value));
-  //     // upload file to server
-  //     this.fileService.uploadFile(file, 1).subscribe({
-  //       next: fileUl => {
-  //         if(fileUl != null){
-  //           this.formSave.get('ds_ngulieu').setValue([fileUl]);
-  //         }else{
-  //           this.formSave.get('ds_ngulieu').setValue(null);
-  //         }
-  //       }, error: () => {
-  //         this.notificationService.toastError('Upload file không thành công');
-  //       }
-  //     })
-  //     // laasy thoong tin vaf update truongwf
-  //     this.characterAvatar = URL.createObjectURL(file);;
-  //   }
-  // }
+
+  dsNgulieu: Ngulieu[];
+
+  async btnAddNgulieu(type) {
+    const result = await this.employeesPickerService.pickerNgulieu([], '', type);
+    console.log(result);
+    const value = [].concat(this.f['ds_ngulieu'].value, result);
+    this.f['ds_ngulieu'].setValue(value);
+    console.log(this.f['ds_ngulieu'].value);
+
+  }
+  deleteNguLieuOnForm(n: Ngulieu) {
+    if (this.f['ds_ngulieu'].value && Array.isArray(this.f['ds_ngulieu'].value)) {
+      const newValues = this.f['ds_ngulieu'].value.filter(u => u.id !== n.id);
+      this.f['ds_ngulieu'].setValue(newValues);
+    } else {
+      this.f['ds_ngulieu'].setValue([]);
+    }
+  }
+  viewDiemtruycap(n:Ngulieu){
+
+  }
 }
