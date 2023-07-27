@@ -89,20 +89,15 @@ export class sceneControl {
   }
 
   async addTooltip(point, isCheck?: boolean) {
-    console.log(new TextureLoader().load(point.userData.iconPoint))
-    // let spriteMap = new TextureLoader().load('https://vr360.com.vn/projects/dai-hoc-ngan-hang-tp-hcm/assets/Move/right.png');
-    let spriteMap = new TextureLoader().load('./assets/icon-png/info.gif');
+    let spriteMap = new TextureLoader().load(point.userData.iconPoint);
     let spriteMaterial = new SpriteMaterial({map: spriteMap});
     let sprite = new Sprite(spriteMaterial);
-
     sprite.name = point.name;
     sprite.userData = point.userData;
-    // sprite.userData = { ovicPointId: 100};
     if (point !== undefined && point.position !== undefined) {
       sprite.position.copy(point.position.clone().normalize().multiplyScalar(13));
     } else {
       // Xử lý trường hợp point không hợp lệ
-      console.log("point is undefined or has invalid position");
     }
     sprite.scale.multiplyScalar(10);
     this.scene.add(sprite);
@@ -136,18 +131,15 @@ export class sceneControl {
     this.scene = scene;
     //=========================create videoTexture======================
     const videoTexture = new VideoTexture(videoDom);
-    console.log(videoTexture)
     const geometry = new SphereGeometry(50, 32, 32);
     const sphereMaterial = new MeshBasicMaterial({map: videoTexture, side: DoubleSide});
     sphereMaterial.needsUpdate = true;
-    console.log(sphereMaterial)
     this.sphere = new Mesh(geometry, sphereMaterial);
     this.scene.add(this.sphere);
     videoTexture.needsUpdate = true;
     this.points.forEach((f) => {
       this.addTooltip(f);
     });
-    console.log(this.scene);
   }
 
   addAudio(audio) {

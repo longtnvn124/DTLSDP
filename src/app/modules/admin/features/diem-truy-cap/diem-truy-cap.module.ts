@@ -15,26 +15,28 @@ import {ContextMenuModule} from 'primeng/contextmenu';
 import {ButtonModule} from "primeng/button";
 import {MultiSelectModule} from 'primeng/multiselect';
 import {RippleModule} from "primeng/ripple";
+import {RadioButtonModule} from "primeng/radiobutton";
 
 @NgModule({
   declarations: [
     DanhSachDiemTruyCapComponent
   ],
-  imports: [
-    CommonModule,
-    DiemTruyCapRoutingModule,
-    SharedModule,
-    PaginatorModule,
-    ReactiveFormsModule,
-    DropdownModule,
-    InputMaskModule,
-    DialogModule,
-    EditorModule,
-    ContextMenuModule,
-    MultiSelectModule,
-    ButtonModule,
-    RippleModule
-  ]
+    imports: [
+        CommonModule,
+        DiemTruyCapRoutingModule,
+        SharedModule,
+        PaginatorModule,
+        ReactiveFormsModule,
+        DropdownModule,
+        InputMaskModule,
+        DialogModule,
+        EditorModule,
+        ContextMenuModule,
+        MultiSelectModule,
+        ButtonModule,
+        RippleModule,
+        RadioButtonModule
+    ]
 })
 export class DiemTruyCapModule {
 }

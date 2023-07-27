@@ -1,23 +1,33 @@
-<div class="position-relative w-100 h-100 d-flex flex-column" [class.ovic-is-loading]="isLoading">
-  <div class="ds-diem-truy-cap__content w-100">
-    <div class="w-100 ovic-load-init-fail alert alert-danger --fs-14" *ngIf="error; else tableData">
-      Đã có lỗi trong quá trình tải dữ liệu
-      <button class="btn btn-primary border-circle --fs-13 ml-2" (click)="loadInit()">Reload</button>
+<ng-container [ngSwitch]="mode" class="h-100 w-100">
+  <ng-container *ngSwitchDefault>
+    <div class="position-relative w-100 h-100 d-flex flex-column" [class.ovic-is-loading]="isLoading">
+      <div class="ds-diem-truy-cap__content w-100">
+        <div class="w-100 ovic-load-init-fail alert alert-danger --fs-14" *ngIf="error; else tableData">
+          Đã có lỗi trong quá trình tải dữ liệu
+          <button class="btn btn-primary border-circle --fs-13 ml-2" (click)="loadInit()">Reload</button>
+        </div>
+        <ng-template #tableData>
+          <ovic-table class="w-100 h-100" emptyMessage="Danh sách trống" [index]="index" [data]="data"
+                      styleClass="tbl-danh-sach-tap-the head-input-size--normal head-input-size--250px" dataKey="id"
+                      rowHover="true"
+                      [rows]="15" tableName="Danh sách điểm truy cập" [tblStructure]="tblStructure"
+                      (onButtonClick)="handleClickOnTable($event)" [enableSearch]="true" [enableSearchLocal]="false"
+                      (onSearch)="onSearch($event)" [searchDebounceTime]="800" [headerButtons]="headButtons"></ovic-table>
+        </ng-template>
+      </div>
+      <p-paginator class="p-paginator--custom" [showCurrentPageReport]="true" [rows]="rows" [totalRecords]="recordsTotal"
+                   [pageLinkSize]="5" (onPageChange)="paginate($event)"></p-paginator>
     </div>
-    <ng-template #tableData>
-      <ovic-table class="w-100 h-100" emptyMessage="Danh sách trống" [index]="index" [data]="data"
-                  styleClass="tbl-danh-sach-tap-the head-input-size--normal head-input-size--250px" dataKey="id"
-                  rowHover="true"
-                  [rows]="15" tableName="Danh sách điểm truy cập" [tblStructure]="tblStructure"
-                  (onButtonClick)="handleClickOnTable($event)" [enableSearch]="true" [enableSearchLocal]="false"
-                  (onSearch)="onSearch($event)" [searchDebounceTime]="800" [headerButtons]="headButtons"></ovic-table>
-    </ng-template>
-  </div>
-  <p-paginator class="p-paginator--custom" [showCurrentPageReport]="true" [rows]="rows" [totalRecords]="recordsTotal"
-               [pageLinkSize]="5" (onPageChange)="paginate($event)"></p-paginator>
-</div>
+  </ng-container>
 
-<!--<input type="file" #fileChooser hidden="true" (change)="onInputAvatar($event , fileChooser)">-->
+  <ng-container *ngSwitchCase="'MEDIAVR'" class="p-0 w-100 h-100">
+    <div class="w-100 h-100 position-relative">
+      <button pRipple pButton label="Thoát" icon="pi pi-sign-out" class="p-button-secondary btn-exit" (click)="btnExit()"></button>
+      <media-vr-manager [_diemtruycap]="diemditichPoint" [showOnly]="false" class="w-100 h-100"></media-vr-manager>
+    </div>
+
+  </ng-container>
+</ng-container>
 <ng-template #fromUpdate>
   <div class="ovic-side-navigation-content">
     <div class="ovic-side-navigation-content__head">
@@ -63,12 +73,21 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-12">
+            <div class="col-6">
               <p class="form-row">
                 <label>Thuộc điểm di tích <span class="ovic-mark">*</span></label>
                 <p-dropdown placeholder="Chọn..." class="w-100" [options]="dataDiemditich" optionLabel="ten"
                             [showClear]="true" optionValue="id" formControlName='ditich_id'
                             (onChange)="onChangeDitich($event)"></p-dropdown>
+              </p>
+            </div>
+
+            <div class="col-6">
+              <p class="form-row">
+                <label>Thuộc điểm truy cập <span class="ovic-mark">*</span></label>
+                <p-dropdown placeholder="Chọn..." class="w-100" [options]="data" optionLabel="title"
+                            [showClear]="true" optionValue="id" formControlName='parent_id'
+                ></p-dropdown>
               </p>
             </div>
           </div>
@@ -79,7 +98,7 @@
                 <label>Đích đến <span class="ovic-mark">*</span></label>
                 <div class="w-100">
                   <button *ngIf="!destination; else showDestination" pRipple
-                          class="btn-vr-chooser justify-content-center align-items-center" (click)="btnAddNgulieu('DIRECT')">
+                          class="btn-vr-chooser justify-content-center align-items-center" [class.btn-vr-chooser--invalid]="f['ds_ngulieu'].touched && formSave.getError('invalidPinable')" (click)="btnAddNgulieu('DIRECT')">
                     <span class="btn-vr-chooser__icon"></span>
                   </button>
                   <ng-template #showDestination>
@@ -89,8 +108,8 @@
                           <span class="btn-vr-chooser__icon" [class]="'btn-vr-chooser__icon--'+destination.loaingulieu"></span>
                           <p class="btn-vr-chooser__name">{{ destination.title }}</p>
                         </div>
-                        <button class="btn-vr-chooser__control p-button-text p-button-rounded" pRipple pButton icon="pi pi-globe"
-                                (click)="viewDiemtruycap(destination)"></button>
+                        <button class="btn-vr-chooser__control p-button-text p-button-rounded" pRipple pButton icon="pi pi-download"
+                                (click)="btnDownloadFIle(destination)"></button>
                         <button class="btn-vr-chooser__control p-button-text p-button-danger p-button-rounded" pRipple pButton icon="pi pi-trash"
                                 (click)="deleteNguLieuOnForm(destination)"></button>
                       </div>
@@ -98,48 +117,8 @@
                   </ng-template>
                 </div>
               </div>
-
-              <div class="alert alert-danger" role="alert"
-                   *ngIf="f['ds_ngulieu'].touched && f['ds_ngulieu'].invalid && f['ds_ngulieu'].getError('invalidPinable')">
-                Vui lòng chọn điểm đến
-              </div>
-
-
-              <!--              <div *ngIf="destination" class="d-flex justify-content-between align-items-center border-top-0">-->
-              <!--                <div class="list-vr-chooser">-->
-              <!--                  <div class="wrap-table w-100 ">-->
-              <!--                    <table class="tbl w-100" styleClass="">-->
-              <!--                      <thead class="p-datatable-thead">-->
-              <!--                      <tr>-->
-              <!--                        <th> Tiêu đề ngữ liệu</th>-->
-              <!--                        <th class="ovic-w-200px">Loại ngữ liệu</th>-->
-              <!--                        <th class="ovic-w-110px text-center">Thao tác</th>-->
-              <!--                      </tr>-->
-              <!--                      </thead>-->
-              <!--                      <tbody class="p-datatable-tbody">-->
-              <!--                      <tr *ngIf="!destination ">-->
-              <!--                        <td [attr.colspan]="3">Không có ngữ liệu</td>-->
-              <!--                      </tr>-->
-              <!--                      <tr>-->
-              <!--                        <td>{{destination.title}}</td>-->
-              <!--                        <td>{{destination.loaingulieu}}</td>-->
-              <!--                        <td class="ovic-w-110px text-center">-->
-              <!--                          <button class="p-button-rounded p-button-success p-button-text ml-1" pRipple pButton-->
-              <!--                                  icon="pi pi-globe"-->
-              <!--                                  (click)="viewDiemtruycap(destination)"></button>-->
-              <!--                          <button class="p-button-rounded p-button-danger p-button-text ml-1" pRipple pButton-->
-              <!--                                  icon="pi pi-trash"-->
-              <!--                                  (click)="deleteNguLieuOnForm(destination)"></button>-->
-              <!--                        </td>-->
-              <!--                      </tr>-->
-              <!--                      </tbody>-->
-              <!--                    </table>-->
-              <!--                  </div>-->
-              <!--                </div>-->
-              <!--              </div>-->
             </div>
           </div>
-
           <div class="row">
             <div class="col-12">
               <div class="form-row">
@@ -150,8 +129,8 @@
                       <span class="btn-vr-chooser__icon" [class]="'btn-vr-chooser__icon--'+n.loaingulieu"></span>
                       <p class="btn-vr-chooser__name">{{ n.title }}</p>
                     </div>
-                    <button class="btn-vr-chooser__control p-button-text p-button-rounded" pRipple pButton icon="pi pi-globe"
-                            (click)="viewDiemtruycap(n)"></button>
+                    <button class="btn-vr-chooser__control p-button-text p-button-rounded" pRipple pButton icon="pi pi-download"
+                            (click)="btnDownloadFIle(n)"></button>
                     <button class="btn-vr-chooser__control p-button-text p-button-danger p-button-rounded" pRipple pButton icon="pi pi-trash"
                             (click)="deleteNguLieuOnForm(n)"></button>
                   </div>

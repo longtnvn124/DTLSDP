@@ -23,7 +23,7 @@ export interface DmLoaiNguLieu extends DmChung {
   ten: string;
   mota: string;
   donvi_id: number;
-  kyhieu: string;
+  kyhieu: LoaiNguLieu;
   status: number; //1 Active; 0: inactive
 }
 
@@ -63,7 +63,7 @@ export interface DonVi {
 }
 
 
-export const KieuDuLieuNguLieu: { label: string, value: string }[] = [
+export const KieuDuLieuNguLieu: { label: string, value: LoaiNguLieu }[] = [
   {label: 'Hình ảnh', value: 'image'},
   {label: 'Video', value: 'video'},
   {label: 'Âm thanh', value: 'audio'},
@@ -71,4 +71,6 @@ export const KieuDuLieuNguLieu: { label: string, value: string }[] = [
   {label: 'Hình ảnh 360', value: 'image360'},
   {label: 'Text', value: 'text'},
   {label: 'Tài liệu', value: 'others'},
-]
+];
+
+export type LoaiNguLieu = 'image' | 'video' | 'audio' | 'video360' | 'image360' | 'text' | 'others'

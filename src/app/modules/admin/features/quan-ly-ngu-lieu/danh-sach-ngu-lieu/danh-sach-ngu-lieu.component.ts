@@ -241,6 +241,7 @@ export class DanhSachNguLieuComponent implements OnInit {
     if (object['fileType'] == 'mediaVr') {
       this.mode = "MEDIAVR";
       this.objectVR = object;
+      console.log(this.objectVR);
     } else {
       // this.mode = "INFO";
       this.visible=true;

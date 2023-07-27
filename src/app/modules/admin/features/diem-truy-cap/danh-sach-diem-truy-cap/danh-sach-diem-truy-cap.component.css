@@ -5,3 +5,8 @@
   align-content: center;
   width: 100%;
 }
+.btn-exit{
+  position:absolute;
+  left: 30px;
+  top:30px;
+}

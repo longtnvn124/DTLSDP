@@ -16,11 +16,21 @@
       <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
         <form [formGroup]="formSave" autocomplete="off">
           <div class="row">
-            <div class="col-6">
+            <div class="col-12">
               <p class="form-row">
                 <label>Tên vị trí <span class="ovic-mark">*</span></label>
                 <input type="text" placeholder="Tên vị trí..." formControlName="title"
                        autocomplete="off">
+              </p>
+            </div>
+
+          </div>
+          <div class="row">
+            <div class="col-6">
+              <p class="form-row">
+                <label>loại điểm truy cập <span class="ovic-mark">*</span></label>
+                <p-dropdown placeholder="Chọn..." class="w-100" [options]="typeOptions" optionLabel="label"
+                            optionValue="value" formControlName='type'></p-dropdown>
               </p>
             </div>
             <div class="col-6">
@@ -43,42 +53,54 @@
             </div>
           </div>
 
-          <div class="ovic-ui-table position-relative w-100 " style="margin-top:15px">
-            <div class="wrap-table">
-              <div class="p-datatable-header">
-                <h3 class="tbl-title ng-star-inserted">DM Ngữ liệu</h3>
-                <button type="button" pButton pRipple class="lgp__button-add p-button-success ml-2" label="Thêm mới"
-                        icon="pi pi-plus" matTooltip="Thêm mới ngữ liệu" matTooltipPosition="above"
-                        matTooltipClass="ovic-table--tooltip" (click)="btnAddNgulieu()"></button>
+          <div class="row" *ngIf="f['type'].value === 'DIRECT'">
+            <div class="col-12">
+              <div class="form-row">
+                <label>Đích đến <span class="ovic-mark">*</span></label>
+                <div class="w-100">
+                  <button *ngIf="!destination; else showDestination" pRipple
+                          class="btn-vr-chooser justify-content-center align-items-center" [class.btn-vr-chooser--invalid]="f['ds_ngulieu'].touched && formSave.getError('invalidPinable')" (click)="btnAddNgulieu('DIRECT')">
+                    <span class="btn-vr-chooser__icon"></span>
+                  </button>
+                  <ng-template #showDestination>
+                    <div class="list-vr-chooser" *ngIf="destination">
+                      <div class="d-flex align-items-center w-100 mb-0">
+                        <div class="btn-vr-chooser--single w-100 p-0 border-0">
+                          <span class="btn-vr-chooser__icon" [class]="'btn-vr-chooser__icon--'+destination.loaingulieu"></span>
+                          <p class="btn-vr-chooser__name">{{ destination.title }}</p>
+                        </div>
+                        <button class="btn-vr-chooser__control p-button-text p-button-rounded" pRipple pButton icon="pi pi-download"
+                                (click)="dowloadNgulieu(destination)"></button>
+                        <button class="btn-vr-chooser__control p-button-text p-button-danger p-button-rounded" pRipple pButton icon="pi pi-trash"
+                                (click)="deleteNguLieuOnForm(destination)"></button>
+                      </div>
+                    </div>
+                  </ng-template>
+                </div>
               </div>
-              <table class="tbl w-100">
-                <thead class="p-datatable-thead">
-                <tr>
-                  <th class="ovic-w-50px text-center">#</th>
-                  <th> Tiêu đề ngữ liệu</th>
-                  <th>Loại ngữ liệu</th>
-                  <th class="ovic-w-110px text-center">Thao tác</th>
-                </tr>
-                </thead>
-                <tbody class="p-datatable-tbody">
-                <tr *ngIf="!f['ds_ngulieu'].value || f['ds_ngulieu'].value.length === 0">
-                  <td [attr.colspan]="4">Không có ngữ liệu</td>
-                </tr>
-                <tr *ngFor="let r of f['ds_ngulieu'].value; index as i">
-                  <td class="ovic-w-50px text-center">{{ index + i }}</td>
-                  <td>{{r.title}}</td>
-                  <td>{{r['__loaingulieu_converted']}}</td>
-                  <td class="ovic-w-110px text-center">
-                    <button type="button" pButton pRipple class="lgp__button" icon="pi pi-download"
-                            matTooltip="Cập nhật thông tin" matTooltipPosition="above"
-                            matTooltipClass="ovic-table--tooltip" (click)="btnDowloadNgulieu(r)"></button>
-                    <button type="button" pButton pRipple class="lgp__button p-button-danger ml-2" icon="pi pi-trash"
-                            matTooltip="Xóa " matTooltipPosition="above" matTooltipClass="ovic-table--tooltip"
-                            (click)="btnDeleteNgulieu(r.id)"></button>
-                  </td>
-                </tr>
-                </tbody>
-              </table>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <div class="form-row">
+                <label>Danh mục ngữ liệu <span class="ovic-mark">*</span></label>
+                <div class="list-vr-chooser">
+                  <div class="d-flex align-items-center w-100" *ngFor="let n of otherInfo">
+                    <div class="btn-vr-chooser--single pt-2 pb-2 px-0 border-0">
+                      <span class="btn-vr-chooser__icon" [class]="'btn-vr-chooser__icon--'+n.loaingulieu"></span>
+                      <p class="btn-vr-chooser__name">{{ n.title }}</p>
+                    </div>
+                    <button class="btn-vr-chooser__control p-button-text p-button-rounded" pRipple pButton icon="pi pi-download"
+                            (click)="dowloadNgulieu(n)"></button>
+                    <button class="btn-vr-chooser__control p-button-text p-button-danger p-button-rounded" pRipple pButton icon="pi pi-trash"
+                            (click)="deleteNguLieuOnForm(n)"></button>
+                  </div>
+                  <div class="d-flex align-items-center w-100 border-0">
+                    <button class="p-button-success w-100" pRipple pButton icon="pi pi-plus"
+                            (click)="btnAddNgulieu('INFO')"></button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </form>
@@ -101,6 +123,10 @@
     <p-button class="m-2" icon="pi pi-volume-up" styleClass="p-button-secondary" (onClick)="btnVolume()"></p-button>
   </ng-template>
   <ng-template [ngIf]="typeNgulieu === 'video'">
+    <p-button class="m-2" [icon]="video360.paused ? 'pi pi-play' : 'pi pi-pause'" styleClass="p-button-warning"
+              (onClick)="btnPausePlay()"></p-button>
+  </ng-template>
+  <ng-template [ngIf]="destinationDiemditich.loaingulieu === 'video360'">
     <p-button class="m-2" [icon]="video360.paused ? 'pi pi-play' : 'pi pi-pause'" styleClass="p-button-warning"
               (onClick)="btnPausePlay()"></p-button>
   </ng-template>

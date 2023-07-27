@@ -4,7 +4,7 @@ import {MediaVrManagerComponent} from "@shared/components/media-vr-manager/media
 import {FormType, NgPaginateEvent, OvicForm, OvicTableStructure} from "@shared/models/ovic-models";
 import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from "@angular/forms";
 import {debounceTime, filter, forkJoin, Observable, Subject, Subscription} from "rxjs";
-import {DmDiemDiTich,DmLoaiNguLieu} from "@shared/models/danh-muc";
+import {DmDiemDiTich, DmLoaiNguLieu} from "@shared/models/danh-muc";
 import {ThemeSettingsService} from "@core/services/theme-settings.service";
 import {NotificationService} from "@core/services/notification.service";
 import {DanhMucDiemDiTichService} from "@shared/services/danh-muc-diem-di-tich.service";
@@ -18,6 +18,9 @@ import {DanhMucLoaiNguLieuService} from "@shared/services/danh-muc-loai-ngu-lieu
 import {Ngulieu} from "@shared/models/quan-ly-ngu-lieu";
 import {EmployeesPickerService} from "@shared/services/employees-picker.service";
 import {TypeOptions} from "@shared/utils/syscat";
+import {OvicFile} from "@core/models/file";
+import {DownloadProcess} from "@shared/components/ovic-download-progress/ovic-download-progress.component";
+import {MediaService} from "@shared/services/media.service";
 
 interface FormDiemTruyCap extends OvicForm {
   object: Point;
@@ -46,6 +49,8 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
   @ViewChild('formMedia') formMedia: TemplateRef<any>;
   @ViewChild(Paginator) paginator: Paginator;
   @ViewChild(MediaVrManagerComponent) MediaVr: MediaVrManagerComponent;
+
+  mode: 'TABLE' | 'MEDIAVR' = "TABLE";
 
   filePermission = {
     canDelete: true,
@@ -81,9 +86,9 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
     },
     {
       fieldType: 'normal',
-      field: ['type'],
+      field: ['__type_converted'],
       innerData: true,
-      header: 'loai',
+      header: 'loại điểm truy cập',
       sortable: false,
     },
     {
@@ -100,7 +105,7 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
           tooltip: 'Truy cập Vr360',
           label: '',
           icon: 'pi pi-globe',
-          name: 'MEDIA_DECISION',
+          name: 'MEDIAVR_DECISION',
           cssClass: 'btn-warning rounded',
           conditionField: 'type',
           conditionValue: 'DIRECT'
@@ -149,12 +154,16 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
   ];
 
   listForm = {
-    [FormType.ADDITION]: {type: FormType.ADDITION, title: 'Thêm mới di tích', object: null, data: null},
-    [FormType.UPDATE]: {type: FormType.UPDATE, title: 'Cập nhật di tích', object: null, data: null}
+    [FormType.ADDITION]: {type: FormType.ADDITION, title: 'Thêm mới điểm truy cập di tích', object: null, data: null},
+    [FormType.UPDATE]: {type: FormType.UPDATE, title: 'Cập nhật điểm truy cập di tích', object: null, data: null}
   };
 
-  formSave: FormGroup;
+  selectRadio: { value: number, label: string, key: string }[] = [
+    {label: 'Điểm bắt đầu', value: 1, key: '1'},
+    {label: 'Điểm truy cập', value: 0, key: '2'},
 
+  ]
+  formSave: FormGroup;
   private OBSERVE_PROCESS_FORM_DATA = new Subject<FormDiemTruyCap>();
   formActive: FormDiemTruyCap;
   data: Point[];
@@ -183,19 +192,20 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
     private fileService: FileService,
     private danhMucLoaiNguLieuService: DanhMucLoaiNguLieuService,
     private danhMucLinhVucService: DanhMucLinhVucService,
-    private employeesPickerService: EmployeesPickerService
+    private employeesPickerService: EmployeesPickerService,
+    private mediaService:MediaService
   ) {
     this.formSave = this.fb.group({
-      icon: ['', Validators.required],
+      icon: [''],
       title: ['', Validators.required],
       mota: ['',],
       vitri_ggmap: [''],
       type: ['', Validators.required],
       ds_ngulieu: [[], Validators.required],
-      parent_id: ['', Validators.required],
+      parent_id: [''],
       donvi_id: [null, Validators.required],
-      ditich_id: [null, Validators.required],
-      root: [null, Validators.required],
+      ditich_id: [null],
+
     }, {
       validators: PinableValidator
     });
@@ -271,7 +281,8 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
     this.pointsService.loadPage(this.page).subscribe({
       next: ({data, recordsTotal}) => {
         this.data = data.map(m => {
-          m['__diemditich_converted'] = m.ditich_id ? this.dataDiemditich.find(f => f.id === m.ditich_id).ten : m.title;
+          m['__diemditich_converted'] = m.type ? m.title : this.dataDiemditich.find(f => f.id === m.ditich_id).ten;
+          m['__type_converted'] = m.type ? this.typeOptions.find(f => f.value === m.type).label : null;
           return m;
         });
         this.recordsTotal = recordsTotal;
@@ -288,7 +299,7 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
   }
 
   private __processFrom({data, object, type}: FormDiemTruyCap) {
-    const observer$: Observable<any> = type === FormType.ADDITION ? this.danhMucDiemDiTichService.create(data) : this.danhMucDiemDiTichService.update(object.id, data);
+    const observer$: Observable<any> = type === FormType.ADDITION ? this.pointsService.create(data) : this.pointsService.update(object.id, data);
     observer$.subscribe({
       next: () => {
         this.needUpdate = true;
@@ -303,7 +314,6 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
             parent_id: null,
             donvi_id: this.auth.userDonViId,
             ditich_id: null,
-            root: 0
           });
         }
         this.notificationService.toastSuccess('Thao tác thành công', 'Thông báo');
@@ -359,7 +369,6 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
           parent_id: null,
           donvi_id: this.auth.userDonViId,
           ditich_id: null,
-          root: 0
         });
         // this.characterAvatar = ''
         this.formActive = this.listForm[FormType.ADDITION];
@@ -372,11 +381,11 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
           title: object1.title,
           mota: object1.mota,
           vitri_ggmap: object1.vitri_ggmap,
+          type: object1.type,
           donvi_id: object1.donvi_id,
           parrent_id: object1.parent_id,
           ds_ngulieu: object1.ds_ngulieu,
           ditich_id: object1.ditich_id,
-          root: object1.root
         });
         // this.characterAvatar = object1.ds_ngulieu ? getLinkDownload(object1.ds_ngulieu['id']) : '';
         this.formActive = this.listForm[FormType.UPDATE];
@@ -400,10 +409,52 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
           })
         }
         break;
+      case 'MEDIAVR_DECISION':
+        this.mode = "MEDIAVR";
+        this.ngulieuView = decision.ds_ngulieu[0];
+        this.diemditichPoint = decision;
+        break;
+      case 'ADD_POINT_START':
+        const isRoot= this.data.find(f=>f.root === 1);
+        if(isRoot){
+          this.notificationService.toastWarning('Điểm bắt đầu đã được xét');
+        }
+        else{
+          this.notificationService.isProcessing(true);
+          this.pointsService.update(decision.id, {root :1}).subscribe({
+            next:()=>{
+              this.loadData(1);
+              this.notificationService.isProcessing(false);
+            },error:()=>{
+              this.notificationService.isProcessing(false);
+              this.notificationService.toastError('Mất kết nối với máy chủ')
+            }
+          })
+        }
+        break;
+      case 'DELETE-POINT_START':
+          const isRoot1 = decision.root ===1 ;
+          if(!isRoot1){
+            this.notificationService.toastWarning('Điểm truy cập này chưa được gắn là điểm bắt đầu');
+          }else{
+            this.notificationService.isProcessing(true);
+            this.pointsService.update(decision.id,{root:0}).subscribe({
+              next:()=>{
+
+              },error:()=>{
+
+              }
+            })
+          }
+        break
       default:
         break;
     }
   }
+
+  diemditichPoint: Point;
+
+  ngulieuView: Ngulieu;
 
   saveForm() {
     if (this.formSave.valid) {
@@ -418,7 +469,6 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
   onChangeDitich(event) {
     const value = event.value;
     const ditich = this.dataDiemditich.find(f => f.id === value);
-    console.log(ditich);
     if (value) {
       this.f['title'].setValue(ditich.ten);
       this.f['mota'].setValue(ditich.mota);
@@ -433,21 +483,38 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
 
   async btnAddNgulieu(type) {
     const result = await this.employeesPickerService.pickerNgulieu([], '', type);
-    console.log(result);
     const value = [].concat(this.f['ds_ngulieu'].value, result);
     this.f['ds_ngulieu'].setValue(value);
-    console.log(this.f['ds_ngulieu'].value);
-
+    this.f['ds_ngulieu'].markAsUntouched();
   }
+
   deleteNguLieuOnForm(n: Ngulieu) {
     if (this.f['ds_ngulieu'].value && Array.isArray(this.f['ds_ngulieu'].value)) {
       const newValues = this.f['ds_ngulieu'].value.filter(u => u.id !== n.id);
       this.f['ds_ngulieu'].setValue(newValues);
+      this.f['ds_ngulieu'].markAsTouched();
     } else {
       this.f['ds_ngulieu'].setValue([]);
+      this.f['ds_ngulieu'].markAsTouched();
     }
   }
-  viewDiemtruycap(n:Ngulieu){
 
+  btnExit() {
+    this.mode = 'TABLE';
   }
+
+  async btnDownloadFIle(n: Ngulieu) {
+    const file = n.file_media[0];
+    const result = await this.mediaService.tplDownloadFile(file as OvicFile);
+    switch (result) {
+      case DownloadProcess.rejected:
+        this.notificationService.toastInfo('Chưa hỗ trợ tải xuống thư mục');
+        break;
+      case DownloadProcess.error:
+        this.notificationService.toastError('Tải xuống thất bại');
+        break;
+    }
+  }
+
+
 }

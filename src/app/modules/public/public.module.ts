@@ -1,41 +1,41 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
 
-import { PublicRoutingModule } from './public-routing.module';
-import { LoginComponent } from './features/login/login.component';
-import { ResetPasswordComponent } from './features/reset-password/reset-password.component';
-import { ContentNoneComponent } from './features/content-none/content-none.component';
-import { FormsModule , ReactiveFormsModule } from '@angular/forms';
-import { LoginV2Component } from './features/login-v2/login-v2.component';
-import { UnauthorizedComponent } from './features/unauthorized/unauthorized.component';
-import { ButtonModule } from 'primeng/button';
-import { RippleModule } from 'primeng/ripple';
-import { ClearComponent } from './features/clear/clear.component';
-import { TestComponent } from './features/test/test.component';
-import { TestDateInputComponent } from './features/test-date-input/test-date-input.component';
-import { InputMaskModule } from 'primeng/inputmask';
-import { LoginVideoComponent } from './features/login-video/login-video.component';
+import {PublicRoutingModule} from './public-routing.module';
+import {LoginComponent} from './features/login/login.component';
+import {ResetPasswordComponent} from './features/reset-password/reset-password.component';
+import {ContentNoneComponent} from './features/content-none/content-none.component';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {LoginV2Component} from './features/login-v2/login-v2.component';
+import {UnauthorizedComponent} from './features/unauthorized/unauthorized.component';
+import {ButtonModule} from 'primeng/button';
+import {RippleModule} from 'primeng/ripple';
+import {ClearComponent} from './features/clear/clear.component';
 
-@NgModule( {
-	declarations : [
-		LoginComponent ,
-		ResetPasswordComponent ,
-		ContentNoneComponent ,
-		LoginV2Component ,
-		UnauthorizedComponent ,
-		ClearComponent ,
-		TestComponent ,
-		TestDateInputComponent,
-  LoginVideoComponent
-	] ,
-	imports      : [
-		CommonModule ,
-		PublicRoutingModule ,
-		ReactiveFormsModule ,
-		ButtonModule ,
-		RippleModule ,
-		InputMaskModule ,
-		FormsModule
-	]
-} )
-export class PublicModule {}
+import {InputMaskModule} from 'primeng/inputmask';
+import {LoginVideoComponent} from './features/login-video/login-video.component';
+import { VirtualTourComponent } from './features/virtual-tour/virtual-tour.component';
+
+@NgModule({
+  declarations: [
+    LoginComponent,
+    ResetPasswordComponent,
+    ContentNoneComponent,
+    LoginV2Component,
+    UnauthorizedComponent,
+    ClearComponent,
+    LoginVideoComponent,
+    VirtualTourComponent
+  ],
+  imports: [
+    CommonModule,
+    PublicRoutingModule,
+    ReactiveFormsModule,
+    ButtonModule,
+    RippleModule,
+    InputMaskModule,
+    FormsModule
+  ]
+})
+export class PublicModule {
+}

@@ -258,7 +258,7 @@ body .ui-widget {
 	.p-toast {
 		max-width: calc(100% - 30px);
 	}
-	
+
 	.p-toast-bottom-right {
 		right: 15px !important;
 	}
@@ -3292,9 +3292,11 @@ body .ovic-vertical__inputs .form-row .p-dropdown--border-bottom p-dropdown .p-d
 	padding-left: 0 !important;
 }
 
+
 .ovic-vertical__inputs .form-row.err-input textarea,
 .ovic-vertical__inputs .form-row.err-input input,
 .ovic-vertical__inputs .form-row p-dropdown.ng-touched.ng-invalid .p-dropdown,
+.ovic-vertical__inputs .form-row input.ng-touched.ng-invalid,
 .ovic-vertical__inputs .form-row.err-input select,
 .ovic-vertical__inputs .form-row.err-input input.ng-touched,
 .ovic-profiles .form-row.err-input select,

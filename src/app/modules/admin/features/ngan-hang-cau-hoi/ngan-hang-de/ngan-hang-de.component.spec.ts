@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TestDateInputComponent } from './test-date-input.component';
+import { NganHangDeComponent } from './ngan-hang-de.component';
 
-describe('TestDateInputComponent', () => {
-  let component: TestDateInputComponent;
-  let fixture: ComponentFixture<TestDateInputComponent>;
+describe('NganHangDeComponent', () => {
+  let component: NganHangDeComponent;
+  let fixture: ComponentFixture<NganHangDeComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TestDateInputComponent ]
+      declarations: [ NganHangDeComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(TestDateInputComponent);
+    fixture = TestBed.createComponent(NganHangDeComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

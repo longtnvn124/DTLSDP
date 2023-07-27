@@ -5,14 +5,11 @@ import { LoginV2Component } from './features/login-v2/login-v2.component';
 import { ContentNoneComponent } from './features/content-none/content-none.component';
 import { UnauthorizedComponent } from './features/unauthorized/unauthorized.component';
 import { ClearComponent } from './features/clear/clear.component';
-import { TestComponent } from '@modules/public/features/test/test.component';
 import { LoginVideoComponent } from '@modules/public/features/login-video/login-video.component';
+import {VirtualTourComponent} from "@modules/public/features/virtual-tour/virtual-tour.component";
 
 const routes : Routes = [
-	{
-		path      : 'test' ,
-		component : TestComponent
-	} ,
+
 	{
 		path      : 'unauthorized' ,
 		component : UnauthorizedComponent
@@ -37,10 +34,10 @@ const routes : Routes = [
 		path      : 'content-none' ,
 		component : ContentNoneComponent
 	} ,
-	{
-		path         : 'basic' ,
-		loadChildren : () => import('./features/basic/basic.module').then( m => m.BasicModule )
-	} ,
+  {
+    path      : 'virtial-tour' ,
+    component : VirtualTourComponent
+  } ,
 	{
 		path       : '' ,
 		redirectTo : 'login' ,

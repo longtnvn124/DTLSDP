@@ -1,4 +1,5 @@
 import {OvicFile} from "@core/models/file";
+import {LoaiNguLieu} from "@shared/models/danh-muc";
 
 export interface NguLieuChung {
   id: number;
@@ -13,7 +14,7 @@ export interface NguLieuChung {
 }
 
 export interface Ngulieu extends NguLieuChung {
-  loaingulieu: string;
+  loaingulieu: LoaiNguLieu;
   linhvuc: number;
   chuyenmuc: string;
   diemditich_id: number;

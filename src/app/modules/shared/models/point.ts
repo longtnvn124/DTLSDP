@@ -7,7 +7,7 @@ export interface Pinable {
   title: string;
   mota:string;
   location: number[]; // vi tri vector3
-  type: string; //DIRECT | INFO
+  type: 'DIRECT' | 'INFO'; //DIRECT | INFO
   parent_id: number; //ngulieu_id
   donvi_id:number;
   ds_ngulieu: Ngulieu[]; //danh sách audio | hảnh 360 | video360 ;
