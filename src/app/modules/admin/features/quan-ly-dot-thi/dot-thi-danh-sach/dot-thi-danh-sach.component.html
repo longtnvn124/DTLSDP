@@ -8,7 +8,7 @@
       <ovic-table emptyMessage="Danh sách trống" [index]="index" [data]="listData"
                   styleClass="tbl-danh-sach-tap-the head-input-size--normal head-input-size--250px" dataKey="id"
                   rowHover="true"
-                  [rows]="15" tableName="Danh sách lĩnh vực" [tblStructure]="tblStructure"
+                  [rows]="15" tableName="Danh sách ngân hàng đề" [tblStructure]="tblStructure"
                   (onButtonClick)="handleClickOnTable($event)" [enableSearch]="true" [enableSearchLocal]="false"
                   (onSearch)="onSearch($event)" [searchDebounceTime]="800" [headerButtons]="headButtons"></ovic-table>
       <p-paginator class="p-paginator--custom" [showCurrentPageReport]="true" [rows]="rows"
@@ -28,40 +28,54 @@
       <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
         <form [formGroup]="formSave" autocomplete="off">
           <div class="row">
-            <div class="col-6">
-              <p class="form-row" >
-                <label>Tên lĩnh vực<span class="ovic-mark">*</span></label>
-                <input type="text" placeholder="Tên lĩnh vực..." formControlName="ten"
-                       autocomplete="off">
-              </p>
-            </div>
-            <div class="col-6">
-              <p class="form-row">
-                <label>Ký hiệu <span class="ovic-mark">*</span></label>
-                <input type="text" placeholder="Ký hiệu ..." formControlName="kyhieu"
-                       autocomplete="off">
-              </p>
-            </div>
-          </div>
-          <div class="row">
             <div class="col-12">
               <p class="form-row">
-                <label for="mota">Mô tả</label>
-                <textarea formControlName="mota" placeholder="Mô tả..." autocomplete="off" id="mota" cols="30"
-                          rows="5"></textarea>
-              </p>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12">
-              <p class="form-row">
-                <label for="mota">Trạng thái</label>
-                <p-dropdown placeholder="Chọn..." class="w-100" [options]="statusList" optionLabel="label"
-                            optionValue="value" [showClear]="true"
-                            formControlName='status'></p-dropdown>
+                <label>Tên đợt thi<span class="ovic-mark">*</span></label>
+                <input type="text" placeholder="Tên đợt..." formControlName="title" autocomplete="off">
               </p>
             </div>
 
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <p class="form-row">
+                <label >Mô tả</label>
+                <textarea formControlName='desc' placeholder="Mô tả ..." autocomplete="off" cols="30"
+                          rows="2"></textarea>
+              </p>
+            </div>
+
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <p class="form-row">
+                <label >Chọn ngân hàng đề</label>
+                <p-dropdown [options]="nganHangDe" formControlName="bank_id" placeholder="Chọn..." optionValue="id" optionLabel="title" class="w-100"></p-dropdown>
+              </p>
+            </div>
+
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <p class="form-row">
+                <label>Thời gian bắt đầu <span class="ovic-mark">*</span></label>
+                <p-calendar placeholder="chọn..." class="w-100" dateFormat="dd/mm/yy" formControlName="time_start" [showTime]="true" [showIcon]="true" [showSeconds]="false"></p-calendar>
+              </p>
+            </div>
+<!--            <div class="col-6">-->
+<!--              <p class="form-row">-->
+<!--                <label>Thời gian kết thúc<span class="ovic-mark">*</span></label>-->
+<!--                <p-calendar class="w-100" dateFormat="dd/mm/yy" formControlName="time_end" [showTime]="true" [showIcon]="true" [showSeconds]="false"></p-calendar>-->
+<!--              </p>-->
+<!--            </div>-->
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <p class="form-row">
+                <label>Thời gian kết thúc<span class="ovic-mark">*</span></label>
+                <p-calendar placeholder="chọn..." class="w-100" dateFormat="dd/mm/yy" formControlName="time_end" [showTime]="true" [showIcon]="true" [showSeconds]="false"></p-calendar>
+              </p>
+            </div>
           </div>
 
         </form>
@@ -76,4 +90,5 @@
     </div>
   </div>
 </ng-template>
+
 

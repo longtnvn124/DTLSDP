@@ -98,4 +98,5 @@ export class PointsService {
     return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
   }
 
+
 }

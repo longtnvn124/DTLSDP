@@ -1,19 +1,38 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
 
-import { NganHangCauHoiRoutingModule } from './ngan-hang-cau-hoi-routing.module';
-import { NganHangCauHoiComponent } from './ngan-hang-cau-hoi/ngan-hang-cau-hoi.component';
-import { NganHangDeComponent } from './ngan-hang-de/ngan-hang-de.component';
+import {NganHangCauHoiRoutingModule} from './ngan-hang-cau-hoi-routing.module';
+import {NganHangCauHoiComponent} from './ngan-hang-cau-hoi/ngan-hang-cau-hoi.component';
+import {NganHangDeComponent} from './ngan-hang-de/ngan-hang-de.component';
+import {SharedModule} from "@shared/shared.module";
+import {PaginatorModule} from "primeng/paginator";
+import {ReactiveFormsModule} from "@angular/forms";
+import {ButtonModule} from "primeng/button";
+import {RippleModule} from "primeng/ripple";
+import {AnswerOptionGroupComponent} from './answer-option-group/answer-option-group.component';
+import {CheckboxModule} from "primeng/checkbox";
+import {RadioButtonModule} from "primeng/radiobutton";
+import {InputTextModule} from "primeng/inputtext";
 
 
 @NgModule({
   declarations: [
     NganHangCauHoiComponent,
-    NganHangDeComponent
+    NganHangDeComponent,
+    AnswerOptionGroupComponent
   ],
-  imports: [
-    CommonModule,
-    NganHangCauHoiRoutingModule
-  ]
+    imports: [
+        CommonModule,
+        NganHangCauHoiRoutingModule,
+        SharedModule,
+        PaginatorModule,
+        ReactiveFormsModule,
+        ButtonModule,
+        RippleModule,
+        CheckboxModule,
+        RadioButtonModule,
+        InputTextModule
+    ]
 })
-export class NganHangCauHoiModule { }
+export class NganHangCauHoiModule {
+}

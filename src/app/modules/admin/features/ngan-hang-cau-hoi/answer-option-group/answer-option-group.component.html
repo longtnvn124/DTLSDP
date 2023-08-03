@@ -1,0 +1,20 @@
+<div class="answer-option-group">
+
+    <ng-container *ngFor="let option of options; index as i">
+      <div class="answer-option-group__answer">
+        <button pButton pRipple [icon]="correctAnswer.includes(option.id) ? 'pi pi-check-circle' : 'pi pi-times-circle'"
+                [ngClass]=" correctAnswer.includes(option.id) ? 'p-button-success' : 'p-button-danger'"
+                class="answer-option-group__answer__button p-button-text"
+                (click)="selectItem(option.id)"></button>
+        <p class="answer-option-group__answer__form-row form-row">
+          <label>Câu trả lời {{1 + i}}</label>
+          <input type="text" placeholder="...." [(ngModel)]="option.value" autocomplete="off">
+        </p>
+        <button pButton pRipple icon="pi pi-trash"
+                class="answer-option-group__answer__button p-button-danger p-button-text"
+                (click)="deleteItem(option.id)"></button>
+      </div>
+    </ng-container>
+
+  <button pRipple pButton class="w-100 mt-3" icon="pi pi-plus" label="Thêm phương án trả lời" (click)="addMoreAnswer()"></button>
+</div>

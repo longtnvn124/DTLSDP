@@ -54,10 +54,10 @@ const routes : Routes = [
         path         : 'diem-truy-cap' ,
         loadChildren : () => import('@modules/admin/features/diem-truy-cap/diem-truy-cap.module').then( m => m.DiemTruyCapModule )
       } ,
-			// {
-			// 	path         : 'khoi-cum' ,
-			// 	loadChildren : () => import('@modules/admin/features/khoi-cum/khoi-cum.module').then( m => m.KhoiCumModule )
-			// } ,
+			{
+				path         : 'tro-giup' ,
+				loadChildren : () => import('@modules/admin/features/tro-giup/tro-giup.module').then( m => m.TroGiupModule )
+			} ,
 			// {
 			// 	path         : 'phong-trao-thi-dua' ,
 			// 	loadChildren : () => import('@modules/admin/features/phong-trao-thi-dua/phong-trao-thi-dua.module').then( m => m.PhongTraoThiDuaModule )

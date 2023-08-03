@@ -102,6 +102,24 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
       headClass: 'ovic-w-180px text-center',
       buttons: [
         {
+          tooltip: 'Tạo điểm bắt đầu',
+          label: '',
+          icon: 'pi pi-check-square',
+          name: 'ADD_POINT_START',
+          cssClass: 'btn-secondary rounded',
+          conditionField: 'root',
+          conditionMultiValues: [0]
+        },
+        {
+          tooltip: 'Xoá Điểm bắt đầu',
+          label: '',
+          icon: 'pi pi-times-circle',
+          name: 'DELETE_POINT_START',
+          cssClass: 'btn-success rounded',
+          conditionField: 'root',
+          conditionMultiValues: [1]
+        },
+        {
           tooltip: 'Truy cập Vr360',
           label: '',
           icon: 'pi pi-globe',
@@ -119,13 +137,7 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
           conditionField: 'type',
           conditionValue: 'INFO'
         },
-        {
-          tooltip: 'Thông tin chi tiết ',
-          label: '',
-          icon: 'pi pi-file',
-          name: 'INFORMATION_DECTISION',
-          cssClass: 'btn-secondary rounded'
-        },
+
         {
           tooltip: 'Sửa',
           label: '',
@@ -193,7 +205,7 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
     private danhMucLoaiNguLieuService: DanhMucLoaiNguLieuService,
     private danhMucLinhVucService: DanhMucLinhVucService,
     private employeesPickerService: EmployeesPickerService,
-    private mediaService:MediaService
+    private mediaService: MediaService
   ) {
     this.formSave = this.fb.group({
       icon: [''],
@@ -393,20 +405,24 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
         this.preSetupForm(this.menuName);
         break;
       case 'DELETE_DECISION':
-        const confirm = await this.notificationService.confirmDelete();
-        if (confirm) {
-          this.danhMucDiemDiTichService.delete(decision.id).subscribe({
-            next: () => {
-              this.page = Math.max(1, this.page - (this.data.length > 1 ? 0 : 1));
-              this.notificationService.isProcessing(false);
-              this.notificationService.toastSuccess('Thao tác thành công');
-              this.loadData(this.page);
+        if (decision.root === 0) {
+          const confirm = await this.notificationService.confirmDelete();
+          if (confirm) {
+            this.danhMucDiemDiTichService.delete(decision.id).subscribe({
+              next: () => {
+                this.page = Math.max(1, this.page - (this.data.length > 1 ? 0 : 1));
+                this.notificationService.isProcessing(false);
+                this.notificationService.toastSuccess('Thao tác thành công');
+                this.loadData(this.page);
 
-            }, error: () => {
-              this.notificationService.isProcessing(false);
-              this.notificationService.toastError('Thao tác không thành công');
-            }
-          })
+              }, error: () => {
+                this.notificationService.isProcessing(false);
+                this.notificationService.toastError('Thao tác không thành công');
+              }
+            })
+          }
+        } else {
+          this.notificationService.toastError('Điểm truy cập này đang được gắn điểm bắt đầu')
         }
         break;
       case 'MEDIAVR_DECISION':
@@ -415,37 +431,38 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
         this.diemditichPoint = decision;
         break;
       case 'ADD_POINT_START':
-        const isRoot= this.data.find(f=>f.root === 1);
-        if(isRoot){
+        const isRoot = this.data.find(f => f.root === 1);
+        if (isRoot) {
           this.notificationService.toastWarning('Điểm bắt đầu đã được xét');
-        }
-        else{
+        } else {
           this.notificationService.isProcessing(true);
-          this.pointsService.update(decision.id, {root :1}).subscribe({
-            next:()=>{
+          this.pointsService.update(decision.id, {root: 1}).subscribe({
+            next: () => {
               this.loadData(1);
               this.notificationService.isProcessing(false);
-            },error:()=>{
+            }, error: () => {
               this.notificationService.isProcessing(false);
               this.notificationService.toastError('Mất kết nối với máy chủ')
             }
           })
         }
         break;
-      case 'DELETE-POINT_START':
-          const isRoot1 = decision.root ===1 ;
-          if(!isRoot1){
-            this.notificationService.toastWarning('Điểm truy cập này chưa được gắn là điểm bắt đầu');
-          }else{
-            this.notificationService.isProcessing(true);
-            this.pointsService.update(decision.id,{root:0}).subscribe({
-              next:()=>{
-
-              },error:()=>{
-
-              }
-            })
-          }
+      case 'DELETE_POINT_START':
+        const isRoot1 = decision.root === 1;
+        if (!isRoot1) {
+          this.notificationService.toastWarning('Điểm truy cập này chưa được gắn là điểm bắt đầu');
+        } else {
+          this.notificationService.isProcessing(true);
+          this.pointsService.update(decision.id, {root: 0}).subscribe({
+            next: () => {
+              this.notificationService.isProcessing(false);
+              this.loadData(1);
+            }, error: () => {
+              this.notificationService.isProcessing(false);
+              this.notificationService.toastError('Mất kết nối với máy chủ');
+            }
+          })
+        }
         break
       default:
         break;

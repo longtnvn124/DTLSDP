@@ -110,7 +110,7 @@ export class ChuyenMucComponent implements OnInit {
   menuName: 'dm_chuyenmuc';
 
   page = 1;
-
+  btn_checkAdd:'Lưu lại' |'Cập nhật';
   recordsTotal = 0;
 
   index = 1;
@@ -213,6 +213,7 @@ export class ChuyenMucComponent implements OnInit {
     const decision = button.data && this.listData ? this.listData.find(u => u.id === button.data) : null;
     switch (button.name) {
       case 'BUTTON_ADD_NEW':
+        this.btn_checkAdd="Lưu lại";
         this.formSave.reset({
           ten: '',
           mota: '',
@@ -223,6 +224,8 @@ export class ChuyenMucComponent implements OnInit {
         this.preSetupForm(this.menuName);
         break;
       case 'EDIT_DECISION':
+        this.btn_checkAdd="Cập nhật";
+
         const object1 = this.listData.find(u => u.id === decision.id);
         this.formSave.reset({
           ten: object1.ten,

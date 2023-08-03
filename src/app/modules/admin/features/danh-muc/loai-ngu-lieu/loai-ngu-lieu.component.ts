@@ -99,7 +99,7 @@ export class LoaiNguLieuComponent implements OnInit {
       class: 'p-button-rounded p-button-success ml-3 mr-2'
     },
   ];
-
+  btn_checkAdd:'Lưu lại'|'Cập nhật';
   listForm = {
     [FormType.ADDITION]: {type: FormType.ADDITION, title: 'Thêm mới loại ngữ liệu', object: null, data: null},
     [FormType.UPDATE]: {type: FormType.UPDATE, title: 'Cập nhật loại ngữ liệu', object: null, data: null}
@@ -224,6 +224,7 @@ export class LoaiNguLieuComponent implements OnInit {
     const decision = button.data && this.listData ? this.listData.find(u => u.id === button.data) : null;
     switch (button.name) {
       case 'BUTTON_ADD_NEW':
+        this.btn_checkAdd="Lưu lại"
         this.formSave.reset({
           ten: '',
           mota: '',
@@ -235,6 +236,7 @@ export class LoaiNguLieuComponent implements OnInit {
         this.preSetupForm(this.menuName);
         break;
       case 'EDIT_DECISION':
+        this.btn_checkAdd="Cập nhật"
         const object1 = this.listData.find(u => u.id === decision.id);
         this.formSave.reset({
           ten: object1.ten,

@@ -1,0 +1,17 @@
+.answer-option-group__answer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.answer-option-group__answer__button {
+  width: 42px;
+  height: 42px;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.answer-option-group__answer__form-row {
+  width: calc(100% - 42px - 42px);
+}

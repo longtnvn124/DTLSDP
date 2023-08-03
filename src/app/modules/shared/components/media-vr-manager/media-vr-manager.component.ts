@@ -120,6 +120,7 @@ export class MediaVrManagerComponent implements OnInit, AfterViewInit, OnDestroy
     private employeesPickerService: EmployeesPickerService,
 
   ) {
+    console.log(this._diemtruycap);
     this.video360 = this.renderer2.createElement('video');
 
     this.formSave = this.fb.group({
@@ -181,11 +182,7 @@ export class MediaVrManagerComponent implements OnInit, AfterViewInit, OnDestroy
       this.container.nativeElement.addEventListener('click', this.onClick);
       this.container.nativeElement.addEventListener('mousemove', this.onMouseMove);
       this.container.nativeElement.addEventListener('contextmenu', this.onRightClick);
-
-      console.log('cho phep add point');
-
     } else {
-      console.log('khong cho phep add point');
     }
 
   }
@@ -248,7 +245,9 @@ export class MediaVrManagerComponent implements OnInit, AfterViewInit, OnDestroy
     this.typeMedia = this._diemtruycap.type;
     this.notificationService.isProcessing(true);
     this.destinationDiemditich = this._diemtruycap.ds_ngulieu.find(n => ['image360', 'video360'].includes(n['loaingulieu']));
+    console.log(this.destinationDiemditich);
     this.otherInfoDiemditich = this._diemtruycap.ds_ngulieu.filter(n => !['image360', 'video360'].includes(n['loaingulieu']));
+    console.log(this.otherInfoDiemditich);
 
     const mediaVr_destination_Link = this.destinationDiemditich.file_media && this.destinationDiemditich.file_media[0] ? this.fileService.getPreviewLinkLocalFile(this.destinationDiemditich.file_media[0]) : null;
     const audio_otherInfo = this.otherInfoDiemditich.find(f => f.loaingulieu === 'audio') ? this.otherInfoDiemditich.find(f => f.loaingulieu === 'audio').file_media[0] : null;

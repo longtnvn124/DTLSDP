@@ -15,6 +15,7 @@ import {ClearComponent} from './features/clear/clear.component';
 import {InputMaskModule} from 'primeng/inputmask';
 import {LoginVideoComponent} from './features/login-video/login-video.component';
 import { VirtualTourComponent } from './features/virtual-tour/virtual-tour.component';
+import {SharedModule} from "@shared/shared.module";
 
 @NgModule({
   declarations: [
@@ -27,15 +28,16 @@ import { VirtualTourComponent } from './features/virtual-tour/virtual-tour.compo
     LoginVideoComponent,
     VirtualTourComponent
   ],
-  imports: [
-    CommonModule,
-    PublicRoutingModule,
-    ReactiveFormsModule,
-    ButtonModule,
-    RippleModule,
-    InputMaskModule,
-    FormsModule
-  ]
+    imports: [
+        CommonModule,
+        PublicRoutingModule,
+        ReactiveFormsModule,
+        ButtonModule,
+        RippleModule,
+        InputMaskModule,
+        FormsModule,
+        SharedModule
+    ]
 })
 export class PublicModule {
 }

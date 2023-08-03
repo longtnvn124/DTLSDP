@@ -139,7 +139,7 @@ export class DiemDiTichComponent implements OnInit {
   isLoading = true;
   needUpdate = false;
   menuName: 'diem-truy-cap';
-
+  btn_checkAdd:'Lưu lại'|'Cập nhật';
   page = 1;
 
   recordsTotal = 0;
@@ -221,6 +221,7 @@ export class DiemDiTichComponent implements OnInit {
     observer$.subscribe({
       next: () => {
         this.needUpdate = true;
+
         if (type === FormType.ADDITION) {
           this.formSave.reset({
             ten: '',
@@ -271,7 +272,7 @@ export class DiemDiTichComponent implements OnInit {
     const decision = button.data && this.listData ? this.listData.find(u => u.id === button.data) : null;
     switch (button.name) {
       case 'BUTTON_ADD_NEW':
-        console.log(123);
+        this.btn_checkAdd= "Lưu lại";
         this.formSave.reset({
           ten: '',
           mota: '',
@@ -282,6 +283,7 @@ export class DiemDiTichComponent implements OnInit {
         this.preSetupForm(this.menuName);
         break;
       case 'EDIT_DECISION':
+        this.btn_checkAdd="Cập nhật"
         const object1 = this.listData.find(u => u.id === decision.id);
         this.formSave.reset({
           ten: object1.ten,

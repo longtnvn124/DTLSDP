@@ -1,0 +1,28 @@
+
+.tour-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.tour-container__body{
+  width:100%;
+  height:100%;
+  margin:auto;
+}
+
+.ctn-background{
+  text-align: center;
+  background-size: cover;
+  object-fit: cover; /* Tự động co dãn hình ảnh để che đậy vùng chứa */
+  object-position: center; /* Hiển thị phần trung tâm của hình ảnh */
+
+
+}
+.btnRun{
+  border-radius: 40px;
+  padding: 10px;
+  width:200px;
+  height:50px;
+  font-size:15px;
+  font-weight: 700;
+}

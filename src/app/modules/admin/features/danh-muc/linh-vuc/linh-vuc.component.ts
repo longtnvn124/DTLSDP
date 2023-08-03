@@ -101,7 +101,7 @@ export class LinhVucComponent implements OnInit {
   formSave: FormGroup;
 
   private OBSERVE_PROCESS_FORM_DATA = new Subject<FormDmLinhVuc>();
-
+  btn_checkAdd:'Lưu lại'|'Cập nhật';
   listData: DmLinhVuc[];
   rows = this.themeSettingsService.settings.rows;
   loadInitFail = false;
@@ -214,6 +214,7 @@ export class LinhVucComponent implements OnInit {
     const decision = button.data && this.listData ? this.listData.find(u => u.id === button.data) : null;
     switch (button.name) {
       case 'BUTTON_ADD_NEW':
+        this.btn_checkAdd ="Lưu lại"
         this.formSave.reset({
           ten: '',
           mota: '',
@@ -225,6 +226,7 @@ export class LinhVucComponent implements OnInit {
         this.preSetupForm(this.menuName);
         break;
       case 'EDIT_DECISION':
+        this.btn_checkAdd="Cập nhật"
         const object1 = this.listData.find(u => u.id === decision.id);
         this.formSave.reset({
           ten: object1.ten,

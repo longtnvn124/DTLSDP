@@ -126,7 +126,7 @@
     <p-button class="m-2" [icon]="video360.paused ? 'pi pi-play' : 'pi pi-pause'" styleClass="p-button-warning"
               (onClick)="btnPausePlay()"></p-button>
   </ng-template>
-  <ng-template [ngIf]="destinationDiemditich.loaingulieu === 'video360'">
+  <ng-template [ngIf]="destinationDiemditich && destinationDiemditich.loaingulieu === 'video360'">
     <p-button class="m-2" [icon]="video360.paused ? 'pi pi-play' : 'pi pi-pause'" styleClass="p-button-warning"
               (onClick)="btnPausePlay()"></p-button>
   </ng-template>

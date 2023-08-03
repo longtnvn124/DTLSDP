@@ -56,7 +56,7 @@ export class NhanVatLichSuComponent implements OnInit {
     canDownload: true,
     canUpload: true
   };
-
+  btn_checkAdd:'Lưu lại'|'Cập nhật';
   characterAvatar: string;
   @ViewChild('fileChooser', {static: true}) fileChooser: TemplateRef<any>;
 
@@ -114,8 +114,18 @@ export class NhanVatLichSuComponent implements OnInit {
   }
 
   onSearch(text: string) {
-    this.filter.search = text;
-    this.loadData(1);
+    if(text == ''){
+      this.filter.search= '';
+      this.loadData(1);
+    }
+  }
+
+  onkeyDowm(event:KeyboardEvent){
+    if(event.key === 'Enter'){
+      // this.filter.search = text;
+      console.log(this.filter.search);
+      this.loadData(1);
+    }
   }
 
   async btnDelete(id) {
@@ -144,6 +154,7 @@ export class NhanVatLichSuComponent implements OnInit {
     this.formState.formTitle = formType === 'add' ? 'Thêm nhân vật lịch sử' : 'Cập nhật nhân vật lịch sử ';
     this.formState.formType = formType;
     if (formType === 'add') {
+       this.btn_checkAdd="Lưu lại";
       this.formSave.reset(
         {
           ten: '',
@@ -158,6 +169,7 @@ export class NhanVatLichSuComponent implements OnInit {
       this.characterAvatar = '';
     } else {
       this.formState.object = object;
+      this.btn_checkAdd="Cập nhật"
       this.formSave.reset(
         {
           ten: object.ten,
@@ -222,10 +234,6 @@ export class NhanVatLichSuComponent implements OnInit {
     }
   }
 
-  closeForm() {
-    this.notificationService.closeSideNavigationMenu();
-    this.loadData(1);
-  }
   async makeCharacterAvatar(file: File, characterName: string): Promise<File> {
     try {
       const options: AvatarMakerSetting = {
@@ -282,5 +290,9 @@ export class NhanVatLichSuComponent implements OnInit {
     }), 100);
     this.infoNhanvalichsu = this.listData.find(f => f.id === object.id)
     this.infoNhanvalichsu['image_convenrted'] =  this.infoNhanvalichsu.files ? this.fileService.getPreviewLinkLocalFile( this.infoNhanvalichsu.files) : null;
+  }
+  closeForm(){
+    this.notificationService.closeSideNavigationMenu();
+    this.loadData(1);
   }
 }

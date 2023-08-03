@@ -1,1 +1,186 @@
-<p>ngan-hang-cau-hoi works!</p>
+<div class="row">
+  <div class="col-12" [class.ovic-is-loading]="isLoading">
+    <div class="ovic-load-init-fail alert alert-danger --fs-14" *ngIf="loadInitFail; else tableData">
+      Đã có lỗi trong quá trình tải dữ liệu
+      <button class="btn btn-primary border-circle --fs-13 ml-2" (click)="loadInit()">Reload</button>
+    </div>
+    <ng-template #tableData>
+      <ovic-table emptyMessage="Danh sách trống" [index]="index" [data]="listData"
+                  styleClass="tbl-danh-sach-tap-the head-input-size--normal head-input-size--250px" dataKey="id"
+                  rowHover="true"
+                  [rows]="15" tableName="Danh sách ngân hàng đề" [tblStructure]="tblStructure"
+                  (onButtonClick)="handleClickOnTable($event)" [enableSearch]="true" [enableSearchLocal]="false"
+                  (onSearch)="onSearch($event)" [searchDebounceTime]="800"></ovic-table>
+      <p-paginator class="p-paginator--custom" [showCurrentPageReport]="true" [rows]="rows"
+                   [totalRecords]="recordsTotal" [pageLinkSize]="5" (onPageChange)="paginate($event)"></p-paginator>
+    </ng-template>
+  </div>
+</div>
+
+<ng-template #formAddQuestion>
+  <div class="ovic-side-navigation-content">
+    <div class="ovic-side-navigation-content__head">
+      <h4 class="ovic-side-navigation-content__head__title">Danh sách câu câu hỏi ngân hàng đề</h4>
+      <button (click)="closeForm()" pButton pRipple type="button" icon="pi pi-times"
+              class="p-button-rounded p-button-danger p-button-text close ovic-side-navigation-content__head__btn-close"></button>
+    </div>
+    <div class="ovic-side-navigation-content__body ovic-scroll-style p-0 --no-footer">
+      <ng-container [ngSwitch]="mode">
+        <ng-container *ngSwitchDefault>
+          <div class="d-flex justify-content-center w-100 h-100">
+            <div style="width:1000px">
+              <div class="mt-3 row">
+                <div class="col-10 m-0" style="padding-right: 0;">
+                  <input pInputText type="text" placeholder="Tìm kiếm..." class="input-search pi pi-search" [(ngModel)]="searchQuestion" (ngModelChange)=onSearchQuestion($event) >
+                </div>
+                <div class="col-2">
+                  <button pRipple pButton icon="pi pi-plus" class="w-100 border-radius-0 " label="Thêm mới" (click)="btnAddExam()"></button>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  <div *ngFor="let item of dataQuestion, index as i" class='mb-3'>
+                    <div >
+                      <div class="ctn-question border">
+                        <div class="ctn-question__left">
+                          <ng-container *ngIf="item['state']===1,else showInfo">
+                            <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
+                              <form [formGroup]="item['_formSave']" autocomplete="off">
+                                <div class="row">
+                                  <div class="col-12">
+                                    <p class="form-row">
+                                      <label>Nội dung câu hỏi <span class="ovic-mark">*</span></label>
+                                      <textarea type="text" placeholder="Nội dung..." formControlName="title"
+                                                autocomplete="off"></textarea>
+                                    </p>
+                                  </div>
+                                </div>
+                                <app-answer-option-group class="h-100 mt-3 d-block" [_formControl]="item['_formSave'].get('answer_options')"
+                                                         [correctAnswerControl]="item['_formSave'].get('correct_answer')"></app-answer-option-group>
+                              </form>
+                            </div>
+                          </ng-container>
+                          <ng-template #showInfo>
+                            <div class="w-100 h-100">
+                              <div class="ctn-question__title">
+                                <p class="mb-0">Câu {{i+1}} : </p> <span> {{item.title}}</span>
+                              </div>
+                              <div *ngFor="let answer of item.answer_options">
+                                <div class="ctn-question__answer-item" [ngClass]="item.correct_answer.includes(answer.id) ? 'avtive-bg':''">{{answer.value}}</div>
+                              </div>
+                            </div>
+                          </ng-template>
+
+                        </div>
+                        <div class="ctn-question__right">
+                          <ng-container *ngIf="item['state'] ===1">
+                            <button pButton pRipple icon="pi pi-check-square" class="p-button-success p-button-text " (click)="saveEdit(item)" ></button>
+                            <button pButton pRipple icon="pi pi-times" class="p-button-danger p-button-text mt-1" (click)="btnExit(item)" ></button>
+                          </ng-container>
+                          <ng-container *ngIf="item['state']===0">
+                            <button  pButton pRipple icon="pi pi-file-edit" class="p-button-warning p-button-text " (click)="btnEdit(item)"></button>
+                            <button pButton pRipple icon="pi pi-trash" class="p-button-danger p-button-text mt-1" (click)="btnDelete(item)"></button>
+                          </ng-container>
+                        </div>
+
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </ng-container>
+        <ng-container *ngSwitchCase="'FORM'">
+          <div class="d-flex justify-content-center w-100 h-100">
+            <div style="width:1000px " class="h-100">
+              <div class="ovic-side-navigation-content h-100">
+                <div class="ovic-side-navigation-content__head">
+                  <h4 class="ovic-side-navigation-content__head__title">Thêm mới câu hỏi</h4>
+<!--                  <button (click)="closeFormAdd()" pButton pRipple type="button" icon="pi pi-times"-->
+<!--                          class="p-button-rounded p-button-danger p-button-text close ovic-side-navigation-content__head__btn-close"></button>-->
+                </div>
+                <div class="ovic-side-navigation-content__body ovic-scroll-style">
+                  <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
+                    <form [formGroup]="formSave" autocomplete="off">
+                      <div class="row">
+                        <div class="col-12">
+                          <p class="form-row">
+                            <label>Nội dung câu hỏi <span class="ovic-mark">*</span></label>
+                            <textarea type="text" placeholder="Nội dung..." formControlName="title"
+                                      autocomplete="off"></textarea>
+                          </p>
+                        </div>
+                      </div>
+                      <app-answer-option-group class="h-100 mt-3 d-block" [_formControl]="formSave.get('answer_options')"
+                                               [correctAnswerControl]="f['correct_answer']"></app-answer-option-group>
+                    </form>
+                  </div>
+                </div>
+                <div class="ovic-side-navigation-content__foot">
+                  <span class="ovic-side-navigation-content__foot__notice mr-auto"><mark>(*)</mark> bắt buộc phải nhập</span>
+                  <button pButton pRipple type="button" label="Lưu lại" icon="pi pi-save" (click)="saveForm()"
+                          class="p-button-success"></button>
+                  <button pButton pRipple type="button" label="Đóng" class="p-button-secondary ml-3" icon="pi pi-times"
+                          (click)="closeFormAdd()"></button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </ng-container>
+      </ng-container>
+
+      </div>
+    </div>
+
+
+</ng-template>
+
+<ng-template #formUpdate>
+  <div class="ovic-side-navigation-content">
+    <div class="ovic-side-navigation-content__head">
+      <h4 class="ovic-side-navigation-content__head__title">Thêm mới câu hỏi</h4>
+      <button (click)="closeForm()" pButton pRipple type="button" icon="pi pi-times"
+              class="p-button-rounded p-button-danger p-button-text close ovic-side-navigation-content__head__btn-close"></button>
+    </div>
+    <div class="ovic-side-navigation-content__body ovic-scroll-style ">
+      <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
+        <form [formGroup]="formSave" autocomplete="off">
+          <div class="row">
+            <div class="col-12">
+              <p class="form-row">
+                <label>Nội dung câu hỏi <span class="ovic-mark">*</span></label>
+                <textarea type="text" placeholder="Nội dung..." formControlName="title"
+                          autocomplete="off"></textarea>
+              </p>
+            </div>
+          </div>
+          <app-answer-option-group class="h-100 mt-3 d-block" [_formControl]="formSave.get('answer_options')"
+                                   [correctAnswerControl]="f['correct_answer']"></app-answer-option-group>
+        </form>
+      </div>
+    </div>
+    <div class="ovic-side-navigation-content__foot">
+      <span class="ovic-side-navigation-content__foot__notice mr-auto"><mark>(*)</mark> bắt buộc phải nhập</span>
+      <button pButton pRipple type="button" label="Lưu lại" icon="pi pi-save" (click)="saveForm()"
+              class="p-button-success"></button>
+      <button pButton pRipple type="button" label="Đóng" class="p-button-secondary ml-3" icon="pi pi-times"
+              (click)="closeForm()"></button>
+    </div>
+  </div>
+
+
+</ng-template>
+
+
+<!--                  <button pButton pRipple [icon]="item.correct_answer.includes(answer.id) ? 'pi pi-check-circle' : 'pi pi-times-circle'"-->
+<!--                          [ngClass]="item.correct_answer.includes(answer.id) ? 'p-button-success' : 'p-button-danger'"-->
+<!--                          class="answer-option-group__answer__button p-button-text"-->
+<!--                  ></button>-->
+<!--                  <button pButton pRipple [icon]=""></button>-->
+<!--                  <div class="w-100 " [class]="answer.id === item.correct_answer ? correntAnswer : ''">-->
+<!--                    <input type="text" placeholder="...."  value="{{answer.value}}" autocomplete="off">-->

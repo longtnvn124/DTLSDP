@@ -1,40 +1,42 @@
 import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
-import {NganHangDeService} from "@shared/services/ngan-hang-de.service";
-import {NotificationService} from "@core/services/notification.service";
-import {NganHangDe} from "@shared/models/quan-ly-ngan-hang";
-import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {FormType, NgPaginateEvent, OvicForm, OvicTableStructure} from "@shared/models/ovic-models";
-import {DmNhanVatLichSu} from "@shared/models/danh-muc";
-import {debounceTime, filter, Observable, Subject, Subscription, switchMap} from "rxjs";
-import {OvicButton} from "@core/models/buttons";
+import {shift} from "@shared/models/quan-ly-doi-thi";
+import {debounceTime, filter, Observable, Subject, Subscription} from "rxjs";
+import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {NotificationService} from "@core/services/notification.service";
 import {ThemeSettingsService} from "@core/services/theme-settings.service";
+import {DmNhanVatLichSu} from "@shared/models/danh-muc";
+import {DotThiDanhSachService} from "@shared/services/dot-thi-danh-sach.service";
+import {OvicButton} from "@core/models/buttons";
+import {NganHangDeService} from "@shared/services/ngan-hang-de.service";
+import {NganHangDe} from "@shared/models/quan-ly-ngan-hang";
+import {HelperService} from '@core/services/helper.service';
 
-
-interface FormNganHangDe extends OvicForm {
-  object: NganHangDe;
+interface FormDotthi extends OvicForm {
+  object: shift;
 }
 
 @Component({
-  selector: 'app-ngan-hang-de',
-  templateUrl: './ngan-hang-de.component.html',
-  styleUrls: ['./ngan-hang-de.component.css']
+  selector: 'app-dot-thi-danh-sach',
+  templateUrl: './dot-thi-danh-sach.component.html',
+  styleUrls: ['./dot-thi-danh-sach.component.css']
 })
-export class NganHangDeComponent implements OnInit {
+
+export class DotThiDanhSachComponent implements OnInit {
   @ViewChild('fromUpdate', {static: true}) fromUpdate: TemplateRef<any>;
   rows = this.themeSettingsService.settings.rows;
   loadInitFail: false;
-  formActive: FormNganHangDe;
+  formActive: FormDotthi;
   formSave: FormGroup;
   page = 1;
   subscription = new Subscription();
   index: number;
   sizeFullWidth = 1024;
+  recordsTotal: number;
   isLoading = true;
   needUpdate = false;
-  menuName: 'nganhangde';
   search: string;
-  listData: NganHangDe[];
-  recordsTotal: number;
+
   formState: {
     formType: 'add' | 'edit',
     showForm: boolean,
@@ -46,59 +48,40 @@ export class NganHangDeComponent implements OnInit {
     formTitle: '',
     object: null
   }
-  filePermission = {
-    canDelete: true,
-    canDownload: true,
-    canUpload: true
-  };
-
+  menuName = 'DsDotthi';
+  listData: shift[];
+  nganHangDe: NganHangDe[];
   btn_checkAdd: 'Lưu lại' | 'Cập nhật';
-  private OBSERVE_PROCESS_FORM_DATA = new Subject<FormNganHangDe>();
+  private OBSERVE_PROCESS_FORM_DATA = new Subject<FormDotthi>();
   tblStructure: OvicTableStructure[] = [
     {
       fieldType: 'normal',
-      field: ['__ten_converted'],
+      field: ['__title_converted'],
       innerData: true,
-      header: 'Tên Ngân hàng',
+      header: 'Tên đợt thi',
       sortable: false,
 
     },
+
     {
       fieldType: 'normal',
-      field: ['total'],
-      innerData: true,
-      header: 'Tổng số câu hỏi',
-      sortable: false,
-      headClass: 'ovic-w-150px text-center',
-      rowClass: 'ovic-w-150px text-center'
-    },
-    {
-      fieldType: 'normal',
-      field: ['number_questions_per_test'],
-      innerData: true,
-      header: 'Số câu hỏi trong 1 đề',
-      sortable: false,
-      headClass: 'ovic-w-160px text-center',
-      rowClass: 'ovic-w-160px text-center'
-    },
-    {
-      fieldType: 'normal',
-      field: ['count'],
-      innerData: true,
-      header: 'Số đề đã tạo',
-      sortable: false,
-      headClass: 'ovic-w-150px text-center',
-      rowClass: 'ovic-w-150px text-center'
-    },
-    {
-      fieldType: 'normal',
-      field: ['__time_exam'],
+      field: ['__time_converted'],
       innerData: true,
       header: 'Thời gian thi',
       sortable: false,
-      headClass: 'ovic-w-110px text-center',
-      rowClass: 'ovic-w-110px text-center'
+      headClass: 'ovic-w-300px text-center',
+      rowClass: 'ovic-w-300px text-center'
     },
+    {
+      fieldType: 'normal',
+      field: ['__bank_coverted'],
+      innerData: true,
+      header: 'Ngân hàng đề sử dụng',
+      sortable: false,
+      headClass: 'ovic-w-180px text-center',
+      rowClass: 'ovic-w-180px text-center'
+    },
+
     {
       tooltip: '',
       fieldType: 'buttons',
@@ -110,12 +93,13 @@ export class NganHangDeComponent implements OnInit {
       headClass: 'ovic-w-120px text-center',
       buttons: [
         {
-          tooltip: 'Tạo đề',
+          tooltip: 'Danh sách thí sinh',
           label: '',
           icon: 'pi pi-server',
-          name: 'CREATE_EXAM_DECISION',
+          name: 'STUDENT_DECISION',
           cssClass: 'btn-warning rounded'
-        },{
+        },
+        {
           tooltip: 'Sửa',
           label: '',
           icon: 'pi pi-file-edit',
@@ -135,30 +119,32 @@ export class NganHangDeComponent implements OnInit {
 
   headButtons = [
     {
-      label: 'Thêm ngân hàng',
+      label: 'Thêm đợt thi',
       name: 'BUTTON_ADD_NEW',
       icon: 'pi-plus pi',
       class: 'p-button-rounded p-button-success ml-3 mr-2'
     },
   ];
   listForm = {
-    [FormType.ADDITION]: {type: FormType.ADDITION, title: 'Thêm mới ngân hành đề', object: null, data: null},
-    [FormType.UPDATE]: {type: FormType.UPDATE, title: 'Cập nhật ngân hành đề', object: null, data: null}
+    [FormType.ADDITION]: {type: FormType.ADDITION, title: 'Thêm mới đợt thi ', object: null, data: null},
+    [FormType.UPDATE]: {type: FormType.UPDATE, title: 'Cập nhật đợt thi ', object: null, data: null}
   };
 
-
   constructor(
-    private nganHangDeService: NganHangDeService,
+    private dotThiDanhSachService: DotThiDanhSachService,
     private notificationService: NotificationService,
     private fb: FormBuilder,
-    private themeSettingsService: ThemeSettingsService
+    private themeSettingsService: ThemeSettingsService,
+    private nganHangDeService: NganHangDeService,
+    private helperService: HelperService
   ) {
     this.formSave = this.fb.group({
       title: ['', Validators.required],
       desc: [''],
-      number_questions_per_test: [null],
-      time_per_test: [null, Validators.required],
-    });
+      time_start: ['', Validators.required],
+      time_end: ['', Validators.required],
+      bank_id: ['', Validators.required],
+    })
     const observeProcessFormData = this.OBSERVE_PROCESS_FORM_DATA.asObservable().pipe(debounceTime(100)).subscribe(form => this.__processFrom(form));
     this.subscription.add(observeProcessFormData);
     const observeProcessCloseForm = this.notificationService.onSideNavigationMenuClosed().pipe(filter(menuName => menuName === this.menuName && this.needUpdate)).subscribe(() => this.loadData(this.page));
@@ -168,24 +154,48 @@ export class NganHangDeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadInit();
+    this.nganHangDeService.getDataUnlimit().subscribe({
+      next: (data) => {
+        this.nganHangDe = data;
+        this.loadInit();
+      }, error: () => {
+        this.notificationService.toastError('Mất kết nối với máy chủ');
+      }
+    })
   }
 
   loadInit() {
     this.loadData(1);
+
+  }
+
+  strToTime(input: string): string {
+    const date = input ? new Date(input) : null;
+    let result = '';
+    if (date) {
+      result += [date.getDate().toString().padStart(2, '0'), (date.getMonth() + 1).toString().padStart(2, '0'), date.getFullYear().toString()].join('/');
+      result += ' ' + [date.getHours().toString().padStart(2, '0'), date.getMinutes().toString().padStart(2, '0')].join(':');
+    }
+    return result;
+  }
+
+  private convertDateFormat(dateString: string): string {
+    const date = new Date(dateString);
+    return date ? this.helperService.formatSQLDateTime(date) : null;
   }
 
   loadData(page) {
     const limit = this.themeSettingsService.settings.rows;
     this.index = (page * limit) - limit + 1;
-    this.isLoading = true
-    this.nganHangDeService.load(page).subscribe({
+    this.isLoading = true;
+    this.dotThiDanhSachService.load(page, this.search).subscribe({
       next: ({data, recordsTotal}) => {
-        this.listData = data.map(m=>{
-          m['__ten_converted'] = `<b>${m.title}</b><br>` + m.desc;
-          m['__time_exam'] = m.time_per_test + ' phút';
+        this.listData = data.map(m => {
+          m['__title_converted'] = `<b>${m.title}</b><br>` + m.desc;
+          m['__time_converted'] = this.strToTime(m.time_start) + ' - ' + this.strToTime(m.time_end);
+          m['__bank_coverted'] = this.nganHangDe && m.bank_id && this.nganHangDe.find(f=>f.id=== m.bank_id) ? this.nganHangDe.find(f=>f.id=== m.bank_id).title : '';
           return m;
-        });
+        })
         this.recordsTotal = recordsTotal;
         this.isLoading = false
       }, error: () => {
@@ -193,13 +203,7 @@ export class NganHangDeComponent implements OnInit {
         this.notificationService.toastError('Mất kết nối với máy chủ');
       }
     })
-
-    // this.nganHangDeService.load(page).pipe(switchMap(list=>{
-    //   const list = list;
-    //   return list;
-    // }))
   }
-
 
   get f(): { [key: string]: AbstractControl<any> } {
     return this.formSave.controls;
@@ -215,8 +219,8 @@ export class NganHangDeComponent implements OnInit {
     this.loadData(this.page);
   }
 
-  private __processFrom({data, object, type}: FormNganHangDe) {
-    const observer$: Observable<any> = type === FormType.ADDITION ? this.nganHangDeService.create(data) : this.nganHangDeService.update(object.id, data);
+  private __processFrom({data, object, type}: FormDotthi) {
+    const observer$: Observable<any> = type === FormType.ADDITION ? this.dotThiDanhSachService.create(data) : this.dotThiDanhSachService.update(object.id, data);
     observer$.subscribe({
       next: () => {
         this.needUpdate = true;
@@ -225,6 +229,7 @@ export class NganHangDeComponent implements OnInit {
       error: () => this.notificationService.toastError('Thao tác thất bại', 'Thông báo')
     });
   }
+
   private preSetupForm(name: string) {
     this.notificationService.isProcessing(false);
     this.notificationService.openSideNavigationMenu({
@@ -251,9 +256,9 @@ export class NganHangDeComponent implements OnInit {
         this.formSave.reset({
           title: '',
           desc: '',
-
-          number_questions_per_test: null,
-          time_per_test: '',
+          time_start: '',
+          time_end: '',
+          bank_id: 0,
 
         });
         this.formActive = this.listForm[FormType.ADDITION];
@@ -266,9 +271,9 @@ export class NganHangDeComponent implements OnInit {
         this.formSave.reset({
           title: object1.title,
           desc: object1.desc,
-
-          number_questions_per_test: object1.number_questions_per_test,
-          time_per_test: object1.time_per_test,
+          time_start: object1.time_start ? new Date(object1.time_start) : null,
+          time_end: object1.time_end ? new Date(object1.time_end) : null,
+          bank_id: object1.bank_id,
 
         })
         this.formActive = this.listForm[FormType.UPDATE];
@@ -278,7 +283,7 @@ export class NganHangDeComponent implements OnInit {
       case 'DELETE_DECISION':
         const confirm = await this.notificationService.confirmDelete();
         if (confirm) {
-          this.nganHangDeService.delete(decision.id).subscribe({
+          this.dotThiDanhSachService.delete(decision.id).subscribe({
             next: () => {
               this.page = Math.max(1, this.page - (this.listData.length > 1 ? 0 : 1));
               this.notificationService.isProcessing(false);
@@ -297,8 +302,11 @@ export class NganHangDeComponent implements OnInit {
     }
   }
 
+
   saveForm() {
     if (this.formSave.valid) {
+      this.formSave.value['time_start'] = this.convertDateFormat(this.formSave.value['time_start']);
+      this.formSave.value['time_end'] = this.convertDateFormat(this.formSave.value['time_end']);
       this.formActive.data = this.formSave.value;
       this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
 
@@ -307,5 +315,4 @@ export class NganHangDeComponent implements OnInit {
       this.notificationService.toastError('Vui lòng điền đầy đủ thông tin');
     }
   }
-
 }

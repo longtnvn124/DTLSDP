@@ -74,18 +74,12 @@ export class DanhMucNhanVatLichSuService {
           value: `%${search}%`,
           orWhere: 'and'
         },
-        // {
-        //   conditionName: 'mota',
-        //   condition: OvicQueryCondition.like,
-        //   value: `%${search}%`,
-        //   orWhere: 'or'
-        // },
         {
-          conditionName: 'is_deleted',
-          condition: OvicQueryCondition.equal,
-          value: '0',
-          orWhere: 'and'
-        }
+          conditionName: 'bietdanh',
+          condition: OvicQueryCondition.like,
+          value: `%${search}%`,
+          orWhere: 'or'
+        },
       ];
       conditions.push(...c1);
     }

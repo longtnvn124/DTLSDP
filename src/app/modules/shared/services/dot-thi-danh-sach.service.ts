@@ -1,18 +1,19 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import {getRoute} from "@env";
-import {NganHangDe} from "@shared/models/quan-ly-ngan-hang";
-import {map, Observable} from 'rxjs';
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {HttpParamsHeplerService} from "@core/services/http-params-hepler.service";
 import {ThemeSettingsService} from "@core/services/theme-settings.service";
 import {AuthService} from "@core/services/auth.service";
-import {Dto, OvicConditionParam, OvicQueryCondition} from '@core/models/dto';
+import {map, Observable} from "rxjs";
+
+import {Dto, OvicConditionParam, OvicQueryCondition} from "@core/models/dto";
+import {shift} from "@shared/models/quan-ly-doi-thi";
 
 @Injectable({
   providedIn: 'root'
 })
-export class NganHangDeService {
-  private readonly api = getRoute('bank/');
+export class DotThiDanhSachService {
+  private readonly api = getRoute('shift/');
 
   constructor(
     private http: HttpClient,
@@ -21,7 +22,8 @@ export class NganHangDeService {
     private auth: AuthService
   ) { }
 
-  load(page:number,search?:string): Observable<{recordsTotal:number,data:NganHangDe[]}> {
+  load(page:number,search?:string): Observable<{recordsTotal:number,data:shift[]}> {
+
     const conditions: OvicConditionParam[] = [
       {
         conditionName: 'is_deleted',
@@ -48,7 +50,7 @@ export class NganHangDeService {
 
   }
 
-  create(data: any): Observable<NganHangDe> {
+  create(data: any): Observable<shift> {
     data['created_by'] = this.auth.user.id;
     return this.http.post<Dto>(this.api, data).pipe(map(res => res.data));
   }
@@ -62,24 +64,5 @@ export class NganHangDeService {
     const is_deleted = 1;
     const deleted_by = this.auth.user.id;
     return this.update(id, {is_deleted, deleted_by});
-  }
-
-  getDataUnlimit():Observable<NganHangDe[]>{
-    const conditions: OvicConditionParam[] = [
-      {
-        conditionName: 'is_deleted',
-        condition: OvicQueryCondition.equal,
-        value: '0'
-      },
-    ];
-
-    const fromObject = {
-      paged: 1,
-      limit: -1,
-      orderby:'title',
-      order: "ASC"
-    }
-    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
-    return this.http.get<Dto>(this.api, { params }).pipe(map(res =>  res.data ));
   }
 }

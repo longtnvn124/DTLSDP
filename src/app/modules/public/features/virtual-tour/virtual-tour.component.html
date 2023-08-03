@@ -1,5 +1,24 @@
-<div class="d-flex justify-content-center align-items-center pt-4">
-  <iframe width="1000px" height="500px" class="bg-info">
-
-  </iframe>
+<div class="tour-container w-100 h-100 d-block" >
+  <div class=" tour-container__body">
+    <ng-container [ngSwitch]="mode" class="h-100 w-100">
+       <ng-container *ngSwitchDefault>
+         <div *ngIf="linkImg,else unLinkImg" class="ctn-background d-flex justify-content-center align-items-center h-100 w-100" [ngStyle]="{'background': 'url(' + linkImg+ ')','background-size':'cover'}">
+           <button pButton pRipple icon="pi pi-play" label="Bắt đầu tham quan" class="btnRun" (click)="btnRun()"></button>
+         </div>
+         <ng-template #unLinkImg>
+           <div class="ctn-background d-flex justify-content-center align-items-center h-100 w-100" style="background:url('assets/icon-png/pano2.jpg')">
+             <img class src="" alt="">
+             <button pButton pRipple icon="pi pi-play" label="Bắt đầu tham quan" class="btnRun" (click)="btnRun()"></button>
+           </div>
+         </ng-template>
+       </ng-container>
+      <ng-container *ngSwitchCase="'MEDIAVR'">
+        <ng-container *ngIf="pointStart">
+          <media-vr-manager [_diemtruycap]="pointStart" [showOnly]="true" class="w-100 h-100"></media-vr-manager>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+  </div>
 </div>
+
+

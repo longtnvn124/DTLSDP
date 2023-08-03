@@ -1,8 +1,6 @@
 p-calendar .p-calendar {
   width: 100%;
 }
-
-
 .ovic-side-navigation-content__foot__notice {
   font-size: 13px;
   color: #333333;
@@ -151,6 +149,7 @@ app-danh-sach-ngu-lieu,app-danh-sach-diem-truy-cap {
   border-top: 1px dashed #ced4da;
 }
 app-virtual-tour{
+  position: absolute;
   width: 100%;
   height: 100%;
 }

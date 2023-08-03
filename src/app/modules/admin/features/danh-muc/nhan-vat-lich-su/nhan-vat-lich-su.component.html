@@ -25,8 +25,8 @@
       <h3 class="tbl-title">Danh sách nhân vật lịch sử</h3>
     </div>
     <div>
-      <input type="text" pInputText [(ngModel)]="filter.search" placeholder="Tìm kiếm"
-             (ngModelChange)="onSearch($event)" style="padding:8px"
+      <input type="text" pInputText [(ngModel)]="filter.search" placeholder="Tìm kiếm" (ngModelChange)="onSearch($event)"
+              style="padding:8px" (keydown)="onkeyDowm($event)"
              class="p-inputtext p-component p-element"/>
       <p-button class="my-auto ml-2 " label="Thêm nhân vật lịch sử" iconPos="right" icon="pi pi-plus"
                 styleClass="p-button-rounded p-button-success" (click)="btnAdd()"></p-button>
@@ -144,7 +144,7 @@
     </div>
     <div class="ovic-side-navigation-content__foot">
       <span class="ovic-side-navigation-content__foot__notice mr-auto"><mark>(*)</mark> bắt buộc phải nhập</span>
-      <button pButton pRipple type="button" label="Cập nhật" icon="pi pi-save" (click)="saveForm()"
+      <button pButton pRipple type="button" [label]="btn_checkAdd" icon="pi pi-save" (click)="saveForm()"
               class="p-button-success"></button>
       <button pButton pRipple type="button" label="Đóng" class="p-button-secondary ml-3" icon="pi pi-times"
               (click)="closeForm()"></button>

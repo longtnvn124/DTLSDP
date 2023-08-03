@@ -87,32 +87,13 @@
     </div>
     <div class="ovic-side-navigation-content__foot">
       <span class="ovic-side-navigation-content__foot__notice mr-auto"><mark>(*)</mark> bắt buộc phải nhập</span>
-      <button pButton pRipple type="button" label="Cập nhật" icon="pi pi-save" (click)="saveForm()"
+      <button pButton pRipple type="button" [label]="btn_checkAdd" icon="pi pi-save" (click)="saveForm()"
               class="p-button-success"></button>
       <button pButton pRipple type="button" label="Đóng" class="p-button-secondary ml-3" icon="pi pi-times"
               (click)="closeForm()"></button>
     </div>
   </div>
 </ng-template>
-
-<!--<ng-template #formMedia>-->
-<!--  <div class="ovic-side-navigation-content">-->
-<!--    <div class="ovic-side-navigation-content__head">-->
-<!--      <h4 class="ovic-side-navigation-content__head__title">Xem ngữ liệu media</h4>-->
-<!--      <button (click)="closeForm()" pButton pRipple type="button" icon="pi pi-times"-->
-<!--              class="p-button-rounded p-button-danger p-button-text close ovic-side-navigation-content__head__btn-close"></button>-->
-<!--    </div>-->
-<!--    <div class="ovic-side-navigation-content__body position-relative">-->
-<!--      <media-vr-manager class="d-flex w-100 h-100" [dataPoint]="dataBinding"></media-vr-manager>-->
-<!--    </div>-->
-<!--    <div class="ovic-side-navigation-content__foot">-->
-<!--      <button pButton pRipple type="button" label="Bật thuyết minh" class="p-button-help ml-3" icon="pi pi-volume-up"-->
-<!--              (click)="btnControlVolume()"></button>-->
-<!--      <button pButton pRipple type="button" label="Đóng" class="p-button-secondary ml-3" icon="pi pi-times"-->
-<!--              (click)="closeForm()"></button>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--</ng-template>-->
 
 <p-dialog header="Thông tin chi tiết" [(visible)]="visible" [modal]="true" [style]="{ width: '70vw' }"
           [draggable]="false" [resizable]="false" class="m-0">
