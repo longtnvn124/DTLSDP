@@ -55,7 +55,7 @@ export class NganHangCauHoiService {
     return this.update(id, {is_deleted, deleted_by});
   }
 
-  getDataByBankId(bank_id: number, search?: string): Observable<NganHangCauHoi[]> {
+  getDataByBankId(bank_id: number, search?: string, select: string = null): Observable<NganHangCauHoi[]> {
     const conditions: OvicConditionParam[] = [
       {
         conditionName: 'is_deleted',
@@ -77,6 +77,54 @@ export class NganHangCauHoiService {
         orWhere: 'and'
       })
     }
+
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+      orderby: 'id',
+    }
+    if (select) {
+      fromObject['select'] = select;
+    }
+
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
+    return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
+  }
+
+
+  getdataUnlimit(): Observable<NganHangCauHoi[]> {
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'is_deleted',
+        condition: OvicQueryCondition.equal,
+        value: '0'
+      },
+    ];
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+      orderby: 'id',
+    }
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
+    return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
+  }
+
+
+  getDataByBankIdString(bank_id: string): Observable<NganHangCauHoi[]> {
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'is_deleted',
+        condition: OvicQueryCondition.equal,
+        value: '0'
+      },
+      {
+        conditionName: 'bank_id',
+        condition: OvicQueryCondition.equal,
+        value: bank_id,
+        orWhere: 'and'
+      }
+    ];
+
     const fromObject = {
       paged: 1,
       limit: -1,

@@ -19,9 +19,10 @@ export class NganHangDeService {
     private httpParamsHelper: HttpParamsHeplerService,
     private themeSettingsService: ThemeSettingsService,
     private auth: AuthService
-  ) { }
+  ) {
+  }
 
-  load(page:number,search?:string): Observable<{recordsTotal:number,data:NganHangDe[]}> {
+  load(page: number, search?: string): Observable<{ recordsTotal: number, data: NganHangDe[] }> {
     const conditions: OvicConditionParam[] = [
       {
         conditionName: 'is_deleted',
@@ -29,22 +30,25 @@ export class NganHangDeService {
         value: '0'
       },
     ];
-    if(search){
+    if (search) {
       conditions.push({
-        conditionName:'title',
-        condition:OvicQueryCondition.like,
-        value:`%${search}%`,
-        orWhere:"and"
+        conditionName: 'title',
+        condition: OvicQueryCondition.like,
+        value: `%${search}%`,
+        orWhere: "and"
       })
     }
     const fromObject = {
       paged: page,
       limit: this.themeSettingsService.settings.rows,
-      orderby:'title',
+      orderby: 'title',
       order: "ASC"
     }
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
-    return this.http.get<Dto>(this.api, { params }).pipe(map(res => ({ recordsTotal: res.recordsFiltered, data: res.data })))
+    return this.http.get<Dto>(this.api, {params}).pipe(map(res => ({
+      recordsTotal: res.recordsFiltered,
+      data: res.data
+    })))
 
   }
 
@@ -64,7 +68,7 @@ export class NganHangDeService {
     return this.update(id, {is_deleted, deleted_by});
   }
 
-  getDataUnlimit():Observable<NganHangDe[]>{
+  getDataUnlimit(): Observable<NganHangDe[]> {
     const conditions: OvicConditionParam[] = [
       {
         conditionName: 'is_deleted',
@@ -76,10 +80,14 @@ export class NganHangDeService {
     const fromObject = {
       paged: 1,
       limit: -1,
-      orderby:'title',
+      orderby: 'title',
       order: "ASC"
     }
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
-    return this.http.get<Dto>(this.api, { params }).pipe(map(res =>  res.data ));
+    return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
+  }
+
+  getDataById(id: number): Observable<NganHangDe> {
+    return this.http.get<Dto>(''.concat(this.api, id.toString(10))).pipe(map(res => res.data));
   }
 }

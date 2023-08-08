@@ -132,7 +132,7 @@ export class NganHangCauHoiComponent implements OnInit {
       title: ['', Validators.required],
       bank_id: [0, Validators.required],
       answer_options: [[], Validators.required],
-      correct_answer: [0, Validators.required]
+      correct_answer: [[], Validators.required]
     })
     const observeProcessFormData = this.OBSERVE_PROCESS_FORM_DATA.asObservable().pipe(debounceTime(100)).subscribe(form => this.__processFrom(form));
     this.subscription.add(observeProcessFormData);
@@ -264,7 +264,7 @@ export class NganHangCauHoiComponent implements OnInit {
   saveForm() {
     const index = this.listData.findIndex(u => u.id === this.formSave.get('bank_id').value);
     forkJoin([
-      this.nganHangDeService.update(this.listData[index].id, {total: this.listData[index].total + 1}),
+      this.nganHangDeService.update(this.listData[index].id, {total: this.dataQuestion.length + 1}),
       this.nganHangCauHoiService.create(this.formSave.value)
     ]).subscribe({
       next: () => {
@@ -345,6 +345,10 @@ export class NganHangCauHoiComponent implements OnInit {
     if(this._bank_id){
       this.loadQuestion(this._bank_id);
     }
+  }
+
+  btnStartExam(){
+
   }
 
 }

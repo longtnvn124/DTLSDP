@@ -8,6 +8,10 @@ const routes : Routes = [
 		canActivate  : [ ModuleGuard ] ,
 		loadChildren : () => import('@modules/admin/admin.module').then( m => m.AdminModule )
 	} ,
+  {
+    path         : 'test' ,
+    loadChildren : () => import('@modules/test/test.module').then( m => m.TestModule )
+  } ,
 	{
 		path         : '' ,
 		loadChildren : () => import('@modules/public/public.module').then( m => m.PublicModule )

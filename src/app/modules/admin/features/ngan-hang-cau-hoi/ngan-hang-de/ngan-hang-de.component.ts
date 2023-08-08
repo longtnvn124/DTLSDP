@@ -115,7 +115,7 @@ export class NganHangDeComponent implements OnInit {
           icon: 'pi pi-server',
           name: 'CREATE_EXAM_DECISION',
           cssClass: 'btn-warning rounded'
-        },{
+        }, {
           tooltip: 'Sửa',
           label: '',
           icon: 'pi pi-file-edit',
@@ -181,8 +181,9 @@ export class NganHangDeComponent implements OnInit {
     this.isLoading = true
     this.nganHangDeService.load(page).subscribe({
       next: ({data, recordsTotal}) => {
-        this.listData = data.map(m=>{
+        this.listData = data.map(m => {
           m['__ten_converted'] = `<b>${m.title}</b><br>` + m.desc;
+          // m['__time_exam'] = (m.time_per_test/60) + ' phút';
           m['__time_exam'] = m.time_per_test + ' phút';
           return m;
         });
@@ -216,6 +217,8 @@ export class NganHangDeComponent implements OnInit {
   }
 
   private __processFrom({data, object, type}: FormNganHangDe) {
+    // const time_conver = this.f['time_per_test'].value * 60;
+    // this.f['time_per_test'].setValue(time_conver);
     const observer$: Observable<any> = type === FormType.ADDITION ? this.nganHangDeService.create(data) : this.nganHangDeService.update(object.id, data);
     observer$.subscribe({
       next: () => {
@@ -225,6 +228,7 @@ export class NganHangDeComponent implements OnInit {
       error: () => this.notificationService.toastError('Thao tác thất bại', 'Thông báo')
     });
   }
+
   private preSetupForm(name: string) {
     this.notificationService.isProcessing(false);
     this.notificationService.openSideNavigationMenu({
@@ -251,10 +255,8 @@ export class NganHangDeComponent implements OnInit {
         this.formSave.reset({
           title: '',
           desc: '',
-
-          number_questions_per_test: null,
-          time_per_test: '',
-
+          number_questions_per_test: 0,
+          time_per_test: 0,
         });
         this.formActive = this.listForm[FormType.ADDITION];
         this.preSetupForm(this.menuName);
@@ -266,10 +268,8 @@ export class NganHangDeComponent implements OnInit {
         this.formSave.reset({
           title: object1.title,
           desc: object1.desc,
-
           number_questions_per_test: object1.number_questions_per_test,
           time_per_test: object1.time_per_test,
-
         })
         this.formActive = this.listForm[FormType.UPDATE];
         this.formActive.object = object1;

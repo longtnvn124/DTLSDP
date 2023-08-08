@@ -1,6 +1,7 @@
 p-calendar .p-calendar {
   width: 100%;
 }
+
 .ovic-side-navigation-content__foot__notice {
   font-size: 13px;
   color: #333333;
@@ -26,7 +27,7 @@ p-calendar .p-calendar {
   height: 44px;
 }
 
-app-danh-sach-ngu-lieu,app-danh-sach-diem-truy-cap {
+app-danh-sach-ngu-lieu, app-danh-sach-diem-truy-cap {
   height: 100%;
 }
 
@@ -148,8 +149,31 @@ app-danh-sach-ngu-lieu,app-danh-sach-diem-truy-cap {
 .list-vr-chooser > * + * {
   border-top: 1px dashed #ced4da;
 }
-app-virtual-tour{
+
+app-virtual-tour, app-shift, app-panel {
   position: absolute;
   width: 100%;
   height: 100%;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #f5af19;
+  border-radius: 50px;
+}
+
+
+.test-notify--no-header .p-dialog-header {
+  display: none;
+}
+
+.test-notify {
+  overflow: hidden;
+  border-radius: 0;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+}
+
+.test-notify .p-dialog-content {
+  padding: 20px;
+  border-radius: 0 !important;
+
 }

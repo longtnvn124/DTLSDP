@@ -1,0 +1,114 @@
+.dotthi-container {
+  width: 1000px;
+  /*border-radius: 4px;*/
+  background-color: #fff;
+}
+
+.dotthi-container__title {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  font-size: 20px;
+  font-weight: 700;
+  text-transform: uppercase;
+  height: 60px;
+  border-bottom: 1px solid #ffa500;
+}
+
+.dotthi-container__body {
+
+}
+
+.dotthi-item {
+  display: flex;
+  text-align: center;
+  margin: 10px;
+  border-radius: 3px;
+  background-color: #f1f1f1;
+
+}
+
+.dotthi-item__logo {
+  width: 74px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dotthi-item__logo svg {
+  transform: scale(2);
+  color: orange;
+}
+
+.dotthi-item__body {
+  font-size: 14px;
+  font-weight: 300;
+}
+
+.dotthi-item__body-title {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  text-align: center;
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.dotthi-item__body-time {
+  display: flex;
+  justify-content: start;
+}
+
+.dotthi-item__body-time span {
+  color: #f73e48;
+}
+
+.dotthi-item__body-count-question {
+  display: flex;
+  justify-content: start;
+}
+
+.dotthi-item__body_time-doit {
+  display: flex;
+  justify-content: start;
+}
+
+.dotthi-item__button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dotthi-item__button button {
+  width: 160px;
+  /*height: 100%;*/
+}
+
+/* ===============================test exam=========================*/
+.test-exam__container {
+  width: 900px;
+  height: 100%;
+  background-color: #fff;
+}
+
+.test-exam__container-title {
+  display: flex;
+  height: 160px;
+}
+
+.test-exam__container-title__name {
+
+}
+
+.test-exam__container-title__email {
+
+}
+
+.test-exam__container-body {
+
+}
+
+
+

@@ -12,6 +12,7 @@ const ws_url      = [ 'w' , 's' , 's' , ':' , '/' , '/' , 'a' , 'p' , 'i' , '-' 
 
 export const getHost         = () : string => host.join( '' );
 export const getRoute        = ( route : string ) : string => [].concat( host , [ ':' , port , '/' , realm , '/api/' , route ] ).join( '' );
+export const getDateTime     = () : string => [].concat( host , [ ':' , port , '/' , 'datetime'] ).join( '' );
 export const getLinkDrive    = ( id : string ) : string => [].concat( host , [ ':' , port , '/' , realm , '/api/driver/' , id ] ).join( '' );
 export const getLinkMedia    = ( id : string ) : string => [].concat( host , [ ':' , port , '/' , realm , '/api/uploads/' , id ] ).join( '' );
 export const getFileDir      = () : string => [].concat( host , [ ':' , port , '/' , realm , '/api/uploads/folder/' ] ).join( '' );

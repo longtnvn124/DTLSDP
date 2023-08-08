@@ -1,0 +1,83 @@
+<div class="w-100 h-100" style="background-color:#f1f1f1">
+  <ng-container [ngSwitch]="mode">
+    <ng-container *ngSwitchDefault>
+      <div class="d-flex justify-content-center align-items-center h-100 flex-column">
+        <div class="sceen-contailer border">
+          <div class="header_container">
+            <div class="info_container d-flex">
+              <div class="info_container-left">
+                <div class="info_container-head d-flex">
+                  <div class="d-flex justify-content-center align-items-center mr-1">
+                    Tài khoản :
+                  </div>
+                  <div class="info-avata">
+                    <img src="{{candiate.avatar}}" alt=""><span>{{candiate.name}}</span>
+                  </div>
+                </div>
+                <div class="info_container-head">Bài thi : <span>{{candiate.testName}}</span></div>
+                <div class="info_container-head">Ngày thi: <span>{{ candiate.date}}</span></div>
+              </div>
+              <div class="info_container-right border-left border-right">
+                <div class="countdown-timer">
+                  <h1>Thời gian làm bài</h1>
+                  <div class="timer">{{ getFormattedTime() }}</div>
+                </div>
+              </div>
+              <div class="d-flex justify-content-center align-items-center" style="width:15%;">
+
+                <button pButton pRipple label="Nộp bài"
+                        class="border-radius-0 w-100 h-100 ml-3 p-button-success" (click)="btSubmit()"></button>
+
+              </div>
+            </div>
+            <div class=" space-item"></div>
+          </div>
+          <div class="exam-container">
+            <div class="exam-container__item " *ngFor="let question of dataQuestion, index as i">
+              <div class="exam-container__item-label mb-2">Câu {{i + 1}}: <span>{{question.title}}</span></div>
+              <form [formGroup]="formSave">
+                <groups-radio [options]="question.answer_options" optionLabel="value" optionId="id"
+                              [verticalMode]="true" [formField]="f['detail']">
+
+                </groups-radio>
+<!--                <ovic-groups-radio [options]="question.answer_options" optionLabel="value" optionId="id"-->
+<!--                                   [verticalMode]="true" [formField]="f['detail']"></ovic-groups-radio>-->
+              </form>
+
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </ng-container>
+  </ng-container>
+</div>
+
+
+<p-dialog [(visible)]="enableDialog" styleClass="test-notify test-notify--no-header" appendTo="body" [modal]="true">
+  <h4 class="text-center text-primary" style="text-transform: uppercase;
+    font-weight: 600;
+    font-family: roboto;">Thông báo</h4>
+  <table *ngIf="shiftTest" class="tbl-in-dialog">
+    <tr>
+      <td>Họ và Tên:</td>
+      <td>{{candiate.name}}</td>
+    </tr>
+    <tr>
+      <td>Bài thi:</td>
+      <td>{{candiate.testName}}</td>
+    </tr>
+    <tr>
+      <td>Thời gian làm bài:</td>
+      <td>{{shiftTest.time / 60}} phút</td>
+    </tr>
+    <tr>
+      <td>Ngày thi:</td>
+      <td>{{candiate.date}}</td>
+    </tr>
+  </table>
+  <div class="d-flex justify-content-center align-items-center mt-2">
+    <button pButton pRipple icon="pi pi-check-square" label="Bắt đầu thi" (click)="startTheTest()"></button>
+  </div>
+</p-dialog>

@@ -54,11 +54,9 @@ export class AnswerOptionGroupComponent implements OnInit {
   selectItem(id: number) {
     if (this.correctAnswerControl) {
       const oldValue = Array.isArray(this.correctAnswerControl.value) ? this.correctAnswerControl.value : [];
-      console.log(this.correctAnswerControl);
 
       const newValue = oldValue.includes(id) ? oldValue.filter(u => u !== id) : [...oldValue, id];
       this.correctAnswerControl.setValue(newValue);
-      console.log(this.correctAnswerControl);
     }
   }
 

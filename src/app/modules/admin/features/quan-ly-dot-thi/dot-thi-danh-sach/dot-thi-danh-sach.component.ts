@@ -1,6 +1,6 @@
 import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {FormType, NgPaginateEvent, OvicForm, OvicTableStructure} from "@shared/models/ovic-models";
-import {shift} from "@shared/models/quan-ly-doi-thi";
+import {Shift, statusOptions} from "@shared/models/quan-ly-doi-thi";
 import {debounceTime, filter, Observable, Subject, Subscription} from "rxjs";
 import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {NotificationService} from "@core/services/notification.service";
@@ -13,7 +13,7 @@ import {NganHangDe} from "@shared/models/quan-ly-ngan-hang";
 import {HelperService} from '@core/services/helper.service';
 
 interface FormDotthi extends OvicForm {
-  object: shift;
+  object: Shift;
 }
 
 @Component({
@@ -36,7 +36,7 @@ export class DotThiDanhSachComponent implements OnInit {
   isLoading = true;
   needUpdate = false;
   search: string;
-
+  statusOptions= statusOptions;
   formState: {
     formType: 'add' | 'edit',
     showForm: boolean,
@@ -49,7 +49,7 @@ export class DotThiDanhSachComponent implements OnInit {
     object: null
   }
   menuName = 'DsDotthi';
-  listData: shift[];
+  listData: Shift[];
   nganHangDe: NganHangDe[];
   btn_checkAdd: 'Lưu lại' | 'Cập nhật';
   private OBSERVE_PROCESS_FORM_DATA = new Subject<FormDotthi>();
@@ -81,6 +81,15 @@ export class DotThiDanhSachComponent implements OnInit {
       headClass: 'ovic-w-180px text-center',
       rowClass: 'ovic-w-180px text-center'
     },
+    {
+      fieldType: 'normal',
+      field: ['__status_converted'],
+      innerData: true,
+      header: 'Trạng thái',
+      sortable: false,
+      headClass: 'ovic-w-120px text-center',
+      rowClass: 'ovic-w-120px text-center'
+    },
 
     {
       tooltip: '',
@@ -95,7 +104,7 @@ export class DotThiDanhSachComponent implements OnInit {
         {
           tooltip: 'Danh sách thí sinh',
           label: '',
-          icon: 'pi pi-server',
+          icon: 'pi pi-users',
           name: 'STUDENT_DECISION',
           cssClass: 'btn-warning rounded'
         },
@@ -144,6 +153,7 @@ export class DotThiDanhSachComponent implements OnInit {
       time_start: ['', Validators.required],
       time_end: ['', Validators.required],
       bank_id: ['', Validators.required],
+      status:[1],
     })
     const observeProcessFormData = this.OBSERVE_PROCESS_FORM_DATA.asObservable().pipe(debounceTime(100)).subscribe(form => this.__processFrom(form));
     this.subscription.add(observeProcessFormData);
@@ -194,6 +204,7 @@ export class DotThiDanhSachComponent implements OnInit {
           m['__title_converted'] = `<b>${m.title}</b><br>` + m.desc;
           m['__time_converted'] = this.strToTime(m.time_start) + ' - ' + this.strToTime(m.time_end);
           m['__bank_coverted'] = this.nganHangDe && m.bank_id && this.nganHangDe.find(f=>f.id=== m.bank_id) ? this.nganHangDe.find(f=>f.id=== m.bank_id).title : '';
+          m['__status_converted'] = m.status ===1 ? this.statusOptions[1].color : this.statusOptions[0].color;
           return m;
         })
         this.recordsTotal = recordsTotal;
@@ -259,6 +270,7 @@ export class DotThiDanhSachComponent implements OnInit {
           time_start: '',
           time_end: '',
           bank_id: 0,
+          status:1
 
         });
         this.formActive = this.listForm[FormType.ADDITION];
@@ -274,6 +286,7 @@ export class DotThiDanhSachComponent implements OnInit {
           time_start: object1.time_start ? new Date(object1.time_start) : null,
           time_end: object1.time_end ? new Date(object1.time_end) : null,
           bank_id: object1.bank_id,
+          status:object1.status
 
         })
         this.formActive = this.listForm[FormType.UPDATE];

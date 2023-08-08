@@ -1,5 +1,8 @@
 import {Injectable} from '@angular/core';
 import {Is} from '@core/utils/is';
+import * as moment from 'moment-timezone';
+
+moment.tz.setDefault('Asia/Ho_Chi_Minh');
 
 @Injectable({
   providedIn: 'root'
@@ -298,5 +301,9 @@ export class HelperService {
       return _default;
     }
   }
+
+  // dateFormatWithTimeZone(date: Date | string, timeZone = 'Asia/Ho_Chi_Minh'): Date {
+  //   return typeof date === 'string' ? new Date(new Date(date).toLocaleString('en-US', {timeZone})) : new Date(date.toLocaleString('en-US', {timeZone}));
+  // }
 
 }

@@ -13,7 +13,7 @@ export interface NganHangDe extends ThongTinChung {
   desc: string;
   total: number;//tổng số câu hỏi trong ngân hàng đề
   number_questions_per_test: number;// số câu hỏi trong 1 đề
-  time_per_test: string;
+  time_per_test: number;
   count: number;
 }
 

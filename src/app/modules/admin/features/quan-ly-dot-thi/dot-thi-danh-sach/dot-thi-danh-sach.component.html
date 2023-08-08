@@ -28,10 +28,16 @@
       <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
         <form [formGroup]="formSave" autocomplete="off">
           <div class="row">
-            <div class="col-12">
+            <div class="col-8">
               <p class="form-row">
                 <label>Tên đợt thi<span class="ovic-mark">*</span></label>
                 <input type="text" placeholder="Tên đợt..." formControlName="title" autocomplete="off">
+              </p>
+            </div>
+            <div class="col-4">
+              <p class="form-row">
+                <label>Trạng thái<span class="ovic-mark">*</span></label>
+                <p-dropdown class="w-100" placeholder="chọn..." [options]="statusOptions" formControlName="status" optionLabel="label" optionValue="value"></p-dropdown>
               </p>
             </div>
 
