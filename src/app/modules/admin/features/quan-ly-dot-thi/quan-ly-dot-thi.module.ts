@@ -9,6 +9,9 @@ import {SharedModule} from "@shared/shared.module";
 import {PaginatorModule} from "primeng/paginator";
 import {ReactiveFormsModule} from "@angular/forms";
 import {CalendarModule} from "primeng/calendar";
+import {RippleModule} from "primeng/ripple";
+import {TableModule} from "primeng/table";
+import {TestModule} from "@modules/test/test.module";
 
 
 @NgModule({
@@ -16,14 +19,17 @@ import {CalendarModule} from "primeng/calendar";
     DotThiDanhSachComponent,
     DotThiThiSinhComponent
   ],
-  imports: [
-    CommonModule,
-    QuanLyDotThiRoutingModule,
-    ButtonModule,
-    SharedModule,
-    PaginatorModule,
-    ReactiveFormsModule,
-    CalendarModule
-  ]
+    imports: [
+        CommonModule,
+        QuanLyDotThiRoutingModule,
+        ButtonModule,
+        SharedModule,
+        PaginatorModule,
+        ReactiveFormsModule,
+        CalendarModule,
+        RippleModule,
+        TableModule,
+        TestModule
+    ]
 })
 export class QuanLyDotThiModule { }

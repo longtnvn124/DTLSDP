@@ -43,14 +43,14 @@ export class GroupsRadioComponent implements OnInit {
   _correctAnswer = [];
 
   ngOnInit() : void {
+
     if ( this.default && this.options && this.optionId ) {
       if ( this.inputType === 'checkbox' ) {
         if ( this.default ) {
-          this.index = [];
-          this.default.split( ',' ).forEach( elmDefault => {
+          this.default.split( ',' ).map(m=>parseInt(m)).forEach( elmDefault => {
             const _i = this.options.findIndex( elm => elm.hasOwnProperty( this.optionId ) && elm[ this.optionId ] === elmDefault );
             if ( _i !== -1 ) {
-              this.index.push( _i );
+              this.index.push( elmDefault );
             }
           } );
         }
@@ -59,6 +59,7 @@ export class GroupsRadioComponent implements OnInit {
       }
     } else {
       this.index = [];
+
     }
     this._correctAnswer = this.correctAnswer || null;
   }
@@ -70,7 +71,7 @@ export class GroupsRadioComponent implements OnInit {
         if ( this.options && this.optionId ) {
           if ( this.inputType === 'checkbox' ) {
             this.index = [];
-            this.default.split( ',' ).forEach( elmDefault => {
+            this.default.split( ',' ).map(m=>parseInt(m)).forEach( elmDefault => {
               const _i = this.options.findIndex( elm => elm.hasOwnProperty( this.optionId ) && elm[ this.optionId ] === elmDefault );
               if ( _i !== -1 ) {
                 this.index.push( _i );

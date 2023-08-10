@@ -24,6 +24,7 @@ export interface NganHangCauHoi extends ThongTinChung {
   answer_options: AnswerOption[];
   correct_answer: number[];
   total_used: number;
+  multiple: number;
 }
 
 

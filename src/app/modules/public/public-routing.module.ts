@@ -7,6 +7,7 @@ import { UnauthorizedComponent } from './features/unauthorized/unauthorized.comp
 import { ClearComponent } from './features/clear/clear.component';
 import { LoginVideoComponent } from '@modules/public/features/login-video/login-video.component';
 import {VirtualTourComponent} from "@modules/public/features/virtual-tour/virtual-tour.component";
+import {ResetPasswordComponent} from "@modules/public/features/reset-password/reset-password.component";
 
 const routes : Routes = [
 
@@ -37,6 +38,10 @@ const routes : Routes = [
   {
     path      : 'virtial-tour' ,
     component : VirtualTourComponent
+  } ,
+  {
+    path      : 'reset-password' ,
+    component : ResetPasswordComponent
   } ,
 	{
 		path       : '' ,

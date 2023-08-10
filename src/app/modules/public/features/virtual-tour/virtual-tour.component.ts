@@ -37,6 +37,7 @@ export class VirtualTourComponent implements OnInit {
         this.linkImg = this.pointStart.ds_ngulieu.find(f=>f.loaingulieu ==='image360') ?
           this.fileService.getPreviewLinkLocalFile(this.pointStart.ds_ngulieu.find(f=>f.loaingulieu ==='image360')) : null;
         this.notificationService.isProcessing(false);
+
       }, error: () => {
         this.notificationService.isProcessing(false);
         this.notificationService.toastError('Mất kết với máy chủ');

@@ -43,15 +43,30 @@ export class DotThiKetQuaService {
     return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data && res.data[0] ? res.data[0] : null));
   }
 
-  createShiftTest(data: { shift_id: number, user_id: number, question_ids: number[], time_start: string, time : number }): Observable<number> {
+  createShiftTest(data: { shift_id: number, user_id: number, question_ids: number[], time_start: string, time: number }): Observable<number> {
     data['created_by'] = this.auth.user.id;
     return this.http.post<Dto>(this.api, data).pipe(map(res => res.data));
   }
+
   update(id: number, data: any): Observable<any> {
     data['updated_by'] = this.auth.user.id;
     return this.http.put<Dto>(''.concat(this.api, id.toString(10)), data);
   }
 
+  // Tính điểm server
+  scoreTest(id: number): Observable<any> {
+    return this.http.post<Dto>(''.concat(this.api, id.toString(10), '/point'), null);
+  }
+
+  getDataByShiftId(shift_id: number): Observable<ShiftTests[]> {
+    const conditions: OvicConditionParam[] = [{
+      conditionName: 'shift_id',
+      condition: OvicQueryCondition.equal,
+      value: shift_id.toString(10),
+    }];
+    const params: HttpParams = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams().set('with', 'users'));
+    return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
+  }
 
 
 }

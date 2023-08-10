@@ -107,9 +107,9 @@ export class ShiftComponent implements OnInit {
 
   timeConvert(n) {
     const num = n;
-    const minutes = num / 60;
+    const minutes = num % 60;
     const rminutes = Math.round(minutes);
-    const second = (minutes - rminutes) * 60;
+    const second = num -rminutes;
     const rsecond = Math.round(second);
     return minutes + "phút, " + rsecond + " giây";
   }

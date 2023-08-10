@@ -37,7 +37,8 @@
             <div class="col-4">
               <p class="form-row">
                 <label>Trạng thái<span class="ovic-mark">*</span></label>
-                <p-dropdown class="w-100" placeholder="chọn..." [options]="statusOptions" formControlName="status" optionLabel="label" optionValue="value"></p-dropdown>
+                <p-dropdown class="w-100" placeholder="chọn..." [options]="statusOptions" formControlName="status"
+                            optionLabel="label" optionValue="value"></p-dropdown>
               </p>
             </div>
 
@@ -45,7 +46,7 @@
           <div class="row">
             <div class="col-12">
               <p class="form-row">
-                <label >Mô tả</label>
+                <label>Mô tả</label>
                 <textarea formControlName='desc' placeholder="Mô tả ..." autocomplete="off" cols="30"
                           rows="2"></textarea>
               </p>
@@ -55,35 +56,29 @@
           <div class="row">
             <div class="col-12">
               <p class="form-row">
-                <label >Chọn ngân hàng đề</label>
-                <p-dropdown [options]="nganHangDe" formControlName="bank_id" placeholder="Chọn..." optionValue="id" optionLabel="title" class="w-100"></p-dropdown>
+                <label>Chọn ngân hàng đề</label>
+                <p-dropdown [options]="nganHangDe" formControlName="bank_id" placeholder="Chọn..." optionValue="id"
+                            optionLabel="title" class="w-100"></p-dropdown>
               </p>
             </div>
 
           </div>
           <div class="row">
-            <div class="col-12">
+            <div class="col-6">
               <p class="form-row">
                 <label>Thời gian bắt đầu <span class="ovic-mark">*</span></label>
-                <p-calendar placeholder="chọn..." class="w-100" dateFormat="dd/mm/yy" formControlName="time_start" [showTime]="true" [showIcon]="true" [showSeconds]="false"></p-calendar>
+                <p-calendar placeholder="chọn..." class="w-100" dateFormat="dd/mm/yy" formControlName="time_start"
+                            [showTime]="true" [showIcon]="true" [showSeconds]="false"></p-calendar>
               </p>
             </div>
-<!--            <div class="col-6">-->
-<!--              <p class="form-row">-->
-<!--                <label>Thời gian kết thúc<span class="ovic-mark">*</span></label>-->
-<!--                <p-calendar class="w-100" dateFormat="dd/mm/yy" formControlName="time_end" [showTime]="true" [showIcon]="true" [showSeconds]="false"></p-calendar>-->
-<!--              </p>-->
-<!--            </div>-->
-          </div>
-          <div class="row">
-            <div class="col-12">
+            <div class="col-6">
               <p class="form-row">
                 <label>Thời gian kết thúc<span class="ovic-mark">*</span></label>
-                <p-calendar placeholder="chọn..." class="w-100" dateFormat="dd/mm/yy" formControlName="time_end" [showTime]="true" [showIcon]="true" [showSeconds]="false"></p-calendar>
+                <p-calendar placeholder="chọn..." class="w-100" dateFormat="dd/mm/yy" formControlName="time_end"
+                            [showTime]="true" [showIcon]="true" [showSeconds]="false"></p-calendar>
               </p>
             </div>
           </div>
-
         </form>
       </div>
     </div>
@@ -96,5 +91,4 @@
     </div>
   </div>
 </ng-template>
-
 

@@ -1,3 +1,56 @@
+.v-step-popup {
+  display: flex;
+  flex-direction: column;
+  padding: 5px 0;
+  align-items: center;
+}
+
+.v-step-popup__head {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  margin-top: 10px;
+  text-align: center;
+}
+
+@media (max-width: 767px) {
+  .v-step-popup__head {
+    font-size: 18px;
+  }
+}
+
+.v-step-popup__mess p {
+  margin-bottom: 5px;
+}
+
+.v-step-popup__mess {
+  font-size: 15px;
+  color: #133bb1;
+  font-weight: 400;
+  line-height: 22px;
+  padding: 0;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.v-step-popup__wrap-buttons {
+}
+
+.v-step-popup__btn {
+  outline: none !important;
+  box-shadow: none !important;
+  border-radius: 999px;
+  font-size: 13px;
+  padding: 7px 18px;
+  font-weight: 400;
+  min-width: 80px;
+}
+
+.v-step-popup__btn + .v-step-popup__btn {
+  margin-left: 10px;
+}
+
 p-calendar .p-calendar {
   width: 100%;
 }
@@ -174,6 +227,6 @@ app-virtual-tour, app-shift, app-panel {
 
 .test-notify .p-dialog-content {
   padding: 20px;
-  border-radius: 0 !important;
+  border-radius: 4px !important;
 
 }

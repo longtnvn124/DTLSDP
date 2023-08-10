@@ -21,12 +21,12 @@ export interface Shift extends ThongTinChung {
 export interface ShiftTests extends ThongTinChung {
   user_id: number;
   shift_id: number;
-  details: detail[];
+  details: detail;
   time_start: string;
   time_end: string;
   time: number;
   question_ids: [];//array danh sách quesion sau khi random
-  number_corect: number;//số câu trả lời đúng
+  number_correct: number;//số câu trả lời đúng
   score: number;//điểm hệ số 10
   state: 0 | 1 | 2 | -1;//0: chưa thi 1:đang thi 2:đã thi xong -1:bỏ thi
 }
@@ -43,5 +43,5 @@ export const statusOptions = [
     color: '<span class="badge badge--size-normal badge-success w-100">Đang diễn ra</span>'
   }
 ];
-export type detail={[T: number]: number };
+export type detail={[T: number]: number[] };
 

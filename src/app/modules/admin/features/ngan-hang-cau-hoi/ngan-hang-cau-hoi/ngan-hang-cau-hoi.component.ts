@@ -34,9 +34,9 @@ export class NganHangCauHoiComponent implements OnInit {
   sizeFullWidth = 1024;
   menuName = 'ADD-QUESTION';
   formActive: NganHangCauHoi;
-  _bank_id:number;
+  _bank_id: number;
   searchQuestion: string
-  mode:'TABLE'|'FORM' ="TABLE";
+  mode: 'TABLE' | 'FORM' = "TABLE";
   page = 1;
   rows = this.themeSettingsService.settings.rows;
   tblStructure: OvicTableStructure[] = [
@@ -174,7 +174,7 @@ export class NganHangCauHoiComponent implements OnInit {
   }
 
   loadQuestion(id: number) {
-    this.nganHangCauHoiService.getDataByBankId(id,this.searchQuestion).subscribe({
+    this.nganHangCauHoiService.getDataByBankId(id, this.searchQuestion).subscribe({
       next: (data) => {
         this.dataQuestion = data.map(m => {
           m['state'] = 0; // 1: chọn, 0 :bỏ chọn
@@ -225,13 +225,14 @@ export class NganHangCauHoiComponent implements OnInit {
           offsetTop: '0px',
           offCanvas: false
         }), 100);
-        this.mode ="TABLE";
+        this.mode = "TABLE";
         break;
       default:
         break;
     }
   }
-  btnAddExam(){
+
+  btnAddExam() {
     this.btn_checkAdd = "Lưu lại";
     this.formSave.reset({
       title: '',
@@ -239,16 +240,19 @@ export class NganHangCauHoiComponent implements OnInit {
       answer_options: [],
       correct_answer: 0,
     });
-    this.mode= "FORM"
+    this.mode = "FORM"
   }
-  closeFormAdd(){
+
+  closeFormAdd() {
     this.loadQuestion(this._bank_id);
     this.mode = "TABLE";
   }
+
   closeForm() {
     this.notificationService.closeSideNavigationMenu();
     this.loadData(1);
   }
+
 //=====================add exam=================================
   private __processFrom({data, object, type}: FormNganHangCauhoi) {
     const observer$: Observable<any> = type === FormType.ADDITION ? this.nganHangCauHoiService.create(data) : this.nganHangCauHoiService.update(object.id, data);
@@ -289,14 +293,19 @@ export class NganHangCauHoiComponent implements OnInit {
         title: ['', Validators.required],
         bank_id: [0, Validators.required],
         answer_options: [[], Validators.required],
-        correct_answer: [0, Validators.required]
+        correct_answer: [[], Validators.required],
+        multiple: [0]
       });
+      item['_formSave'].get('correct_answer').valueChanges.subscribe((value: number[]) => {
+        item['_formSave'].get('multiple').setValue(Array.isArray(value) && value.length ? 1 : 0);
+      })
     }
     item['_formSave'].reset({
       title: item.title,
       bank_id: item.bank_id,
       answer_options: item.answer_options,
       correct_answer: item.correct_answer,
+      multiple: item.multiple,
     });
     item['state'] = 1;
   }
@@ -314,7 +323,7 @@ export class NganHangCauHoiComponent implements OnInit {
           this.notificationService.toastSuccess('Thao tác thành công');
           this.dataQuestion = this.dataQuestion.filter(f => f.id != item.id);
           console.log(this.dataQuestion.length);
-          this.nganHangDeService.update(item.bank_id,{total: this.dataQuestion.length}).subscribe();
+          this.nganHangDeService.update(item.bank_id, {total: this.dataQuestion.length}).subscribe();
         }, error: () => {
           this.notificationService.isProcessing(false);
           this.notificationService.toastError('Thao tác không thành công');
@@ -340,14 +349,14 @@ export class NganHangCauHoiComponent implements OnInit {
     })
   }
 
-  onSearchQuestion(text:string){
+  onSearchQuestion(text: string) {
     this.searchQuestion = text;
-    if(this._bank_id){
+    if (this._bank_id) {
       this.loadQuestion(this._bank_id);
     }
   }
 
-  btnStartExam(){
+  btnStartExam() {
 
   }
 

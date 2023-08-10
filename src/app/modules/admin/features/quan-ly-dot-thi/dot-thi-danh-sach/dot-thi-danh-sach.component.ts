@@ -41,7 +41,7 @@ export class DotThiDanhSachComponent implements OnInit {
     formType: 'add' | 'edit',
     showForm: boolean,
     formTitle: string,
-    object: DmNhanVatLichSu | null
+    object: Shift | null
   } = {
     formType: 'add',
     showForm: false,

@@ -13,11 +13,14 @@ import { GroupsRadioComponent } from './panel/groups-radio/groups-radio.componen
 
 
 @NgModule({
-  declarations: [
-    ShiftComponent,
-    PanelComponent,
-    GroupsRadioComponent
-  ],
+    declarations: [
+        ShiftComponent,
+        PanelComponent,
+        GroupsRadioComponent
+    ],
+    exports: [
+        GroupsRadioComponent
+    ],
     imports: [
         CommonModule,
         TestRoutingModule,
@@ -26,7 +29,7 @@ import { GroupsRadioComponent } from './panel/groups-radio/groups-radio.componen
         SharedModule,
         DialogModule,
         ReactiveFormsModule,
-      FormsModule
+        FormsModule
     ]
 })
 export class TestModule { }
