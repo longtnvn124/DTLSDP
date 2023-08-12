@@ -120,7 +120,7 @@ export class MediaVrManagerComponent implements OnInit, AfterViewInit, OnDestroy
     private employeesPickerService: EmployeesPickerService,
 
   ) {
-    console.log(this._diemtruycap);
+
     this.video360 = this.renderer2.createElement('video');
 
     this.formSave = this.fb.group({
@@ -245,9 +245,9 @@ export class MediaVrManagerComponent implements OnInit, AfterViewInit, OnDestroy
     this.typeMedia = this._diemtruycap.type;
     this.notificationService.isProcessing(true);
     this.destinationDiemditich = this._diemtruycap.ds_ngulieu.find(n => ['image360', 'video360'].includes(n['loaingulieu']));
-    console.log(this.destinationDiemditich);
+
     this.otherInfoDiemditich = this._diemtruycap.ds_ngulieu.filter(n => !['image360', 'video360'].includes(n['loaingulieu']));
-    console.log(this.otherInfoDiemditich);
+
 
     const mediaVr_destination_Link = this.destinationDiemditich.file_media && this.destinationDiemditich.file_media[0] ? this.fileService.getPreviewLinkLocalFile(this.destinationDiemditich.file_media[0]) : null;
     const audio_otherInfo = this.otherInfoDiemditich.find(f => f.loaingulieu === 'audio') ? this.otherInfoDiemditich.find(f => f.loaingulieu === 'audio').file_media[0] : null;
@@ -398,7 +398,6 @@ export class MediaVrManagerComponent implements OnInit, AfterViewInit, OnDestroy
     this.renderer.render(this.scene, this.camera)
   }
   onClick = (e: MouseEvent) => {
-    // let mouse = new Three.Vector2(
     let mouse = new Vector2(
       (e.offsetX / this.container.nativeElement.clientWidth) * 2 - 1,
       -(e.offsetY / this.container.nativeElement.clientHeight) * 2 + 1,

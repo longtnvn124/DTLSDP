@@ -16,6 +16,8 @@ import {InputMaskModule} from 'primeng/inputmask';
 import {LoginVideoComponent} from './features/login-video/login-video.component';
 import { VirtualTourComponent } from './features/virtual-tour/virtual-tour.component';
 import {SharedModule} from "@shared/shared.module";
+import {DialogModule} from "primeng/dialog";
+import {TabMenuModule} from "primeng/tabmenu";
 
 @NgModule({
   declarations: [
@@ -36,7 +38,9 @@ import {SharedModule} from "@shared/shared.module";
         RippleModule,
         InputMaskModule,
         FormsModule,
-        SharedModule
+        SharedModule,
+        DialogModule,
+        TabMenuModule
     ]
 })
 export class PublicModule {
