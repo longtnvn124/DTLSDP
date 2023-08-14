@@ -90,4 +90,14 @@ export class NganHangDeService {
   getDataById(id: number): Observable<NganHangDe> {
     return this.http.get<Dto>(''.concat(this.api, id.toString(10))).pipe(map(res => res.data));
   }
+
+  countAllItems():Observable<number>{
+    const fromObject = {
+      paged: 1,
+      limit: 1,
+      select: 'id'
+    }
+    const params = new HttpParams({fromObject});
+    return this.http.get<Dto>(''.concat(this.api), {params}).pipe(map(res => res.recordsFiltered));
+  }
 }

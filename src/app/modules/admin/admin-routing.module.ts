@@ -2,8 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule , Routes } from '@angular/router';
 import { ContentNoneComponent } from '@modules/admin/features/content-none/content-none.component';
 import { DashboardComponent } from '@modules/admin/dashboard/dashboard.component';
-import { NewHomeComponent } from '@modules/admin/features/new-home/new-home.component';
 import { AdminGuard } from '@core/guards/admin.guard';
+import {HomeComponent} from "@modules/admin/features/home/home.component";
 
 const routes : Routes = [
 	{
@@ -18,7 +18,7 @@ const routes : Routes = [
 			} ,
 			{
 				path      : 'dashboard' ,
-				component : NewHomeComponent ,
+				component : HomeComponent ,
 				data      : { state : 'dashboard' }
 			} ,
 			{

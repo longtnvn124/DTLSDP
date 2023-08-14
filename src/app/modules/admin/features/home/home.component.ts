@@ -1,83 +1,167 @@
-import { Component , OnInit , TemplateRef } from '@angular/core';
-import { AuthService } from '@core/services/auth.service';
-import { NotificationService } from '@core/services/notification.service';
-import { DomSanitizer , SafeHtml } from '@angular/platform-browser';
+import {ChangeDetectorRef, Component, Input, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {ChartOptions} from '@shared/models/chart-options';
+import {ChartComponent, ApexAxisChartSeries} from 'ng-apexcharts';
+import {DhtdHtkt} from '@shared/models/dhtd-htkt';
 
-@Component( {
-	selector    : 'app-home' ,
-	templateUrl : './home.component.html' ,
-	styleUrls   : [ './home.component.css' ]
-} )
+import {forkJoin, Observable, of, timer} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {AuthService} from '@core/services/auth.service';
+import {CardWidgetService} from '@modules/admin/features/home/widgets/card-widget/card-widget.component';
+import {NguLieuDanhSachService} from "@shared/services/ngu-lieu-danh-sach.service";
+import {NguLieuSuKienService} from "@shared/services/ngu-lieu-su-kien.service";
+import {DotThiDanhSachService} from "@shared/services/dot-thi-danh-sach.service";
+import {NganHangDeService} from "@shared/services/ngan-hang-de.service";
+import {HttpParams} from "@angular/common/http";
+import {Dto} from "@core/models/dto";
+import {PointsService} from "@shared/services/points.service";
+
+interface DhtdHtktReportTable {
+  loading: boolean;
+  error: boolean;
+  data: {
+    object: DhtdHtkt,
+    person: {
+      total: number,
+      percent: number,
+    },
+    group: {
+      total: number,
+      percent: number,
+    }
+    summary: number,
+  }[];
+  mode: 'total' | 'percent';
+  selected: {
+    year: string,
+    title: string,
+    sum: number
+  };
+}
+
+
+interface HomeWidget {
+  service: CardWidgetService
+  title: string,
+  icon: TemplateRef<any>,
+  styleClass: string,
+}
+
+@Component({
+  selector: 'app-home',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.css']
+
+})
 export class HomeComponent implements OnInit {
 
-	regexTagAs = /<\s*a[^>]*>(.*?)<\s*\/\s*a>/gmi;
-	regex      = new RegExp( '<\s*a[^>]*>(.*?)<\s*\/\s*a>' , 'gmi' );
-	regexUrl   = new RegExp( `^http[s]?:\/\/(www\.)?(.*)?\/?(.)*` , 'gmi' );
-	link       = /(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))?/gmi;
-
-	text  = 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions?retiredLocale=vi <a href="/life">life</a> sed consectetur. <a href="/work">Work</a> quis risus eget urna mollis ornare <a href="/about">about</a> leo.';
-	text3 = 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions?retiredLocale=vi  life sed consectetur Work quis risus eget urna mollis ornare about leo';
-	text2 = 'http://foo.com http://goo.gl https://foo.com https://www.foo.com https://www.foo.com/ https://www.foo.com/bar http://goo.gl/1 http://goo.gl/2 foo (http://goo.gl/1) http://goo.gl/(2) http://foo.com/. http://foo.com/! http://foo.com/, This url does not have a protocol: goo.gl/1 http://firstround.com/review/thoughts-on-gender-and-radical-candor/?ct=t(How_Does_Your_Leadership_Team_Rate_12_3_2015) https://google.com https:google.com www.cool.com.au http://www.cool.com.au http://www.cool.com.au/ersdfs http://www.cool.com.au/ersdfs?dfd=dfgd@s=1 http://www.cool.com:81/index.html';
+  @ViewChild('c1', {static: true}) private c1Component: ChartComponent;
 
 
-	buttonDefer = '<button ovicLogger="child-button" pButton pRipple type="button btn-success" label="Child button" icon="pi pi-time"></button>';
+  protected bankWidget: HomeWidget = {
+    service: this.nganHangDeService,
+    title: 'Số ngân hàng',
+    styleClass: '',
+    icon: null
+  }
 
-	innerButton : SafeHtml;
+  tblReport: DhtdHtktReportTable = {
+    loading: false,
+    error: false,
+    data: [],
+    mode: 'total',
+    selected: null
+  };
 
-	constructor(
-		private auth : AuthService ,
-		private notificationService : NotificationService ,
-		private domSanitizer : DomSanitizer
-	) {
-		// const result = this.text.match( this.regex );
-		// const url    = this.text3.match( this.link );
-		// console.log( result );
+  lastFourYearsAgo: number[];
 
+  c1Options: Partial<ChartOptions>;
 
-		// const url = this.text2.replace( this.link , text => {
-		// 	return ( text.startsWith( 'www.' ) || text.startsWith( 'http' ) ) ? `<a href="${ text }">${ text }</a>` : text;
-		// } );
-		// console.log( url );
-	}
+  // resistanceAchievementWidgetService : CardWidgetService = { countAllItems : () => of( 0 ) };
+  // achievementWidgetService : CardWidgetService           = { countAllItems : () => forkJoin<[ number , number ]>( [ this.quyetDinhKhenCaNhanService.countAllItems() , this.quyetDinhKhenTapTheService.countAllItems() ] ).pipe( map( ( [ n1 , n2 ] ) => ( n1 + n2 ) ) ) };
+  nguLieuWidgetService : CardWidgetService               = { countAllItems : () => this.nguLieuDanhSachService.countAllItems() };
+  suKienWidgetService : CardWidgetService                = { countAllItems : () => this.nguLieuSuKienService.countAllItems() };
+  pointWidgetService : CardWidgetService                      = { countAllItems : () => this.pointsService.countAllItems() };
+  nganHangDeWidgetService : CardWidgetService                      = { countAllItems : () => this.nganHangDeService.countAllItems() };
+  dottiWidgetService : CardWidgetService              = { countAllItems : () => this.dotThiDanhSachService.countAllItems()};
+  index = 13;
 
-	ngOnInit() : void {
-	}
+  constructor(
+    private auth: AuthService,
+    private cd: ChangeDetectorRef,
+    private nguLieuDanhSachService: NguLieuDanhSachService,
+    private nguLieuSuKienService: NguLieuSuKienService,
+    private pointsService:PointsService,
+    protected nganHangDeService: NganHangDeService,
+    private dotThiDanhSachService: DotThiDanhSachService,
 
-	async alertError() {
-		const btn = await this.notificationService.alertError( 'Sorry...' , 'You lost the match!' , 'OK :(' , true );
-		console.log( btn );
-	}
+  ) {
+    const lastYear = new Date().getFullYear();
+    this.lastFourYearsAgo = [lastYear , lastYear + 1 , lastYear + 2, lastYear + 3];
+    this.c1Options = {
+      series: [
+        {
+          name: 'Điểm truy cập',
+          type: 'column',
+          data: [10, 20, 30, 40]
+        },
+        {
+          name: 'Ngân hàng đề',
+          type: 'column',
+          data: [22, 7, 18, 35]
+        },
+        {
+          name: 'Đợt thi',
+          type: 'column',
+          data: [3, 8, 12, 7]
+        },
+      ],
+      chart: {
+        height: 350,
+        type: 'bar',
+        events: {
+          dataPointSelection: (e, c, {
+            dataPointIndex,
+            seriesIndex,
+            w
+          }: { dataPointIndex: number, seriesIndex: number, w: { config: { series: ApexAxisChartSeries, xaxis: { categories: string[] } } } }) => {
+            const year = w.config.xaxis.categories[dataPointIndex].toString();
+            const title = w.config.series[seriesIndex].name;
+            const sum = w.config.series[seriesIndex].data[dataPointIndex] as number;
+            this.loadTable(year, title, sum);
+            this.cd.detectChanges();
+          }
+        }
+      },
+      title: {
+        text: 'My First Angular Chart'
+      },
+      xaxis: {
+        categories: this.lastFourYearsAgo
+      },
+      tooltip: {
+        enabled: true
+      }
+    };
+  }
 
-	async alertSuccess() {
-		const btn = await this.notificationService.alertSuccess( 'Congratulations!' , 'You won the match!' , 'Ok' , true );
-		console.log( btn );
-	}
+  ngOnInit(): void {
+    const y = new Date().getFullYear();
+    this.lastFourYearsAgo = [y - 4, y - 3, y - 2, y - 1];
 
-	async alertWarning() {
-		const btn = await this.notificationService.alertWarning( 'Be careful...' , 'That\'s dangerous!' , 'OMG' , true );
-		console.log( btn );
-	}
+  }
 
-	async alertInfo() {
-		const btn = await this.notificationService.alertInfo( 'Quick tip!' , 'Avoid this path...' , 'Ok' , true );
-		console.log( btn );
-	}
+  loadTable(year: string, title: string, sum: number) {
+    this.tblReport.loading = true;
+    this.tblReport.selected = {year, title, sum};
+    timer(1000).subscribe(() => {
+      this.tblReport.loading = false;
+      this.cd.detectChanges();
+    });
+  }
 
-	async alertConfirm() {
-		const btn = await this.notificationService.alertConfirm( 'Quick reminder!' , 'Are you sure?' , null , true );
-		console.log( btn );
-	}
+  changeTableReportMode() {
+    this.tblReport.mode = this.tblReport.mode === 'total' ? 'percent' : 'total';
+  }
 
-	openMenu( size : number , template : TemplateRef<any> ) {
-		this.notificationService.openSideNavigationMenu( { template , size } );
-	}
-
-	closeMenu() {
-		this.notificationService.closeSideNavigationMenu();
-	}
-
-	showChildButton() {
-		this.innerButton = this.innerButton ? '' : this.domSanitizer.bypassSecurityTrustHtml( this.buttonDefer );
-	}
 
 }

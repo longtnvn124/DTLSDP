@@ -27,6 +27,9 @@ import { OvicMessageModule } from '@modules/admin/features/ovic-message/ovic-mes
 import { NewHomeComponent } from '@modules/admin/features/new-home/new-home.component';
 import { DropdownModule } from 'primeng/dropdown';
 import { FormsModule } from '@angular/forms';
+import {HomeEducationComponent} from "@modules/admin/features/home/home-education/home-education.component";
+import {HomeSampleComponent} from "@modules/admin/features/home/home-sample/home-sample.component";
+import {CardWidgetComponent} from "@modules/admin/features/home/widgets/card-widget/card-widget.component";
 
 @NgModule( {
 	declarations : [
@@ -36,7 +39,10 @@ import { FormsModule } from '@angular/forms';
 		SidenavComponent ,
 		UserInfoComponent ,
 		MenuLanguageComponent ,
-		NewHomeComponent
+		NewHomeComponent,
+    HomeEducationComponent,
+    HomeSampleComponent,
+    CardWidgetComponent
 	] ,
 	imports      : [
 		CommonModule ,
