@@ -20,3 +20,9 @@ export const ALERT_MODAL_OPTIONS : NgbModalOptions = {
 	centered    : true ,
 	windowClass : 'ovic-modal-class ovic-alert-modal-class'
 };
+export const MODAL_SIZE_AUTO : NgbModalOptions = {
+  size        : 'lg' ,
+  backdrop    : 'static' ,
+  centered    : true ,
+  windowClass : 'ovic-modal-class ovic-modal-class--size-auto'
+};

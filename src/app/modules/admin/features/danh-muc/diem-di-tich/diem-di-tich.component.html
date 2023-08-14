@@ -102,7 +102,7 @@
     <div class="ctn-right">
       <ng-container *ngIf="dataInformation">
         <div class="datainfo-title">
-          <div class="w-100 mx-auto d-flex justify-content-center">
+          <div *ngIf="dataInformation['__fileMedia_converted']" class="w-100 mx-auto d-flex justify-content-center">
             <img src="{{dataInformation['__fileMedia_converted']}}" class="datainfo-body__img">
           </div>
           <p class="datainfo-title__p m-auto">{{dataInformation.ten}}</p>

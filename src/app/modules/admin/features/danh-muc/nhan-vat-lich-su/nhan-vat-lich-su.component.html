@@ -1,34 +1,16 @@
-<!--<div class="row">-->
-<!--  <div class="col-12" [class.ovic-is-loading]="isLoading">-->
-<!--    <div class="ovic-load-init-fail alert alert-danger &#45;&#45;fs-14" *ngIf="loadInitFail; else tableData">-->
-<!--      Đã có lỗi trong quá trình tải dữ liệu-->
-<!--      <button class="btn btn-primary border-circle &#45;&#45;fs-13 ml-2" (click)="loadInit()">Reload</button>-->
-<!--    </div>-->
-<!--    <ng-template #tableData>-->
-<!--      <ovic-table emptyMessage="Danh sách trống" [index]="index" [data]="listData"-->
-<!--                  styleClass="tbl-danh-sach-tap-the head-input-size&#45;&#45;normal head-input-size&#45;&#45;250px" dataKey="id"-->
-<!--                  rowHover="true"-->
-<!--                  [rows]="15" tableName="Danh sách nhân vật lịch sử" [tblStructure]="tblStructure"-->
-<!--                  (onButtonClick)="handleClickOnTable($event)" [enableSearch]="true" [enableSearchLocal]="false"-->
-<!--                  (onSearch)="onSearch($event)" [searchDebounceTime]="800" [headerButtons]="headButtons"></ovic-table>-->
-<!--      <p-paginator class="p-paginator&#45;&#45;custom" [showCurrentPageReport]="true" [rows]="rows"-->
-<!--                   [totalRecords]="recordsTotal" [pageLinkSize]="5" (onPageChange)="paginate($event)"></p-paginator>-->
-<!--    </ng-template>-->
-<!--  </div>-->
-<!--</div>-->
 
-<!--suppress ALL -->
+
 <div class="intro-y h-full container__body">
   <!-- headding -->
-  <div class="p-card p-2 d-flex justify-content-between">
+  <div class="p-2 d-flex justify-content-between header-container">
     <div class="d-flex align-items-center">
       <h3 class="tbl-title">Danh sách nhân vật lịch sử</h3>
     </div>
-    <div>
-      <input type="text" pInputText [(ngModel)]="filter.search" placeholder="Tìm kiếm" (ngModelChange)="onSearch($event)"
+    <div class="d-flex justify-content-center align-items-center ">
+      <input type="text" [(ngModel)]="filter.search" placeholder="Tìm kiếm" (ngModelChange)="onSearch($event)"
               style="padding:8px" (keydown)="onkeyDowm($event)"
              class="p-inputtext p-component p-element"/>
-      <p-button class="my-auto ml-2 " label="Thêm nhân vật lịch sử" iconPos="right" icon="pi pi-plus"
+      <p-button class="my-auto ml-4 " label="Thêm nhân vật lịch sử" iconPos="right" icon="pi pi-plus"
                 styleClass="p-button-rounded p-button-success" (click)="btnAdd()"></p-button>
     </div>
   </div>
@@ -36,7 +18,7 @@
   <div class="row h-full">
     <div class="set-width inline-block flex flex-wrap flex-row justify-content-between align-items-center col-md-3 p-3"
          *ngFor="let item of listData">
-      <div class="w-full inline-block border-round-lg shadow-6 bg-white border ovic--parent-image position-relative">
+      <div class="w-full inline-block shadow-6 bg-white border ovic--parent-image position-relative" style="border-radius:4px">
         <div class='head-card_hover w-100' (click)="btnShowInfo(item)" style="cursor: pointer;">
           <div class="position-relative w-100 st-image img-child-max-width"
                [ovicLoadImageById]="item.files ? item.files : null"></div>

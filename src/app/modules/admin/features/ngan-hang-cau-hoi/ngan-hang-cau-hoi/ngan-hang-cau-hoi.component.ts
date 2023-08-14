@@ -177,7 +177,8 @@ export class NganHangCauHoiComponent implements OnInit {
     this.nganHangCauHoiService.getDataByBankId(id, this.searchQuestion).subscribe({
       next: (data) => {
         this.dataQuestion = data.map(m => {
-          m['state'] = 0; // 1: chọn, 0 :bỏ chọn
+          m['state'] = 0; // 1: chọn, 0 :bỏ chọn;
+          m['_bank_id']= id;
           return m;
         })
       }, error: () => {
@@ -260,6 +261,9 @@ export class NganHangCauHoiComponent implements OnInit {
       next: () => {
         this.needUpdate = true;
         this.notificationService.toastSuccess('Thao tác thành công', 'Thông báo');
+        if(type === FormType.ADDITION){
+          this.nganHangDeService.update(this._bank_id, {total: this.dataQuestion.length + 1}).subscribe();
+        }
       },
       error: () => this.notificationService.toastError('Thao tác thất bại', 'Thông báo')
     });
@@ -268,7 +272,7 @@ export class NganHangCauHoiComponent implements OnInit {
   saveForm() {
     const index = this.listData.findIndex(u => u.id === this.formSave.get('bank_id').value);
     forkJoin([
-      this.nganHangDeService.update(this.listData[index].id, {total: this.dataQuestion.length + 1}),
+      this.nganHangDeService.update(this._bank_id, {total: this.dataQuestion.length + 1}),
       this.nganHangCauHoiService.create(this.formSave.value)
     ]).subscribe({
       next: () => {
@@ -321,9 +325,9 @@ export class NganHangCauHoiComponent implements OnInit {
         next: () => {
           this.notificationService.isProcessing(false);
           this.notificationService.toastSuccess('Thao tác thành công');
+          const count = this.dataQuestion.filter(f => f.id != item.id);
           this.dataQuestion = this.dataQuestion.filter(f => f.id != item.id);
-          console.log(this.dataQuestion.length);
-          this.nganHangDeService.update(item.bank_id, {total: this.dataQuestion.length}).subscribe();
+          this.nganHangDeService.update(item.bank_id, {total: count.length}).subscribe();
         }, error: () => {
           this.notificationService.isProcessing(false);
           this.notificationService.toastError('Thao tác không thành công');

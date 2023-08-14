@@ -21,8 +21,12 @@ const routes : Routes = [
 	} ,
 	{
 		path      : 'login' ,
-		component : LoginComponent
+		component : LoginVideoComponent
 	} ,
+  // {
+	// 	path      : 'login' ,
+	// 	component : LoginComponent
+	// } ,
 	{
 		path      : 'login-video' ,
 		component : LoginVideoComponent

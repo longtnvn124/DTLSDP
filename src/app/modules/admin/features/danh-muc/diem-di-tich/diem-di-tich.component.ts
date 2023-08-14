@@ -50,17 +50,7 @@ export class DiemDiTichComponent implements OnInit {
       innerData: true,
       header: 'Tên',
       sortable: false,
-
     },
-    // {
-    //   fieldType: 'normal',
-    //   field: ['__duongdan'],
-    //   innerData: true,
-    //   header: 'Đường dẫn di tích ',
-    //   sortable: false,
-    //   headClass: 'ovic-w-350px text-left',
-    //   rowClass: 'ovic-w-350px text-left'
-    // },
     {
       fieldType: 'normal',
       field: ['__status'],
@@ -80,13 +70,6 @@ export class DiemDiTichComponent implements OnInit {
       sortable: false,
       headClass: 'ovic-w-180px text-center',
       buttons: [
-        {
-          tooltip: 'Truy cập Vr360',
-          label: '',
-          icon: 'pi pi-globe',
-          name: 'MEDIA_DECISION',
-          cssClass: 'btn-warning rounded'
-        },
         {
           tooltip: 'Thông tin chi tiết ',
           label: '',

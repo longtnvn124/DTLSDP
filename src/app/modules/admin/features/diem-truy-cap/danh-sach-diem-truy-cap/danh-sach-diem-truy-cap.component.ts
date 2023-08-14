@@ -51,7 +51,7 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
   @ViewChild(MediaVrManagerComponent) MediaVr: MediaVrManagerComponent;
 
   mode: 'TABLE' | 'MEDIAVR' = "TABLE";
-
+  btn_checkAdd:"Lưu lại"|"Xác nhận";
   filePermission = {
     canDelete: true,
     canDownload: true,
@@ -371,6 +371,7 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
     const decision = button.data && this.data ? this.data.find(u => u.id === button.data) : null;
     switch (button.name) {
       case 'BUTTON_ADD_NEW':
+        this.btn_checkAdd= "Lưu lại";
         this.formSave.reset({
           icon: '',
           title: '',
@@ -387,6 +388,7 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
         this.preSetupForm(this.menuName);
         break;
       case 'EDIT_DECISION':
+        this.btn_checkAdd= "Xác nhận";
         const object1 = this.data.find(u => u.id === decision.id);
         this.formSave.reset({
           icon: object1.icon,

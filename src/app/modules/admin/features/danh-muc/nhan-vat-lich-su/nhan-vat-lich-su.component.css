@@ -1,37 +1,47 @@
+.header-container {
+  height: 60px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+}
 
-.tbl-title{
+.tbl-title {
   margin: auto;
   font-size: 20px;
 }
-.st-image{
+
+.st-image {
   display: flex;
   justify-content: center;
-  padding-top:10px;
-  width:100%;
+  padding-top: 10px;
+  width: 100%;
 }
 
-.btn-ctm{
+.btn-ctm {
   border: 1px solid #e0e0e0;
   min-height: 42px;
 }
-.head-card_hover:hover{
+
+.head-card_hover:hover {
   background-color: #fff;
   opacity: 0.3;
 }
-.txt-label-nomal{
+
+.txt-label-nomal {
   margin-top: 20px;
   font-size: 16px;
   font-weight: normal;
 }
-.scroll-ctn-right{
+
+.scroll-ctn-right {
   /*height: 100%;*/
   /*overflow-x:hidden;*/
   /*overflow-y:auto;*/
-  width:100%;
+  width: 100%;
   /*height:100%;*/
   min-height: 628px;
   max-height: 100%;
-  overflow-x:hidden;
-  overflow-y:auto;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
