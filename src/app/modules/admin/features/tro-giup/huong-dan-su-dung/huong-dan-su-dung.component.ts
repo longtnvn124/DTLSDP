@@ -10,8 +10,6 @@ export class HuongDanSuDungComponent implements OnInit {
   constructor() {
   }
 
-  videoId = 'i9cg8cSOlS8';
-
   ngOnInit(): void {
   }
 

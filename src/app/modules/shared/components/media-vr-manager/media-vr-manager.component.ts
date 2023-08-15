@@ -274,8 +274,8 @@ export class MediaVrManagerComponent implements OnInit, AfterViewInit, OnDestroy
   typeNgulieu: 'video' | 'image';
 
   loadInit(check: 'ngulieu' | 'diemtruycap', src: string, audio?: string, datapoint?: Pinable[]) {
-    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     //scene and controls
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.scene = new Scene();
     this.controls.rotateSpeed = -0.3;
     this.controls.enableZoom = false;
