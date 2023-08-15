@@ -40,7 +40,7 @@ const routes : Routes = [
 		component : ContentNoneComponent
 	} ,
   {
-    path      : 'virtial-tour' ,
+    path      : 'virtual-tour' ,
     component : VirtualTourComponent
   } ,
   {

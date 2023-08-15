@@ -368,6 +368,15 @@ body .p-tooltip-top .p-tooltip-arrow {
 	height: calc(100vh - 50px);
 }
 
+.ovic-modal-class--size-auto .modal-dialog {
+  justify-content: center
+}
+
+.ovic-modal-class--size-auto .modal-dialog .modal-content {
+  width: auto;
+  background: transparent
+}
+
 .btn-cancel {
 	background-color: #aaa;
 	border-color: #aaa;

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {PointsService} from "@shared/services/points.service";
 import {AuthService} from "@core/services/auth.service";
 import {NotificationService} from "@core/services/notification.service";
@@ -14,8 +14,9 @@ import {Ngulieu} from "@shared/models/quan-ly-ngu-lieu";
   styleUrls: ['./virtual-tour.component.css']
 })
 export class VirtualTourComponent implements OnInit {
+  @Input() rotate:boolean = true;
   pointStart: Point;
-  mode: "BTNPLAY" | "MEDIAVR" = "BTNPLAY";
+  mode: "BTNPLAY" | "MEDIAVR" = "MEDIAVR";
   items:MenuItem[] = [
     // { label:'Hình ảnh 3D', icon: 'pi pi-image',command:(event)=> this.viewSpace3D('image')},// view hình ảnh 3d
     { label:'Hình ảnh 3D', icon: 'pi pi-image',command:(event)=> this.viewSpace3D('image')},// view hình ảnh 3d

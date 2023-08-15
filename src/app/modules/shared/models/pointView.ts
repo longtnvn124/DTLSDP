@@ -8,8 +8,8 @@ import {
   Sprite, RepeatWrapping, DoubleSide, VideoTexture, AudioLoader,
   Vector3, LinearFilter
 } from "three";
-import TweenLite from "gsap";
 
+import TweenLite from "gsap";
 interface OvicVrPoint {
   userData: {
     ovicPointId: number,
@@ -37,13 +37,13 @@ export class sceneControl {
   sound: Audio;
   state: any;
 
-  constructor(image, camera, audio) {
+  constructor(image, camera) {
     this.image = image;
     this.points = [];
     this.sprites = [];
     this.scene = null;
     this.camera = camera;
-    this.audio = audio;
+
   }
 
   createScrene(scene, ovicPointId?: number, state?: boolean) {
@@ -189,3 +189,4 @@ export class sceneControl {
   }
 
 }
+

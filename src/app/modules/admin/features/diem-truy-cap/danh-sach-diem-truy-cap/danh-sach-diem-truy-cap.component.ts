@@ -293,6 +293,7 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
     this.pointsService.loadPage(this.page).subscribe({
       next: ({data, recordsTotal}) => {
         this.data = data.map(m => {
+          m['__child']= data.filter(f=>f.parent_id === m.id);
           m['__diemditich_converted'] = m.type ? m.title : this.dataDiemditich.find(f => f.id === m.ditich_id).ten;
           m['__type_converted'] = m.type ? this.typeOptions.find(f => f.value === m.type).label : null;
           return m;
@@ -300,6 +301,8 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
         this.recordsTotal = recordsTotal;
         this.isLoading = false;
         this.error = false;
+        console.log(this.data);
+
       },
       error: () => {
         this.error = true;

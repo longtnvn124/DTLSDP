@@ -22,6 +22,10 @@ import {MenuItem} from "primeng/api/menuitem";
 import {PointsService} from "@shared/services/points.service";
 import {EmployeesPickerService} from "@shared/services/employees-picker.service";
 import {sceneControl} from "@shared/models/sceneVr";
+import {DanhMucDiemDiTichService} from "@shared/services/danh-muc-diem-di-tich.service";
+import {DmDiemDiTich} from "@shared/models/danh-muc";
+import {OvicFile} from "@core/models/file";
+import {DownloadProcess} from "@shared/components/ovic-download-progress/ovic-download-progress.component";
 
 const PinableValidator = (control: AbstractControl): ValidationErrors | null => {
   if (control.get('type').valid && control.get('type').value) {
@@ -44,6 +48,7 @@ export class OvicInputVrMediaComponent implements OnInit {
   @ViewChild('fromUpdate', {static: true}) formUpdate: TemplateRef<any>;
   @ViewChild('myCanvas', {static: false}) canvasRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('container', {static: true}) container: ElementRef<HTMLDivElement>;
+  @ViewChild('audio', {static: true}) audio: ElementRef<HTMLAudioElement>;
   @ViewChild('tooltip', {static: true}) tooltip: ElementRef<HTMLDivElement>;
 
   @Input() Showspinning: boolean; // hiểu thị nút quay
@@ -53,11 +58,10 @@ export class OvicInputVrMediaComponent implements OnInit {
 
   @Input() ngulieu: Ngulieu;
   @Input() _pointStart: Point;
-  @Input() showOnly = false; // if true; remove all mouse events
+  @Input() showOnly = false; // if true  remove all mouse events
 
   menuName: 'Point-location';
   index: number = 1;
-  isAudio = false;
   formState: {
     formType: 'add' | 'edit',
     showForm: boolean,
@@ -75,14 +79,13 @@ export class OvicInputVrMediaComponent implements OnInit {
     {label: 'Thông tin trực tiếp', value: 'INFO'},
   ];
   typeOptions = TypeOptions;
-
-
   audioLink: string;
-
-
   video360: HTMLVideoElement;
   destination: Ngulieu;
   otherInfo: Ngulieu[];
+  pointHover: boolean;
+  dmDiemDitich:DmDiemDiTich[];
+  pointChild: Point[];
   //----------------three js------------------
   spriteActive = false;
   scene: Scene;
@@ -94,7 +97,7 @@ export class OvicInputVrMediaComponent implements OnInit {
   // =======================menu right click=================================
   items: MenuItem[];
   formSave: FormGroup;
-
+  backToScene:boolean = false;
   constructor(
     private notificationService: NotificationService,
     private element: ElementRef,
@@ -105,6 +108,7 @@ export class OvicInputVrMediaComponent implements OnInit {
     private pointsService: PointsService,
     private mediaService: MediaService,
     private employeesPickerService: EmployeesPickerService,
+    private danhMucDiemDiTichService:DanhMucDiemDiTichService
   ) {
     this.video360 = this.renderer2.createElement('video');
 
@@ -113,7 +117,8 @@ export class OvicInputVrMediaComponent implements OnInit {
       icon: ['', Validators.required],
       mota: [''],
       location: ['', Validators.required], // vi tri vector3
-      parent_id: [null, Validators.required],
+      ditich_id:[null],
+      parent_id: [null, Validators.required],//
       type: ['', Validators.required], //DIRECT | INFO
       ds_ngulieu: [[]], // ảnh 360 | video360// audio thuyết minh
       donvi_id: [null, Validators.required],
@@ -170,6 +175,7 @@ export class OvicInputVrMediaComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.danhMucDiemDiTichService.getDataUnlimit().subscribe({next:(data)=>this.dmDiemDitich =data})
     this.iconList =
       [
         {name: 'Thông tin chi tiết ', path: './assets/icon-png/infomation.png'},
@@ -177,7 +183,6 @@ export class OvicInputVrMediaComponent implements OnInit {
         {name: 'Chuyển cảnh', path: './assets/icon-png/chuyencanh.png'},
       ];
     console.log(this._pointStart);
-
     if (this._pointStart) {
       this.startSeenByDiemtruycap();
     }
@@ -186,26 +191,23 @@ export class OvicInputVrMediaComponent implements OnInit {
   startSeenByDiemtruycap() {
     const nglieu = this._pointStart.ds_ngulieu;
     const pointChild = this._pointStart['__child'];
-    console.log(pointChild);
-    console.log(nglieu);
+    this.pointChild= pointChild;
     const nglieuDerect = nglieu.find(f => f.loaingulieu === "video360" || f.loaingulieu === "image360");
-    console.log(nglieuDerect);
     const nguleuAudio = nglieu.find(f => f.loaingulieu === "audio");
     const nglieuInfo = nguleuAudio ? nglieu.filter(f => f.id !== nglieuDerect.id && f.id !== nguleuAudio.id) : nglieu.filter(f => f.id !== nglieuDerect.id);
-    console.log(nglieuInfo);
     this.loadInit(nglieuDerect, nguleuAudio, pointChild);
   }
 
-  s:sceneControl;
-  loadInit(nglieuPoind: Ngulieu, nglieuAudio?: Ngulieu, point?: Point[]) {
-    const pointchild = point;
-    if (nglieuAudio) {
-      this.audioLink = this.fileService.getPreviewLinkLocalFile(nglieuAudio);
-    }
+  s: sceneControl;
 
+  loadInit(nglieuPoind: Ngulieu, nglieuAudio?: Ngulieu, point?: Point[]) {
+    if (nglieuAudio) {
+      this.audioLink = this.fileService.getPreviewLinkLocalFile(nglieuAudio.file_media[0]);
+      console.log(this.audioLink);
+    }
     if (nglieuPoind) {
       const src = this.fileService.getPreviewLinkLocalFile(nglieuPoind.file_media[0]);
-      const audio= null;
+      const audio = null;
       //scene and controls
       this.controls = new OrbitControls(this.camera, this.renderer.domElement);
       this.scene = new Scene();
@@ -214,7 +216,7 @@ export class OvicInputVrMediaComponent implements OnInit {
       this.camera.position.set(-0.1, 0, 0.1);
       // Sphere
       if (nglieuPoind.loaingulieu === 'video360') {
-        this.s = new sceneControl(src, this.camera,null);
+        this.s = new sceneControl(src, this.camera, null);
         this.renderer2.setAttribute(this.video360, 'src', src);
         this.renderer2.setAttribute(this.video360, 'loop', 'true');
         this.renderer2.setAttribute(this.video360, 'autoplay', 'true');
@@ -223,8 +225,8 @@ export class OvicInputVrMediaComponent implements OnInit {
         this.s.createMovie(this.scene, this.video360);
       }
       if (nglieuPoind.loaingulieu === 'image360') {
-        this.s = new sceneControl(src, this.camera,null);
-        this.s.createScrene(this.scene,nglieuPoind.id);
+        this.s = new sceneControl(src, this.camera, null);
+        this.s.createScrene(this.scene, nglieuPoind.id);
       } else {
 
       }
@@ -244,12 +246,12 @@ export class OvicInputVrMediaComponent implements OnInit {
     }
     animate()
   }
+
   get f(): { [key: string]: AbstractControl<any> } {
     return this.formSave.controls;
   }
 
 //=====================Sukien-Mouse==============================
-  //======================sukien-onclick======================
   onResize = () => {
     let width = this.container.nativeElement.clientWidth;
     let height = this.container.nativeElement.clientHeight;
@@ -268,13 +270,14 @@ export class OvicInputVrMediaComponent implements OnInit {
     intersects.forEach((intersect: any) => {
       if (intersect.object.type === "Sprite") {
         intersect.object.onClick();
-        // this.backToScene = true;
+        this.backToScene = true;
         if (this.spriteActive) {
           this.tooltip.nativeElement.classList.remove('is-active');
           this.spriteActive = false;
         }
       }
     });
+
     // intersects = this.rayCaster.intersectObject(this.s.sphere);
     // if (intersects.length > 0) {
     // console.log(intersects[0].point);
@@ -298,7 +301,7 @@ export class OvicInputVrMediaComponent implements OnInit {
           this.tooltip.nativeElement.innerHTML = intersect.object.name;
           this.spriteActive = intersect.object;
           foundSprite = true;
-          // this.pointHover = true;
+          this.pointHover = true;
         }
       });
     }
@@ -311,20 +314,17 @@ export class OvicInputVrMediaComponent implements OnInit {
     if (foundSprite === false && this.spriteActive) {
       this.tooltip.nativeElement.classList.remove('is-active');
       this.spriteActive = false;
-      // this.pointHover = false;
+      this.pointHover = false;
     }
   }
   varMouseRight: any;
   @HostListener("contextmenu", ["$event"]) onRightClick = (e: MouseEvent) => {
     if (!this.showOnly) {
-      // let mouse = new Three.Vector2(
       let mouse = new Vector2(
         (e.offsetX / this.container.nativeElement.clientWidth) * 2 - 1,
         -(e.offsetY / this.container.nativeElement.clientHeight) * 2 + 1,
       );
       this.rayCaster.setFromCamera(mouse, this.camera);
-      // let intersectss = this.rayCaster ? this.rayCaster.intersectObject(this.s.sphere) : [];
-      // this.intersectsVecter = intersectss;
       this.intersectsVecter = this.rayCaster ? this.rayCaster.intersectObject(this.s.sphere) : [];
       this.rayCaster.setFromCamera(mouse, this.camera);
       let point = this.rayCaster.intersectObjects(this.scene.children);
@@ -332,33 +332,176 @@ export class OvicInputVrMediaComponent implements OnInit {
       if (point[0].object.name == '') {
         this.items = [
           {
-            label: 'Thêm điểm truy cập mới',
+            label: 'Thêm điểm truy cập',
             icon: 'pi pi-plus',
-            // command: () => this.btnFormAdd()
+            command: () => this.btnFormAdd()
           },
-
+          // {
+          //   label: 'Thêm mới thông tin ',
+          //   icon: 'pi pi-plus',
+          //   command: () => this.btnFormAdd('THONGTIN')
+          // },
         ]
       } else {
         this.items = [
           {
             label: 'Cập nhật vị trí',
             icon: 'pi pi-file-edit',
-            // command: () => this.btnFormEdit()
+            command: () => this.btnFormEdit()
           },
           {
             label: 'Xoá vị trí',
             icon: 'pi pi-trash',
-            // command: () => this.btnFormDelete()
+            command: () => this.btnFormDelete()
           },
           {
             label: 'Thông tin chi tiết',
             icon: 'pi pi-info-circle',
-            // command: () => this.btnFormInformation()
+            command: () => this.btnFormInformation()
           },
         ];
       }
     }
   }
-  //=======================================su ly form========================================
+  //-------------------form, button--------------------------------------
+  selectDmDiemDiTich(event){
+    const id = event.value;
+    const object = this.dmDiemDitich.find(f=>f.id === id);
+    this.formSave.reset({
+      title: object.ten,
+      mota: object.mota,
+      ditich_id:object.id,
+    })
+  }
 
+  onOpenFormEdit() {
+    setTimeout(() => this.notificationService.openSideNavigationMenu({
+      template: this.formUpdate,
+      size: 700,
+      offsetTop: '0'
+    }), 100);
+    this.controls.saveState();
+    console.log('onOpenFormEdit');
+  }
+  changeInputMode(formType: 'add' | 'edit', object: Pinable | null = null) {
+    this.formState.formTitle = formType === 'add' ? 'Thêm điểm truy cập mới ' : 'Cập nhật điểm truy cập';
+    this.formState.formType = formType;
+    if (formType === 'add') {
+      this.formSave.reset(
+        {
+          title: '',
+          mota: '',
+          icon: '',
+          location: this.intersectsVecter[0].point,// vi tri vector3
+          // parent_id: this._diemtruycap.id,
+          type: 'INFO', //DIRECT | INFO
+          ditich_id: null,
+          ds_ngulieu: [], // ảnh 360 | video360// audio thuyết minh
+          donvi_id: this.auth.userDonViId,
+        }
+      );
+    } else {
+      this.formState.object = object;
+      this.formSave.reset(
+        {
+          title: object.title,
+          mota: object.mota,
+          icon: object.icon,
+          location: object.location, // vi tri vector3
+          parent_id: object.parent_id,
+          type: object.type, //DIRECT | INFO
+          ds_ngulieu: object.ds_ngulieu, // ảnh 360 | video360
+          donvi_id: this.auth.userDonViId,
+
+        }
+      );
+    }
+  }
+  btnFormAdd(){
+    console.log('btnFormAdd');
+    this.changeInputMode("add")
+    this.onOpenFormEdit();
+  }
+  btnFormEdit(){
+    this.onOpenFormEdit();
+    const object = this.pointChild.find(f => f.id === this.varMouseRight);
+    this.changeInputMode("edit",object)
+
+  }
+  btnFormDelete(){
+
+  }
+  btnFormInformation(){
+
+  }
+  saveForm(){
+
+  }
+  closeForm(){
+    this.notificationService.closeSideNavigationMenu();
+  }
+  //---------------------------- button action----------------------------
+  btnPlayVideo(){
+    if (this.video360.paused) {
+      this.video360.play();
+    } else {
+      this.video360.pause();
+    }
+  }
+  souseAudio:boolean= false;
+  btnPlayAudio(){
+    if(this.audioLink){
+      this.souseAudio = !this.souseAudio;
+      if(this.souseAudio){
+        this.audio.nativeElement.play();
+      }else{
+        this.audio.nativeElement.pause();
+      }
+
+    }else{
+      this.notificationService.toastError('Điểm truy cập này chưa gắn audio');
+    }
+  }
+  rotate:boolean;
+  btnplayRotate(){
+    this.rotate = !this.rotate;
+    if (this.rotate) {
+      this.controls.autoRotate = true;
+      this.controls.autoRotateSpeed = 0.8; // Tốc độ quay (đơn 2 vị là radian/giây)
+      this.renderSecene()
+    } else {
+      this.controls.autoRotate = false;
+      this.controls.update();
+    }
+  }
+
+  //============================btn use picker ngulieu==================================//
+  async btnAddNgulieu(type) {
+    const result = await this.employeesPickerService.pickerNgulieu([], '', type);
+    const value = [].concat(this.f['ds_ngulieu'].value, result);
+    this.f['ds_ngulieu'].setValue(value);
+    this.f['ds_ngulieu'].markAsUntouched();
+  }
+  async dowloadNgulieu(n:Ngulieu){
+    const file = n.file_media[0];
+    const result = await this.mediaService.tplDownloadFile(file as OvicFile);
+    switch (result) {
+      case DownloadProcess.rejected:
+        this.notificationService.toastInfo('Chưa hỗ trợ tải xuống thư mục');
+        break;
+      case DownloadProcess.error:
+        this.notificationService.toastError('Tải xuống thất bại');
+        break;
+    }
+  }
+  deleteNguLieuOnForm(n: Ngulieu) {
+    if (this.f['ds_ngulieu'].value && Array.isArray(this.f['ds_ngulieu'].value)) {
+      const newValues = this.f['ds_ngulieu'].value.filter(u => u.id !== n.id);
+      this.f['ds_ngulieu'].setValue(newValues);
+      this.f['ds_ngulieu'].markAsTouched();
+    } else {
+      this.f['ds_ngulieu'].setValue([]);
+      this.f['ds_ngulieu'].markAsTouched();
+    }
+  }
 }

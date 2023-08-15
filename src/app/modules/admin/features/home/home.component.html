@@ -43,8 +43,7 @@
 <div class="mb-3 position-relative">
   <div class="surface-card px-3 py-2">
     <div class="d-flex align-items-center justify-content-between mb-0 px-3 pt-3">
-      <div class="surface-card__title--type-3 d-flex w-100 align-items-center white-space-pre-wrap">Danh sách thống kê
-        số DHTD/HTKT
+      <div class="surface-card__title--type-3 d-flex w-100 align-items-center white-space-pre-wrap">Danh sách thống kê đợt thi
         <span *ngIf="tblReport && tblReport.selected" class="title-bind-data">{{ tblReport.selected.title }}
           năm {{ tblReport.selected.year }}</span>
         <button class="surface-card__title__switch--text surface-card__title__switch--text--rectangle ml-auto"
@@ -60,9 +59,9 @@
         <thead>
         <tr>
           <th class="ovic-w-60px text-center">TT</th>
-          <th>Loại DHTD/HTKT</th>
-          <th class="ovic-w-200px text-center">Cá nhân</th>
-          <th class="ovic-w-200px text-center">Tập thể</th>
+          <th>Đợt thi</th>
+          <th class="ovic-w-200px text-center">Ngày thi</th>
+          <th class="ovic-w-200px text-center">Tổng số thí sinh</th>
         </tr>
         </thead>
         <tbody>

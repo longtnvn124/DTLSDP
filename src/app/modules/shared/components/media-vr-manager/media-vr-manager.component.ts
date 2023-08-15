@@ -51,7 +51,7 @@ export class MediaVrManagerComponent implements OnInit, AfterViewInit, OnDestroy
   @Input() ngulieu: Ngulieu;
   @Input() _diemtruycap: Point;
   @Input() showOnly = false; // if true; remove all mouse events
-
+  @Input() viewRotate :boolean = true;  // view rotate
   index: number = 1;
   isAudio = false;
   formState: {
@@ -550,9 +550,7 @@ export class MediaVrManagerComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   btnFormAdd() {
-
     this.onOpenFormEdit();
-
     this.changeInputMode("add");
   }
 
@@ -709,11 +707,8 @@ export class MediaVrManagerComponent implements OnInit, AfterViewInit, OnDestroy
 
   async btnAddNgulieu(type) {
     const result = await this.employeesPickerService.pickerNgulieu([], '', type);
-    console.log(result);
     const value = [].concat(this.f['ds_ngulieu'].value, result);
-    console.log(value);
     this.f['ds_ngulieu'].setValue(value);
-    console.log(this.f['ds_ngulieu'].value);
     this.f['ds_ngulieu'].markAsUntouched();
   }
   async dowloadNgulieu(n:Ngulieu){
@@ -738,7 +733,5 @@ export class MediaVrManagerComponent implements OnInit, AfterViewInit, OnDestroy
       this.f['ds_ngulieu'].markAsTouched();
     }
   }
-  viewDiemtruycap(n: Ngulieu) {
 
-  }
 }

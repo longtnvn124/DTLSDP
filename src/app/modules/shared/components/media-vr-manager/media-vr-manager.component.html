@@ -5,6 +5,7 @@
 </div>
 
 <p-contextMenu [target]="container" [model]="items" appendTo="body" *ngIf="!showOnly"></p-contextMenu>
+
 <ng-template #fromUpdate>
   <div class="ovic-side-navigation-content h-100">
     <div class="ovic-side-navigation-content__head">
@@ -118,7 +119,9 @@
 
 
 <div class="onRight-bottom">
-  <p-button class="m-2" [icon]="rotate ? 'pi pi-spin pi-spinner':'pi pi-refresh'" (onClick)="btnRotate()"></p-button>
+  <ng-template [ngIf]="viewRotate">
+    <p-button class="m-2" [icon]="rotate ? 'pi pi-spin pi-spinner':'pi pi-refresh'" (onClick)="btnRotate()"></p-button>
+  </ng-template>
   <ng-template [ngIf]="isAudio">
     <p-button class="m-2" icon="pi pi-volume-up" styleClass="p-button-secondary" (onClick)="btnVolume()"></p-button>
   </ng-template>
