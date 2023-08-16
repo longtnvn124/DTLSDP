@@ -1,5 +1,5 @@
 <div class="content-section implementation ovic-table-component__content-section" (contextmenu)="disableContextMenu($event)">
-    <p-table #dt [value]="data" [dataKey]="dataKey" [styleClass]="tblClass" [rowHover]="rowHover" [rows]="rows" [showCurrentPageReport]="true" [paginator]="enablePaginator" [filterDelay]="0" [globalFilterFields]="globalFilterFields">
+    <p-table  #dt [value]="data" [dataKey]="dataKey" [styleClass]="tblClass" [rowHover]="rowHover" [rows]="rows" [showCurrentPageReport]="true" [paginator]="enablePaginator" [filterDelay]="0" [globalFilterFields]="globalFilterFields">
         <ng-template pTemplate="caption" *ngIf="tableName || enableSearch ">
             <h3 class="tbl-title" [class.addRow]="addRow" [innerHTML]="tableName | ovicSafeHtml"></h3>
             <div class="search-block ui-table-globalfilter-container" [class.addRow]="addRow">

@@ -1,3 +1,10 @@
+.tbl-noScroll> .p-datatable-wrapper{
+  overflow: unset !important;
+}
+/*.tbl-noScroll .p-datatable {*/
+/*  overflow: unset;*/
+/*}*/
+
 .v-step-popup {
   display: flex;
   flex-direction: column;

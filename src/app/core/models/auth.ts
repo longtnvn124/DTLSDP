@@ -2,6 +2,7 @@ import { User } from '@core/models/user';
 import { Ucase } from '@core/models/ucase';
 
 export interface SimpleRole {
+  id : number;
 	description : string,
 	name : string,
 	ordering : string,

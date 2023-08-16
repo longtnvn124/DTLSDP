@@ -733,5 +733,4 @@ export class MediaVrManagerComponent implements OnInit, AfterViewInit, OnDestroy
       this.f['ds_ngulieu'].markAsTouched();
     }
   }
-
 }

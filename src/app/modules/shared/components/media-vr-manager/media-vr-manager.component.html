@@ -60,19 +60,24 @@
                 <label>Đích đến <span class="ovic-mark">*</span></label>
                 <div class="w-100">
                   <button *ngIf="!destination; else showDestination" pRipple
-                          class="btn-vr-chooser justify-content-center align-items-center" [class.btn-vr-chooser--invalid]="f['ds_ngulieu'].touched && formSave.getError('invalidPinable')" (click)="btnAddNgulieu('DIRECT')">
+                          class="btn-vr-chooser justify-content-center align-items-center"
+                          [class.btn-vr-chooser--invalid]="f['ds_ngulieu'].touched && formSave.getError('invalidPinable')"
+                          (click)="btnAddNgulieu('DIRECT')">
                     <span class="btn-vr-chooser__icon"></span>
                   </button>
                   <ng-template #showDestination>
                     <div class="list-vr-chooser" *ngIf="destination">
                       <div class="d-flex align-items-center w-100 mb-0">
                         <div class="btn-vr-chooser--single w-100 p-0 border-0">
-                          <span class="btn-vr-chooser__icon" [class]="'btn-vr-chooser__icon--'+destination.loaingulieu"></span>
+                          <span class="btn-vr-chooser__icon"
+                                [class]="'btn-vr-chooser__icon--'+destination.loaingulieu"></span>
                           <p class="btn-vr-chooser__name">{{ destination.title }}</p>
                         </div>
-                        <button class="btn-vr-chooser__control p-button-text p-button-rounded" pRipple pButton icon="pi pi-download"
+                        <button class="btn-vr-chooser__control p-button-text p-button-rounded" pRipple pButton
+                                icon="pi pi-download"
                                 (click)="dowloadNgulieu(destination)"></button>
-                        <button class="btn-vr-chooser__control p-button-text p-button-danger p-button-rounded" pRipple pButton icon="pi pi-trash"
+                        <button class="btn-vr-chooser__control p-button-text p-button-danger p-button-rounded" pRipple
+                                pButton icon="pi pi-trash"
                                 (click)="deleteNguLieuOnForm(destination)"></button>
                       </div>
                     </div>
@@ -91,9 +96,11 @@
                       <span class="btn-vr-chooser__icon" [class]="'btn-vr-chooser__icon--'+n.loaingulieu"></span>
                       <p class="btn-vr-chooser__name">{{ n.title }}</p>
                     </div>
-                    <button class="btn-vr-chooser__control p-button-text p-button-rounded" pRipple pButton icon="pi pi-download"
+                    <button class="btn-vr-chooser__control p-button-text p-button-rounded" pRipple pButton
+                            icon="pi pi-download"
                             (click)="dowloadNgulieu(n)"></button>
-                    <button class="btn-vr-chooser__control p-button-text p-button-danger p-button-rounded" pRipple pButton icon="pi pi-trash"
+                    <button class="btn-vr-chooser__control p-button-text p-button-danger p-button-rounded" pRipple
+                            pButton icon="pi pi-trash"
                             (click)="deleteNguLieuOnForm(n)"></button>
                   </div>
                   <div class="d-flex align-items-center w-100 border-0">
@@ -134,12 +141,29 @@
               (onClick)="btnPausePlay()"></p-button>
   </ng-template>
 </div>
+<div class="onCenter-bottom">
+<!--  <button pRipple pButton class="btn-outline-0" icon="pi pi-chevron-up"></button>-->
+<!--  <button pRipple pButton class="btn-outline-0" icon="pi pi-chevron-down"></button>-->
+  <div class="onCenter-bottom_item">
+    <svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 24 24" width="512"
+         height="512">
+      <path
+        d="M18,20c-.384,0-.768-.146-1.061-.439l-4.938-4.939-4.94,4.939c-.586,.586-1.535,.586-2.121,0s-.586-1.536,0-2.121l6.001-6c.281-.281,.663-.439,1.061-.439h0c.397,0,.779,.158,1.061,.439l5.999,6c.586,.586,.586,1.536,0,2.121-.293,.293-.677,.439-1.061,.439Zm1.067-7.708c.582-.589,.576-1.539-.014-2.121l-3.922-3.873c-.837-.837-1.948-1.298-3.132-1.298s-2.295,.461-3.124,1.291l-3.93,3.88c-.59,.582-.596,1.532-.014,2.121,.581,.59,1.533,.595,2.121,.014l3.938-3.887c.537-.539,1.473-.546,2.025,.007l3.93,3.88c.292,.289,.673,.433,1.054,.433,.387,0,.774-.149,1.067-.446Z"/>
+    </svg>
+  </div>
+  <div class="onCenter-bottom_item">
+    <svg xmlns="http://www.w3.org/2000/svg" id="Bold" viewBox="0 0 24 24" width="512" height="512">
+      <path
+        d="M19.061,7.854a1.5,1.5,0,0,0-2.122,0l-4.586,4.585a.5.5,0,0,1-.707,0L7.061,7.854A1.5,1.5,0,0,0,4.939,9.975l4.586,4.586a3.5,3.5,0,0,0,4.95,0l4.586-4.586A1.5,1.5,0,0,0,19.061,7.854Z"/>
+    </svg>
+  </div>
 
-<!--<audio controls autoplay>-->
-<!--  <source [src]="audioLink | ovicSafeUrl" type="audio/ogg">-->
-<!--  <source [src]="audioLink | ovicSafeUrl" type="audio/mpeg">-->
-<!--  Your browser does not support the audio element.-->
-<!--</audio>-->
+</div>
+  <!--<audio controls autoplay>-->
+  <!--  <source [src]="audioLink | ovicSafeUrl" type="audio/ogg">-->
+  <!--  <source [src]="audioLink | ovicSafeUrl" type="audio/mpeg">-->
+  <!--  Your browser does not support the audio element.-->
+  <!--</audio>-->
 
 <p-dialog header="Thông tin chi tiết" [(visible)]="visible" [modal]="true" [style]="{ width: '60vw' }"
           [draggable]="false" [resizable]="false" class="m-0">

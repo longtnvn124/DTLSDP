@@ -102,3 +102,35 @@
   font-size: 14px;
 
 }
+.onCenter-bottom{
+  display:flex;
+  flex-direction: column;
+  position: absolute;
+  bottom:20px;
+  left:50%;
+  transform: translate(-50%, -50%);
+}
+.onCenter-bottom button{
+  outline: none;
+  background: transparent;
+  border: none;
+  font-size:30px;
+}
+.onCenter-bottom_item{
+  width:30px;
+  height: 30px;
+  color:#fff;
+  padding:10px;
+}
+.onCenter-bottom_item svg{
+  width: 26px;
+  height: auto;
+  fill: currentColor;
+
+}
+.onCenter-bottom_item :hover{
+  fill: #d6b1d0;
+  /*border: 1px solid #94a0b4;*/
+}.onCenter-bottom_item :active{
+   transform: translateY(4px);
+}

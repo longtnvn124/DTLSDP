@@ -94,8 +94,8 @@ export class LinhVucComponent implements OnInit {
     },
   ];
   listForm = {
-    [FormType.ADDITION]: {type: FormType.ADDITION, title: 'Thêm mới chuyên mục', object: null, data: null},
-    [FormType.UPDATE]: {type: FormType.UPDATE, title: 'Cập nhật chuyên mục', object: null, data: null}
+    [FormType.ADDITION]: {type: FormType.ADDITION, title: 'Thêm mới lĩnh vực', object: null, data: null},
+    [FormType.UPDATE]: {type: FormType.UPDATE, title: 'Cập nhật lĩnh vực', object: null, data: null}
   };
   formActive:FormDmLinhVuc;
   formSave: FormGroup;

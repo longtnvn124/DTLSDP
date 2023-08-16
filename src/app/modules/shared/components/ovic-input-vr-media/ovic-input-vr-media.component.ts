@@ -504,4 +504,16 @@ export class OvicInputVrMediaComponent implements OnInit {
       this.f['ds_ngulieu'].markAsTouched();
     }
   }
+
+  //==========================btn next,back===================================
+  dataNextBack:Point[];
+  btnNext(){
+    console.log('btnNext');
+    this.pointChild.forEach(f=>{
+
+    })
+  }
+  btnBack(){
+    console.log('btnBack');
+  }
 }

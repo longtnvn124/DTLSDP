@@ -11,26 +11,31 @@
   </div>
 </div>
 
+<div class="onCenter-bottom">
+  <!--  <button pRipple pButton class="btn-outline-0" icon="pi pi-chevron-up"></button>-->
+  <!--  <button pRipple pButton class="btn-outline-0" icon="pi pi-chevron-down"></button>-->
+  <div class="onCenter-bottom_item" (click)="btnNext()">
+    <svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 24 24" width="512"
+         height="512">
+      <path
+        d="M18,20c-.384,0-.768-.146-1.061-.439l-4.938-4.939-4.94,4.939c-.586,.586-1.535,.586-2.121,0s-.586-1.536,0-2.121l6.001-6c.281-.281,.663-.439,1.061-.439h0c.397,0,.779,.158,1.061,.439l5.999,6c.586,.586,.586,1.536,0,2.121-.293,.293-.677,.439-1.061,.439Zm1.067-7.708c.582-.589,.576-1.539-.014-2.121l-3.922-3.873c-.837-.837-1.948-1.298-3.132-1.298s-2.295,.461-3.124,1.291l-3.93,3.88c-.59,.582-.596,1.532-.014,2.121,.581,.59,1.533,.595,2.121,.014l3.938-3.887c.537-.539,1.473-.546,2.025,.007l3.93,3.88c.292,.289,.673,.433,1.054,.433,.387,0,.774-.149,1.067-.446Z"/>
+    </svg>
+  </div>
+  <div class="onCenter-bottom_item" (click)="btnBack()">
+    <svg xmlns="http://www.w3.org/2000/svg" id="Bold" viewBox="0 0 24 24" width="512" height="512">
+      <path
+        d="M19.061,7.854a1.5,1.5,0,0,0-2.122,0l-4.586,4.585a.5.5,0,0,1-.707,0L7.061,7.854A1.5,1.5,0,0,0,4.939,9.975l4.586,4.586a3.5,3.5,0,0,0,4.95,0l4.586-4.586A1.5,1.5,0,0,0,19.061,7.854Z"/>
+    </svg>
+  </div>
+
+</div>
+
 <p-contextMenu [target]="container" [model]="items" appendTo="body" *ngIf="!showOnly"></p-contextMenu>
 
 <audio #audio id="myAudio">
   <source src="{{audioLink}}" type="audio/mpeg">
 </audio>
 
-<!--<div class="position-absolute menu-bottom-container">-->
-<!--  <div class="position-relative w-100 h-100 d-flex justify-content-between align-items-center">-->
-<!--    <div class="ml-4 menu-bottom">-->
-<!--      <div class="p-2 menu-bottom_item" (click)="viewDataPoint()"> Thư viện 3D</div>-->
-<!--      <div class="p-2 menu-bottom_item" (click)="viewMedia()"> Thư viện đa phương tiện</div>-->
-<!--      <div class="p-2 menu-bottom_item" (click)="viewDocomment()"> Thư viện tài liệu </div>-->
-<!--    </div>-->
-<!--    <div class="d-flex mr-4">-->
-<!--      <button pButton pRipple [icon]="video360.paused ? 'pi pi-play' : 'pi pi-pause'" class="p-button-text mx-2 " style="color:#fff" (click)="btnPlayVideo()"></button>-->
-<!--      <button pButton pRipple [icon]="souseAudio ? 'pi pi-volume-down':'pi pi-volume-off'" class="p-button-text mx-2 " style="color:#fff" (click)="btnPlayAudio()"></button>-->
-<!--      <button pButton pRipple [icon]="rotate ? 'pi pi-spin pi-spinner':'pi pi-refresh'" class="p-button-text mx-2 " style="color:#fff" (click)="btnplayRotate()"></button>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--</div>-->
 <ng-template #fromUpdate>
   <div class="ovic-side-navigation-content h-100">
     <div class="ovic-side-navigation-content__head">
