@@ -1,6 +1,7 @@
-.tbl-noScroll> .p-datatable-wrapper{
+.tbl-noScroll > .p-datatable-wrapper {
   overflow: unset !important;
 }
+
 /*.tbl-noScroll .p-datatable {*/
 /*  overflow: unset;*/
 /*}*/
@@ -57,6 +58,7 @@
 .v-step-popup__btn + .v-step-popup__btn {
   margin-left: 10px;
 }
+
 p-calendar .p-calendar {
   width: 100%;
 }
@@ -237,6 +239,7 @@ app-virtual-tour, app-shift, app-panel {
   border-radius: 4px !important;
 
 }
+
 /*----------------control map----------------*/
 .marker {
   background: url('/assets/icon-png/pin.gif');
@@ -246,8 +249,9 @@ app-virtual-tour, app-shift, app-panel {
   border-radius: 50%;
   cursor: pointer;
 }
+
 .mapboxgl-popup {
-  width:150px;
+  width: 150px;
   max-width: 100%;
 }
 
@@ -255,7 +259,8 @@ app-virtual-tour, app-shift, app-panel {
   text-align: center;
   font-family: 'Open Sans', sans-serif;
 }
-.mapboxgl-popup-content h3{
+
+.mapboxgl-popup-content h3 {
   padding-top: 10PX;
   font-size: 14px;
   margin-left: 10px;
@@ -263,3 +268,10 @@ app-virtual-tour, app-shift, app-panel {
   font-weight: 700;
 }
 
+.map-Resize .mapboxgl-canvas {
+  border-radius:50%;
+}
+
+.mapboxgl-ctrl-bottom-right, .mapboxgl-ctrl-bottom-left {
+  display: none;
+}

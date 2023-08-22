@@ -115,7 +115,7 @@ export class DanhSachNguLieuComponent implements OnInit {
   loadData(page: number) {
     let i = 1;
     this.isLoading = true;
-    this.nguLieuDanhSachService.getDataByLinhvucIdAndSearch(page, this.filterData.linhvucid, this.filterData.search).subscribe({
+    this.nguLieuDanhSachService.getDataByLinhvucIdAndSearch(page, this.filterData.linhvucid, this.filterData.search, this.filterData.loaingulieu).subscribe({
       next: ({data, recordsTotal}) => {
         this.recordsTotal = recordsTotal;
         this.listData = data.map(m => {
@@ -264,13 +264,16 @@ export class DanhSachNguLieuComponent implements OnInit {
     this.filterData.linhvucid = linhvucid;
     this.loadData(1);
   }
-
+  changeFilterLoaiNguLieu(event){
+    this.filterData.loaingulieu = event.value;
+    this.loadData(1);
+  }
   changeInput(event: string) {
     setTimeout(()=>{
       this.loadData(1);
     },1000);
   }
-  filterData: { linhvucid: number, search: string } = {linhvucid: null, search: ''};
+  filterData: { linhvucid: number, search: string,loaingulieu:string } = {linhvucid: null, search: '',loaingulieu:''};
   btnExit() {
     this.mode = "TABLE";
   }

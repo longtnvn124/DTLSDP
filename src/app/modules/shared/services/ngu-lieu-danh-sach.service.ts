@@ -147,7 +147,7 @@ export class NguLieuDanhSachService {
       data: res.data
     })));
   }
-  getDataByLinhvucIdAndSearch(page:number,linhvuc_id:number,search:string):Observable<{recordsTotal: number, data: Ngulieu[]}>{
+  getDataByLinhvucIdAndSearch(page:number,linhvuc_id:number,search:string, loaingulieu?:string):Observable<{recordsTotal: number, data: Ngulieu[]}>{
     const conditions: OvicConditionParam[] = [
       {
         conditionName: 'is_deleted',
@@ -172,6 +172,15 @@ export class NguLieuDanhSachService {
         orWhere:'and'
       }
       conditions.push(...[searchdata]);
+    }
+    if(loaingulieu){
+      const data :OvicConditionParam={
+        conditionName:'loaingulieu',
+        condition:OvicQueryCondition.equal,
+        value:loaingulieu,
+        orWhere:'and'
+      };
+      conditions.push(...[data]);
     }
 
     const fromObject = {

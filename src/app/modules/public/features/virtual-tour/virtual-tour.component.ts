@@ -7,6 +7,7 @@ import {Point} from '@modules/shared/models/point';
 import {MediaService} from "@shared/services/media.service";
 import {MenuItem} from "primeng/api/menuitem";
 import {Ngulieu} from "@shared/models/quan-ly-ngu-lieu";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-virtual-tour',
@@ -37,13 +38,19 @@ export class VirtualTourComponent implements OnInit {
     private auth: AuthService,
     private notificationService: NotificationService,
     private fileService: FileService,
-    private mediaService: MediaService
+    private mediaService: MediaService,
+    private router: Router
   ) {
     this.activeItem = this.items[0];
   }
 
   ngOnInit(): void {
-    this.loadScend();
+    if (this.auth.isLoggedIn()) {
+      this.loadScend();
+    } else {
+      void this.router.navigate(['/login'], {queryParams: {redirect: 'test/shift'}});
+    }
+
   }
 
   loadScend() {
@@ -53,7 +60,7 @@ export class VirtualTourComponent implements OnInit {
         this.pointStart = data.find(f => f.root === 1);
         this.pointStart['__child'] = data.filter(f => f.parent_id === this.pointStart.id);
         this.linkImg = this.pointStart.ds_ngulieu.find(f=>f.loaingulieu ==='image360') ?
-          this.fileService.getPreviewLinkLocalFile(this.pointStart.ds_ngulieu.find(f=>f.loaingulieu ==='image360')) : null;
+          this.fileService.getPreviewLinkLocalFile(this.pointStart.ds_ngulieu.find(f=>f.loaingulieu ==='image360').file_media[0]) : null;
         this.notificationService.isProcessing(false);
       }, error: () => {
         this.notificationService.isProcessing(false);

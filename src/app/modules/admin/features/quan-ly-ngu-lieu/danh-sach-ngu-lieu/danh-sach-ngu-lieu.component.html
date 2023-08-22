@@ -14,6 +14,13 @@
                 <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
                   <div class="d-flex">
                     <div class="search-block__elm filter-by-group-control ml-3">
+                      <p-dropdown [options]="dataLoaingulieu" styleClass="ovic-dropdown-style w-100 dropdown--narrow-angle"
+                                  placeholder="Loại ngữ liệu" optionLabel="ten"
+                                  optionValue="kyhieu" (onChange)="changeFilterLoaiNguLieu($event)" [showClear]="true"
+                                  [style]="{'min-width':'200px'}"
+                      ></p-dropdown>
+                    </div>
+                    <div class="search-block__elm filter-by-group-control ml-3">
                       <p-dropdown [options]="dataLinhvuc" styleClass="ovic-dropdown-style w-100 dropdown--narrow-angle"
                                   placeholder="Lĩnh vực" optionLabel="ten"
                                   optionValue="id" (onChange)="changeFilter($event)" [showClear]="true"

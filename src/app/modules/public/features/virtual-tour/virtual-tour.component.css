@@ -16,9 +16,15 @@
   background-size: cover;
   object-fit: cover; /* Tự động co dãn hình ảnh để che đậy vùng chứa */
   object-position: center; /* Hiển thị phần trung tâm của hình ảnh */
-
-
 }
+/*.ctn-background::before{*/
+/*  content:'';*/
+/*  width: 100%;*/
+/*  height: 100%;*/
+/*  background-size: cover;*/
+/*  opacity: 0.5; !* Độ mờ *!*/
+/*  z-index: -1*/
+/*}*/
 
 .btnRun {
   border-radius: 40px;
