@@ -48,9 +48,10 @@ export interface DmDiemDiTich extends DmChung {
   id: number;
   ten: string;
   mota: string;
-  vitri_ggmap: string;
+  toado_map: string;
   ds_ngulieu: Ngulieu[];
   status: number; //1 Active; 0: inactive
+  toado:string;
 }
 
 

@@ -211,10 +211,10 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
       icon: [''],
       title: ['', Validators.required],
       mota: ['',],
-      vitri_ggmap: [''],
+      toado_map: [''],
       type: ['', Validators.required],
       ds_ngulieu: [[], Validators.required],
-      parent_id: [''],
+      parent_id: [null],
       donvi_id: [null, Validators.required],
       ditich_id: [null],
 
@@ -285,15 +285,22 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
       }
     })
   }
-
+  dataFull :Point[];
   loadData(page) {
     const limit = this.themeSettingsService.settings.rows;
     this.index = (page * limit) - limit + 1;
     this.isLoading = true;
-    this.pointsService.loadPage(this.page).subscribe({
-      next: ({data, recordsTotal}) => {
+    forkJoin <[{data:Point[],recordsTotal:number}, Point[]]>([
+      this.pointsService.loadPage(this.page),
+      this.pointsService.load(),
+    ]).subscribe({
+      next: ([{data, recordsTotal},point]) => {
+        this.dataFull = point;
         this.data = data.map(m => {
-          m['__child']= data.filter(f=>f.parent_id === m.id);
+          m['__child']= point.map(a=>{
+            a['__child'] = point.filter(f=>f.parent_id=== m.id);
+            return a
+          }).filter(f=>f.parent_id === m.id);
           m['__diemditich_converted'] = m.type ? m.title : this.dataDiemditich.find(f => f.id === m.ditich_id).ten;
           m['__type_converted'] = m.type ? this.typeOptions.find(f => f.value === m.type).label : null;
           return m;
@@ -301,8 +308,6 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
         this.recordsTotal = recordsTotal;
         this.isLoading = false;
         this.error = false;
-        console.log(this.data);
-
       },
       error: () => {
         this.error = true;
@@ -310,7 +315,6 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
         this.notificationService.toastError('Mất kết nối mạng');
       },
     });
-
   }
 
   private __processFrom({data, object, type}: FormDiemTruyCap) {
@@ -323,12 +327,12 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
             icon: '',
             title: '',
             mota: '',
-            vitri_ggmap: '',
             type: '',
             ds_ngulieu: [],
             parent_id: null,
             donvi_id: this.auth.userDonViId,
             ditich_id: null,
+            toado_map:''
           });
         }
         this.notificationService.toastSuccess('Thao tác thành công', 'Thông báo');
@@ -379,7 +383,7 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
           icon: '',
           title: '',
           mota: '',
-          vitri_ggmap: '',
+          toado_map: '',
           type: '',
           ds_ngulieu: [],
           parent_id: null,
@@ -393,14 +397,15 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
       case 'EDIT_DECISION':
         this.btn_checkAdd= "Xác nhận";
         const object1 = this.data.find(u => u.id === decision.id);
+        console.log(object1);
         this.formSave.reset({
           icon: object1.icon,
           title: object1.title,
           mota: object1.mota,
-          vitri_ggmap: object1.vitri_ggmap,
+          toado_map: object1.toado_map,
           type: object1.type,
           donvi_id: object1.donvi_id,
-          parrent_id: object1.parent_id,
+          parent_id: object1.parent_id,
           ds_ngulieu: object1.ds_ngulieu,
           ditich_id: object1.ditich_id,
         });
@@ -494,9 +499,12 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
     if (value) {
       this.f['title'].setValue(ditich.ten);
       this.f['mota'].setValue(ditich.mota);
+      this.f['toado_map'].setValue(ditich.toado);
     } else {
       this.f['title'].setValue('');
       this.f['mota'].setValue('');
+      this.f['toado_mpa'].setValue('');
+
     }
   }
 
@@ -537,6 +545,4 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
         break;
     }
   }
-
-
 }

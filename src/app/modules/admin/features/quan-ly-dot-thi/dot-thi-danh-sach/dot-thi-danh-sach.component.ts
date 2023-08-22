@@ -102,13 +102,6 @@ export class DotThiDanhSachComponent implements OnInit {
       headClass: 'ovic-w-120px text-center',
       buttons: [
         {
-          tooltip: 'Danh sách thí sinh',
-          label: '',
-          icon: 'pi pi-users',
-          name: 'STUDENT_DECISION',
-          cssClass: 'btn-warning rounded'
-        },
-        {
           tooltip: 'Sửa',
           label: '',
           icon: 'pi pi-file-edit',

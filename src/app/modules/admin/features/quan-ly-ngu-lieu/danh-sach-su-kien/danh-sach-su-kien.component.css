@@ -9,3 +9,9 @@
   border: 1px solid #ced4da;
   border-radius: 6px;
 }
+
+.diem_ditich-css{
+  padding:3px;
+  margin: 2px;
+  /*background: linear-gradient(to right, #314755, #26a0da);*/
+}

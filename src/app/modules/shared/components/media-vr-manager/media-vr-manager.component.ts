@@ -5,7 +5,7 @@ import {
 import {OrbitControls} from '@three-ts/orbit-controls';
 import {NotificationService} from '@core/services/notification.service';
 import {FileService} from "@core/services/file.service";
-import {sceneControl} from "@shared/models/sceneVr";
+import {OvicVrPoint, OvicVrPointType, OvicVrPointUserData, sceneControl} from "@shared/models/sceneVr";
 import {AuthService} from "@core/services/auth.service";
 import {MenuItem} from 'primeng/api/menuitem';
 import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from "@angular/forms";
@@ -51,7 +51,7 @@ export class MediaVrManagerComponent implements OnInit, AfterViewInit, OnDestroy
   @Input() ngulieu: Ngulieu;
   @Input() _diemtruycap: Point;
   @Input() showOnly = false; // if true; remove all mouse events
-  @Input() viewRotate :boolean = true;  // view rotate
+  @Input() viewRotate: boolean = true;  // view rotate
   index: number = 1;
   isAudio = false;
   formState: {
@@ -118,7 +118,6 @@ export class MediaVrManagerComponent implements OnInit, AfterViewInit, OnDestroy
     private pointsService: PointsService,
     private mediaService: MediaService,
     private employeesPickerService: EmployeesPickerService,
-
   ) {
 
     this.video360 = this.renderer2.createElement('video');
@@ -327,6 +326,7 @@ export class MediaVrManagerComponent implements OnInit, AfterViewInit, OnDestroy
       }
       this.renderSecene();
     }
+
     // Render
   }
 
@@ -353,7 +353,10 @@ export class MediaVrManagerComponent implements OnInit, AfterViewInit, OnDestroy
         scene: newPoint,
         userData: {
           ovicPointId: info.id,
-          iconPoint: info.icon
+          iconPoint: info.icon,
+          dataPoint: null,
+          type: info.type,
+          parentPointId: this._diemtruycap ? this._diemtruycap.id : this.ngulieu.id,
         }
       });
       if (data_ngulieu[0].loaingulieu === 'image360') {
@@ -404,21 +407,35 @@ export class MediaVrManagerComponent implements OnInit, AfterViewInit, OnDestroy
     );
     this.rayCaster.setFromCamera(mouse, this.camera);
     let intersects = this.rayCaster.intersectObjects(this.scene.children);
-    intersects.forEach((intersect: any) => {
-      if (intersect.object.type === "Sprite") {
-        intersect.object.onClick();
-        this.backToScene = true;
-        if (this.spriteActive) {
-          this.tooltip.nativeElement.classList.remove('is-active');
-          this.spriteActive = false;
+    const userData: OvicVrPointUserData = intersects[0].object.userData as OvicVrPointUserData;
+    console.log(intersects);
+    console.log(userData);
+    if (!userData.type) {
+      return
+    }
+
+    if (userData.type === "DIRECT") {
+      intersects.forEach((intersect: any) => {
+        if (intersect.object.type === "Sprite") {
+          intersect.object.onClick();
+          this.backToScene = true;
+          if (this.spriteActive) {
+            this.tooltip.nativeElement.classList.remove('is-active');
+            this.spriteActive = false;
+          }
         }
-      }
-    });
+      });
+    } else if (userData.type === "INFO") {
+      console.log('POIT TYPE INFO');
+    }
+    console.log(userData.type);
     // intersects = this.rayCaster.intersectObject(this.s.sphere);
     // if (intersects.length > 0) {
     // console.log(intersects[0].point);
     // }
   }
+
+
   onMouseMove = (e: MouseEvent) => {
     let mouse = new Vector2(
       (e.offsetX / this.container.nativeElement.clientWidth) * 2 - 1,
@@ -711,7 +728,8 @@ export class MediaVrManagerComponent implements OnInit, AfterViewInit, OnDestroy
     this.f['ds_ngulieu'].setValue(value);
     this.f['ds_ngulieu'].markAsUntouched();
   }
-  async dowloadNgulieu(n:Ngulieu){
+
+  async dowloadNgulieu(n: Ngulieu) {
     const file = n.file_media[0];
     const result = await this.mediaService.tplDownloadFile(file as OvicFile);
     switch (result) {
@@ -723,6 +741,7 @@ export class MediaVrManagerComponent implements OnInit, AfterViewInit, OnDestroy
         break;
     }
   }
+
   deleteNguLieuOnForm(n: Ngulieu) {
     if (this.f['ds_ngulieu'].value && Array.isArray(this.f['ds_ngulieu'].value)) {
       const newValues = this.f['ds_ngulieu'].value.filter(u => u.id !== n.id);

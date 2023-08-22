@@ -16,7 +16,7 @@ import {Ngulieu} from "@shared/models/quan-ly-ngu-lieu";
 export class VirtualTourComponent implements OnInit {
   @Input() rotate:boolean = true;
   pointStart: Point;
-  mode: "BTNPLAY" | "MEDIAVR" = "MEDIAVR";
+  mode: "BTNPLAY" | "MEDIAVR" = "BTNPLAY";
   items:MenuItem[] = [
     // { label:'Hình ảnh 3D', icon: 'pi pi-image',command:(event)=> this.viewSpace3D('image')},// view hình ảnh 3d
     { label:'Hình ảnh 3D', icon: 'pi pi-image',command:(event)=> this.viewSpace3D('image')},// view hình ảnh 3d

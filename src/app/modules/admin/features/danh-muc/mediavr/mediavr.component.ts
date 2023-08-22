@@ -266,7 +266,10 @@ export class MediavrComponent implements OnInit, AfterViewInit, OnDestroy {
         scene: newPoint,
         userData: {
           ovicPointId: info.id,
-          iconPoint: info.icon
+          iconPoint: info.icon,
+          dataPoint: null,
+          parentPointId:null,
+          type:null
         }
       });
       if (type === "image") {
@@ -665,10 +668,5 @@ export class MediavrComponent implements OnInit, AfterViewInit, OnDestroy {
     // this.s.backToScene();
   }
 
-  // btnDelete1(){
-  //   const idDelete = this.varMouseRight;
-  //   console.log()
-  //   this.s.deletePoint(idDelete);
-  // }
 }
 

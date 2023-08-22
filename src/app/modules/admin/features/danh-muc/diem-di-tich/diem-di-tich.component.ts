@@ -156,7 +156,8 @@ export class DiemDiTichComponent implements OnInit {
     this.formSave = this.fb.group({
       ten: ['', Validators.required],
       mota: [''],
-      status: ['', Validators.required]
+      status: ['', Validators.required],
+      toado:['']
     });
 
     const observeProcessFormData = this.OBSERVE_PROCESS_FORM_DATA.asObservable().pipe(debounceTime(100)).subscribe(form => this.__processFrom(form));
@@ -188,7 +189,7 @@ export class DiemDiTichComponent implements OnInit {
           // m['__fileMedia_converted'] = m.ds_ngulieu ==[] ||m.ds_ngulieu == null?null :this.fileService.getPreviewLinkLocalFile(m.ds_ngulieu[0]);
 
           // m['__ten_converted'] = `<b>${m.ten}</b> <br>` + m.mota;
-          // m['__duongdan']=m.vitri_ggmap + ' ' + `<a href="${m.vitri_ggmap}" target="_blank"><i class="pi pi-map"></i></a>`;
+          // m['__duongdan']=m.toado_map + ' ' + `<a href="${m.toado_map}" target="_blank"><i class="pi pi-map"></i></a>`;
           return m;
         })
         this.isLoading = false;
@@ -209,7 +210,8 @@ export class DiemDiTichComponent implements OnInit {
           this.formSave.reset({
             ten: '',
             mota: '',
-            status: ''
+            status: '',
+            toado:''
           });
         }
         this.notificationService.toastSuccess('Thao tác thành công', 'Thông báo');
@@ -260,6 +262,7 @@ export class DiemDiTichComponent implements OnInit {
           ten: '',
           mota: '',
           status: null,
+          toado:''
         });
         // this.characterAvatar = ''
         this.formActive = this.listForm[FormType.ADDITION];
@@ -272,6 +275,7 @@ export class DiemDiTichComponent implements OnInit {
           ten: object1.ten,
           mota: object1.mota,
           status: object1.status,
+          toado:object1.toado
         });
         // this.characterAvatar = object1.ds_ngulieu ? getLinkDownload(object1.ds_ngulieu['id']) : '';
         this.formActive = this.listForm[FormType.UPDATE];

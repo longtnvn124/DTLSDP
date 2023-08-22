@@ -110,12 +110,6 @@ export class NganHangDeComponent implements OnInit {
       headClass: 'ovic-w-120px text-center',
       buttons: [
         {
-          tooltip: 'Tạo đề',
-          label: '',
-          icon: 'pi pi-server',
-          name: 'CREATE_EXAM_DECISION',
-          cssClass: 'btn-warning rounded'
-        }, {
           tooltip: 'Sửa',
           label: '',
           icon: 'pi pi-file-edit',

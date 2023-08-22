@@ -33,7 +33,7 @@
           <tr>
             <th class="ovic-w-50px text-center">#</th>
             <th class="text-left">Tiêu đề Sự kiện</th>
-            <th class="ovic-w-180px text-left p-1">Địa điểm diễn ra</th>
+            <th class="ovic-w-215px text-left p-1">Địa điểm diễn ra</th>
             <th class="ovic-w-250px text-left">Thời gian diễn ra</th>
             <th class="ovic-w-180px text-center">Thao tác</th>
           </tr>
@@ -51,9 +51,9 @@
               <div class="d-block --fs-14" [innerHTML]="item['__title_converted'] | ovicSafeHtml"></div>
             </td>
 
-            <td class="ovic-w-100px">
+            <td class="ovic-w-215px">
               <div class="d-block --fs-14" *ngFor="let ditich of item['__diemditich_ids_coverted']">
-                <div>{{ditich.ten}}</div>
+                <div class="diem_ditich-css" >{{ditich.ten}}</div>
               </div>
             </td>
             <td class="ovic-w-100px">

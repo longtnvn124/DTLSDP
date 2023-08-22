@@ -199,6 +199,7 @@ app-danh-sach-ngu-lieu, app-danh-sach-diem-truy-cap {
   height: 36px;
   min-width: 36px;
   min-height: 36px;
+
 }
 
 .btn-vr-chooser--single {
@@ -236,3 +237,29 @@ app-virtual-tour, app-shift, app-panel {
   border-radius: 4px !important;
 
 }
+/*----------------control map----------------*/
+.marker {
+  background: url('/assets/icon-png/pin.gif');
+  background-size: cover;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.mapboxgl-popup {
+  width:150px;
+  max-width: 100%;
+}
+
+.mapboxgl-popup-content {
+  text-align: center;
+  font-family: 'Open Sans', sans-serif;
+}
+.mapboxgl-popup-content h3{
+  padding-top: 10PX;
+  font-size: 14px;
+  margin-left: 10px;
+  margin-right: 10px;
+  font-weight: 700;
+}
+

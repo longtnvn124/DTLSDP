@@ -23,9 +23,9 @@
   <ng-container *ngSwitchCase="'MEDIAVR'" class="p-0 w-100 h-100">
     <div class="w-100 h-100 position-relative">
       <button pRipple pButton label="Thoát" icon="pi pi-sign-out" class="p-button-secondary btn-exit" (click)="btnExit()"></button>
-      <media-vr-manager [_diemtruycap]="diemditichPoint" [showOnly]="false" class="w-100 h-100"></media-vr-manager>
+<!--      <media-vr-manager [_diemtruycap]="diemditichPoint" [showOnly]="false" class="w-100 h-100"></media-vr-manager>-->
 
-<!--      <ovic-input-vr-media  [_pointStart]="diemditichPoint" ></ovic-input-vr-media>-->
+      <ovic-input-vr-media  [_pointStart]="diemditichPoint" [showOnly]="false" ></ovic-input-vr-media>
     </div>
 
   </ng-container>
@@ -60,8 +60,8 @@
           <div class="row">
             <div class="col-6">
               <p class="form-row">
-                <label>Đường dẫn google map <span class="ovic-mark">*</span></label>
-                <input type="text" placeholder="dường dẫn ..." formControlName="vitri_ggmap"
+                <label>Toạ độ bản đồ  <span class="ovic-mark">*</span></label>
+                <input type="text" placeholder="..." formControlName="toado_map"
                        autocomplete="off">
               </p>
             </div>
@@ -87,7 +87,7 @@
             <div class="col-6">
               <p class="form-row">
                 <label>Thuộc điểm truy cập <span class="ovic-mark">*</span></label>
-                <p-dropdown placeholder="Chọn..." class="w-100" [options]="data" optionLabel="title"
+                <p-dropdown placeholder="Chọn..." class="w-100" [options]="dataFull" optionLabel="title"
                             [showClear]="true" optionValue="id" formControlName='parent_id'
                 ></p-dropdown>
               </p>
@@ -159,3 +159,6 @@
 </ng-template>
 
 <!--<ovic-input-vr-media [_pointStart]="data[0]"></ovic-input-vr-media>-->
+<p-dialog>
+
+</p-dialog>

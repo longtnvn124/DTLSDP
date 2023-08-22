@@ -1,6 +1,6 @@
 import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {Paginator} from "primeng/paginator";
-import {FormType, OvicForm, } from "@shared/models/ovic-models";
+import {FormType, NgPaginateEvent, OvicForm,} from "@shared/models/ovic-models";
 import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {debounceTime, filter, forkJoin, Observable, Subject, Subscription} from "rxjs";
 import {ThemeSettingsService} from "@core/services/theme-settings.service";
@@ -122,7 +122,7 @@ export class DanhSachNguLieuComponent implements OnInit {
           const linhvuc = this.dataLinhvuc && m.linhvuc ? this.dataLinhvuc.find(f => f.id === m.linhvuc) : null;
           const loaingulieu = this.dataLoaingulieu && m.loaingulieu ? this.dataLoaingulieu.find(f => f.kyhieu === m.loaingulieu) : null;
 
-          m['indexTable'] = i++;
+          m['indexTable'] = (page -1)*10 + i++;
           m['__ten_converted'] = `<b>${m.title}</b><br>`;
           m['linhvuc_converted'] = linhvuc ? linhvuc.ten : '';
           m['loaingulieu_converted'] = loaingulieu ? loaingulieu.ten : '';
@@ -154,6 +154,10 @@ export class DanhSachNguLieuComponent implements OnInit {
 
   get f(): { [key: string]: AbstractControl<any> } {
     return this.formSave.controls;
+  }
+  paginate({page}: NgPaginateEvent) {
+    this.page = page + 1;
+    this.loadData(this.page);
   }
 
   btnAddNew() {
@@ -238,11 +242,17 @@ export class DanhSachNguLieuComponent implements OnInit {
   visible:boolean= false;
   ngulieuInfo:Ngulieu;
   btnInformation(object: Ngulieu) {
-    if (object['fileType'] == 'mediaVr') {
+    if (object.loaingulieu=== "video360" || object.loaingulieu === "image360") {
       this.mode = "MEDIAVR";
       this.objectVR = object;
-      console.log(this.objectVR);
-    } else {
+
+    }
+
+    else if(object.loaingulieu === 'image' ||object.loaingulieu === 'video'){
+      this.visible=true;
+      this.ngulieuInfo =object;
+    }else{
+      // tai lieu || audio || ...
       // this.mode = "INFO";
       this.visible=true;
       this.ngulieuInfo =object;

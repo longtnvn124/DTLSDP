@@ -36,7 +36,7 @@
               </div>
             </div>
           </div>
-          <p-table [value]="listData" [paginator]="true" [rows]="rows" [showCurrentPageReport]="true"
+          <p-table [value]="listData" [showCurrentPageReport]="false"
                    [tableStyle]="{ 'min-width': '100px' }">
             <ng-template pTemplate="header">
               <tr>
@@ -79,6 +79,8 @@
               </tr>
             </ng-template>
           </p-table>
+          <p-paginator class="p-paginator--custom" [showCurrentPageReport]="true" [rows]="rows"
+                       [totalRecords]="recordsTotal" [pageLinkSize]="5" (onPageChange)="paginate($event)"></p-paginator>
         </ng-template>
 
       </div>
@@ -184,24 +186,42 @@
   </div>
 </ng-template>
 
-<p-dialog header="Thông tin ngữ liệu" [(visible)]="visible" [modal]="true" [style]="{ width: '50vw' }"
+<p-dialog header="Thông tin ngữ liệu" [(visible)]="visible" [modal]="true" [style]="{ width: '30vw' }"
           [draggable]="false" [resizable]="false">
   <div *ngIf="ngulieuInfo" class="w-100 h-100">
     <div class="d-flex justify-content-center mb-4 border-bottom">
       <h3>{{ngulieuInfo.title}}</h3>
     </div>
-    <div>
-      <div class="mb-2" style="font-size: 14px; font-weight: bold"> Mô tả:<span
-        class="font-weight-normal">{{ngulieuInfo.mota}}</span></div>
-      <div class="mb-2" style="font-size: 14px; font-weight: bold"> Lĩnh vực: <span
-        class="font-weight-normal">{{ngulieuInfo['linhvuc_converted']}}</span></div>
-      <div class="mb-2" style="font-size: 14px; font-weight: bold"> Loại ngữ liệu: <span
-        class="font-weight-normal">{{ngulieuInfo['loaingulieu_converted']}}</span></div>
-      <div class="mb-2" style="font-size: 14px; font-weight: bold"> File đính kèm:
-        <div class="d-inline-block" *ngFor="let item of ngulieuInfo.file_media">
-          <span class="font-weight-normal">{{item.title}}</span><a href="{{ngulieuInfo['__media_link']}}"> <i
-          class="ml-2 pi pi-download"></i></a>
+    <div class="d-flex justify-content-start">
 
+      <!--        image || video-->
+      <div *ngIf="ngulieuInfo.loaingulieu === 'image' ">
+        <img [src]="ngulieuInfo['__media_link'] ?ngulieuInfo['__media_link'] : 'assets/images/placeholder-3x2.jpg'" class="url-css" alt="">
+      </div>
+      <div *ngIf="ngulieuInfo.loaingulieu === 'video'">
+        <div *ngIf="ngulieuInfo['__media_link'],else placeholder">
+          <video controls autoplay class="url-css">
+            <source src="{{ngulieuInfo['__media_link']}}"  type="video/mp4">
+          </video>
+        </div>
+        <ng-template #placeholder>
+          <img src="assets/images/placeholder-3x2.jpg" class="url-css" alt="">
+        </ng-template>
+      </div>
+
+      <div class="ml-3">
+        <div class="mb-2" style="font-size: 14px; font-weight: bold"> Mô tả:<span
+          class="font-weight-normal">{{ngulieuInfo.mota}}</span></div>
+        <div class="mb-2" style="font-size: 14px; font-weight: bold"> Lĩnh vực: <span
+          class="font-weight-normal">{{ngulieuInfo['linhvuc_converted']}}</span></div>
+        <div class="mb-2" style="font-size: 14px; font-weight: bold"> Loại ngữ liệu: <span
+          class="font-weight-normal">{{ngulieuInfo['loaingulieu_converted']}}</span></div>
+        <div class="mb-2" style="font-size: 14px; font-weight: bold"> File đính kèm:
+          <div class="d-inline-block" *ngFor="let item of ngulieuInfo.file_media">
+            <span class="font-weight-normal">{{item.title}}</span><a href="{{ngulieuInfo['__media_link']}}"> <i
+            class="ml-2 pi pi-download"></i></a>
+
+          </div>
         </div>
       </div>
     </div>

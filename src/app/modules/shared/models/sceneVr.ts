@@ -1,26 +1,33 @@
 import {
-  Scene, PerspectiveCamera, Audio,
+  Scene, PerspectiveCamera,
   SphereGeometry,
   MeshBasicMaterial,
   Mesh,
   TextureLoader,
   SpriteMaterial,
-  Sprite, RepeatWrapping, DoubleSide, VideoTexture, AudioLoader,
-  Vector3, LinearFilter
+  Sprite, RepeatWrapping, DoubleSide, VideoTexture,
+  Vector3,
 } from "three";
 import TweenLite from "gsap";
+import {Pinable} from "@shared/models/point";
 
-interface OvicVrPoint {
-  userData: {
-    ovicPointId: number,
-    iconPoint: string,
-    [key: string]: any
-  };
+
+export type OvicVrPointType = 'DIRECT' | 'INFO';
+
+export interface OvicVrPointUserData {
+  ovicPointId: number,
+  iconPoint: string,
+  dataPoint: Pinable,
+  parentPointId: number,
+  type: OvicVrPointType
+}
+
+export interface OvicVrPoint {
+  userData: OvicVrPointUserData;
   name: string;
   position: Vector3,
   scene: sceneControl,
 }
-
 
 export class sceneControl {
   image: string;
@@ -33,8 +40,6 @@ export class sceneControl {
   camera: PerspectiveCamera;
   points: OvicVrPoint[] = [];
   point: any = {};
-  listener: any;
-  sound: Audio;
   state: any;
 
   constructor(image, camera, audio) {
@@ -46,7 +51,7 @@ export class sceneControl {
     this.audio = audio;
   }
 
-  createScrene(scene, ovicPointId?: number, state?: boolean) {
+  createScrene(scene, ovicPointId?: number, state?: boolean, userData?: OvicVrPointUserData) {
     this.scene = scene;
     if (state) {
       this.state = scene;
@@ -59,6 +64,9 @@ export class sceneControl {
     const material = new MeshBasicMaterial({map: texture, side: DoubleSide});
     // material.transparent = true;
     this.sphere = new Mesh(geometry, material);
+    if (userData) {
+      this.scene.userData = userData;
+    }
     if (ovicPointId) {
       this.sphere.userData = {ovicPointId: ovicPointId};
       this.spheres.push(this.sphere);
@@ -105,26 +113,12 @@ export class sceneControl {
     sprite["onClick"] = () => {
       this.destroy();
       // point.scene.createScrene(screen);
-      point.scene.createScrene(this.scene, point.id);
+      point.scene.createScrene(this.scene, point.id, false, point.userData);
       point.scene.appear();
     };
     sprite["mousemove"] = () => {
       point.scene.appear();
     }
-
-    // const originalScale = sprite.scale.clone();
-
-// // Hiệu ứng hover vào Sprite
-//     sprite.on('mouseover', () => {
-//       TweenLite.to(sprite.scale, 0.2, { x: originalScale.x * 1.2, y: originalScale.y * 1.2, z: originalScale.z * 1.2 });
-//     });
-//
-// // Hiệu ứng hover ra khỏi Sprite
-//     sprite.on('mouseout', () => {
-//       TweenLite.to(sprite.scale, 0.2, { x: originalScale.x, y: originalScale.y, z: originalScale.z });
-//     });
-
-
   }
 
   createMovie(scene, videoDom: HTMLVideoElement) {
@@ -187,5 +181,6 @@ export class sceneControl {
     )
 
   }
+
 
 }
