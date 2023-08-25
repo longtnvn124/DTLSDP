@@ -150,7 +150,7 @@ export class DanhSachSuKienComponent implements OnInit {
     this.nguLieuSuKienService.searchData(page, this.search).subscribe({
       next: ({data, recordsTotal}) => {
         let index=1;
-        this.recordsTotal = recordsTotal;
+
         this.listData = data.map(m => {
           let nhanvatId = m.nhanvat_ids;
           let nhanvat = [];
@@ -168,7 +168,7 @@ export class DanhSachSuKienComponent implements OnInit {
           m['__diemditich_ids_coverted'] = ditich;
           return m;
         })
-        console.log(this.listData);
+        this.recordsTotal = this.listData.length;
         this.isLoading = false;
         this.notificationService.isProcessing(false);
       },

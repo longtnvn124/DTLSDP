@@ -39,7 +39,7 @@ const routes : Routes = [
 				loadChildren : () => import('@modules/admin/features/ovic-message/ovic-message.module').then( m => m.OvicMessageModule )
 			} ,
 			{
-				path         : 'ngu-lieu' ,
+				path         : 'quan-ly-ngu-lieu' ,
 				loadChildren : () => import('@modules/admin/features/quan-ly-ngu-lieu/quan-ly-ngu-lieu.module').then( m => m.QuanLyNguLieuModule )
 			} ,
 			{

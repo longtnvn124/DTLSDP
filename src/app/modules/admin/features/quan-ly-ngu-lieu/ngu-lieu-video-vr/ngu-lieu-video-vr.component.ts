@@ -115,7 +115,6 @@ export class NguLieuVideoVrComponent implements OnInit {
     this.isLoading = true;
     this.nguLieuDanhSachService.getDataByLinhvucIdAndSearch(page, this.filterData.linhvucid, this.filterData.search, this.filterData.loaingulieu).subscribe({
       next: ({data, recordsTotal}) => {
-        this.recordsTotal = recordsTotal;
         this.listData = data.map(m => {
           const linhvuc = this.dataLinhvuc && m.linhvuc ? this.dataLinhvuc.find(f => f.id === m.linhvuc) : null;
           const loaingulieu = this.dataLoaingulieu && m.loaingulieu ? this.dataLoaingulieu.find(f => f.kyhieu === m.loaingulieu) : null;
@@ -128,7 +127,7 @@ export class NguLieuVideoVrComponent implements OnInit {
           m['__media_link']=m.file_media&& m.file_media[0] ? this.fileService.getPreviewLinkLocalFile(m.file_media[0]) :null;
           return m;
         });
-
+        this.recordsTotal = this.listData.length;
         this.isLoading = false;
       },
       error: () => {
@@ -163,7 +162,7 @@ export class NguLieuVideoVrComponent implements OnInit {
       title: '',
       mota: '',
       chuyenmuc: '',
-      loaingulieu: null,
+      loaingulieu: 'video360',
       diemditich_id: null,
       linhvuc: '',
       file_media: null,
@@ -262,10 +261,7 @@ export class NguLieuVideoVrComponent implements OnInit {
     this.filterData.linhvucid = linhvucid;
     this.loadData(1);
   }
-  changeFilterLoaiNguLieu(event){
-    this.filterData.loaingulieu = event.value;
-    this.loadData(1);
-  }
+
   changeInput(event: string) {
     setTimeout(()=>{
       this.loadData(1);

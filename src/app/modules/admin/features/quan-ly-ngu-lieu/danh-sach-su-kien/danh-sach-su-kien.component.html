@@ -72,6 +72,8 @@
           </tr>
         </ng-template>
       </p-table>
+      <p-paginator class="p-paginator--custom" [showCurrentPageReport]="true" [rows]="rows"
+                   [totalRecords]="recordsTotal" [pageLinkSize]="5" (onPageChange)="paginate($event)"></p-paginator>
     </ng-template>
   </div>
 </div>

@@ -1,10 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import {ChuyenMucComponent} from "@modules/admin/features/danh-muc/chuyen-muc/chuyen-muc.component";
-import {DiemDiTichComponent} from "@modules/admin/features/danh-muc/diem-di-tich/diem-di-tich.component";
-import {LinhVucComponent} from "@modules/admin/features/danh-muc/linh-vuc/linh-vuc.component";
-import {LoaiNguLieuComponent} from "@modules/admin/features/danh-muc/loai-ngu-lieu/loai-ngu-lieu.component";
-import {NhanVatLichSuComponent} from "@modules/admin/features/danh-muc/nhan-vat-lich-su/nhan-vat-lich-su.component";
 import {
   DanhSachNguLieuComponent
 } from "@modules/admin/features/quan-ly-ngu-lieu/danh-sach-ngu-lieu/danh-sach-ngu-lieu.component";
@@ -20,22 +15,22 @@ import {
 
 const routes: Routes = [
   {
-    path: 'ngu-lieu-img-vr',
+    path: 'danh-sach-ngu-lieu-anh-vr',
     component: NguLieuVideoVrComponent,
-    data: {state: 'quan-ly-ngu-lieu--ngu-lieu-img-vr'}
+    data: {state: 'quan-ly-ngu-lieu--danh-sach-ngu-lieu-anh-vr'}
   },
   {
-    path: 'ngu-lieu-video-vr',
+    path: 'danh-sach-ngu-lieu-video-vr',
     component: NguLieuImageVrComponent,
-    data: {state: 'quan-ly-ngu-lieu--ngu-lieu-img-vr'}
+    data: {state: 'quan-ly-ngu-lieu--danh-sach-ngu-lieu-video-vr'}
   },
   {
-    path: 'danh-sach',
+    path: 'danh-sach-ngu-lieu',
     component: DanhSachNguLieuComponent,
-    data: {state: 'quan-ly-ngu-lieu--danhsach'}
+    data: {state: 'quan-ly-ngu-lieu--danh-sach-ngu-lieu'}
   },
   {
-    path: 'su-kien',
+    path: 'danh-sach-su-kien',
     component: DanhSachSuKienComponent,
     data: {state: 'quan-ly-ngu-lieu--sukien'}
   },
