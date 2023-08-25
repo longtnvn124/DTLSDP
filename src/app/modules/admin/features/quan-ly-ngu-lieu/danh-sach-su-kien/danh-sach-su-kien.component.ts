@@ -121,7 +121,9 @@ export class DanhSachSuKienComponent implements OnInit {
       next: ([dataDiemditich, dataNhanvatlichsu]) => {
         this.dataDiemditich = dataDiemditich;
         this.dataNhanvatlichsu = dataNhanvatlichsu;
-        this.loadInit();
+        if(this.dataDiemditich && this.dataNhanvatlichsu){
+          this.loadInit();
+        }
         this.notificationService.isProcessing(false);
 
       },
@@ -150,22 +152,26 @@ export class DanhSachSuKienComponent implements OnInit {
     this.nguLieuSuKienService.searchData(page, this.search).subscribe({
       next: ({data, recordsTotal}) => {
         let index=1;
-
         this.listData = data.map(m => {
           let nhanvatId = m.nhanvat_ids;
           let nhanvat = [];
           nhanvatId.forEach(f => {
-            nhanvat.push(this.dataNhanvatlichsu.find(m => m.id === f));
-          })
+            if(this.dataNhanvatlichsu.find(m => m.id === f)){
+              nhanvat.push(this.dataNhanvatlichsu.find(m => m.id === f));
+            }
+          });
           let ditich = [];
           m.diemditich_ids.forEach(f => {
-            ditich.push(this.dataDiemditich.find(m => m.id === f));
-          })
+            if(this.dataDiemditich.find(m => m.id === f)){
+              ditich.push(this.dataDiemditich.find(m => m.id === f));
+            }
+
+          });
           m['__indexTable']= index++;
           m['__title_converted'] = `<b>${m.title}</b>`;
           m['__time_converted'] = m.thoigian_batdau + ' - ' + m.thoigian_ketthuc;
-          m['__nhanvat_converted'] = nhanvat;
-          m['__diemditich_ids_coverted'] = ditich;
+          m['__nhanvat_converted'] = nhanvat ? nhanvat :'';
+          m['__diemditich_ids_coverted'] = ditich? ditich :'';
           return m;
         })
         this.recordsTotal = this.listData.length;
@@ -296,7 +302,6 @@ export class DanhSachSuKienComponent implements OnInit {
         break;
       case 'INFO_DECISION':
         this.dataInfo = this.listData.find(f => f.id === decision.id);
-        console.log(this.dataInfo);
         this.formSave.reset({
           title: this.dataInfo.title,
           mota: this.dataInfo.mota,
@@ -339,7 +344,7 @@ export class DanhSachSuKienComponent implements OnInit {
   }
   btnInformation(id:number){
     this.dataInfo = this.listData.find(f => f.id === id);
-    console.log(this.dataInfo);
+
     this.formSave.reset({
       title: this.dataInfo.title,
       mota: this.dataInfo.mota,
@@ -413,7 +418,6 @@ export class DanhSachSuKienComponent implements OnInit {
   dsNgulieu:Ngulieu[];
   async btnAddNgulieu(type:'DIRECT'|'INFO'){
     const result = await this.employeesPickerService.pickerNgulieu([], '',type);
-    console.log(result);
     this.f['ngulieu_ids'].setValue(result);
     this.dsNgulieu = result;
   }
@@ -430,4 +434,5 @@ export class DanhSachSuKienComponent implements OnInit {
     const object= this.f['ngulieu_ids'].value;
     this.f['ngulieu_ids'].reset(object.filter(f=>f.id !=id));
   }
+
 }

@@ -71,6 +71,13 @@ export class DiemDiTichComponent implements OnInit {
       headClass: 'ovic-w-180px text-center',
       buttons: [
         {
+          tooltip: 'Xem vị trí  ',
+          label: '',
+          icon: 'pi pi-map',
+          name: 'MAP_DECTISION',
+          cssClass: 'btn-warning rounded'
+        },
+        {
           tooltip: 'Thông tin chi tiết ',
           label: '',
           icon: 'pi pi-file',
@@ -132,7 +139,7 @@ export class DiemDiTichComponent implements OnInit {
     search: ''
   }
 
-  dataBinding: any;
+  dataBinding: DmDiemDiTich;
 
   filePermission = {
     canDelete: true,
@@ -303,20 +310,17 @@ export class DiemDiTichComponent implements OnInit {
         this.dataInformation = this.listData.find(u => u.id === decision.id);
         this.visible = true;
         break;
-      case 'MEDIA_DECISION':
+      case 'MAP_DECTISION':
+        this.visibleMap = true;
         this.dataBinding = this.listData.find(u => u.id === decision.id);
-        // this.dataBinding = this.auth.encryptData(`${data}`);
-        // console.log(dataBinding);
-        const code = this.auth.encryptData(`${this.dataBinding.id}`);
-        this.router.navigate(['admin/danh-muc/media-vr-manager'], {queryParams: {code}});
+        console.log(this.dataBinding);
         break
       default:
         break;
     }
   }
-
+  visibleMap:boolean=false;
   dataInformation: DmDiemDiTich;
-
   saveForm() {
     if (this.formSave.valid) {
       this.formActive.data = this.formSave.value;
@@ -327,57 +331,6 @@ export class DiemDiTichComponent implements OnInit {
     }
   }
 
-  // btnControlVolume() {
-  //   // this.MediaVr.toggleVolume();
-  // }
 
-  // async makeCharacterAvatar(file: File, characterName: string): Promise<File> {
-  //   try {
-  //     const options: AvatarMakerSetting = {
-  //       aspectRatio: 3 / 2,
-  //       resizeToWidth: 300,
-  //       format: 'jpeg',
-  //       cropperMinWidth: 10,
-  //       dirRectImage: {
-  //         enable: true,
-  //         dataUrl: URL.createObjectURL(file)
-  //       }
-  //     };
-  //     const avatar = await this.mediaService.callAvatarMaker(options);
-  //     if (avatar && !avatar.error && avatar.data) {
-  //       const none = new Date().valueOf();
-  //       const fileName = characterName + none + '.jpg';
-  //       return Promise.resolve(this.fileService.base64ToFile(avatar.data.base64, fileName));
-  //     } else {
-  //       return Promise.resolve(null);
-  //     }
-  //   } catch (e) {
-  //     this.notificationService.isProcessing(false);
-  //     this.notificationService.toastError('Quá trình tạo avatar thất bại');
-  //     return Promise.resolve(null);
-  //   }
-  // }
-  //
-  // characterAvatar: string;
-  //
-  // async onInputAvatar(event, fileChooser: HTMLInputElement) {
-  //   if (fileChooser.files && fileChooser.files.length) {
-  //     const file = await this.makeCharacterAvatar(fileChooser.files[0], this.helperService.sanitizeVietnameseTitle(this.f['ten'].value));
-  //     // upload file to server
-  //     this.fileService.uploadFile(file, 1).subscribe({
-  //       next: fileUl => {
-  //         if(fileUl != null){
-  //           this.formSave.get('ds_ngulieu').setValue([fileUl]);
-  //         }else{
-  //           this.formSave.get('ds_ngulieu').setValue(null);
-  //         }
-  //       }, error: () => {
-  //         this.notificationService.toastError('Upload file không thành công');
-  //       }
-  //     })
-  //     // laasy thoong tin vaf update truongwf
-  //     this.characterAvatar = URL.createObjectURL(file);;
-  //   }
-  // }
 
 }

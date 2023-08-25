@@ -88,7 +88,7 @@ p-calendar .p-calendar {
   height: 44px;
 }
 
-app-danh-sach-ngu-lieu, app-danh-sach-diem-truy-cap {
+app-danh-sach-ngu-lieu, app-danh-sach-diem-truy-cap,app-ngu-lieu-image-vr,app-ngu-lieu-video-vr {
   height: 100%;
 }
 
@@ -369,4 +369,9 @@ app-web-home {
 .btn_examinations{
   border-radius: 0;
   font-size: 15px;
+}
+ovic-map{
+  position: absolute;
+  width:100% !important;
+  height:100% !important;
 }

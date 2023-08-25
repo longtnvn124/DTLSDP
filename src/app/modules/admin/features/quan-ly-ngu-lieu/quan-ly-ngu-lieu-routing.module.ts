@@ -16,12 +16,12 @@ import {
 const routes: Routes = [
   {
     path: 'danh-sach-ngu-lieu-anh-vr',
-    component: NguLieuVideoVrComponent,
+    component: NguLieuImageVrComponent,
     data: {state: 'quan-ly-ngu-lieu--danh-sach-ngu-lieu-anh-vr'}
   },
   {
     path: 'danh-sach-ngu-lieu-video-vr',
-    component: NguLieuImageVrComponent,
+    component:NguLieuVideoVrComponent,
     data: {state: 'quan-ly-ngu-lieu--danh-sach-ngu-lieu-video-vr'}
   },
   {
