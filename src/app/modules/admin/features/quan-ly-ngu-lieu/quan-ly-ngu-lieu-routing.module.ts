@@ -11,8 +11,24 @@ import {
 import {
   DanhSachSuKienComponent
 } from "@modules/admin/features/quan-ly-ngu-lieu/danh-sach-su-kien/danh-sach-su-kien.component";
+import {
+  NguLieuVideoVrComponent
+} from "@modules/admin/features/quan-ly-ngu-lieu/ngu-lieu-video-vr/ngu-lieu-video-vr.component";
+import {
+  NguLieuImageVrComponent
+} from "@modules/admin/features/quan-ly-ngu-lieu/ngu-lieu-image-vr/ngu-lieu-image-vr.component";
 
 const routes: Routes = [
+  {
+    path: 'ngu-lieu-img-vr',
+    component: NguLieuVideoVrComponent,
+    data: {state: 'quan-ly-ngu-lieu--ngu-lieu-img-vr'}
+  },
+  {
+    path: 'ngu-lieu-video-vr',
+    component: NguLieuImageVrComponent,
+    data: {state: 'quan-ly-ngu-lieu--ngu-lieu-img-vr'}
+  },
   {
     path: 'danh-sach',
     component: DanhSachNguLieuComponent,

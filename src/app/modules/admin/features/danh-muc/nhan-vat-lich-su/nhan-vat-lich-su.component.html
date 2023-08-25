@@ -10,8 +10,7 @@
       <input type="text" [(ngModel)]="filter.search" placeholder="Tìm kiếm" (ngModelChange)="onSearch($event)"
               style="padding:8px" (keydown)="onkeyDowm($event)"
              class="p-inputtext p-component p-element"/>
-      <p-button class="my-auto ml-4 " label="Thêm nhân vật lịch sử" iconPos="right" icon="pi pi-plus"
-                styleClass="p-button-rounded p-button-success" (click)="btnAdd()"></p-button>
+      <button pButton pRipple icon="pi pi-plus" iconPos="left" class="my-auto ml-3 p-button-success" label="Thêm nhân vật lịch sử"  (click)="btnAdd()"></button>
     </div>
   </div>
   <!--   body -->

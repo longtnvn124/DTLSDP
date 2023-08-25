@@ -2,18 +2,20 @@
   <div class=" tour-container__body">
     <ng-container [ngSwitch]="mode" class="h-100 w-100">
       <ng-container *ngSwitchDefault>
-        <div *ngIf="linkImg,else unLinkImg"
-             class="ctn-background d-flex justify-content-center align-items-center h-100 w-100"
-             [ngStyle]="{'background': 'url(' + linkImg+ ')','background-size':'cover'}">
-          <button pButton pRipple icon="pi pi-play" label="Bắt đầu tham quan" class="btnRun"
-                  (click)="btnRun()"></button>
+        <div *ngIf="linkImg,else unLinkImg" class="ctn-background ">
+          <img src="{{linkImg}}" class="ctn-background__img" style="z-index: 12;" alt="">
+          <div class="content">
+            <button pButton pRipple label="Bắt đầu tham quan" class="btnRun"
+                    (click)="btnRun()"></button>
+          </div>
         </div>
         <ng-template #unLinkImg>
-          <div class="ctn-background d-flex justify-content-center align-items-center h-100 w-100"
-               style="background:url('assets/images/videoPlaceholder.jpg')">
-            <img class src="" alt="">
-            <button pRipple pButton icon="pi pi-play" label="Bắt đầu tham quan" class="btnRun"
-                    (click)="btnRun()"></button>
+          <div class="ctn-background ">
+            <img class="ctn-background__img" style="z-index: 13;" src="assets/images/videoPlaceholder.jpg" alt="">
+            <div class="content">
+              <button pRipple pButton icon="pi pi-play" label="Bắt đầu tham quan" class="btnRun"
+                      (click)="btnRun()"></button>
+            </div>
           </div>
         </ng-template>
       </ng-container>
@@ -23,6 +25,7 @@
           <ovic-input-vr-media [_pointStart]="pointStart" [showOnly]="true"></ovic-input-vr-media>
         </ng-container>
       </ng-container>
+
     </ng-container>
   </div>
 </div>
@@ -70,5 +73,4 @@
 
   </div>
 </p-dialog>
-
 

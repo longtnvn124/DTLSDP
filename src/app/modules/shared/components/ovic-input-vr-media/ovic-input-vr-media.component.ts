@@ -602,7 +602,7 @@ export class OvicInputVrMediaComponent implements OnInit {
         toado_map: '',
         root: null
       }
-      if (this.formState.formTitle === 'add') {
+      if (this.formState.formType === 'add') {
         this.notificationService.isProcessing(true);
         this.pointsService.create(this.formSave.value).subscribe({
           next: (id) => {
@@ -629,6 +629,7 @@ export class OvicInputVrMediaComponent implements OnInit {
         })
       } else {
         this.notificationService.isProcessing(true);
+        console.log(this.formState.object);
         this.pointsService.update(this.formState.object.id, this.formSave.value).subscribe({
           next: () => {
             newPin.id = this.formState.object.id;

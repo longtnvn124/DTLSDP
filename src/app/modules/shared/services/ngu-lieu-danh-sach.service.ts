@@ -147,54 +147,54 @@ export class NguLieuDanhSachService {
       data: res.data
     })));
   }
-  getDataByLinhvucIdAndSearch(page:number,linhvuc_id:number,search:string, loaingulieu?:string):Observable<{recordsTotal: number, data: Ngulieu[]}>{
-    const conditions: OvicConditionParam[] = [
-      {
-        conditionName: 'is_deleted',
-        condition: OvicQueryCondition.equal,
-        value: '0'
+    getDataByLinhvucIdAndSearch(page:number,linhvuc_id:number,search:string, loaingulieu?:string):Observable<{recordsTotal: number, data: Ngulieu[]}>{
+      const conditions: OvicConditionParam[] = [
+        {
+          conditionName: 'is_deleted',
+          condition: OvicQueryCondition.equal,
+          value: '0'
+        }
+        ]
+      if(linhvuc_id){
+        const diemditich:OvicConditionParam={
+          conditionName:'linhvuc',
+          condition:OvicQueryCondition.equal,
+          value:linhvuc_id.toString(10),
+          orWhere:'and'
+        }
+        conditions.push(...[diemditich]);
       }
-      ]
-    if(linhvuc_id){
-      const diemditich:OvicConditionParam={
-        conditionName:'linhvuc',
-        condition:OvicQueryCondition.equal,
-        value:linhvuc_id.toString(10),
-        orWhere:'and'
+      if(search){
+        const searchdata:OvicConditionParam={
+          conditionName:'title',
+          condition:OvicQueryCondition.like,
+          value:`%${search}%`,
+          orWhere:'and'
+        }
+        conditions.push(...[searchdata]);
       }
-      conditions.push(...[diemditich]);
-    }
-    if(search){
-      const searchdata:OvicConditionParam={
-        conditionName:'title',
-        condition:OvicQueryCondition.like,
-        value:`%${search}%`,
-        orWhere:'and'
+      if(loaingulieu){
+        const data :OvicConditionParam={
+          conditionName:'loaingulieu',
+          condition:OvicQueryCondition.equal,
+          value:loaingulieu,
+          orWhere:'and'
+        };
+        conditions.push(...[data]);
       }
-      conditions.push(...[searchdata]);
-    }
-    if(loaingulieu){
-      const data :OvicConditionParam={
-        conditionName:'loaingulieu',
-        condition:OvicQueryCondition.equal,
-        value:loaingulieu,
-        orWhere:'and'
-      };
-      conditions.push(...[data]);
-    }
 
-    const fromObject = {
-      paged: page,
-      limit: this.themeSettingsService.settings.rows,
-      orderby: 'title',
-      order: "ASC"
+      const fromObject = {
+        paged: page,
+        limit: this.themeSettingsService.settings.rows,
+        orderby: 'title',
+        order: "ASC"
+      }
+      const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
+      return this.http.get<Dto>(this.api, {params}).pipe(map(res => ({
+        recordsTotal: res.recordsTotal,
+        data: res.data
+      })));
     }
-    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
-    return this.http.get<Dto>(this.api, {params}).pipe(map(res => ({
-      recordsTotal: res.recordsTotal,
-      data: res.data
-    })));
-  }
 
   getdataBydonviIdandSelect(donvi_id: number, select = '', isPer = false, loaingulieu?:string): Observable<Ngulieu[]> {
     const fromObject = { limit: -1, orderby: 'title', order: 'ASC' };

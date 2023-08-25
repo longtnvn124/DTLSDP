@@ -110,5 +110,22 @@
 
 }
 
+/*-----------------image left righ ----------------*/
+.svg_content{
+  width: 300px;
+  position: absolute;
+  bottom: 15px;
+  z-index:0;
+}
+.svg-left{
+  left: 35px;
+}
 
+.svg-right{
+  right: 35px;
+}
 
+.svg-img{
+  width:100%;
+  height:100%;
+}

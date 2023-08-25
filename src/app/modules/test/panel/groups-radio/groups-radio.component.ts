@@ -8,54 +8,69 @@ import {AbstractControl} from "@angular/forms";
 })
 export class GroupsRadioComponent implements OnInit {
 
-  version : '1.0.1';
+  version: '1.0.1';
 
-  constructor() { }
+  constructor() {
+  }
 
-  @Input() options : any;
+  @Input() options: any;
 
-  @Input() default : any;
+  @Input() default: any;
 
-  @Input() correctAnswer : any; // only work with inputType = 'radio' , avoid 0 value pls
+  @Input() correctAnswer: any; // only work with inputType = 'radio' , avoid 0 value pls
 
-  @Input() optionId : string;
+  @Input() optionId: string;
 
-  @Input() optionLabel : string;
+  @Input() optionLabel: string;
 
   @Input() freeze = false; // đóng băng hành động khi đã công bố kết quả
 
-  @Input() formField : AbstractControl;
+  @Input() formField: AbstractControl;
 
   @Input() rawHtml = false;
 
   @Input() verticalMode = false;
 
-  @Input() columns : 1 | 2 | 3 | 4 = 1;
+  @Input() columns: 1 | 2 | 3 | 4 = 1;
 
   @Input() inputType = 'radio'; // radio | checkbox
 
   @Output() onChange = new EventEmitter<any>();
 
-  active : any;
+  active: any;
 
-  index : number[];
+  index: number[];
 
   _correctAnswer = [];
 
-  ngOnInit() : void {
+  ngOnInit(): void {
 
-    if ( this.default && this.options && this.optionId ) {
-      if ( this.inputType === 'checkbox' ) {
-        if ( this.default ) {
-          this.default.split( ',' ).map(m=>parseInt(m)).forEach( elmDefault => {
-            const _i = this.options.findIndex( elm => elm.hasOwnProperty( this.optionId ) && elm[ this.optionId ] === elmDefault );
-            if ( _i !== -1 ) {
-              this.index.push( elmDefault );
-            }
-          } );
+    if (this.default && this.options && this.optionId) {
+      if (this.inputType === 'checkbox') {
+        if (this.default) {
+          // this.default.split(',').map(m => parseInt(m)).forEach(elmDefault => {
+          //   const _i = this.options.findIndex(elm => elm.hasOwnProperty(this.optionId) && elm[this.optionId] === elmDefault);
+          //   if (_i !== -1) {
+          //     this.index.push(elmDefault);
+          //   }
+          // });
+
+
+          this.index = this.default.split(',').map(m => parseInt(m)).reduce((collector, selected) => ([...collector,
+            -1 !== this.options.findIndex(elm => elm.hasOwnProperty(this.optionId) && elm[this.optionId] === selected) ? selected : null
+          ]), new Array<number>()).filter(Boolean);
+
+          // console.log(_index);
+
         }
+
+
+        console.log('init');
+        console.log(this.default);
+        console.log(this.index);
+        console.log('end');
       } else {
-        this.index = [ this.options.findIndex( elm => elm.hasOwnProperty( this.optionId ) && elm[ this.optionId ] === this.default ) ];
+        this.index = [this.options.findIndex(elm => elm.hasOwnProperty(this.optionId) && elm[this.optionId] === this.default)];
       }
     } else {
       this.index = [];
@@ -64,59 +79,65 @@ export class GroupsRadioComponent implements OnInit {
     this._correctAnswer = this.correctAnswer || null;
   }
 
-  ngOnChanges( changes : SimpleChanges ) {
-    if ( changes[ 'default' ] ) {
-      if ( this.default ) {
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['default']) {
+      if (this.default) {
         this.active = this.default;
-        if ( this.options && this.optionId ) {
-          if ( this.inputType === 'checkbox' ) {
-            this.index = [];
-            this.default.split( ',' ).map(m=>parseInt(m)).forEach( elmDefault => {
-              const _i = this.options.findIndex( elm => elm.hasOwnProperty( this.optionId ) && elm[ this.optionId ] === elmDefault );
-              if ( _i !== -1 ) {
-                this.index.push( _i );
-              }
-            } );
+        if (this.options && this.optionId) {
+          if (this.inputType === 'checkbox') {
+            // this.index = [];
+            // this.default.split(',').map(m => parseInt(m)).forEach(elmDefault => {
+            //   const _i = this.options.findIndex(elm => elm.hasOwnProperty(this.optionId) && elm[this.optionId] === elmDefault);
+            //   if (_i !== -1) {
+            //     this.index.push(_i);
+            //   }
+            // });
+
+            this.index = this.default.split(',').map(m => parseInt(m)).reduce((collector, selected) => ([...collector,
+              -1 !== this.options.findIndex(elm => elm.hasOwnProperty(this.optionId) && elm[this.optionId] === selected) ? selected : null
+            ]), new Array<number>()).filter(Boolean);
+
+
           } else {
-            this.index = [ this.options.findIndex( elm => elm.hasOwnProperty( this.optionId ) && elm[ this.optionId ] === this.default ) ];
+            this.index = [this.options.findIndex(elm => elm.hasOwnProperty(this.optionId) && elm[this.optionId] === this.default)];
           }
         }
       }
     }
-    if ( changes[ 'correctAnswer' ] ) {
+    if (changes['correctAnswer']) {
       this._correctAnswer = this.correctAnswer || null;
     }
   }
 
-  updateValue( value : any , index : number ) {
-    if ( this.freeze ) {
+  updateValue(value: any, index: number) {
+    if (this.freeze) {
       return;
     }
-    if ( this.inputType === 'checkbox' ) {
-      if ( this.active ) {
-        const _arr = this.active.split( ',' );
-        if ( _arr.includes( value.toString() ) ) {
-          const _idx = _arr.findIndex( p => p === value.toString() );
-          _arr.splice( _idx , 1 );
-          this.active = _arr.join( ',' );
-          const _idx2 = this.index.findIndex( p => p === index );
-          this.index.splice( _idx2 , 1 );
+    if (this.inputType === 'checkbox') {
+      if (this.active) {
+        const _arr = this.active.split(',');
+        if (_arr.includes(value.toString())) {
+          const _idx = _arr.findIndex(p => p === value.toString());
+          _arr.splice(_idx, 1);
+          this.active = _arr.join(',');
+          const _idx2 = this.index.findIndex(p => p === index);
+          this.index.splice(_idx2, 1);
         } else {
-          this.active = this.active.concat( ',' , value.toString() );
-          this.index.push( index );
+          this.active = this.active.concat(',', value.toString());
+          this.index.push(index);
         }
       } else {
-        this.active = ''.concat( value );
-        this.index  = [ index ];
+        this.active = ''.concat(value);
+        this.index = [index];
       }
     } else {
-      this.index  = [ index ];
+      this.index = [index];
       this.active = value;
     }
-    if ( this.formField ) {
-      this.formField.setValue( this.active );
+    if (this.formField) {
+      this.formField.setValue(this.active);
     }
-    this.onChange.emit( this.active );
+    this.onChange.emit(this.active);
   }
 
 }

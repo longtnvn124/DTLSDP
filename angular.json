@@ -42,9 +42,14 @@
               "src/assets/css/base.css",
               "src/assets/css/animation-loading.css",
               "src/assets/css/style.css",
-              "src/assets/css/secondary.css"
+              "src/assets/css/secondary.css",
+              "node_modules/solid-slider/dist/slider.css"
+
             ],
-            "scripts": [ "node_modules/quill/dist/quill.js"],
+            "scripts": [
+              "node_modules/quill/dist/quill.js",
+              "node_modules/jquery/dist/jquery.min.js"
+            ],
             "allowedCommonJsDependencies": [
               "quill",
               "crypto-js",

@@ -268,10 +268,105 @@ app-virtual-tour, app-shift, app-panel {
   font-weight: 700;
 }
 
-.map-Resize .mapboxgl-canvas {
-  border-radius:50%;
-}
-
 .mapboxgl-ctrl-bottom-right, .mapboxgl-ctrl-bottom-left {
   display: none;
+}
+
+/*=================web view==================*/
+app-web-home {
+  background-color: #fbf6f2;
+}
+
+.virtual-tour-title {
+  font-family: "Roboto", sans-serif;
+  font-weight: 600;
+  color: #f73e48;
+}
+
+.virtual-tour-content {
+  margin-top: 10px;
+  margin-right: 4px;
+  width: 100%;
+  height: 350px;
+  z-index:999999;
+}
+
+.home-body{
+  /*background-color:#fbf6f2;*/
+}
+
+/*=======================content info=========================*/
+
+.content_info {
+  width: 100%;
+  margin-left: 10px;
+  margin-right: 10px;
+  border: 1px solid #f5eee8;
+  font-size: 14px;
+  font-weight: 700;
+  background-color: #fff;
+  box-shadow: 0px 0px 3px #393939;
+  border-radius: 6px;
+}
+
+
+.content_info-caption {
+  display: inline-block;
+  width: 100%;
+  font-family:"Roboto", sans-serif;
+  color: #f73e48;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 24px;
+  padding: 13px 20px;
+}
+
+.content_info ul {
+  margin-bottom: 0;
+  padding-bottom: 10px;
+}
+
+.content_info > ul > li {
+  position: relative;
+}
+
+.content_info > ul > li > div {
+  font-family:"Roboto", sans-serif;
+
+  color: #3d3623;
+  font-size: 15px;
+  line-height: 20px;
+  padding: 10px 25px;
+  transition: 0.3s;
+  display: block;
+  width: 100%;
+}
+
+.content_info-item:hover {
+  color: #000;
+  background: #ffdddf;
+}
+
+.list-unstyled {
+  padding-left: 0;
+  list-style: none;
+  cursor: pointer;
+}
+.content_info hr{
+  border-color: rgb(164, 164, 164);
+  margin-top: 5px;
+}
+.slide-examinations{
+  margin-top:30px;
+}
+.slide-examinations_title{
+  text-transform: uppercase;
+}
+.slide-examinations_desc{
+  color: rgba(111, 111, 111, 0.61);
+  font-size:13px;
+}
+.btn_examinations{
+  border-radius: 0;
+  font-size: 15px;
 }

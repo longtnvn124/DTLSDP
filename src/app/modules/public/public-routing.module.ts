@@ -8,6 +8,7 @@ import { ClearComponent } from './features/clear/clear.component';
 import { LoginVideoComponent } from '@modules/public/features/login-video/login-video.component';
 import {VirtualTourComponent} from "@modules/public/features/virtual-tour/virtual-tour.component";
 import {ResetPasswordComponent} from "@modules/public/features/reset-password/reset-password.component";
+import {WebHomeComponent} from "@modules/public/features/web-home/web-home.component";
 
 const routes : Routes = [
 
@@ -42,6 +43,10 @@ const routes : Routes = [
   {
     path      : 'virtual-tour' ,
     component : VirtualTourComponent
+  } ,
+  {
+    path      : 'home' ,
+    component : WebHomeComponent
   } ,
   {
     path      : 'reset-password' ,

@@ -18,6 +18,15 @@ import { VirtualTourComponent } from './features/virtual-tour/virtual-tour.compo
 import {SharedModule} from "@shared/shared.module";
 import {DialogModule} from "primeng/dialog";
 import {TabMenuModule} from "primeng/tabmenu";
+import { WebHomeComponent } from './features/web-home/web-home.component';
+import { SearchComponent } from './features/web-home/search/search.component';
+import { ChuyenmucComponent } from './features/web-home/chuyenmuc/chuyenmuc.component';
+import { NhanvatComponent } from './features/web-home/nhanvat/nhanvat.component';
+import { DanhmucNgulieusoComponent } from './features/web-home/danhmuc-ngulieuso/danhmuc-ngulieuso.component';
+import { SukienTonghopComponent } from './features/web-home/sukien-tonghop/sukien-tonghop.component';
+import { ThongtinKythuatComponent } from './features/web-home/thongtin-kythuat/thongtin-kythuat.component';
+import {GalleriaModule} from "primeng/galleria";
+
 
 @NgModule({
   declarations: [
@@ -28,7 +37,14 @@ import {TabMenuModule} from "primeng/tabmenu";
     UnauthorizedComponent,
     ClearComponent,
     LoginVideoComponent,
-    VirtualTourComponent
+    VirtualTourComponent,
+    WebHomeComponent,
+    SearchComponent,
+    ChuyenmucComponent,
+    NhanvatComponent,
+    DanhmucNgulieusoComponent,
+    SukienTonghopComponent,
+    ThongtinKythuatComponent
   ],
     imports: [
         CommonModule,
@@ -40,7 +56,9 @@ import {TabMenuModule} from "primeng/tabmenu";
         FormsModule,
         SharedModule,
         DialogModule,
-        TabMenuModule
+        TabMenuModule,
+        GalleriaModule,
+
     ]
 })
 export class PublicModule {

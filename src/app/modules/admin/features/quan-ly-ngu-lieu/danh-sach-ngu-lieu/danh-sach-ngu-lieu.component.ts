@@ -118,7 +118,7 @@ export class DanhSachNguLieuComponent implements OnInit {
     this.nguLieuDanhSachService.getDataByLinhvucIdAndSearch(page, this.filterData.linhvucid, this.filterData.search, this.filterData.loaingulieu).subscribe({
       next: ({data, recordsTotal}) => {
         this.recordsTotal = recordsTotal;
-        this.listData = data.map(m => {
+        this.listData = data.filter(f=>f.loaingulieu !="image360" && f.loaingulieu !=="video360").map(m => {
           const linhvuc = this.dataLinhvuc && m.linhvuc ? this.dataLinhvuc.find(f => f.id === m.linhvuc) : null;
           const loaingulieu = this.dataLoaingulieu && m.loaingulieu ? this.dataLoaingulieu.find(f => f.kyhieu === m.loaingulieu) : null;
 
