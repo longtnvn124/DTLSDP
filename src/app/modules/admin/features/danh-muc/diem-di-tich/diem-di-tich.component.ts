@@ -3,7 +3,7 @@ import {FormType, NgPaginateEvent, OvicForm, OvicTableStructure} from "@shared/m
 import {DmDiemDiTich} from "@shared/models/danh-muc";
 import {Paginator} from "primeng/paginator";
 import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {debounceTime, filter, Observable, Subject, Subscription} from "rxjs";
+import {debounceTime, filter, Observable, Subject, Subscription, timer} from "rxjs";
 import {ThemeSettingsService} from "@core/services/theme-settings.service";
 import {DanhMucDiemDiTichService} from "@shared/services/danh-muc-diem-di-tich.service";
 import {NotificationService} from "@core/services/notification.service";
@@ -129,7 +129,7 @@ export class DiemDiTichComponent implements OnInit {
   isLoading = true;
   needUpdate = false;
   menuName: 'diem-truy-cap';
-  btn_checkAdd:'Lưu lại'|'Cập nhật';
+  btn_checkAdd: 'Lưu lại' | 'Cập nhật';
   page = 1;
 
   recordsTotal = 0;
@@ -164,7 +164,7 @@ export class DiemDiTichComponent implements OnInit {
       ten: ['', Validators.required],
       mota: [''],
       status: ['', Validators.required],
-      toado:['']
+      toado: ['']
     });
 
     const observeProcessFormData = this.OBSERVE_PROCESS_FORM_DATA.asObservable().pipe(debounceTime(100)).subscribe(form => this.__processFrom(form));
@@ -218,7 +218,7 @@ export class DiemDiTichComponent implements OnInit {
             ten: '',
             mota: '',
             status: '',
-            toado:''
+            toado: ''
           });
         }
         this.notificationService.toastSuccess('Thao tác thành công', 'Thông báo');
@@ -245,7 +245,7 @@ export class DiemDiTichComponent implements OnInit {
   private preSetupForm(name: string) {
     this.notificationService.isProcessing(false);
     this.notificationService.openSideNavigationMenu({
-      name:this.menuName,
+      name: this.menuName,
       template: this.template,
       size: 600,
       offsetTop: '0px'
@@ -264,25 +264,25 @@ export class DiemDiTichComponent implements OnInit {
     const decision = button.data && this.listData ? this.listData.find(u => u.id === button.data) : null;
     switch (button.name) {
       case 'BUTTON_ADD_NEW':
-        this.btn_checkAdd= "Lưu lại";
+        this.btn_checkAdd = "Lưu lại";
         this.formSave.reset({
           ten: '',
           mota: '',
           status: null,
-          toado:''
+          toado: ''
         });
         // this.characterAvatar = ''
         this.formActive = this.listForm[FormType.ADDITION];
         this.preSetupForm(this.menuName);
         break;
       case 'EDIT_DECISION':
-        this.btn_checkAdd="Cập nhật"
+        this.btn_checkAdd = "Cập nhật"
         const object1 = this.listData.find(u => u.id === decision.id);
         this.formSave.reset({
           ten: object1.ten,
           mota: object1.mota,
           status: object1.status,
-          toado:object1.toado
+          toado: object1.toado
         });
         // this.characterAvatar = object1.ds_ngulieu ? getLinkDownload(object1.ds_ngulieu['id']) : '';
         this.formActive = this.listForm[FormType.UPDATE];
@@ -311,16 +311,26 @@ export class DiemDiTichComponent implements OnInit {
         this.visible = true;
         break;
       case 'MAP_DECTISION':
+        timer(1000).subscribe(() => {
+          const data = this.listData.find(u => u.id === decision.id);
+          if(data.toado){
+            this.dataBinding = data;
+          }else{
+            this.dataBinding = null;
+          }
+        });
         this.visibleMap = true;
-        this.dataBinding = this.listData.find(u => u.id === decision.id);
-        console.log(this.dataBinding);
+
+
         break
       default:
         break;
     }
   }
-  visibleMap:boolean=false;
+  onShow:boolean=false;
+  visibleMap: boolean = false;
   dataInformation: DmDiemDiTich;
+
   saveForm() {
     if (this.formSave.valid) {
       this.formActive.data = this.formSave.value;
@@ -330,7 +340,6 @@ export class DiemDiTichComponent implements OnInit {
       this.notificationService.toastError('Vui lòng điền đầy đủ thông tin');
     }
   }
-
 
 
 }

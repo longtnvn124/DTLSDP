@@ -1,13 +1,10 @@
 import {AfterViewInit, Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild} from '@angular/core';
-import {interval} from "rxjs";
+import {forkJoin} from "rxjs";
+import {DotThiDanhSachService} from "@shared/services/dot-thi-danh-sach.service";
+import {DotThiKetQuaService} from "@shared/services/dot-thi-ket-qua.service";
+import {Shift, ShiftTests} from "@shared/models/quan-ly-doi-thi";
+import {NotificationService} from "@core/services/notification.service";
 
-
-export interface Galleria_img {
-  itemImageSrc: string,
-  thumbnailImageSrc: string,
-  alt: string,
-  title: string
-}
 
 @Component({
   selector: 'app-web-home',
@@ -16,9 +13,10 @@ export interface Galleria_img {
 })
 
 
-export class WebHomeComponent implements OnInit,AfterViewInit {
+export class WebHomeComponent implements OnInit, AfterViewInit {
 
   @ViewChild('slider', {static: true}) slider: ElementRef<HTMLDivElement>;
+
   @HostListener('window:scroll', []) onWindowScroll() {
     const header = document.getElementById('header');
     if (window.pageYOffset > 100) {
@@ -29,19 +27,77 @@ export class WebHomeComponent implements OnInit,AfterViewInit {
   }
 
   slides = [
-    {index:1,img: '/assets/slide/slide1.jpg'},
-    {index:2,img: '/assets/slide/slide2.jpg',}
+    {index: 1, img: '/assets/slide/slide1.jpg'},
+    {index: 2, img: '/assets/slide/slide2.jpg',}
   ];
 
 
-  index=0;
+  index = 0;
   mode: "CHUYENMUC" | "DANNHMUC_NGULIEUSO" | "NHANVAT" | "SUKIEN_TONGHOP" | "SEARCH" | "THONGTIN" | "HOME" = "HOME";
-  slideIndex = 0;
+  responsiveOptions = [
+    {
+      breakpoint: '1024px',
+      numVisible: 3,
+      numScroll: 3
+    },
+    {
+      breakpoint: '768px',
+      numVisible: 2,
+      numScroll: 2
+    },
+    {
+      breakpoint: '560px',
+      numVisible: 1,
+      numScroll: 1
+    }
+  ];
 
-  constructor(private renderer: Renderer2) {}
-  ngOnInit(): void {}
-  ngAfterViewInit(): void {}
+  constructor(
+    private renderer: Renderer2,
+    private dotThiDanhSachService: DotThiDanhSachService,
+    private dotthiKetquaService: DotThiKetQuaService,
+    private notificationService: NotificationService
+  ) {
+  }
+
+  ngOnInit() {
+    this.loadDotthi();
+  }
+
+  ngAfterViewInit() {
+  }
+
+  dataShift: Shift[];
+
+  loadDotthi() {
+    this.notificationService.isProcessing(true);
+    forkJoin<[Shift[], ShiftTests[]]>(this.dotThiDanhSachService.getdataUnlimit(), this.dotthiKetquaService.getdataUnlimit()).subscribe({
+      next: ([dataShift, dataShiftTest]) => {
+        console.log(dataShiftTest)
+        this.dataShift = dataShift.map(m => {
+          m['__dataShiftTest'] = dataShiftTest.filter(f => f.shift_id === m.id);
+          m['_totalShiftTest'] = m['__dataShiftTest'] ? m['__dataShiftTest'].length : 0;
+          m['_time-coverted'] = this.strToTime(m.time_start) +' - '+ this.strToTime(m.time_end);
+          return m;
+        })
+        console.log(this.dataShift);
+        this.notificationService.isProcessing(false);
+      },
+      error: () => {
+        this.notificationService.isProcessing(false);
+        this.notificationService.toastError('Mất kết với máy chủ');
+      }
+    })
+  }
 
 
-
+  strToTime(input: string): string {
+    const date = input ? new Date(input) : null;
+    let result = '';
+    if (date) {
+      result += [date.getDate().toString().padStart(2, '0'), (date.getMonth() + 1).toString().padStart(2, '0'), date.getFullYear().toString()].join('/');
+      result += ' ' + [date.getHours().toString().padStart(2, '0'), date.getMinutes().toString().padStart(2, '0')].join(':');
+    }
+    return result;
+  }
 }

@@ -17,9 +17,10 @@ export interface Ngulieu extends NguLieuChung {
   loaingulieu: LoaiNguLieu;
   linhvuc: number;
   chuyenmuc: string;
-  diemditich_id: number;
-  file_media?: OvicFile[];
+  diemditich_ids: number[];
   donvi_id: number;
+  file_media?: OvicFile[];
+  file_audio?: OvicFile[];
 }
 
 export interface SuKien extends NguLieuChung {

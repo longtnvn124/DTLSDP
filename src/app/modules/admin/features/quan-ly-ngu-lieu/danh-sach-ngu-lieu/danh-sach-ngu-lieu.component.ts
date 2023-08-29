@@ -192,7 +192,7 @@ export class DanhSachNguLieuComponent implements OnInit {
       mota: object.mota,
       chuyenmuc: object.chuyenmuc,
       loaingulieu: object.loaingulieu,
-      diemditich_id: object.diemditich_id,
+      diemditich_ids: object.diemditich_ids,
       linhvuc: object.linhvuc,
       file_media: object.file_media,
       donvi_id:object.donvi_id
@@ -211,7 +211,7 @@ export class DanhSachNguLieuComponent implements OnInit {
           this.notificationService.isProcessing(false);
           this.notificationService.toastSuccess('Thao tác thành công');
           this.listData.filter(f => f.id != object.id);
-          this.danhMucDiemDiTichService.update(object.diemditich_id, {total_ngulieu: this.listData.length}).subscribe();
+          // this.danhMucDiemDiTichService.update(object.diemditich_ids, {total_ngulieu: this.listData.length}).subscribe();
         }, error: () => {
           this.notificationService.isProcessing(false);
           this.notificationService.toastError('Thao tác không thành công');

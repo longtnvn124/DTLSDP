@@ -26,6 +26,7 @@ import { DanhmucNgulieusoComponent } from './features/web-home/danhmuc-ngulieuso
 import { SukienTonghopComponent } from './features/web-home/sukien-tonghop/sukien-tonghop.component';
 import { ThongtinKythuatComponent } from './features/web-home/thongtin-kythuat/thongtin-kythuat.component';
 import {GalleriaModule} from "primeng/galleria";
+import {CarouselModule} from "primeng/carousel";
 
 
 @NgModule({
@@ -58,6 +59,7 @@ import {GalleriaModule} from "primeng/galleria";
         DialogModule,
         TabMenuModule,
         GalleriaModule,
+        CarouselModule,
 
     ]
 })

@@ -244,10 +244,7 @@ export class MediaVrManagerComponent implements OnInit, AfterViewInit, OnDestroy
     this.typeMedia = this._diemtruycap.type;
     this.notificationService.isProcessing(true);
     this.destinationDiemditich = this._diemtruycap.ds_ngulieu.find(n => ['image360', 'video360'].includes(n['loaingulieu']));
-
     this.otherInfoDiemditich = this._diemtruycap.ds_ngulieu.filter(n => !['image360', 'video360'].includes(n['loaingulieu']));
-
-
     const mediaVr_destination_Link = this.destinationDiemditich.file_media && this.destinationDiemditich.file_media[0] ? this.fileService.getPreviewLinkLocalFile(this.destinationDiemditich.file_media[0]) : null;
     const audio_otherInfo = this.otherInfoDiemditich.find(f => f.loaingulieu === 'audio') ? this.otherInfoDiemditich.find(f => f.loaingulieu === 'audio').file_media[0] : null;
     const audio_otherInfoLink = audio_otherInfo ? this.fileService.getPreviewLinkLocalFile(audio_otherInfo) : null;

@@ -97,9 +97,14 @@
   </div>
 </p-dialog>
 
-<p-dialog header="Bản đồ" [(visible)]="visibleMap" [modal]="true" [style]="{ width: '70vw' }"
-          [draggable]="false" [resizable]="false" class="m-0">
-    <div class="map-Resize">
-      <ovic-map [site]="dataBinding" class="w-100 h-100"></ovic-map>
-    </div>
+<p-dialog  header="Bản đồ" [(visible)]="visibleMap" [modal]="true" [style]="{ width: '50vw','height':'400px' }"
+          [draggable]="false" [resizable]="false" class="ditichMap" [maximizable]="true" (onShow)="onShow =true" (onHide)="onShow=false">
+        <ng-container *ngIf="dataBinding && onShow,else notData">
+          <ovic-map  [site]="dataBinding" ></ovic-map>
+        </ng-container>
+        <ng-template #notData>
+          <div class="w-100 h-100 d-flex justify-content-center align-items-center">
+              <h3 class="">Không có dữ liệu</h3>
+          </div>
+        </ng-template>
 </p-dialog>

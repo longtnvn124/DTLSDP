@@ -4,7 +4,7 @@ import {HttpClient, HttpParams} from "@angular/common/http";
 import {HttpParamsHeplerService} from "@core/services/http-params-hepler.service";
 import {ThemeSettingsService} from "@core/services/theme-settings.service";
 import {AuthService} from "@core/services/auth.service";
-import {ShiftTests} from "@shared/models/quan-ly-doi-thi";
+import {Shift, ShiftTests} from "@shared/models/quan-ly-doi-thi";
 import {map, Observable} from "rxjs";
 import {Dto, OrWhereCondition, OvicConditionParam, OvicQueryCondition} from "@core/models/dto";
 
@@ -68,5 +68,12 @@ export class DotThiKetQuaService {
     return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
   }
 
+  getdataUnlimit(): Observable<ShiftTests[]>{
+    const fromObject = {
+      limit: -1,
+    }
+    const params = new HttpParams({fromObject});
+    return this.http.get<Dto>(''.concat(this.api), {params}).pipe(map(res => res.data));
+  }
 
 }

@@ -8,7 +8,7 @@
         </div>
         <ng-template #tableData>
           <div class="p-datatable-header">
-            <h3 class="tbl-title ng-star-inserted">Danh sách ngữ liệu</h3>
+            <h3 class="tbl-title ng-star-inserted">Danh sách ngữ liệu hình ảnh 3D 360</h3>
             <div class="search-block ui-table-globalfilter-container ng-star-inserted">
               <div class="d-flex align-items-center">
                 <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
@@ -118,6 +118,16 @@
             </div>
           </div>
           <div class="row">
+            <div class="col-12">
+              <p class="form-row">
+                <label>Điểm di tích<span class="ovic-mark">*</span></label>
+              <p-multiSelect [options]="dataDiemDiTich" placeholder="Chọn..." formControlName="diemditich_ids"
+                             optionLabel="ten" optionValue="id" class="w-100" [style]="{'width': '100%'}">
+              </p-multiSelect>
+              </p>
+            </div>
+          </div>
+          <div class="row">
             <div class="col-6">
               <p class="form-row">
                 <label>Lĩnh vực<span class="ovic-mark">*</span></label>
@@ -151,7 +161,7 @@
           <div class="row">
             <div class="col-12">
               <p class="form-row">
-                <label>File Media <span class="ovic-mark">*</span></label>
+                <label>Ảnh nền 3D 360 <span class="ovic-mark">*</span></label>
                 <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"
                                      [formField]="f['file_media']" [multiple]="false"
                                      [state]="1"></app-file-list-local>
@@ -159,7 +169,16 @@
             </div>
           </div>
           <div class="row">
+            <div class="col-12">
+              <p class="form-row">
+                <label>File thuyết minh <span class="ovic-mark">*</span></label>
+                <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"
+                                     [formField]="f['file_audio']" [multiple]="false"
+                                     [state]="1"></app-file-list-local>
+              </p>
+            </div>
           </div>
+
         </form>
       </div>
     </div>
@@ -207,7 +226,6 @@
           <div class="d-inline-block" *ngFor="let item of ngulieuInfo.file_media">
             <span class="font-weight-normal">{{item.title}}</span><a href="{{ngulieuInfo['__media_link']}}"> <i
             class="ml-2 pi pi-download"></i></a>
-
           </div>
         </div>
       </div>

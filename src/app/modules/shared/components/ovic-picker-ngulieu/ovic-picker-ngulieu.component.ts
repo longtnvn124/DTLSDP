@@ -91,20 +91,22 @@ export class OvicPickerNgulieuComponent implements OnInit {
     this.nguLieuDanhSachService.getdataBydonviIdandSelect(this.auth.userDonViId, '').subscribe({
       next: (data) => {
         if (this.type === 'DIRECT') {
-          // "video360"
+          // "video360" image 360
           this.data = data.filter(f => f.loaingulieu === 'video360' || f.loaingulieu === 'image360').map(m => {
-            m['__loaingulieu_converted'] = this.dataLoaingulieu && m.loaingulieu ? this.dataLoaingulieu.find(f => f.kyhieu === m.loaingulieu).ten : '';
-            m['__linhvuc_converted'] = this.dataLinhvuc && m.linhvuc ? this.dataLinhvuc.find(f => f.id === m.linhvuc).ten : '';
+            m['__loaingulieu_converted'] = this.dataLoaingulieu && m.loaingulieu ? this.dataLoaingulieu.find(f => f.kyhieu === m.loaingulieu).ten : '__';
+            m['__linhvuc_object'] = this.dataLinhvuc && m.linhvuc ? this.dataLinhvuc.find(f => f.id === m.linhvuc) : null;
+            m['__linhvuc_converted'] = m['__linhvuc_object'] ? m['__linhvuc_object'].ten : '';
             return m;
           })
-          console.log(this.data);
+
         } else {
           this.data = data.filter(f => f.loaingulieu !== 'video360' && f.loaingulieu !== 'image360').map(m => {
-            m['__loaingulieu_converted'] = this.dataLoaingulieu && m.loaingulieu ? this.dataLoaingulieu.find(f => f.kyhieu === m.loaingulieu).ten : '';
-            m['__linhvuc_converted'] = this.dataLinhvuc && m.linhvuc ? this.dataLinhvuc.find(f => f.id === m.linhvuc).ten : '';
+            const lv = this.dataLinhvuc && m.linhvuc ? this.dataLinhvuc.find(f => f.id === m.linhvuc) : null;
+            m['__loaingulieu_converted'] = this.dataLoaingulieu && m.loaingulieu ? this.dataLoaingulieu.find(f => f.kyhieu === m.loaingulieu).ten : '__';
+            m['__linhvuc_converted'] = lv ? lv.ten : '';
             return m;
           })
-          console.log(this.data);
+
         }
         this.isLoading = false;
         this.loadFail = false;
@@ -136,8 +138,8 @@ export class OvicPickerNgulieuComponent implements OnInit {
 
   checkElement(row: Ngulieu) {
     if (this.type === 'DIRECT') {
-          this.selectedRow = row;
-          this._selected =[row];
+      this.selectedRow = row;
+      this._selected = [row];
     } else {
       if (this._selected) {
         if (-1 !== this._selected.findIndex(u => u.id === row.id)) {

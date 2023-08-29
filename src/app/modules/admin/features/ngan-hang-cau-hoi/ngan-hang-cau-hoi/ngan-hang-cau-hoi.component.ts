@@ -270,25 +270,30 @@ export class NganHangCauHoiComponent implements OnInit {
   }
 
   saveForm() {
-    const index = this.listData.findIndex(u => u.id === this.formSave.get('bank_id').value);
-    forkJoin([
-      this.nganHangDeService.update(this._bank_id, {total: this.dataQuestion.length + 1}),
-      this.nganHangCauHoiService.create(this.formSave.value)
-    ]).subscribe({
-      next: () => {
-        this.formSave.reset(
-          {
-            title: '',
-            answer_options: [],
-            correct_answer: 0,
-          }
-        )
-        this.listData[index].total = this.listData[index].total + 1;
-        this.notificationService.toastSuccess('Thao tác thành công', 'Thông báo');
-      },
-      error: () => this.notificationService.toastError('Thao tác thất bại', 'Thông báo')
+    if(this.formSave.valid){
+      const index = this.listData.findIndex(u => u.id === this.formSave.get('bank_id').value);
+      forkJoin([
+        this.nganHangDeService.update(this._bank_id, {total: this.dataQuestion.length + 1}),
+        this.nganHangCauHoiService.create(this.formSave.value)
+      ]).subscribe({
+        next: () => {
+          this.formSave.reset(
+            {
+              title: '',
+              bank_id:this._bank_id,
+              answer_options: [],
+              correct_answer: 0,
+            }
+          )
+          this.listData[index].total = this.listData[index].total + 1;
+          this.notificationService.toastSuccess('Thao tác thành công', 'Thông báo');
+        },
+        error: () => this.notificationService.toastError('Thao tác thất bại', 'Thông báo')
+      })
+    }else{
+      this.notificationService.toastError('Yêu cầu nhập đủ thông tin');
+    }
 
-    })
   }
 
   btnEdit(item: NganHangCauHoi) {

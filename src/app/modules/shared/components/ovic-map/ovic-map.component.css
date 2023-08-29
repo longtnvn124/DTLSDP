@@ -1,7 +1,9 @@
-.map{
-  width:100%;
+.map {
+  width: 100%;
   height: 100%;
+  display: block;
 }
+
 .marker {
   background: url('/assets/images/logo.png');
   background-size: cover;
@@ -10,8 +12,9 @@
   border-radius: 50%;
   cursor: pointer;
 }
+
 .mapboxgl-popup {
-  max-width: 200px;
+  max-width: 100%;
 }
 
 .mapboxgl-popup-content {

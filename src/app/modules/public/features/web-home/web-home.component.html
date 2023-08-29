@@ -57,18 +57,33 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>
+      <div class="slide-examinations">
+        <div class="container">
+          <div class="d-flex justify-content-center align-items-center flex-column">
+            <h1 class="slide-examinations_title">Đợt thi</h1>
+            <h3 class="slide-examinations_desc">Truy cập và bắt đầu thi</h3>
+            <button pButton pRipple label="Truy cập" class="btn_examinations mt-4"></button>
 
-          <div class="slide-examinations">
-            <div class="container">
-              <div class="d-flex justify-content-center align-items-center flex-column">
-                  <h1 class="slide-examinations_title">Đợt thi</h1>
-                <h3 class="slide-examinations_desc">Truy cập và bắt đầu thi</h3>
-                <button pButton pRipple label="Truy cập" class="btn_examinations"></button>
-              </div>
+            <div class="slide-examinations_body">
+              <p-carousel [value]="dataShift" [numVisible]="3" [numScroll]="1" [responsiveOptions]="responsiveOptions" [autoplayInterval]="3000" >
+                <ng-template let-dataShift pTemplate="item">
+                  <div class="slide-examinations_body-item ">
+                    <div class="slide-examinations_body-title" #headerShift style="">
+                      <p>{{dataShift.title}}</p>
+                    </div>
+                    <p class="float-left slide-examinations_body-desc">{{dataShift['_time-coverted']}}</p>
+                    <p class="float-left slide-examinations_body-desc">Số thí sinh dự thi: {{dataShift['_totalShiftTest']}}</p>
+                  </div>
+
+                </ng-template>
+              </p-carousel>
             </div>
           </div>
         </div>
       </div>
+      <div style="height:500px"></div>
     </div>
 
   </ng-container>

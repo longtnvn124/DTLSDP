@@ -48,27 +48,11 @@ export class GroupsRadioComponent implements OnInit {
     if (this.default && this.options && this.optionId) {
       if (this.inputType === 'checkbox') {
         if (this.default) {
-          // this.default.split(',').map(m => parseInt(m)).forEach(elmDefault => {
-          //   const _i = this.options.findIndex(elm => elm.hasOwnProperty(this.optionId) && elm[this.optionId] === elmDefault);
-          //   if (_i !== -1) {
-          //     this.index.push(elmDefault);
-          //   }
-          // });
-
-
           this.index = this.default.split(',').map(m => parseInt(m)).reduce((collector, selected) => ([...collector,
             -1 !== this.options.findIndex(elm => elm.hasOwnProperty(this.optionId) && elm[this.optionId] === selected) ? selected : null
           ]), new Array<number>()).filter(Boolean);
-
-          // console.log(_index);
-
         }
 
-
-        console.log('init');
-        console.log(this.default);
-        console.log(this.index);
-        console.log('end');
       } else {
         this.index = [this.options.findIndex(elm => elm.hasOwnProperty(this.optionId) && elm[this.optionId] === this.default)];
       }

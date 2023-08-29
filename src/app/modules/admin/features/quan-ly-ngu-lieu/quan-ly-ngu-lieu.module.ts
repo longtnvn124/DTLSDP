@@ -18,6 +18,7 @@ import { DialogModule } from 'primeng/dialog';
 import {InputTextareaModule} from 'primeng/inputtextarea';
 import { NguLieuVideoVrComponent } from './ngu-lieu-video-vr/ngu-lieu-video-vr.component';
 import { NguLieuImageVrComponent } from './ngu-lieu-image-vr/ngu-lieu-image-vr.component';
+import { DanhNhanLichSuComponent } from './danh-nhan-lich-su/danh-nhan-lich-su.component';
 
 
 @NgModule({
@@ -26,6 +27,7 @@ import { NguLieuImageVrComponent } from './ngu-lieu-image-vr/ngu-lieu-image-vr.c
     DanhSachSuKienComponent,
     NguLieuVideoVrComponent,
     NguLieuImageVrComponent,
+    DanhNhanLichSuComponent,
   ],
   imports: [
     CommonModule,

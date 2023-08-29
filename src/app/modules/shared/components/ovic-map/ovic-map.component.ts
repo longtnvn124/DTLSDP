@@ -35,18 +35,15 @@ export interface GeoJson {
   styleUrls: ['./ovic-map.component.css']
 })
 export class OvicMapComponent implements OnInit, AfterViewInit {
-
   @Input() coordinatesPoint: coordinatesPoint;
-
   @Input() point: Point;
-
-  @Input() site: DmDiemDiTich;
+  private _site: DmDiemDiTich;
+  @Input() set site(site: DmDiemDiTich) {this._site = site;}
+  get site(): DmDiemDiTich {return this._site;}
 
   @ViewChild('container', {static: true}) container: ElementRef<HTMLDivElement>;
 
   token = 'pk.eyJ1IjoidHJhbm1pbmhsb25nIiwiYSI6ImNsazB5eXhodDAxaGszY3BvM2M4cHlkNjEifQ.IPMCYyuOBrIr-CKBFe5R6Q';
-  // map: any
-
   geojson: GeoJson = {
     kinds: "FeatureCollection",
     features: []
@@ -80,9 +77,10 @@ export class OvicMapComponent implements OnInit, AfterViewInit {
       }
     }
 
-    if (this.site) {
-      const longitude1 = parseFloat(this.site.toado.split(',')[1]);
-      const latitude1 = parseFloat(this.site.toado.split(',')[0]);
+    if (this._site) {
+      this.geojson.kinds = 'FeatureCollection';
+      const longitude1 = parseFloat(this._site.toado.split(',')[1]);
+      const latitude1 = parseFloat(this._site.toado.split(',')[0]);
       this.geojson.features = [(
         {
           type: "Feature",//default: "Feature"
@@ -91,25 +89,24 @@ export class OvicMapComponent implements OnInit, AfterViewInit {
             coordinates: [longitude1, latitude1]
           },
           properties: {
-            title: this.site.ten,
+            title: this._site.ten,
             description: ''
           }
         })];
 
       const map1 = new mapboxgl.Map({
         accessToken: this.token,
-        container:  this.container.nativeElement, // ID của thẻ HTML để chứa bản đồ
+        container: this.container.nativeElement, // ID của thẻ HTML để chứa bản đồ
         style: 'mapbox://styles/mapbox/streets-v12',
         center: [longitude1, latitude1],
         zoom: 9
       });
       map1.addControl(new mapboxgl.GeolocateControl());
-      console.log(this.geojson.features);
+
       for (const feature of this.geojson.features) {
         // create a HTML element for each feature;
 
         const el = document.createElement('div');
-        console.log(el);
         el.className = 'marker';
         new mapboxgl.Marker(el)
           .setLngLat([feature.geometry.coordinates[0], feature.geometry.coordinates[1]])
@@ -149,6 +146,7 @@ export class OvicMapComponent implements OnInit, AfterViewInit {
       }
 
     }
+
   }
 
   dataPointInMap: Point[] = [];

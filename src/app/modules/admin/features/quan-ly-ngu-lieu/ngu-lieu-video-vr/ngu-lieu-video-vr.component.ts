@@ -1,6 +1,6 @@
 import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {debounceTime, filter, forkJoin, Observable, Subject, Subscription} from "rxjs";
-import {DmChuyenMuc, DmLinhVuc, DmLoaiNguLieu} from "@shared/models/danh-muc";
+import {DmChuyenMuc, DmDiemDiTich, DmLinhVuc, DmLoaiNguLieu} from "@shared/models/danh-muc";
 import {FileType} from "@shared/utils/syscat";
 import {FormType, NgPaginateEvent, OvicForm} from "@shared/models/ovic-models";
 import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
@@ -47,8 +47,8 @@ export class NguLieuVideoVrComponent implements OnInit {
     canUpload: true
   };
   listForm = {
-    [FormType.ADDITION]: {type: FormType.ADDITION, title: 'Thêm mới ngữ liệu', object: null, data: null},
-    [FormType.UPDATE]: {type: FormType.UPDATE, title: 'Cập nhật ngữ liệu', object: null, data: null}
+    [FormType.ADDITION]: {type: FormType.ADDITION, title: 'Thêm mới ngữ liệu video 360', object: null, data: null},
+    [FormType.UPDATE]: {type: FormType.UPDATE, title: 'Cập nhật ngữ liệu video 360', object: null, data: null}
   };
   formSave: FormGroup = this.fb.group({
     title: ['', Validators.required],
@@ -56,12 +56,15 @@ export class NguLieuVideoVrComponent implements OnInit {
     chuyenmuc: ['', Validators.required],
     loaingulieu: ['', Validators.required],
     linhvuc: ['', Validators.required],
-    file_media: [null],
+    diemditich_ids:[[]],
+    file_media: [[]],
+    file_audio:[[]],
     donvi_id:[null, Validators.required]
   });
   dataChuyemuc: DmChuyenMuc[];
   dataLoaingulieu: DmLoaiNguLieu[];
   dataLinhvuc: DmLinhVuc[];
+  dataDiemDiTich:DmDiemDiTich[];
   constructor(
     private themeSettingsService: ThemeSettingsService,
     private nguLieuDanhSachService: NguLieuDanhSachService,
@@ -87,20 +90,23 @@ export class NguLieuVideoVrComponent implements OnInit {
     this.subscription.add(observerSearchData);
   }
 
+
   ngOnInit(): void {
     this.loadInit();
   }
 
   loadInit() {
-    forkJoin<[DmChuyenMuc[], DmLoaiNguLieu[], DmLinhVuc[]]>(
+    forkJoin<[DmChuyenMuc[], DmLoaiNguLieu[], DmLinhVuc[],DmDiemDiTich[]]>(
       this.danhMucChuyenMucService.getDataUnlimit(),
       this.danhMucLoaiNguLieuService.getDataUnlimit(),
       this.danhMucLinhVucService.getDataUnlimit(),
+      this.danhMucDiemDiTichService.getDataUnlimit()
     ).subscribe({
-      next: ([dataChuyemuc, dataLoaingulieu, dataLinhvuc]) => {
+      next: ([dataChuyemuc, dataLoaingulieu, dataLinhvuc,dataDiemDitich]) => {
         this.dataChuyemuc = dataChuyemuc;
         this.dataLoaingulieu = dataLoaingulieu;
         this.dataLinhvuc = dataLinhvuc;
+        this.dataDiemDiTich=dataDiemDitich;
         this.loadData(1);
       },
       error: () => {
@@ -115,6 +121,7 @@ export class NguLieuVideoVrComponent implements OnInit {
     this.isLoading = true;
     this.nguLieuDanhSachService.getDataByLinhvucIdAndSearch(page, this.filterData.linhvucid, this.filterData.search, this.filterData.loaingulieu).subscribe({
       next: ({data, recordsTotal}) => {
+
         this.listData = data.map(m => {
           const linhvuc = this.dataLinhvuc && m.linhvuc ? this.dataLinhvuc.find(f => f.id === m.linhvuc) : null;
           const loaingulieu = this.dataLoaingulieu && m.loaingulieu ? this.dataLoaingulieu.find(f => f.kyhieu === m.loaingulieu) : null;
@@ -138,6 +145,7 @@ export class NguLieuVideoVrComponent implements OnInit {
   }
 
   private __processFrom({data, object, type}: FormNgulieu) {
+    console.log(data);
     const observer$: Observable<any> = type === FormType.ADDITION ? this.nguLieuDanhSachService.create(data) : this.nguLieuDanhSachService.update(object.id, data);
     observer$.subscribe({
       next: () => {
@@ -162,10 +170,11 @@ export class NguLieuVideoVrComponent implements OnInit {
       title: '',
       mota: '',
       chuyenmuc: '',
-      loaingulieu: 'video360',
-      diemditich_id: null,
+      loaingulieu:'video360',
+      diemditich_ids: [],
       linhvuc: '',
-      file_media: null,
+      file_media: [],
+      file_audio: [],
       donvi_id:this.auth.userDonViId
     });
 
@@ -189,9 +198,10 @@ export class NguLieuVideoVrComponent implements OnInit {
       mota: object.mota,
       chuyenmuc: object.chuyenmuc,
       loaingulieu: object.loaingulieu,
-      diemditich_id: object.diemditich_id,
+      diemditich_ids: object.diemditich_ids,
       linhvuc: object.linhvuc,
       file_media: object.file_media,
+      file_audio: object.file_audio,
       donvi_id:object.donvi_id
     });
     this.formActive = this.listForm[FormType.UPDATE];
@@ -208,7 +218,6 @@ export class NguLieuVideoVrComponent implements OnInit {
           this.notificationService.isProcessing(false);
           this.notificationService.toastSuccess('Thao tác thành công');
           this.listData.filter(f => f.id != object.id);
-          this.danhMucDiemDiTichService.update(object.diemditich_id, {total_ngulieu: this.listData.length}).subscribe();
         }, error: () => {
           this.notificationService.isProcessing(false);
           this.notificationService.toastError('Thao tác không thành công');
@@ -220,6 +229,7 @@ export class NguLieuVideoVrComponent implements OnInit {
   mode: 'TABLE' | 'MEDIAVR' | 'INFO' = "TABLE";
 
   saveForm() {
+    console.log(this.formSave.value);
     if (this.formSave.valid) {
       this.formActive.data = this.formSave.value;
       this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
@@ -238,13 +248,13 @@ export class NguLieuVideoVrComponent implements OnInit {
   objectVR: Ngulieu;
   visible:boolean= false;
   ngulieuInfo:Ngulieu;
+
+
   btnInformation(object: Ngulieu) {
     if (object.loaingulieu=== "video360" || object.loaingulieu === "image360") {
       this.mode = "MEDIAVR";
       this.objectVR = object;
-
     }
-
     else if(object.loaingulieu === 'image' ||object.loaingulieu === 'video'){
       this.visible=true;
       this.ngulieuInfo =object;

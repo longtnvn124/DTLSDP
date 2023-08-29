@@ -363,5 +363,33 @@ font-weight: 700;
 .home-container__slide{
 
 }
+.slide-examinations{
+  background-color: #f9f9ff;
+}
+.slide-examinations, .slide-examinations_body{
+  margin-top: 70px;
+}
 
-
+.slide-examinations_body{
+  width:100%;
+}
+.slide-examinations_body-item{
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  width: 310px;
+  margin: 5px;
+  border: 1px solid #c3c3c3;
+  border-radius: 14px;
+}
+.slide-examinations_body-title{
+  font-weight: 700;
+  font-size:16px;
+}
+.slide-examinations_body-desc{
+  margin-top:10px;
+  font-weight: 300;
+  font-size:14px;
+}

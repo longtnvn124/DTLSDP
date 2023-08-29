@@ -1,5 +1,6 @@
 .ovic-settings-systems__head {
-  background-color: #dfdfdf;
+  background: #dfdfdf url("/assets/images/backgroundInfo.jpg") no-repeat center top;
+  background-size: 100%;
 }
 
 .ovic-settings-systems__head__title {
