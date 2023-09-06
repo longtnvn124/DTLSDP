@@ -19,6 +19,7 @@ import {InputTextareaModule} from 'primeng/inputtextarea';
 import { NguLieuVideoVrComponent } from './ngu-lieu-video-vr/ngu-lieu-video-vr.component';
 import { NguLieuImageVrComponent } from './ngu-lieu-image-vr/ngu-lieu-image-vr.component';
 import { DanhNhanLichSuComponent } from './danh-nhan-lich-su/danh-nhan-lich-su.component';
+import {EditorModule} from "primeng/editor";
 
 
 @NgModule({
@@ -29,21 +30,22 @@ import { DanhNhanLichSuComponent } from './danh-nhan-lich-su/danh-nhan-lich-su.c
     NguLieuImageVrComponent,
     DanhNhanLichSuComponent,
   ],
-  imports: [
-    CommonModule,
-    QuanLyNguLieuRoutingModule,
-    ContextMenuModule,
-    SharedModule,
-    PaginatorModule,
-    ReactiveFormsModule,
-    ButtonModule,
-    MultiSelectModule,
-    RippleModule,
-    TableModule,
-    InputMaskModule,
-    InputTextModule,
-    DialogModule,
-    InputTextareaModule
-  ]
+    imports: [
+        CommonModule,
+        QuanLyNguLieuRoutingModule,
+        ContextMenuModule,
+        SharedModule,
+        PaginatorModule,
+        ReactiveFormsModule,
+        ButtonModule,
+        MultiSelectModule,
+        RippleModule,
+        TableModule,
+        InputMaskModule,
+        InputTextModule,
+        DialogModule,
+        InputTextareaModule,
+        EditorModule
+    ]
 })
 export class QuanLyNguLieuModule { }

@@ -12,6 +12,7 @@
   transition: background-color 0.3s ease-in-out;
 
 }
+
 .header-scrolled {
   background-color: rgba(0, 0, 0, 0.8); /* Màu nền với độ mờ */
   color: #fff; /* Màu chữ khi header được cuộn */
@@ -92,6 +93,7 @@
   #header #logo h1 {
     font-size: 28px;
   }
+
   #header #logo img {
     max-height: 40px;
   }
@@ -236,6 +238,7 @@
   #mobile-nav-toggle {
     display: inline;
   }
+
   #nav-menu-container {
     display: none;
   }
@@ -319,21 +322,27 @@
   display: none;
 }
 
-
+.nav-menu li a:hover {
+  background-color: #3A4E42;
+  color:#fff;
+  cursor: pointer;
+}
 
 /*----------------------header-custom--------------------------*/
-.header-logo{
+.header-logo {
   display: flex;
   justify-content: start;
   align-items: center;
   font-weight: 700;
 
 }
-.header-logo img{
+
+.header-logo img {
   width: 40px;
 
 }
-.header-logo_title{
+
+.header-logo_title {
   font-size: 16px;
   font-weight: 700;
 
@@ -343,53 +352,97 @@
 
 }
 
-.nav-menu_item{
-color: #fff;
-font-size: 13px;
-text-transform: uppercase;
-overflow: hidden;
-padding: 10px 22px 10px 15px;
-position: relative;
-text-decoration: none;
-width: 100%;
-display: block;
-outline: none;
-font-weight: 700;
+.nav-menu_item {
+  color: #fff;
+  font-size: 13px;
+  text-transform: uppercase;
+  overflow: hidden;
+  padding: 10px 22px 10px 15px;
+  position: relative;
+  text-decoration: none;
+  width: 100%;
+  display: block;
+  outline: none;
+  font-weight: 700;
 }
+
 /*-------------------home container------------------*/
-.home-container{
-  width:100%;
+.home-container {
+  width: 100%;
 }
-.home-container__slide{
+
+.home-container__slide {
 
 }
-.slide-examinations{
+
+.slide-examinations {
   background-color: #f9f9ff;
 }
-.slide-examinations, .slide-examinations_body{
-  margin-top: 70px;
+
+.slide-examinations, .slide-examinations_body {
+  padding-top: 50px;
 }
 
-.slide-examinations_body{
-  width:100%;
+.slide-examinations_body {
+  width: 100%;
 }
-.slide-examinations_body-item{
-  display:flex;
+
+.slide-examinations_body-item {
+  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 200px;
-  width: 310px;
   margin: 5px;
   border: 1px solid #c3c3c3;
   border-radius: 14px;
 }
-.slide-examinations_body-title{
+
+.slide-examinations_body-title {
   font-weight: 700;
-  font-size:16px;
+  font-size: 16px;
 }
-.slide-examinations_body-desc{
-  margin-top:10px;
+
+.slide-examinations_body-desc {
+  margin-top: 10px;
   font-weight: 300;
-  font-size:14px;
+  font-size: 14px;
+}
+
+.sukien-container {
+  margin-top: 50px;
+}
+
+.sukien-container-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #e5ddd9;
+}
+
+.sukien-container-header_title {
+  font-size: 24px;
+
+}
+
+.sukien-container-header_action {
+  font-weight: 400;
+  padding: 10px;
+}
+
+.sukien-container-header_action:hover {
+  color: #fff;
+  background-color: #3A4E42;
+  cursor: pointer;
+}
+
+.nhanvat-title {
+  font-weight: 600;
+  margin: 0;
+  font-size: 24px;
+  text-transform: uppercase;
 }

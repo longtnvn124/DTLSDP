@@ -53,7 +53,7 @@
 
             <td class="ovic-w-215px">
               <div class="d-block --fs-14" *ngFor="let ditich of item['__diemditich_ids_coverted']">
-                <div class="diem_ditich-css" >{{ditich.ten}}</div>
+                <div class="diem_ditich-css">{{ditich.ten}}</div>
               </div>
             </td>
             <td class="ovic-w-100px">
@@ -66,15 +66,15 @@
                 <p-button class="btn-p-10px mx-2" styleClass=" p-button-warning" icon="pi pi-pencil"
                           (click)="btnEdit(item)"></p-button>
                 <p-button class="btn-p-10px" styleClass=" p-button-danger" icon="pi pi-trash"
-                          (click)="btnDelete(item)"></p-button>
+                          (click)="btnDelete(item.id)"></p-button>
               </div>
             </td>
           </tr>
         </ng-template>
       </p-table>
     </ng-template>
-          <p-paginator class="p-paginator--custom" [showCurrentPageReport]="true" [rows]="rows"
-                       [totalRecords]="recordsTotal" [pageLinkSize]="5" (onPageChange)="paginate($event)"></p-paginator>
+    <p-paginator class="p-paginator--custom" [showCurrentPageReport]="true" [rows]="rows"
+                 [totalRecords]="recordsTotal" [pageLinkSize]="5" (onPageChange)="paginate($event)"></p-paginator>
   </div>
 </div>
 
@@ -90,110 +90,179 @@
       <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
         <form [formGroup]="formSave" autocomplete="off">
           <div class="row">
-            <div class="col-12">
-              <p class="form-row">
-                <label>Tên sự kiện<span class="ovic-mark">*</span></label>
-                <input pRipple type="text" placeholder="Tiêu đề..." formControlName="title"
-                       autocomplete="off">
-              </p>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12">
-              <p class="form-row">
-                <label>Diễn ra ở <span class="ovic-mark">*</span></label>
-              </p>
-              <p-multiSelect [options]="dataDiemditich" placeholder="Chọn..." formControlName="diemditich_ids"
-                             optionLabel="ten" optionValue="id" [style]="{'width': '100%'}">
-              </p-multiSelect>
-            </div>
-
-          </div>
-          <div class="row">
-            <div class="col-12">
-              <p class="form-row">
-                <label>Nội dung </label>
-                <textarea formControlName="mota" placeholder="Nội dung..." autocomplete="off" cols="30"
-                          rows="5"></textarea>
-              </p>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-6">
-              <p class="form-row">
-                <label>Thời gian bắt đầu <span class="ovic-mark">*</span></label>
-                <input pRipple type="text" placeholder="vd: dd/mm/yyyy, mm/yyyy, yyyy, ..."
-                       formControlName="thoigian_batdau"
-                       autocomplete="off">
-              </p>
-            </div>
-            <div class="col-6">
-              <p class="form-row">
-                <label>Thời gian kết thúc <span class="ovic-mark">*</span></label>
-                <input pRipple type="text" placeholder="vd: dd/mm/yyyy, mm/yyyy, yyyy, ..."
-                       formControlName="thoigian_ketthuc"
-                       autocomplete="off">
-              </p>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12">
-              <p class="form-row">
-                <label>Nhân vật lịch sử tham gia sự kiện </label>
-              </p>
-              <p-multiSelect [options]="dataNhanvatlichsu" placeholder="chọn..." formControlName="nhanvat_ids"
-                             optionLabel="ten" optionValue="id" [style]="{'width': '100%'}">
-              </p-multiSelect>
-            </div>
-          </div>
-
-          <div class="ovic-ui-table position-relative w-100 " style="margin-top:15px">
-            <div class="wrap-table">
-              <div class="p-datatable-header">
-                <h3 class="tbl-title ng-star-inserted">DM Ngữ liệu</h3>
-                <button type="button" pButton pRipple class="lgp__button-add p-button-success ml-2" label="Thêm mới"
-                        icon="pi pi-plus" matTooltip="Thêm mới ngữ liệu" matTooltipPosition="above"
-                        matTooltipClass="ovic-table--tooltip" (click)="btnAddNgulieu('DIRECT')"></button>
+            <div class="col-4">
+              <div class="row">
+                <div class="col-12">
+                  <p class="form-row">
+                    <label>Tên sự kiện<span class="ovic-mark">*</span></label>
+                    <input pRipple type="text" placeholder="Tiêu đề..." formControlName="title"
+                           autocomplete="off">
+                  </p>
+                </div>
               </div>
-              <table class="tbl w-100">
-                <thead class="p-datatable-thead">
-                  <tr>
-                    <th class="ovic-w-50px text-center">#</th>
-                    <th> Tiêu đề ngữ liệu</th>
-                    <th>Loại ngữ liệu</th>
-                    <th class="ovic-w-110px text-center">Thao tác</th>
-                  </tr>
-                </thead>
-                <tbody class="p-datatable-tbody">
-                  <tr *ngIf="!f['ngulieu_ids'].value || f['ngulieu_ids'].value.length === 0">
-                    <td [attr.colspan]="4">Không có ngữ liệu</td>
-                  </tr>
-                  <tr *ngFor="let r of f['ngulieu_ids'].value; index as i">
-                    <td class="ovic-w-50px text-center">{{ index + i }}</td>
-                    <td>{{r.title}}</td>
-                    <td>{{r['__loaingulieu_converted']}}</td>
-                   <td class="ovic-w-110px text-center">
-                      <button type="button" pButton pRipple class="lgp__button" icon="pi pi-download"
-                             matTooltip="Cập nhật thông tin" matTooltipPosition="above"
-                             matTooltipClass="ovic-table--tooltip" (click)="btnDowloadNgulieu(r)"></button>
-                     <button type="button" pButton pRipple class="lgp__button p-button-danger ml-2" icon="pi pi-trash"
-                             matTooltip="Xóa " matTooltipPosition="above" matTooltipClass="ovic-table--tooltip"
-                             (click)="btnDeleteNgulieu(r.id)"></button>
-                   </td>
-                </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+              <div class="row">
+                <div class="col-12">
+                  <p class="form-row">
+                    <label>Diễn ra ở <span class="ovic-mark">*</span></label>
+                  </p>
+                  <p-multiSelect [options]="dataDiemditich" placeholder="Chọn..." formControlName="diemditich_ids"
+                                 optionLabel="ten" optionValue="id" [style]="{'width': '100%'}">
+                  </p-multiSelect>
+                </div>
 
-          <div class="row">
-            <div class="col-12">
-              <p class="form-row">
-                <label>File đính kèm</label>
-                <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"
-                                     [formField]="f['file_quyetdinh']" [multiple]="true"
-                                     [state]="1"></app-file-list-local>
-              </p>
+              </div>
+              <div class="row">
+                <div class="col-6">
+                  <p class="form-row">
+                    <label>Thời gian bắt đầu <span class="ovic-mark">*</span></label>
+                    <input pRipple type="text" placeholder="vd: dd/mm/yyyy, mm/yyyy, yyyy, ..."
+                           formControlName="thoigian_batdau"
+                           autocomplete="off">
+                  </p>
+                </div>
+                <div class="col-6">
+                  <p class="form-row">
+                    <label>Thời gian kết thúc <span class="ovic-mark">*</span></label>
+                    <input pRipple type="text" placeholder="vd: dd/mm/yyyy, mm/yyyy, yyyy, ..."
+                           formControlName="thoigian_ketthuc"
+                           autocomplete="off">
+                  </p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  <p class="form-row">
+                    <label>Nhân vật lịch sử tham gia sự kiện </label>
+                  </p>
+                  <p-multiSelect [options]="dataNhanvatlichsu" placeholder="chọn..." formControlName="nhanvat_ids"
+                                 optionLabel="ten" optionValue="id" [style]="{'width': '100%'}">
+                  </p-multiSelect>
+                </div>
+              </div>
+<!--              <div class="row">-->
+<!--                <div class="col-12">-->
+<!--                  <p class="form-row">-->
+<!--                    <label>Ảnh tiêu đề</label>-->
+<!--                    <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"-->
+<!--                                         [formField]="f['files']" [multiple]="true"-->
+<!--                                         [state]="1"></app-file-list-local>-->
+<!--                  </p>-->
+<!--                </div>-->
+<!--              </div>-->
+
+              <div class="row">
+                <div class="col-12">
+                  <p class="form-row">
+                    <label>File media</label>
+                    <button pRipple class="btn w-100 btn-ctm" (click)="fileChooser.click()">
+                      <img *ngIf="characterAvatar; else showIcon" [src]="characterAvatar | ovicSafeUrl" alt="">
+                      <ng-template #showIcon>
+                        <i class="pi pi-camera "></i>
+                      </ng-template>
+                    </button>
+                  </p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  <p class="form-row">
+                    <label>File thuyết minh</label>
+                    <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"
+                                         [formField]="f['file_audio']" [multiple]="true"
+                                         [state]="1"></app-file-list-local>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-8">
+              <div class="row">
+                <div class="col-12">
+                  <p class="form-row">
+                    <label>Nội dung</label>
+                    <p-editor class="w-100" formControlName="mota" [style]="{ height: '500px'}">
+                      <p-header>
+        <span class="ql-formats">
+            <select class="ql-header" title="Thẻ tiêu đề">
+                <option selected>Chữ thường </option>
+                <option value="1">Tiêu đề 1</option>
+                <option value="2">Tiêu đề 2</option>
+                <option value="3">Tiêu đề 3</option>
+                <option value="4">Tiêu đề 4</option>
+                <option value="5">Tiêu đề 5</option>
+                <option value="6">Tiêu đề 6</option>
+            </select>
+             <select id="--ql-size" class="ql-size" title="Kích thước chữ">
+                <option value="small">Cỡ nhỏ</option>
+                <option value="false" selected>Cỡ thường</option>
+                <option value="large">Cỡ vừa</option>
+                <option value="huge">Cỡ lớn</option>
+            </select>
+        </span>
+                        <span class="ql-formats">
+            <button class="ql-bold" title="Kiểu chữ đậm"></button>
+            <button class="ql-italic" title="Kiểu chữ nghiêng"></button>
+            <button class="ql-underline" title="Kiểu chữ ghạch chân"></button>
+            <button class="ql-strike" title="Kiểu chữ ghạch ngang"></button>
+        </span>
+                        <span class="ql-formats">
+            <select class="ql-align" title="Căn lề">
+                <option selected></option>
+                <option value="center"></option>
+                <option value="right"></option>
+                <option value="justify"></option>
+            </select>
+            <select class="ql-color" title="Màu chữ"><option selected="selected"></option><option
+              value="#e60000"></option><option value="#ff9900"></option><option value="#ffff00"></option><option
+              value="#008a00"></option><option value="#0066cc"></option><option value="#9933ff"></option><option
+              value="#ffffff"></option><option value="#facccc"></option><option value="#ffebcc"></option><option
+              value="#ffffcc"></option><option value="#cce8cc"></option><option value="#cce0f5"></option><option
+              value="#ebd6ff"></option><option value="#bbbbbb"></option><option value="#f06666"></option><option
+              value="#ffc266"></option><option value="#ffff66"></option><option value="#66b966"></option><option
+              value="#66a3e0"></option><option value="#c285ff"></option><option value="#888888"></option><option
+              value="#a10000"></option><option value="#b26b00"></option><option value="#b2b200"></option><option
+              value="#006100"></option><option value="#0047b2"></option><option value="#6b24b2"></option><option
+              value="#444444"></option><option value="#5c0000"></option><option value="#663d00"></option><option
+              value="#666600"></option><option value="#003700"></option><option value="#002966"></option><option
+              value="#3d1466"></option></select>
+            <select class="ql-background" title="Màu chữ"><option selected="selected"></option><option
+              value="#e60000"></option><option value="#ff9900"></option><option value="#ffff00"></option><option
+              value="#008a00"></option><option value="#0066cc"></option><option value="#9933ff"></option><option
+              value="#ffffff"></option><option value="#facccc"></option><option value="#ffebcc"></option><option
+              value="#ffffcc"></option><option value="#cce8cc"></option><option value="#cce0f5"></option><option
+              value="#ebd6ff"></option><option value="#bbbbbb"></option><option value="#f06666"></option><option
+              value="#ffc266"></option><option value="#ffff66"></option><option value="#66b966"></option><option
+              value="#66a3e0"></option><option value="#c285ff"></option><option value="#888888"></option><option
+              value="#a10000"></option><option value="#b26b00"></option><option value="#b2b200"></option><option
+              value="#006100"></option><option value="#0047b2"></option><option value="#6b24b2"></option><option
+              value="#444444"></option><option value="#5c0000"></option><option value="#663d00"></option><option
+              value="#666600"></option><option value="#003700"></option><option value="#002966"></option><option
+              value="#3d1466"></option></select>
+        </span>
+                        <span class="ql-formats">
+            <button class="ql-list" value="ordered" title="Danh sách số"></button>
+            <button class="ql-list" value="bullet" title="Danh sách chấm"></button>
+            <button class="ql-indent q1-box" value="+1" title="Thụt đầu dòng"></button>
+            <button class="ql-indent q2-box last" value="-1" title="Giảm thụt đầu dòng"></button>
+        </span>
+                        <span class="ql-formats">
+            <button class="ql-link" aria-label="link" title="Thẻ liên kết"></button>
+            <button class="ql-image" aria-label="image" title="Chèn ảnh"></button>
+            <button class="ql-blockquote" aria-label="blockquote" title="Trích dẫn"></button>
+            <button class="ql-code-block" aria-label="code-block" title="code-block"></button>
+        </span>
+                        <span class="ql-formats">
+            <button class="ql-script" value="sub"></button>
+            <button class="ql-script" value="super"></button>
+            <button class="ql-direction" value="rtl"></button>
+        </span>
+                        <span class="ql-formats">
+            <button class="ql-clean"></button>
+        </span>
+                      </p-header>
+                    </p-editor>
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </form>
@@ -210,6 +279,7 @@
 </ng-template>
 
 <ng-template #formInformation>
+
   <div class="ovic-side-navigation-content">
     <div class="ovic-side-navigation-content__head">
       <h4 class="ovic-side-navigation-content__head__title">Thông tin chi tiết sự kiện lịch sử, văn hoá địa phương</h4>
@@ -218,135 +288,41 @@
     </div>
     <div class="ovic-side-navigation-content__body ovic-scroll-style p-0 ovic-prevent-disable-color"
          style="background-color:#F7F8FA">
-      <div class="w-100 h-100 d-flex">
-        <div class="h-100 border-right" style="width:30%; background-color:#fff">
-          <div class="ovic-side-navigation-content__body ovic-scroll-style">
-            <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
-              <form [formGroup]="formSave" autocomplete="off">
-                <div class="row">
-                  <div class="col-12">
-                    <p class="form-row">
-                      <label>Tên sự kiện<span class="ovic-mark">*</span></label>
-                      <input pRipple type="text" placeholder="Tiêu đề..." formControlName="title"
-                             autocomplete="off">
-                    </p>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-12">
-                    <p class="form-row">
-                      <label>Diễn ra ở <span class="ovic-mark">*</span></label>
-                    </p>
-                    <p-multiSelect [options]="dataDiemditich" placeholder="Chọn..." formControlName="diemditich_ids"
-                                   optionLabel="ten" optionValue="id" [style]="{'width': '100%'}">
-                    </p-multiSelect>
-                  </div>
+      <div class="h-100 d-flex justify-content-center align-items-center flex-column">
+        <div class="scrol-container ovic-scroll-style" style="width:1000px;background-color:#fff">
+          <ng-container *ngIf="dataInfo">
+            <div class="news-container">
+              <div class="news-container_title">
+                <p>{{dataInfo.title}}</p>
+              </div>
 
-                </div>
-                <div class="row">
-                  <div class="col-12">
-                    <p class="form-row">
-                      <label>Nội dung </label>
-                      <textarea style="width: 100%;border-radius: 4px;"
-                                formControlName="mota" placeholder="Nội dung..." autocomplete="off" cols="30"
-                                rows="12"></textarea>
-                    </p>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-6">
-                    <p class="form-row">
-                      <label>Thời gian bắt đầu <span class="ovic-mark">*</span></label>
-                      <input pRipple type="text" placeholder="vd: dd/mm/yyyy, mm/yyyy, yyyy, ..."
-                             formControlName="thoigian_batdau"
-                             autocomplete="off">
-                    </p>
-                  </div>
-                  <div class="col-6">
-                    <p class="form-row">
-                      <label>Thời gian kết thúc <span class="ovic-mark">*</span></label>
-                      <input pRipple type="text" placeholder="vd: dd/mm/yyyy, mm/yyyy, yyyy, ..."
-                             formControlName="thoigian_ketthuc"
-                             autocomplete="off">
-                    </p>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-12">
-                    <p class="form-row">
-                      <label>Nhân vật lịch sử tham gia sự kiện </label>
-                    </p>
-                    <p-multiSelect [options]="dataNhanvatlichsu" placeholder="chọn..." formControlName="nhanvat_ids"
-                                   optionLabel="ten" optionValue="id" [style]="{'width': '100%'}">
-                    </p-multiSelect>
-                  </div>
-                </div>
-                <ng-container *ngIf="dataInfo.files && dataInfo.files[0]">
-                  <div class="row">
-                    <div class="col-12">
-                      <p class="form-row">
-                        <label>File đính kèm</label>
-                        <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"
-                                             [formField]="f['file_quyetdinh']" [multiple]="true"
-                                             [state]="1"></app-file-list-local>
-                      </p>
-                    </div>
-                  </div>
-                </ng-container>
-              </form>
-            </div>
-          </div>
-        </div>
-        <div class="h-100" style="padding: 10px;width: 70%;">
+              <div class="news-container_content" [innerHTML]="dataInfo.mota | htmlDecode">
+              </div>
 
-          <div class="ovic-ui-table position-relative w-100 " style="margin-top:10px">
-            <div class="wrap-table">
-              <div class="p-datatable-header">
-                <h3 class="tbl-title ng-star-inserted">DM Ngữ liệu</h3>
-                <ng-container *ngIf="!dataInfo">
-                  <button type="button" pButton pRipple class="lgp__button-add p-button-success ml-2" label="Thêm mới"
-                          icon="pi pi-plus" matTooltip="Thêm mới ngữ liệu" matTooltipPosition="above"
-                          matTooltipClass="ovic-table--tooltip" (click)="btnAddNgulieu('DIRECT')"></button>
-                </ng-container>
+
+              <div class="news-container_address">
+                Địa điểm diễn ra:
+                <div class="news-container_address_item" *ngFor="let adres of dataInfo['__diemditich_ids_coverted']">
+                  {{adres.ten + ", "}}
+                </div>
+              </div>
+              <div class="news-container_media">
 
               </div>
-              <table class="tbl w-100">
-                <thead class="p-datatable-thead">
-                <tr>
-                  <th class="ovic-w-50px text-center">#</th>
-                  <th> Tiêu đề ngữ liệu</th>
-                  <th> Lĩnh vực</th>
-                  <th class="ovic-w-200px">Loại ngữ liệu</th>
-                  <th class="ovic-w-110px text-center">Thao tác</th>
-                </tr>
-                </thead>
-                <tbody class="p-datatable-tbody">
-                <tr *ngIf="!f['ngulieu_ids'].value || f['ngulieu_ids'].value.length === 0">
-                  <td [attr.colspan]="3">Không có ngữ liệu</td>
-                </tr>
-                <tr *ngFor="let r of f['ngulieu_ids'].value; index as i">
-                  <td class="ovic-w-50px text-center">{{ index + i }}</td>
-                  <td>{{r.title}}</td>
-                  <td>{{r.title}}</td>
-                  <td>{{r.title}}</td>
-                  <td class="ovic-w-110px text-center">
-                    <button type="button" pButton pRipple class="lgp__button" icon="pi pi-download"
-                            matTooltip="Cập nhật thông tin" matTooltipPosition="above"
-                            matTooltipClass="ovic-table--tooltip" (click)="btnDowloadNgulieu(r)"></button>
+              <div class="news-container_user">
+                Nhân vật lịch sử tham gia:
+                <div class="news-container_user_item" *ngFor="let grand of dataInfo['__nhanvat_converted']">
+                  {{grand.ten + ", "}}
+                </div>
+              </div>
 
-                    <ng-container *ngIf="!dataInfo">
-                      <button type="button" pButton pRipple class="lgp__button p-button-danger ml-2" icon="pi pi-trash"
-                              matTooltip="Xóa " matTooltipPosition="above" matTooltipClass="ovic-table--tooltip"
-                              (click)="btnDeleteNgulieu(r.id)"></button>
-                    </ng-container>
-                  </td>
-                </tr>
-                </tbody>
-              </table>
+
+
             </div>
-          </div>
+          </ng-container>
         </div>
       </div>
+
     </div>
     <div class="ovic-side-navigation-content__foot">
       <button pButton pRipple type="button" label="Đóng" class="p-button-secondary ml-3" icon="pi pi-times"
@@ -354,3 +330,6 @@
     </div>
   </div>
 </ng-template>
+
+
+<input type="file" #fileChooser hidden="true" (change)="onInputAvatar($event , fileChooser)">

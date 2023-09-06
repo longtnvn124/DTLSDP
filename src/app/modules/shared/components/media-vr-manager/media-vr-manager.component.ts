@@ -2,7 +2,7 @@ import {
   AfterViewInit, Component, ElementRef, HostListener,
   Input, OnDestroy, OnInit, Renderer2, TemplateRef, ViewChild
 } from '@angular/core';
-import {OrbitControls} from '@three-ts/orbit-controls';
+import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {NotificationService} from '@core/services/notification.service';
 import {FileService} from "@core/services/file.service";
 import {OvicVrPoint, OvicVrPointType, OvicVrPointUserData, sceneControl} from "@shared/models/sceneVr";

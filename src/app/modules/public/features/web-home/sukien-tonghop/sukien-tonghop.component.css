@@ -1,0 +1,22 @@
+.text-in-line{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.item-Sukien:hover{
+  transform: translateY(-7px);
+}
+.sukien_title{
+  margin-top: 50px;
+  margin-bottom: 50px;
+  font-size: 28px;
+  color: #3A4E42;
+  font-weight: 800;
+}
+.sukien_desc{
+  width:100%;
+  font-size: 70%;
+}
+.sukien_desc p img{
+  width:100%;
+}

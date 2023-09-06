@@ -2,10 +2,6 @@
   overflow: unset !important;
 }
 
-/*.tbl-noScroll .p-datatable {*/
-/*  overflow: unset;*/
-/*}*/
-
 .v-step-popup {
   display: flex;
   flex-direction: column;
@@ -274,13 +270,15 @@ app-virtual-tour, app-shift, app-panel {
 
 /*=================web view==================*/
 app-web-home {
-  background-color: #fbf6f2;
+  background: url("assets/icon-png/bg-web.jpg") repeat-y;
+  background-size: 100% auto;
+
 }
 
 .virtual-tour-title {
   font-family: "Roboto", sans-serif;
   font-weight: 600;
-  color: #f73e48;
+  color: #3A4E42;
 }
 
 .virtual-tour-content {
@@ -301,11 +299,8 @@ app-web-home {
   width: 100%;
   margin-left: 10px;
   margin-right: 10px;
-  border: 1px solid #f5eee8;
   font-size: 14px;
   font-weight: 700;
-  background-color: #fff;
-  box-shadow: 0px 0px 3px #393939;
   border-radius: 6px;
 }
 
@@ -314,7 +309,7 @@ app-web-home {
   display: inline-block;
   width: 100%;
   font-family: "Roboto", sans-serif;
-  color: #f73e48;
+  color: #3A4E42;
   font-size: 24px;
   font-weight: 600;
   line-height: 24px;
@@ -343,8 +338,8 @@ app-web-home {
 }
 
 .content_info-item:hover {
-  color: #000;
-  background: #ffdddf;
+  color: #fff;
+  background: #3A4E42;
 }
 
 .list-unstyled {
@@ -382,6 +377,29 @@ ovic-map {
   display: block;
 }
 
-.form-row p-multiSelect{
-  width:100%;
+.form-row p-multiSelect {
+  width: 100%;
+}
+
+.news-container_content img {
+  /* Thuộc tính CSS tùy chỉnh cho tất cả các thẻ img trong div */
+  max-width: 100%;
+  border: 1px solid #ddd;
+}
+
+/*@media(width <1024px){*/
+/*  .dotthi-container{*/
+/*    width:100%;*/
+/*  }*/
+/*}*/
+
+
+/* ----------------- */
+
+.p-carousel .p-carousel-indicators .p-carousel-indicator.p-highlight button {
+  background-color: #3A4E42;
+}
+
+.sukien_desc p img {
+  width: 100%;
 }

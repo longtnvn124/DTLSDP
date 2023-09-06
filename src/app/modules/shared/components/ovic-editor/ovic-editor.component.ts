@@ -1,47 +1,67 @@
-import { Component , OnInit , Input , SimpleChanges , OnChanges } from '@angular/core';
-import { AbstractControl } from '@angular/forms';
-import { HelperService } from '@core/services/helper.service';
+import {Component, OnInit, Input, SimpleChanges, OnChanges} from '@angular/core';
+import {AbstractControl} from '@angular/forms';
+import {HelperService} from '@core/services/helper.service';
+import {DmDiemDiTich} from "@shared/models/danh-muc";
 
-@Component( {
-	selector    : 'ovic-editor' ,
-	templateUrl : './ovic-editor.component.html' ,
-	styleUrls   : [ './ovic-editor.component.css' ]
-} )
-export class OvicEditorComponent implements OnInit , OnChanges {
+@Component({
+  selector: 'ovic-editor',
+  templateUrl: './ovic-editor.component.html',
+  styleUrls: ['./ovic-editor.component.css']
+})
+export class OvicEditorComponent implements OnInit, OnChanges {
 
-	@Input() height = '320px';
+  @Input() height = '320px';
 
-	@Input() formField : AbstractControl;
+  @Input() set formField(field: AbstractControl) {
+    this.textContents = '';
+    this.setData(field.value);
 
-	@Input() readonly = false;
+    field.valueChanges.subscribe(value => this.setData(field.value));
+  }
 
-	@Input() default : string;
+  get formField(): AbstractControl {
+    return this.textContents
+  };
 
-	textContents : any;
 
-	constructor(
-		private helperService : HelperService
-	) {
-	}
+  @Input() readonly = false;
 
-	ngOnInit() : void {
-		this.setData( this.default );
-	}
+  @Input() set default(text: string) {
 
-	ngOnChanges( changes : SimpleChanges ) {
-		if ( changes[ 'default' ] ) {
-			this.setData( this.default );
-		}
-	}
+    this.textContents = '';
+    this.setData(text);
+  }
 
-	setData( data : string ) {
-		this.textContents = data ? this.helperService.decodeHTML( data ) : '';
-	}
+  textContents: any;
 
-	onTextChange( event ) {
-		if ( this.formField ) {
-			this.formField.setValue( this.helperService.encodeHTML( event.htmlValue ) );
-		}
-	}
+  constructor(
+    private helperService: HelperService
+  ) {
+  }
 
+  ngOnInit(): void {
+    // this.setData(this.default);
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    // if (changes['default']) {
+    //
+    // }
+  }
+
+  setData(data: string) {
+    this.textContents = data ? this.helperService.decodeHTML(data) : '';
+  }
+
+
+  onTextChange(event) {
+    console.log(event.htmlValue);
+    if (this.formField) {
+      // this.formField.setValue(this.helperService.encodeHTML(event.htmlValue));
+      // console.log(this.formField.value);
+      this.textContents = event ? this.helperService.decodeHTML(event.htmlValue):'';
+      console.log(this.textContents)
+    }
+
+  }
 }

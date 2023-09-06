@@ -211,6 +211,9 @@ export class OvicInputVrMediaComponent implements OnInit {
     if (this.pointChild) {
       this.convertDataChild();
     }
+    if(this.ngulieu){
+      this.startSeenByNguLieu();
+    }
   }
 
   startSeenByDiemtruycap(pointStart: Point) {
@@ -230,7 +233,9 @@ export class OvicInputVrMediaComponent implements OnInit {
     this.notificationService.isProcessing(false);
 
   }
+  startSeenByNguLieu(){
 
+  }
   s: sceneControl;
 
   loadInit({nglieuPoind, nglieuAudio, pointChild, idPointStart}: { nglieuPoind: Ngulieu, nglieuAudio?: Ngulieu, pointChild?: Point[], idPointStart: number }) {

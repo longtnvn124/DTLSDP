@@ -2,13 +2,15 @@
   <div class="container">
     <div class="row d-flex justify-content-between align-items-center">
       <div class="header-logo">
-        <a href=""> <img src="assets/images/logo.png" alt=""></a>
+        <a><img src="assets/images/quochuy.png"></a>
         <h3 class="header-logo_title ml-4">Ban tuyên giáo</h3>
       </div>
       <div class="nav-menu-container">
         <ul class="nav-menu">
-          <li><a>Ngữ liệu số</a></li>
-          <li><a>Chuyên mục</a></li>
+          <li><a>31 chuyên đề</a></li>
+          <li><a (click)="btn_vr360()">Vr 360</a></li>
+          <li><a (click)="btn_sukien()">Sự kiện</a></li>
+          <li><a (click)="btn_nhanvat()">Danh nhân lịch sử</a></li>
           <li><a>tìm kiếm</a></li>
           <li><a>Đăng nhập</a></li>
         </ul>
@@ -39,7 +41,6 @@
               </div>
             </div>
             <div class="col-5" style="margin-top: 9px">
-
               <div class="content_info">
                 <div class="content_info-caption"> Thông tin</div>
                 <hr>
@@ -48,7 +49,7 @@
                     <div class="content_info-item">Sự kiện tổng hợp</div>
                   </li>
                   <li>
-                    <div class="content_info-item">Nhân vật lịch sử</div>
+                    <div class="content_info-item" (click)="btn_nhanvat()">Nhân vật lịch sử</div>
                   </li>
                   <li>
                     <div class="content_info-item">Thông tin kỹ thuật</div>
@@ -64,17 +65,19 @@
           <div class="d-flex justify-content-center align-items-center flex-column">
             <h1 class="slide-examinations_title">Đợt thi</h1>
             <h3 class="slide-examinations_desc">Truy cập và bắt đầu thi</h3>
-            <button pButton pRipple label="Truy cập" class="btn_examinations mt-4"></button>
+            <button pButton pRipple label="Truy cập" class="btn_examinations mt-4" (click)="btn_shift()"></button>
 
             <div class="slide-examinations_body">
-              <p-carousel [value]="dataShift" [numVisible]="3" [numScroll]="1" [responsiveOptions]="responsiveOptions" [autoplayInterval]="3000" >
+              <p-carousel [value]="dataShift" [numVisible]="3" [numScroll]="1" [responsiveOptions]="responsiveOptions"
+                          [autoplayInterval]="3000">
                 <ng-template let-dataShift pTemplate="item">
                   <div class="slide-examinations_body-item ">
                     <div class="slide-examinations_body-title" #headerShift style="">
                       <p>{{dataShift.title}}</p>
                     </div>
                     <p class="float-left slide-examinations_body-desc">{{dataShift['_time-coverted']}}</p>
-                    <p class="float-left slide-examinations_body-desc">Số thí sinh dự thi: {{dataShift['_totalShiftTest']}}</p>
+                    <p class="float-left slide-examinations_body-desc">Số thí sinh dự
+                      thi: {{dataShift['_totalShiftTest']}}</p>
                   </div>
 
                 </ng-template>
@@ -83,7 +86,15 @@
           </div>
         </div>
       </div>
-      <div style="height:500px"></div>
+      <div class="sukien-container container">
+        <div class=" sukien-container-header">
+          <div class="sukien-container-header_title">Sự kiện</div>
+          <div class="sukien-container-header_action" (click)="btn_sukien()">Chi tiết</div>
+        </div>
+        <div class="sukien-container-body ">
+          <app-sukien-tonghop [selectItem]="false"></app-sukien-tonghop>
+        </div>
+      </div>
     </div>
 
   </ng-container>
@@ -94,10 +105,34 @@
 
   </ng-container>
   <ng-container *ngSwitchCase="'NHANVAT'">
+    <div class="container" style="padding-top: 80px">
+      <div class="w-100 h-100 d-flex justify-content-between align-items-center">
+        <button pRipple pButton class="p-button-warning" label="Trở lại" icon iconPos="left" icon="pi pi-angle-left"
+                (click)="btn_exit()"></button>
+        <p class="nhanvat-title"> Danh nhân lịch sử </p>
+        <div>
+          <button pButton pRipple class="p-button-secondary mr-2" icon="pi pi-angle-left"></button>
+          <button pButton pRipple class="p-button-secondary " icon="pi pi-angle-right"></button>
+        </div>
+      </div>
+      <app-nhanvat [selectItem]="true"></app-nhanvat>
+    </div>
 
   </ng-container>
   <ng-container *ngSwitchCase="'SUKIEN_TONGHOP'">
+    <div class="container" style="padding-top: 80px">
+      <div class="w-100 h-100 d-flex justify-content-between align-items-center">
+        <button pRipple pButton class="p-button-warning" label="Trở lại" icon iconPos="left" icon="pi pi-angle-left"
+                (click)="btn_exit()"></button>
+        <div>
+          <button pButton pRipple class="p-button-secondary mr-2" icon="pi pi-angle-left"
+                  (click)="btnBackInfoSukien()"></button>
+          <button pButton pRipple class="p-button-secondary " icon="pi pi-angle-right"></button>
+        </div>
+      </div>
 
+      <app-sukien-tonghop [selectItem]="true"></app-sukien-tonghop>
+    </div>
   </ng-container>
   <ng-container *ngSwitchCase="'SEARCH'">
 

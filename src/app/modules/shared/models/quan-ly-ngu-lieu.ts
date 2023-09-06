@@ -27,10 +27,11 @@ export interface SuKien extends NguLieuChung {
   diemditich_ids: number[];
   thoigian_batdau: string;
   thoigian_ketthuc: string;
-  files: OvicFile[];
+  files: OvicFile;
   nhanvat_ids: number[];
   donvi_id: number;
   ngulieu_ids: NguLieuSuKien[];
+  file_audio:OvicFile[];
 }
 
 export interface NguLieuSuKien {

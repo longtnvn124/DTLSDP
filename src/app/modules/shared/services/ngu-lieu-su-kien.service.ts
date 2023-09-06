@@ -105,5 +105,12 @@ export class NguLieuSuKienService {
     const params = new HttpParams({fromObject});
     return this.http.get<Dto>(''.concat(this.api), {params}).pipe(map(res => res.recordsFiltered));
   }
-
+  getAllData():Observable<SuKien[]>{
+    const fromObject = {
+      page:1,
+      limit:-1,
+    }
+    const params = new HttpParams({fromObject});
+    return this.http.get<Dto>(''.concat(this.api), {params}).pipe(map(res => res.data));
+  }
 }

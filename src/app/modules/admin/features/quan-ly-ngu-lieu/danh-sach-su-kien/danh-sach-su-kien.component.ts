@@ -1,6 +1,6 @@
 import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
-import {FormType, NgPaginateEvent, OvicForm, OvicTableStructure} from "@shared/models/ovic-models";
-import {Ngulieu, SuKien} from "@shared/models/quan-ly-ngu-lieu";
+import {FormType, NgPaginateEvent, OvicForm} from "@shared/models/ovic-models";
+import { SuKien} from "@shared/models/quan-ly-ngu-lieu";
 import {Paginator} from "primeng/paginator";
 import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {debounceTime, filter, forkJoin, Observable, Subject, Subscription} from "rxjs";
@@ -17,9 +17,12 @@ import {DmDiemDiTich,DmNhanVatLichSu} from "@shared/models/danh-muc";
 import {OvicButton} from "@core/models/buttons";
 import {NguLieuSuKienService} from "@shared/services/ngu-lieu-su-kien.service";
 import {DanhMucNhanVatLichSuService} from "@shared/services/danh-muc-nhan-vat-lich-su.service";
-
 import { EmployeesPickerService } from '@modules/shared/services/employees-picker.service';
 import { FileService } from '@core/services/file.service';
+import {Cache} from "three";
+import files = Cache.files;
+import {AvatarMakerSetting, MediaService} from "@shared/services/media.service";
+import {getLinkDownload} from "@env";
 
 interface FormSuKien extends OvicForm {
   object: SuKien;
@@ -72,7 +75,8 @@ export class DanhSachSuKienComponent implements OnInit {
   index = 1;
 
   search: string;
-
+  characterAvatar: string;
+  @ViewChild('fileChooser', {static: true}) fileChooser: TemplateRef<any>;
   constructor(
     private danhMucChuyenMucService: DanhMucChuyenMucService,
     private danhMucDiemDiTichService: DanhMucDiemDiTichService,
@@ -88,6 +92,7 @@ export class DanhSachSuKienComponent implements OnInit {
     private danhMucNhanVatLichSuService: DanhMucNhanVatLichSuService,
     private employeesPickerService:EmployeesPickerService,
     private fileService:FileService,
+    private mediaService:MediaService
   ) {
     this.formSave = this.fb.group({
       title: ['', Validators.required],
@@ -98,7 +103,8 @@ export class DanhSachSuKienComponent implements OnInit {
       files: [null],
       nhanvat_ids: [null],
       ngulieu_ids: [[]],
-      donvi_id: [null, Validators.required]
+      donvi_id: [null, Validators.required],
+      file_audio:[[]]
     });
 
     const observeProcessFormData = this.OBSERVE_PROCESS_FORM_DATA.asObservable().pipe(debounceTime(100)).subscribe(form => this.__processFrom(form));
@@ -132,7 +138,6 @@ export class DanhSachSuKienComponent implements OnInit {
         this.notificationService.toastError('Mất kết nối với máy chủ');
       }
     })
-    // forkJoin<[DmDiemDiTich[], fileConvent[], Point[]]>([of(list), this.loadFileMedia(list[0]),
 
   }
 
@@ -144,7 +149,6 @@ export class DanhSachSuKienComponent implements OnInit {
   isArray(input: any): boolean {
     return Array.isArray(input);
   }
-
   loadData(page) {
     // const limit = this.themeSettingsService.settings.rows;
     // this.index = (page * limit) - limit + 1;
@@ -165,15 +169,16 @@ export class DanhSachSuKienComponent implements OnInit {
             if(this.dataDiemditich.find(m => m.id === f)){
               ditich.push(this.dataDiemditich.find(m => m.id === f));
             }
-
           });
           m['__indexTable']= index++;
           m['__title_converted'] = `<b>${m.title}</b>`;
           m['__time_converted'] = m.thoigian_batdau + ' - ' + m.thoigian_ketthuc;
           m['__nhanvat_converted'] = nhanvat ? nhanvat :'';
           m['__diemditich_ids_coverted'] = ditich? ditich :'';
+          m['__decode_mota'] = this.helperService.decodeHTML(m.mota);
           return m;
         })
+        console.log(this.listData);
         this.recordsTotal = this.listData.length;
         this.isLoading = false;
         this.notificationService.isProcessing(false);
@@ -197,11 +202,13 @@ export class DanhSachSuKienComponent implements OnInit {
             diemditich_ids: null,
             thoigian_batdau: '',
             thoigian_ketthuc: '',
-            files: null,
+            files: [],
             nhanvat_id: null,
-            donvi_id: null
+            donvi_id: null,
+            file_audio:[]
           });
         }
+        this.characterAvatar = '';
         this.needUpdate = true;
         this.notificationService.toastSuccess('Thao tác thành công', 'Thông báo');
       },
@@ -224,13 +231,14 @@ export class DanhSachSuKienComponent implements OnInit {
     this.paginator.changePage(1);
     this.loadData(1);
   }
+  btnNameSave:"Lưu lại"| "Cập nhật";
 
-  private preSetupForm(name: string) {
+  private preSetupForm(name: string, size:number) {
     this.notificationService.isProcessing(false);
     this.notificationService.openSideNavigationMenu({
       name: name,
       template: this.template,
-      size: 600,
+      size:size,
       offsetTop: '0px'
     });
   }
@@ -251,6 +259,7 @@ export class DanhSachSuKienComponent implements OnInit {
     const decision = button.data && this.listData ? this.listData.find(u => u.id === button.data) : null;
     switch (button.name) {
       case 'BUTTON_ADD_NEW':
+        this.btnNameSave = "Lưu lại";
         this.formSave.reset({
           title: '',
           mota: '',
@@ -262,9 +271,10 @@ export class DanhSachSuKienComponent implements OnInit {
           donvi_id: this.auth.userDonViId
         });
         this.formActive = this.listForm[FormType.ADDITION];
-        this.preSetupForm(this.menuName);
+        this.preSetupForm(this.menuName,this.sizeFullWidth);
         break;
       case 'EDIT_DECISION':
+        this.btnNameSave ="Cập nhật";
         const object1 = this.listData.find(u => u.id === decision.id);
         this.formSave.reset({
           title: object1.title,
@@ -281,7 +291,7 @@ export class DanhSachSuKienComponent implements OnInit {
         this.formSave.enable();
         this.formActive = this.listForm[FormType.UPDATE];
         this.formActive.object = object1;
-        this.preSetupForm(this.menuName);
+        this.preSetupForm(this.menuName,this.sizeFullWidth);
         break;
       case 'DELETE_DECISION':
         const confirm = await this.notificationService.confirmDelete();
@@ -302,19 +312,7 @@ export class DanhSachSuKienComponent implements OnInit {
         break;
       case 'INFO_DECISION':
         this.dataInfo = this.listData.find(f => f.id === decision.id);
-        this.formSave.reset({
-          title: this.dataInfo.title,
-          mota: this.dataInfo.mota,
-          diemditich_ids: this.dataInfo.diemditich_ids,
-          thoigian_batdau: this.dataInfo.thoigian_batdau,
-          thoigian_ketthuc: this.dataInfo.thoigian_ketthuc,
-          files: this.dataInfo.files,
-          nhanvat_ids: this.dataInfo.nhanvat_ids,
-          donvi_id: this.dataInfo.donvi_id,
-          ngulieu_ids:this.dataInfo.ngulieu_ids
-        });
-        // this.formActive.object = this.dataInfo;
-        this.formSave.disable();
+        console.log(this.dataInfo);
         setTimeout(() => this.notificationService.openSideNavigationMenu({
           name: this.menuName,
           template: this.formInformation,
@@ -335,29 +333,22 @@ export class DanhSachSuKienComponent implements OnInit {
       diemditich_ids: null,
       thoigian_batdau: '',
       thoigian_ketthuc: '',
-      files: null,
+      files: [],
       nhanvat_ids: null,
-      donvi_id: this.auth.userDonViId
+      donvi_id: this.auth.userDonViId,
+      file_audio:[]
     });
+    this.characterAvatar = '';
     this.formActive = this.listForm[FormType.ADDITION];
-    this.preSetupForm(this.menuName);
+    this.preSetupForm(this.menuName,this.sizeFullWidth);
   }
+
+  dataInfoFiles :any;
   btnInformation(id:number){
     this.dataInfo = this.listData.find(f => f.id === id);
+    console.log(this.dataInfo);
+    // const files =  this.dataInfo.files.filter(f>f.type.split('/')[0])
 
-    this.formSave.reset({
-      title: this.dataInfo.title,
-      mota: this.dataInfo.mota,
-      diemditich_ids: this.dataInfo.diemditich_ids,
-      thoigian_batdau: this.dataInfo.thoigian_batdau,
-      thoigian_ketthuc: this.dataInfo.thoigian_ketthuc,
-      files: this.dataInfo.files,
-      nhanvat_ids: this.dataInfo.nhanvat_ids,
-      donvi_id: this.dataInfo.donvi_id,
-      ngulieu_ids:this.dataInfo.ngulieu_ids
-    });
-    // this.formActive.object = this.dataInfo;
-    // this.formSave.disable();
     setTimeout(() => this.notificationService.openSideNavigationMenu({
       name: this.menuName,
       template: this.formInformation,
@@ -378,24 +369,27 @@ export class DanhSachSuKienComponent implements OnInit {
       nhanvat_ids: object1.nhanvat_ids,
       donvi_id: object1.donvi_id,
       ngulieu_ids: object1.ngulieu_ids,
+      file_audio:object1.file_audio
     })
+    this.characterAvatar = object1.files ? getLinkDownload(object1.files.id):'';
 
     this.formSave.enable();
     this.formActive = this.listForm[FormType.UPDATE];
     this.formActive.object = object1;
-    this.preSetupForm(this.menuName);
+    this.preSetupForm(this.menuName,this.sizeFullWidth);
+
 
   }
   async btnDelete(id:number){
     const confirm = await this.notificationService.confirmDelete();
     if (confirm) {
-      this.nguLieuDanhSachService.delete(id).subscribe({
+      this.nguLieuSuKienService.delete(id).subscribe({
         next: () => {
           this.page = Math.max(1, this.page - (this.listData.length > 1 ? 0 : 1));
+          this.listData.filter(f=>f.id != id);
           this.notificationService.isProcessing(false);
           this.notificationService.toastSuccess('Thao tác thành công');
           this.loadData(this.page);
-
         }, error: () => {
           this.notificationService.isProcessing(false);
           this.notificationService.toastError('Thao tác không thành công');
@@ -407,6 +401,7 @@ export class DanhSachSuKienComponent implements OnInit {
 
   saveForm() {
     if (this.formSave.valid) {
+      console.log(this.formSave.value);
       this.formActive.data = this.formSave.value;
       this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
     } else {
@@ -415,24 +410,48 @@ export class DanhSachSuKienComponent implements OnInit {
     }
   }
 
-  dsNgulieu:Ngulieu[];
-  async btnAddNgulieu(type:'DIRECT'|'INFO'){
-    const result = await this.employeesPickerService.pickerNgulieu([], '',type);
-    this.f['ngulieu_ids'].setValue(result);
-    this.dsNgulieu = result;
-  }
-
-  btnDowloadNgulieu(btn){
-    const file= btn.file_media && btn.file_media[0] ?  this.fileService.getPreviewLinkLocalFile(btn.file_media[0]) :null;
-    if(file){
-      window.open(file, '_self');
-    }else{
-      this.notificationService.toastError('Ngữ liệu chưa được gắn file đính kèm');
+  //su ly ảnh nền
+  async makeCharacterAvatar(file: File, characterName: string): Promise<File> {
+    try {
+      const options: AvatarMakerSetting = {
+        aspectRatio: 3 / 2,
+        resizeToWidth: 300,
+        format: 'jpeg',
+        cropperMinWidth: 10,
+        dirRectImage: {
+          enable: true,
+          dataUrl: URL.createObjectURL(file)
+        }
+      };
+      const avatar = await this.mediaService.callAvatarMaker(options);
+      if (avatar && !avatar.error && avatar.data) {
+        const none = new Date().valueOf();
+        const fileName = characterName + none + '.jpg';
+        return Promise.resolve(this.fileService.base64ToFile(avatar.data.base64, fileName));
+      } else {
+        return Promise.resolve(null);
+      }
+    } catch (e) {
+      this.notificationService.isProcessing(false);
+      this.notificationService.toastError('Quá trình tạo avatar thất bại');
+      return Promise.resolve(null);
     }
   }
-  btnDeleteNgulieu(id:number){
-    const object= this.f['ngulieu_ids'].value;
-    this.f['ngulieu_ids'].reset(object.filter(f=>f.id !=id));
+
+  async onInputAvatar(event, fileChooser: HTMLInputElement) {
+    if (fileChooser.files && fileChooser.files.length) {
+      const file = await this.makeCharacterAvatar(fileChooser.files[0], this.helperService.sanitizeVietnameseTitle(this.f['title'].value));
+      // upload file to server
+      this.fileService.uploadFile(file, 1).subscribe({
+        next: fileUl => {
+          this.formSave.get('files').setValue(fileUl);
+        }, error: () => {
+          this.notificationService.toastError('Upload file không thành công');
+        }
+      })
+      // laasy thoong tin vaf update truongwf
+      this.characterAvatar = URL.createObjectURL(file);
+    }
   }
 
 }

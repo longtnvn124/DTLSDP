@@ -4,6 +4,8 @@ import {DotThiDanhSachService} from "@shared/services/dot-thi-danh-sach.service"
 import {DotThiKetQuaService} from "@shared/services/dot-thi-ket-qua.service";
 import {Shift, ShiftTests} from "@shared/models/quan-ly-doi-thi";
 import {NotificationService} from "@core/services/notification.service";
+import {Router} from "@angular/router";
+import {SukienTonghopComponent} from "@modules/public/features/web-home/sukien-tonghop/sukien-tonghop.component";
 
 
 @Component({
@@ -14,9 +16,8 @@ import {NotificationService} from "@core/services/notification.service";
 
 
 export class WebHomeComponent implements OnInit, AfterViewInit {
-
   @ViewChild('slider', {static: true}) slider: ElementRef<HTMLDivElement>;
-
+  @ViewChild(SukienTonghopComponent) sukienTonghopComponent: SukienTonghopComponent;
   @HostListener('window:scroll', []) onWindowScroll() {
     const header = document.getElementById('header');
     if (window.pageYOffset > 100) {
@@ -37,13 +38,13 @@ export class WebHomeComponent implements OnInit, AfterViewInit {
   responsiveOptions = [
     {
       breakpoint: '1024px',
-      numVisible: 3,
-      numScroll: 3
+      numVisible: 2,
+      numScroll: 2
     },
     {
       breakpoint: '768px',
-      numVisible: 2,
-      numScroll: 2
+      numVisible: 1,
+      numScroll: 1
     },
     {
       breakpoint: '560px',
@@ -56,7 +57,8 @@ export class WebHomeComponent implements OnInit, AfterViewInit {
     private renderer: Renderer2,
     private dotThiDanhSachService: DotThiDanhSachService,
     private dotthiKetquaService: DotThiKetQuaService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private router: Router
   ) {
   }
 
@@ -100,4 +102,25 @@ export class WebHomeComponent implements OnInit, AfterViewInit {
     }
     return result;
   }
+
+  btn_shift(){
+    void this.router.navigate(['test/shift/']);
+  }
+  btn_sukien(){
+    this.mode="SUKIEN_TONGHOP";
+  }
+  btn_nhanvat(){
+    this.mode= "NHANVAT";
+  }
+
+  btn_exit(){
+    this.mode= "HOME";
+  }
+  btnBackInfoSukien(){
+    this.sukienTonghopComponent.btn_backInfo();
+  }
+  btn_vr360(){
+
+  }
+
 }

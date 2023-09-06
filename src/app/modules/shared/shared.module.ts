@@ -123,6 +123,7 @@ import { OvicInputVrMediaComponent } from './components/ovic-input-vr-media/ovic
 import { OvicFileCorpusComponent } from './components/ovic-file-corpus/ovic-file-corpus.component';
 import { OvicMapComponent } from './components/ovic-map/ovic-map.component';
 import {NgxMapboxGLModule} from "ngx-mapbox-gl";
+import { OvicMediaVrComponent } from './components/ovic-media-vr/ovic-media-vr.component';
 
 
 @NgModule({
@@ -206,7 +207,8 @@ import {NgxMapboxGLModule} from "ngx-mapbox-gl";
     OrganizationPickerComponent,
     OvicInputVrMediaComponent,
     OvicFileCorpusComponent,
-    OvicMapComponent
+    OvicMapComponent,
+    OvicMediaVrComponent
   ],
     imports: [
         EditorModule,
@@ -318,7 +320,8 @@ import {NgxMapboxGLModule} from "ngx-mapbox-gl";
         MediaVrManagerComponent,
         OvicFileCorpusComponent,
         OvicInputVrMediaComponent,
-        OvicMapComponent
+        OvicMapComponent,
+        OvicMediaVrComponent
     ]
 })
 export class SharedModule {

@@ -1,1 +1,39 @@
-<p>sukien-tonghop works!</p>
+
+<ng-container [ngSwitch]="mode">
+  <ng-container *ngSwitchDefault>
+    <ng-container *ngIf="!viewFull">
+      <ng-container *ngIf="listData,else notData">
+        <div class="row row-cols-1 row-cols-md-3 g-4" style="margin-top: 24px;">
+          <div class="item-Sukien col mb-4" *ngFor="let item of listData" (click)="selectSukien(item.id)">
+            <div class="card">
+              <img [src]="item['_bg_link'] !='' ? item['_bg_link'] : 'assets/images/placeholder-3x2.jpg'"
+                   class="card-img-top">
+              <div class="card-body">
+                <h5 class="card-title text-in-line">{{item.title}}</h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+
+  </ng-container>
+  <ng-container *ngSwitchCase="'INFO'">
+    <div class="d-flex flex-column justify-content-center align-items-center">
+      <div class="sukien_title">{{sukienActive.title}}</div>
+      <div class="sukien_desc" [innerHTML]="sukienActive.mota | htmlDecode">
+
+      </div>
+
+    </div>
+  </ng-container>
+</ng-container>
+
+
+<ng-template #notData>
+  <div class="w-100 h-100 d-flex justify-content-center align-items-center">
+    <p class="font-weight-bold ">Không có dữ liệu </p>
+  </div>
+</ng-template>
+
+

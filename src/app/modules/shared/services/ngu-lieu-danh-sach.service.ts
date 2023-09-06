@@ -52,7 +52,7 @@ export class NguLieuDanhSachService {
   delete(id: number): Observable<any> {
     const is_deleted = 1;
     const deleted_by = this.auth.user.id;
-    return this.update(id, {is_deleted, deleted_by});
+    return this.update(id, { is_deleted, deleted_by });
   }
 
   searchData(page:number, search?: string): Observable<Ngulieu[]> {

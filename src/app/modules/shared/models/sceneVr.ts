@@ -19,7 +19,8 @@ export interface OvicVrPointUserData {
   iconPoint: string,
   dataPoint: Pinable,
   parentPointId: number,
-  type: OvicVrPointType
+  type: OvicVrPointType,
+  ngulieu_id?:number
 }
 
 export interface OvicVrPoint {
@@ -35,7 +36,7 @@ export class sceneControl {
 
   scene = new Scene();
   sprites: any = [];
-  sphere: any = [];
+  sphere= new Mesh();
   spheres: any = [];
   camera: PerspectiveCamera;
   points: OvicVrPoint[] = [];
@@ -50,33 +51,52 @@ export class sceneControl {
     this.camera = camera;
     this.audio = audio;
   }
-
   createScrene(scene, ovicPointId?: number, state?: boolean, userData?: OvicVrPointUserData) {
     this.scene = scene;
     if (state) {
       this.state = scene;
     }
     const geometry = new SphereGeometry(50, 32, 32);
-    let textureLoader = new TextureLoader();
-    const texture = textureLoader.load(this.image);// load hinh anh bat dau
+    const texture = new TextureLoader().load(this.image);// load hinh anh bat dau
     texture.wrapS = RepeatWrapping;
     texture.repeat.x = -1;
     const material = new MeshBasicMaterial({map: texture, side: DoubleSide});
     // material.transparent = true;
     this.sphere = new Mesh(geometry, material);
-    if (userData) {
-      this.scene.userData = userData;
-    }
+    console.log(material);
+    console.log(this.sphere);
+
+    this.scene.add(this.sphere);
+    if (userData) {this.scene.userData = userData;}
     if (ovicPointId) {
       this.sphere.userData = {ovicPointId: ovicPointId};
       this.spheres.push(this.sphere);
     }
-    this.scene.add(this.sphere);
     this.points.forEach((f) => {
       this.addTooltip(f);
     });
   }
+  createMovie(scene, videoDom: HTMLVideoElement, ovicPointId?: number, userData?: OvicVrPointUserData) {
+    this.scene = scene;
+    //=========================create videoTexture======================
+    const videoTexture = new VideoTexture(videoDom);
+    const geometry = new SphereGeometry(50, 32, 32);
+    const sphereMaterial = new MeshBasicMaterial({map: videoTexture, side: DoubleSide});
+    sphereMaterial.needsUpdate = true;
+    this.sphere = new Mesh(geometry, sphereMaterial);
+    if (userData) {
+      this.scene.userData = userData;
+    }
+    this.scene.add(this.sphere);
+    videoTexture.needsUpdate = true;
+    if (userData) {
+      this.scene.userData = userData;
+    }
+    this.points.forEach((f) => {
+      this.addTooltip(f);
+    });
 
+  }
   addPoint(point: OvicVrPoint) {
     this.points.push(point);
   }
@@ -90,13 +110,8 @@ export class sceneControl {
     })
   }
 
-
-  editPoint(point: OvicVrPoint) {
-    this.deletePoint(point.userData.ovicPointId);
-    this.addPoint(point);
-  }
-
   async addTooltip(point) {
+
     let spriteMap = new TextureLoader().load(point.userData.iconPoint);
     let spriteMaterial = new SpriteMaterial({map: spriteMap});
     let sprite = new Sprite(spriteMaterial)
@@ -107,34 +122,29 @@ export class sceneControl {
     } else {
       // Xử lý trường hợp point không hợp lệ
     }
+    // material.transparent = true;//
     sprite.scale.multiplyScalar(10);
     this.scene.add(sprite);
     this.sprites.push(sprite);
     sprite["onClick"] = () => {
       this.destroy();
-      // point.scene.createScrene(screen);
-      point.scene.createScrene(this.scene, point.id, false, point.userData);
-      point.scene.appear();
+      const mediaFile= point.userData.dataPoint.file_media
+      const typeMediaInFile = mediaFile ? mediaFile[0].type.split('/')[0]: null;
+      if(typeMediaInFile =='image'){
+        point.scene.createScrene(this.scene,point.id, false, point.userData);
+        point.scene.appear();
+      }
+      if(typeMediaInFile == 'video'){
+        point.scene.createMovie(this.scene,"" ,point.id, point.userData);
+        point.scene.appear();
+      }
     };
     sprite["mousemove"] = () => {
       point.scene.appear();
     }
   }
 
-  createMovie(scene, videoDom: HTMLVideoElement) {
-    this.scene = scene;
-    //=========================create videoTexture======================
-    const videoTexture = new VideoTexture(videoDom);
-    const geometry = new SphereGeometry(50, 32, 32);
-    const sphereMaterial = new MeshBasicMaterial({map: videoTexture, side: DoubleSide});
-    sphereMaterial.needsUpdate = true;
-    this.sphere = new Mesh(geometry, sphereMaterial);
-    this.scene.add(this.sphere);
-    videoTexture.needsUpdate = true;
-    this.points.forEach((f) => {
-      this.addTooltip(f);
-    });
-  }
+
 
   destroy() {
     TweenLite.to(this.sphere.material, 1, {
@@ -154,7 +164,7 @@ export class sceneControl {
   }
 
   appear() {
-    this.sphere.material.opacity = 0
+    // this.sphere.material.opacity = 0;
     TweenLite.to(this.sphere.material, 1, {
       opacity: 1,
     })

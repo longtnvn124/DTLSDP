@@ -1,5 +1,6 @@
 import {Ngulieu} from "@shared/models/quan-ly-ngu-lieu";
 import {OvicVrPointType} from "@shared/models/sceneVr";
+import {OvicFile} from "@core/models/file";
 
 export interface Pinable {
   id: number;
@@ -11,7 +12,9 @@ export interface Pinable {
   parent_id: number; //ngulieu_id
   donvi_id: number;
   ds_ngulieu: Ngulieu[]; //danh sách audio | hảnh 360 | video360 ;
-
+  ngulieu_id?:number;
+  file_media?:OvicFile[];
+  file_audio?:OvicFile[];
 }
 
 export interface Point extends Pinable {
