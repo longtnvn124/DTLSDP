@@ -233,6 +233,30 @@ export class NguLieuDanhSachService {
     const params = new HttpParams({fromObject});
     return this.http.get<Dto>(''.concat(this.api), {params}).pipe(map(res => res.recordsFiltered));
   }
+  getDataByLinhvucAndRoot(linhvuc?:number):Observable<Ngulieu[]>{
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'is_deleted',
+        condition: OvicQueryCondition.equal,
+        value: '0'
+      }
+    ]
+    if(linhvuc){
+      const diemditich:OvicConditionParam={
+        conditionName:'linhvuc',
+        condition:OvicQueryCondition.equal,
+        value:linhvuc.toString(10),
+        orWhere:'and'
+      }
+      conditions.push(...[diemditich]);
+    }
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+    }
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
+  }
 
 }
 

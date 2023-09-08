@@ -106,7 +106,7 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
           label: '',
           icon: 'pi pi-check-square',
           name: 'ADD_POINT_START',
-          cssClass: 'btn-secondary rounded',
+            cssClass: 'btn-secondary rounded',
           conditionField: 'root',
           conditionMultiValues: [0]
         },

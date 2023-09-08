@@ -3,9 +3,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.item-Sukien:hover{
-  transform: translateY(-7px);
-}
+
 .sukien_title{
   margin-top: 50px;
   margin-bottom: 50px;
@@ -20,3 +18,20 @@
 .sukien_desc p img{
   width:100%;
 }
+
+.item-Sukien{
+  position: relative;
+  overflow: hidden;
+}
+.item-Sukien:hover{
+  cursor: pointer;
+}
+/*.ovic-img-zoom {*/
+/*  width: 100%;*/
+/*  height: 100%;*/
+/*  transition: transform 0.3s ease;*/
+/*}*/
+
+/*.ovic-img-zoom:hover {*/
+/*  transform: scale(1.1);*/
+/*}*/

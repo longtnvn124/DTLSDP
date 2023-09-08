@@ -13,7 +13,7 @@ import {NotificationService} from "@core/services/notification.service";
 import {AuthService} from "@core/services/auth.service";
 import {HelperService} from "@core/services/helper.service";
 import {NguLieuDanhSachService} from "@shared/services/ngu-lieu-danh-sach.service";
-import {DmDiemDiTich,DmNhanVatLichSu} from "@shared/models/danh-muc";
+import {DmDiemDiTich, DmLinhVuc, DmNhanVatLichSu} from "@shared/models/danh-muc";
 import {OvicButton} from "@core/models/buttons";
 import {NguLieuSuKienService} from "@shared/services/ngu-lieu-su-kien.service";
 import {DanhMucNhanVatLichSuService} from "@shared/services/danh-muc-nhan-vat-lich-su.service";
@@ -104,7 +104,8 @@ export class DanhSachSuKienComponent implements OnInit {
       nhanvat_ids: [null],
       ngulieu_ids: [[]],
       donvi_id: [null, Validators.required],
-      file_audio:[[]]
+      file_audio:[[]],
+      linhvuc:[null,Validators.required]
     });
 
     const observeProcessFormData = this.OBSERVE_PROCESS_FORM_DATA.asObservable().pipe(debounceTime(100)).subscribe(form => this.__processFrom(form));
@@ -117,17 +118,20 @@ export class DanhSachSuKienComponent implements OnInit {
 
   dataDiemditich: DmDiemDiTich[];
   dataNhanvatlichsu: DmNhanVatLichSu[];
+  dataLinhvuc:DmLinhVuc[];
 
   ngOnInit(): void {
     this.notificationService.isProcessing(true);
-    forkJoin<[DmDiemDiTich[], DmNhanVatLichSu[]]>(
+    forkJoin<[DmDiemDiTich[], DmNhanVatLichSu[],DmLinhVuc[]]>(
       this.danhMucDiemDiTichService.getDataUnlimit(),
-      this.danhMucNhanVatLichSuService.getDataUnlimit()
+      this.danhMucNhanVatLichSuService.getDataUnlimit(),
+      this.danhMucLinhVucService.getDataUnlimit()
     ).subscribe({
-      next: ([dataDiemditich, dataNhanvatlichsu]) => {
+      next: ([dataDiemditich, dataNhanvatlichsu,linhvuc]) => {
         this.dataDiemditich = dataDiemditich;
         this.dataNhanvatlichsu = dataNhanvatlichsu;
-        if(this.dataDiemditich && this.dataNhanvatlichsu){
+        this.dataLinhvuc= linhvuc
+        if(this.dataDiemditich && this.dataNhanvatlichsu && this.dataLinhvuc){
           this.loadInit();
         }
         this.notificationService.isProcessing(false);
@@ -205,10 +209,12 @@ export class DanhSachSuKienComponent implements OnInit {
             files: [],
             nhanvat_id: null,
             donvi_id: null,
-            file_audio:[]
+            file_audio:[],
+            linhvuc:null
           });
+          this.characterAvatar = '';
         }
-        this.characterAvatar = '';
+
         this.needUpdate = true;
         this.notificationService.toastSuccess('Thao tác thành công', 'Thông báo');
       },
@@ -336,7 +342,8 @@ export class DanhSachSuKienComponent implements OnInit {
       files: [],
       nhanvat_ids: null,
       donvi_id: this.auth.userDonViId,
-      file_audio:[]
+      file_audio:[],
+      linhvuc:null
     });
     this.characterAvatar = '';
     this.formActive = this.listForm[FormType.ADDITION];
@@ -369,7 +376,8 @@ export class DanhSachSuKienComponent implements OnInit {
       nhanvat_ids: object1.nhanvat_ids,
       donvi_id: object1.donvi_id,
       ngulieu_ids: object1.ngulieu_ids,
-      file_audio:object1.file_audio
+      file_audio:object1.file_audio,
+      linhvuc:object1.linhvuc
     })
     this.characterAvatar = object1.files ? getLinkDownload(object1.files.id):'';
 
@@ -415,7 +423,7 @@ export class DanhSachSuKienComponent implements OnInit {
     try {
       const options: AvatarMakerSetting = {
         aspectRatio: 3 / 2,
-        resizeToWidth: 300,
+        resizeToWidth: 400,
         format: 'jpeg',
         cropperMinWidth: 10,
         dirRectImage: {
@@ -451,6 +459,21 @@ export class DanhSachSuKienComponent implements OnInit {
       })
       // laasy thoong tin vaf update truongwf
       this.characterAvatar = URL.createObjectURL(file);
+    }
+  }
+
+  btnCheck(sukien:SuKien){
+    if(sukien.root === 1){
+      this.nguLieuSuKienService.update(sukien.id, {root:0}).subscribe();
+      this.listData.find(f=>f.id === sukien.id).root =0;
+      // this.loadData(this.page);
+      this.notificationService.toastSuccess('Thao tác thành công');
+
+    }else if(sukien.root ===0){
+      this.nguLieuSuKienService.update(sukien.id, {root:1}).subscribe();
+      this.listData.find(f=>f.id === sukien.id).root =1;
+      // this.loadData(this.page);
+      this.notificationService.toastSuccess('Thao tác thành công');
     }
   }
 

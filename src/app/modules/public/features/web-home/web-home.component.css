@@ -98,7 +98,19 @@
     max-height: 40px;
   }
 }
-
+@media (max-width: 768px) {
+  #nav-menu-container {
+    display: none;
+  }
+}
+@media (max-width: 960px) {
+  #mobile-nav-toggle {
+    display: inline;
+  }
+  #nav-menu-container {
+    display: none;
+  }
+}
 /*--------------------------------------------------------------
 # Navigation Menu
 --------------------------------------------------------------*/
@@ -176,8 +188,8 @@
   text-decoration: none;
   display: inline-block;
   color: #fff;
-  font-weight: 400;
-  font-size: 12px;
+  font-weight: 600;
+  font-size: 14px;
   text-transform: uppercase;
   outline: none;
 }
@@ -445,4 +457,120 @@
   margin: 0;
   font-size: 24px;
   text-transform: uppercase;
+}
+
+.vr-container_title{
+  font-size:26px;
+  font-weight:600;
+  position:relative;
+}
+
+.vr-container_title::before{
+  /*content: "";*/
+  /*position: absolute;*/
+  /*width: 100%;*/
+  /*height: 4px;*/
+  /*background-color: #88d200; !* Màu sắc của đường gạch chân *!*/
+  /*bottom: -5px;*/
+  /*left: 0;*/
+
+  content: "";
+  height: 2px;
+  border-bottom: 2px solid #88d200;
+  order: 2;
+  width: 105px;
+  margin: 10px 0 0;
+}
+.vr-container_title::after {
+  /*content: "";*/
+  /*position: absolute;*/
+  /*width: 100px;*/
+  /*height: 1px;*/
+  /*background-color: #88d200; !* Màu sắc của đường gạch chân *!*/
+  /*bottom: -20px;*/
+  /*left: 0;*/
+  /*transform: translate(-50%, -50%);*/
+
+  order: 3;
+  width: 78px;
+  margin: 5px 0 0;
+}
+.hr-custom-1{
+  width: 16%;
+  border-radius: 10px;
+  border: 3px solid #3A4E42;
+}
+.hr-custom-2{
+  margin:0;
+  width: 8%;
+  border-radius: 10px;
+  border: 1px solid #3A4E42;
+}
+
+
+
+/*--------------------------footer-----------------------------*/
+.footer_container{
+  color:#fff;
+  font-size:16px;
+}
+.footer-section{
+  padding-top:15px;
+  padding-bottom: 0;
+  background-color: #4d6657;
+}
+
+.footer-left{
+  border-right: 1px solid #ccc;
+}
+.section-footer__container{
+
+}
+.footer__title{
+
+}
+.footer__social{
+
+}
+.footer__social__link{
+  display: inline-flex;
+  padding: 0;
+  margin: 0 5px;
+  text-decoration: none;
+  font-size: 15px;
+  width: 34px;
+  height: 34px;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  background-color: #0003;
+  border-radius: 999px;
+  line-height: 0;
+}
+.footer__address{
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+  color: #eee;
+}
+/*=================btn shifttest*/
+
+.shift-test__title{
+  text-shadow: -1px 0 black;
+  font-size:24px;
+  font-weight: 500;
+  color:#fff;
+}
+ .btn_shifTest{
+   background-color: #3f604d;
+   border-radius: 0;
+   color: #fff;
+   border: #609174;
+   font-size: 18px;
+ }
+.btn_shifTest:hover{
+  background-color: #3A4E42;
+}
+.shif-test__img{
+  width:350px;
 }

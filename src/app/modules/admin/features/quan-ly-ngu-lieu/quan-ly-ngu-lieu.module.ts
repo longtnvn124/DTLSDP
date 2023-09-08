@@ -20,6 +20,7 @@ import { NguLieuVideoVrComponent } from './ngu-lieu-video-vr/ngu-lieu-video-vr.c
 import { NguLieuImageVrComponent } from './ngu-lieu-image-vr/ngu-lieu-image-vr.component';
 import { DanhNhanLichSuComponent } from './danh-nhan-lich-su/danh-nhan-lich-su.component';
 import {EditorModule} from "primeng/editor";
+import {TabViewModule} from "primeng/tabview";
 
 
 @NgModule({
@@ -45,7 +46,8 @@ import {EditorModule} from "primeng/editor";
         InputTextModule,
         DialogModule,
         InputTextareaModule,
-        EditorModule
+        EditorModule,
+        TabViewModule
     ]
 })
 export class QuanLyNguLieuModule { }

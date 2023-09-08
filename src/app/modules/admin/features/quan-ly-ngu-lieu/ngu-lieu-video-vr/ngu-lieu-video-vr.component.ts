@@ -15,6 +15,9 @@ import {DanhMucLinhVucService} from "@shared/services/danh-muc-linh-vuc.service"
 import {DanhMucDiemDiTichService} from "@shared/services/danh-muc-diem-di-tich.service";
 import {FileService} from "@core/services/file.service";
 import {AuthService} from "@core/services/auth.service";
+import {AvatarMakerSetting, MediaService} from "@shared/services/media.service";
+import { getLinkDownload } from '@env';
+import { HelperService } from '@core/services/helper.service';
 interface FormNgulieu extends OvicForm {
   object: Ngulieu;
 }
@@ -75,7 +78,9 @@ export class NguLieuVideoVrComponent implements OnInit {
     private danhMucLinhVucService: DanhMucLinhVucService,
     private danhMucDiemDiTichService: DanhMucDiemDiTichService,
     private fileService:FileService,
-    private auth:AuthService
+    private auth:AuthService,
+    private mediaService:MediaService,
+    private helperService:HelperService
   ) {
     const observeProcessFormData = this.OBSERVE_PROCESS_FORM_DATA.asObservable().pipe(debounceTime(100)).subscribe(form => this.__processFrom(form));
     this.subscription.add(observeProcessFormData);
@@ -187,7 +192,7 @@ export class NguLieuVideoVrComponent implements OnInit {
     this.notificationService.openSideNavigationMenu({
       name,
       template: this.template,
-      size: 600,
+      size: this.sizeFullWidth,
       offsetTop: '0px'
     });
   }
@@ -205,6 +210,7 @@ export class NguLieuVideoVrComponent implements OnInit {
       donvi_id:object.donvi_id
     });
     this.formActive = this.listForm[FormType.UPDATE];
+    this.characterAvatar = object.file_thumbnail ? getLinkDownload(object.file_thumbnail.id) : '';
     this.formActive.object = object;
     this.preSetupForm(this.menuName);
   };
@@ -282,4 +288,87 @@ export class NguLieuVideoVrComponent implements OnInit {
     this.mode = "TABLE";
   }
 
+
+  //  ========ảnh thumbnail=========
+  loaidoituong:"TRUCTIEP"|"GIANTIEP" = "TRUCTIEP";
+
+  changeObjectType(type:"TRUCTIEP"|"GIANTIEP"){
+    if (this.loaidoituong !== type) {
+      this.loaidoituong = type;
+
+    }
+  }
+
+  //su ly ảnh nền
+  characterAvatar:string = '';
+  async makeCharacterAvatar(file: File, characterName: string): Promise<File> {
+    try {
+      const options: AvatarMakerSetting = {
+        aspectRatio: 3 / 2,
+        resizeToWidth: 400,
+        format: 'jpeg',
+        cropperMinWidth: 10,
+        dirRectImage: {
+          enable: true,
+          dataUrl: URL.createObjectURL(file)
+        }
+      };
+      const avatar = await this.mediaService.callAvatarMaker(options);
+      if (avatar && !avatar.error && avatar.data) {
+        const none = new Date().valueOf();
+        const fileName = characterName + none + '.jpg';
+        return Promise.resolve(this.fileService.base64ToFile(avatar.data.base64, fileName));
+      } else {
+        return Promise.resolve(null);
+      }
+    } catch (e) {
+      this.notificationService.isProcessing(false);
+      this.notificationService.toastError('Quá trình tạo avatar thất bại');
+      return Promise.resolve(null);
+    }
+  }
+
+  async onInputAvatar(event, fileChooser: HTMLInputElement) {
+    if (fileChooser.files && fileChooser.files.length) {
+      const file = await this.makeCharacterAvatar(fileChooser.files[0], this.helperService.sanitizeVietnameseTitle(this.f['title'].value));
+      // upload file to server
+      this.fileService.uploadFile(file, 1).subscribe({
+        next: fileUl => {
+          this.formSave.get('file_thumbnail').setValue(fileUl);
+        }, error: () => {
+          this.notificationService.toastError('Upload file không thành công');
+        }
+      })
+      // laasy thoong tin vaf update truongwf
+      this.characterAvatar = URL.createObjectURL(file);
+    }
+  }
+
+  btnCheck(ngulieu:Ngulieu){
+    if(ngulieu.root ===1){
+      this.nguLieuDanhSachService.update(ngulieu.id, {root:0}).subscribe({
+        next:()=>{
+          this.listData.find(f=>f.id === ngulieu.id).root =0;
+          this.notificationService.isProcessing(false);
+          this.notificationService.toastSuccess("Câp nhật thành công");
+        },
+        error:()=>{
+          this.notificationService.isProcessing(false);
+          this.notificationService.toastError("Cập nhật không thành công");
+        }
+      })
+    }else if(ngulieu.root === 0){
+      this.nguLieuDanhSachService.update(ngulieu.id, {root:1}).subscribe({
+        next:()=>{
+          this.listData.find(f=>f.id === ngulieu.id).root =1;
+          this.notificationService.isProcessing(false);
+          this.notificationService.toastSuccess("Câp nhật thành công");
+        },
+        error:()=>{
+          this.notificationService.isProcessing(false);
+          this.notificationService.toastError("Cập nhật không thành công");
+        }
+      })
+    }
+  }
 }

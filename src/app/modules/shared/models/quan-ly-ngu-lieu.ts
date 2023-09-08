@@ -21,6 +21,9 @@ export interface Ngulieu extends NguLieuChung {
   donvi_id: number;
   file_media?: OvicFile[];
   file_audio?: OvicFile[];
+  file_thumbnail?:OvicFile;
+  file_product?:OvicFile[];
+  root:number;
 }
 
 export interface SuKien extends NguLieuChung {
@@ -32,6 +35,8 @@ export interface SuKien extends NguLieuChung {
   donvi_id: number;
   ngulieu_ids: NguLieuSuKien[];
   file_audio:OvicFile[];
+  linhvuc:number;
+  root:1|0;
 }
 
 export interface NguLieuSuKien {

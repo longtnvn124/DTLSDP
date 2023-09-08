@@ -403,3 +403,45 @@ ovic-map {
 .sukien_desc p img {
   width: 100%;
 }
+
+
+/*------------------cover css------------------------*/
+.button-none-selection {
+  background: rgba(96, 145, 116, 0.5);
+  color: #3A4E42;
+  border: rgba(96, 145, 116, 0.5);
+}
+.button-none-selection:hover{
+  background-color:#3A4E42 !important;
+  color:#fff !important;
+  border:#3A4E42 !important;
+}
+.button-none-selection:focus{
+  outline: none !important;
+}
+
+.button-selection{
+  background-color:#3A4E42;
+  color:#fff;
+  border:#3A4E42;
+
+}
+.button-selection:hover{
+  background-color: #35463b !important;
+  color:#fff !important;
+  border:#35463b !important;
+
+}
+.button-selection:focus{
+  outline: none !important;
+}
+
+.ovic-img-zoom {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s ease;
+}
+
+.ovic-img-zoom:hover {
+  transform: scale(1.1);
+}

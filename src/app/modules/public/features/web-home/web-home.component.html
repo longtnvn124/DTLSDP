@@ -11,8 +11,8 @@
           <li><a (click)="btn_vr360()">Vr 360</a></li>
           <li><a (click)="btn_sukien()">Sự kiện</a></li>
           <li><a (click)="btn_nhanvat()">Danh nhân lịch sử</a></li>
-          <li><a>tìm kiếm</a></li>
-          <li><a>Đăng nhập</a></li>
+          <li><a (click)="btn_vr360()">tìm kiếm</a></li>
+          <li><a (click)="btn_login()">Đăng nhập</a></li>
         </ul>
       </div>
     </div>
@@ -31,77 +31,109 @@
           </ng-template>
         </p-galleria>
       </div>
-      <div class="home-body py-4">
-        <div class="container">
-          <h3 class="virtual-tour-title"> VR360 Virtual Tour</h3>
-          <div class="row d-flex justify-content-center align-items-start">
-            <div class="col-7 p-0">
-              <div class="virtual-tour-content">
-                <app-virtual-tour></app-virtual-tour>
-              </div>
-            </div>
-            <div class="col-5" style="margin-top: 9px">
-              <div class="content_info">
-                <div class="content_info-caption"> Thông tin</div>
-                <hr>
-                <ul class="list-unstyled">
-                  <li>
-                    <div class="content_info-item">Sự kiện tổng hợp</div>
-                  </li>
-                  <li>
-                    <div class="content_info-item" (click)="btn_nhanvat()">Nhân vật lịch sử</div>
-                  </li>
-                  <li>
-                    <div class="content_info-item">Thông tin kỹ thuật</div>
-                  </li>
-                </ul>
+    </div>
+    <div class="vr-container container col-xxl- mt-5">
+      <div class="d-flex justify-content-center align-items-center flex-column">
+        <div class="vr-container_title mb-2">Vr 3D 360 tiêu biểu</div>
+        <hr class="hr-custom-1">
+        <hr class="hr-custom-2">
+        <div class="d-flex mt-4">
+          <div *ngFor="let item of dataLinhvuc">
+            <button pButton pRipple
+                    [class]="linhvucId === item.id ? 'p-button-primary button-selection ' : 'button-none-selection'"
+                    label="{{item.ten}}" class="mx-2" style="border-radius:40px"
+                    (click)="selectDatavr(item.id)"></button>
+          </div>
+
+        </div>
+        <div *ngFor="let vr of dataVr"></div>
+        <!--  thay tế-->
+        <div class="w-100 mt-3">
+          <div class="row h-100">
+            <div class="inline-block flex flex-wrap flex-row justify-content-between align-items-center col-md-3 p-0"
+                 *ngFor="let item of dataVr">
+              <div class="w-100 inline-block shadow-6 bg-white ovic--parent-image position-relative">
+                <div class='head-card_hover w-100' style="cursor: pointer;">
+                  <p-image [src]="item.file_thumbnail ? item['_img_thumbnail']: 'assets/images/placeholder-3x2.jpg'"
+                           alt="Image"
+                           width="100%" [preview]="true"></p-image>
+                </div>
               </div>
             </div>
           </div>
         </div>
+        <ng-container *ngIf="dataVr == []">
+          <div class="w-100 d-flex justify-content-center align-items-center" style="height:300px">
+            <h3>Không có dữ kiệu </h3>
+          </div>
+        </ng-container>
       </div>
-      <div class="slide-examinations">
-        <div class="container">
-          <div class="d-flex justify-content-center align-items-center flex-column">
-            <h1 class="slide-examinations_title">Đợt thi</h1>
-            <h3 class="slide-examinations_desc">Truy cập và bắt đầu thi</h3>
-            <button pButton pRipple label="Truy cập" class="btn_examinations mt-4" (click)="btn_shift()"></button>
 
-            <div class="slide-examinations_body">
-              <p-carousel [value]="dataShift" [numVisible]="3" [numScroll]="1" [responsiveOptions]="responsiveOptions"
-                          [autoplayInterval]="3000">
-                <ng-template let-dataShift pTemplate="item">
-                  <div class="slide-examinations_body-item ">
-                    <div class="slide-examinations_body-title" #headerShift style="">
-                      <p>{{dataShift.title}}</p>
-                    </div>
-                    <p class="float-left slide-examinations_body-desc">{{dataShift['_time-coverted']}}</p>
-                    <p class="float-left slide-examinations_body-desc">Số thí sinh dự
-                      thi: {{dataShift['_totalShiftTest']}}</p>
+
+    </div>
+
+    <div class="shift-test-container mt-5" style="background: #75837ad4;">
+      <div class=" container d-flex justify-content-center align-items-center flex-column py-5">
+        <div class="row container">
+          <div class="col-6 text-right shif-test__img">
+            <img class="w-100" src="assets/icon-png/shift-test.png" alt="">
+          </div>
+          <div class="col-6">
+            <div class="w-100 h-100 d-flex justify-content-center align-items-center flex-column">
+              <h3 class="shift-test__title">Tìm hiểu về Lịch sử - Văn hoá</h3>
+              <h3 class="shift-test__title">thông qua các cuộc thi</h3>
+              <button pButton pRipple label="Chi tiết" class="btn_shifTest mt-2" (click)="btn_shift()"></button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="shift-test-container container col-xxl- mt-5 mb-4">
+      <div class="d-flex justify-content-center align-items-center flex-column">
+        <div class="vr-container_title mb-2">Sự kiện tiêu biểu</div>
+        <hr class="hr-custom-1">
+        <hr class="hr-custom-2">
+        <div class="d-flex mt-4">
+          <div *ngFor="let item of dataLinhvuc">
+            <button pButton pRipple
+                    [class]="loaidoituong === item.id ? 'p-button-primary button-selection ' : 'button-none-selection'"
+                    label="{{item.ten}}" class="mx-2" style="border-radius:40px"
+                    (click)="selectDataSukien(item.id)"></button>
+          </div>
+        </div>
+        <div class="w-100 mt-3">
+          <div class="row h-100">
+            <ng-container *ngIf="dataSukien,else unData">
+              <div class="inline-block flex flex-wrap flex-row justify-content-between align-items-center col-md-3 p-0"
+                   *ngFor="let item of dataSukien">
+                <div class="w-100 inline-block shadow-6 bg-white ovic--parent-image position-relative">
+                  <div class='head-card_hover w-100' style="cursor: pointer;">
+                    <p-image [src]="item.files ? item['_img_thumbnail']: 'assets/images/placeholder-3x2.jpg'"
+                             alt="Image"
+                             width="100%" [preview]="true"></p-image>
                   </div>
+                </div>
+              </div>
 
-                </ng-template>
-              </p-carousel>
-            </div>
+            </ng-container>
+            <ng-template #unData>
+              <div class="w-100 justify-content-center align-items-center" style="height:300px">
+                <h3 class="font-weight-bold"> Không có dữ liệu</h3>
+              </div>
+            </ng-template>
+
           </div>
         </div>
-      </div>
-      <div class="sukien-container container">
-        <div class=" sukien-container-header">
-          <div class="sukien-container-header_title">Sự kiện</div>
-          <div class="sukien-container-header_action" (click)="btn_sukien()">Chi tiết</div>
-        </div>
-        <div class="sukien-container-body ">
-          <app-sukien-tonghop [selectItem]="false"></app-sukien-tonghop>
-        </div>
+
+
       </div>
     </div>
 
   </ng-container>
-  <ng-container *ngSwitchCase="'CHUYENMUC'">
 
-  </ng-container>
-  <ng-container *ngSwitchCase="'DANNHMUC_NGULIEUSO'">
+  <ng-container *ngSwitchCase="'VR360'">
 
   </ng-container>
   <ng-container *ngSwitchCase="'NHANVAT'">
@@ -124,6 +156,7 @@
       <div class="w-100 h-100 d-flex justify-content-between align-items-center">
         <button pRipple pButton class="p-button-warning" label="Trở lại" icon iconPos="left" icon="pi pi-angle-left"
                 (click)="btn_exit()"></button>
+        <p class="nhanvat-title"> Sự kiện </p>
         <div>
           <button pButton pRipple class="p-button-secondary mr-2" icon="pi pi-angle-left"
                   (click)="btnBackInfoSukien()"></button>
@@ -143,3 +176,35 @@
 
 </ng-container>
 
+<div class="footer_container" #footer>
+  <div class="footer-section">
+    <div class="container section-footer__container">
+      <div class="row justify-content-center">
+        <div class="col-6 text-right footer-left">
+          <div class="d-inline-flex flex-column justify-content-center h-100">
+            <h3 class="footer__title"> Tỉnh uỷ Tỉnh Thái Nguyên</h3>
+            <div class="footer__social text-center">
+              <a href="https://www.facebook.com/" class="footer__social__link">
+                <i class="fa fa-facebook"></i></a>
+              <a href="https://twitter.com/" class="footer__social__link">
+                <i class="fa fa-twitter"></i></a>
+              <a href="https://www.youtube.com/" class="footer__social__link">
+                <i class="fa fa-google"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-6">
+          <address class="footer__address">
+            <p>Địa chỉ: Số 28 - Đ.Phan Đình Phùng - TP.Thái Nguyên - T.Thái Nguyên</p>
+            <p>Email: vanthu.btgtu@thainguyen.gov.vn </p>
+            <p>Tel: 0208 3855.529 | Fax: 0208 3855529</p></address>
+        </div>
+      </div>
+
+    </div>
+    <div class="container d-flex align-items-center justify-content-center border-top mt-2" style="font-size: 12px">
+      Bản quyền thuộc Tỉnh uỷ tỉnh Thái Nguyên
+    </div>
+  </div>
+</div>

@@ -1,20 +1,21 @@
 import {AfterViewInit, Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild} from '@angular/core';
-import {forkJoin} from "rxjs";
 import {DotThiDanhSachService} from "@shared/services/dot-thi-danh-sach.service";
 import {DotThiKetQuaService} from "@shared/services/dot-thi-ket-qua.service";
-import {Shift, ShiftTests} from "@shared/models/quan-ly-doi-thi";
 import {NotificationService} from "@core/services/notification.service";
 import {Router} from "@angular/router";
 import {SukienTonghopComponent} from "@modules/public/features/web-home/sukien-tonghop/sukien-tonghop.component";
-
+import {DanhMucLinhVucService} from "@shared/services/danh-muc-linh-vuc.service";
+import {NguLieuSuKienService} from "@shared/services/ngu-lieu-su-kien.service";
+import {DmLinhVuc} from "@shared/models/danh-muc";
+import {Ngulieu, SuKien} from "@shared/models/quan-ly-ngu-lieu";
+import {FileService} from "@core/services/file.service";
+import {NguLieuDanhSachService} from "@shared/services/ngu-lieu-danh-sach.service";
 
 @Component({
   selector: 'app-web-home',
   templateUrl: './web-home.component.html',
   styleUrls: ['./web-home.component.css']
 })
-
-
 export class WebHomeComponent implements OnInit, AfterViewInit {
   @ViewChild('slider', {static: true}) slider: ElementRef<HTMLDivElement>;
   @ViewChild(SukienTonghopComponent) sukienTonghopComponent: SukienTonghopComponent;
@@ -25,6 +26,7 @@ export class WebHomeComponent implements OnInit, AfterViewInit {
     } else {
       this.renderer.removeClass(header, 'header-scrolled');
     }
+
   }
 
   slides = [
@@ -34,7 +36,7 @@ export class WebHomeComponent implements OnInit, AfterViewInit {
 
 
   index = 0;
-  mode: "CHUYENMUC" | "DANNHMUC_NGULIEUSO" | "NHANVAT" | "SUKIEN_TONGHOP" | "SEARCH" | "THONGTIN" | "HOME" = "HOME";
+  mode: "CHUYENMUC" | "DANNHMUC_NGULIEUSO" |"VR360"| "NHANVAT" | "SUKIEN_TONGHOP" | "SEARCH" | "THONGTIN" | "HOME" = "HOME";
   responsiveOptions = [
     {
       breakpoint: '1024px',
@@ -58,50 +60,80 @@ export class WebHomeComponent implements OnInit, AfterViewInit {
     private dotThiDanhSachService: DotThiDanhSachService,
     private dotthiKetquaService: DotThiKetQuaService,
     private notificationService: NotificationService,
-    private router: Router
+    private router: Router,
+    private danhMucLinhVucService:DanhMucLinhVucService,
+    private nguLieuSuKienService: NguLieuSuKienService,
+    private nguLieuDanhSachService: NguLieuDanhSachService,
+    private fileService:FileService
   ) {
   }
 
+  dataLinhvuc:DmLinhVuc[];
+
   ngOnInit() {
-    this.loadDotthi();
+    this.danhMucLinhVucService.getDataUnlimit().subscribe({
+      next:data=>{
+        this.dataLinhvuc = data;
+        if(this.dataLinhvuc ){
+          const first = this.dataLinhvuc[0].id;
+          this.loaidoituong = first;
+          this.loadSukien(first);
+          this.linhvucId = first;
+          this.loadVr(first);
+        }
+      },
+
+    })
+
   }
 
   ngAfterViewInit() {
+
   }
-
-  dataShift: Shift[];
-
-  loadDotthi() {
-    this.notificationService.isProcessing(true);
-    forkJoin<[Shift[], ShiftTests[]]>(this.dotThiDanhSachService.getdataUnlimit(), this.dotthiKetquaService.getdataUnlimit()).subscribe({
-      next: ([dataShift, dataShiftTest]) => {
-        console.log(dataShiftTest)
-        this.dataShift = dataShift.map(m => {
-          m['__dataShiftTest'] = dataShiftTest.filter(f => f.shift_id === m.id);
-          m['_totalShiftTest'] = m['__dataShiftTest'] ? m['__dataShiftTest'].length : 0;
-          m['_time-coverted'] = this.strToTime(m.time_start) +' - '+ this.strToTime(m.time_end);
+  dataSukien:SuKien[];
+  loadSukien(id :number){
+    this.notificationService.isProcessing(true)
+    this.nguLieuSuKienService.getDataBylinhvucAndRoot(id).subscribe({
+      next:data=>{
+        this.dataSukien= data.map(m=>{
+          m['_img_thumbnail'] = m.files ? this.fileService.getPreviewLinkLocalFile(m.files): '';
           return m;
         })
-        console.log(this.dataShift);
+        console.log(this.dataSukien);
         this.notificationService.isProcessing(false);
+      },error:()=>{
+        this.notificationService.isProcessing(false);
+      }
+    })
+  }
+  selectDataSukien(id:number){
+    console.log(id);
+    this.loaidoituong = id;
+    this.loadSukien(id);
+  }
+
+  linhvucId:number;
+  selectDatavr(id:number){
+    this.linhvucId = id;
+    this.loadVr(id);
+  }
+  dataVr:Ngulieu[];
+  loadVr(id){
+
+    this.nguLieuDanhSachService.getDataByLinhvucAndRoot(id).subscribe({
+      next:(data)=>{
+        this.dataVr = data.filter(f=>f.loaingulieu === "video360" || f.loaingulieu ==="image360").map(m=>{
+          m['_img_thumbnail']= m.file_thumbnail ? this.fileService.getPreviewLinkLocalFile(m.file_thumbnail) :'';
+          return m;
+        });
+        console.log(this.dataVr);
       },
-      error: () => {
-        this.notificationService.isProcessing(false);
-        this.notificationService.toastError('Mất kết với máy chủ');
+      error:()=>{
       }
     })
   }
 
 
-  strToTime(input: string): string {
-    const date = input ? new Date(input) : null;
-    let result = '';
-    if (date) {
-      result += [date.getDate().toString().padStart(2, '0'), (date.getMonth() + 1).toString().padStart(2, '0'), date.getFullYear().toString()].join('/');
-      result += ' ' + [date.getHours().toString().padStart(2, '0'), date.getMinutes().toString().padStart(2, '0')].join(':');
-    }
-    return result;
-  }
 
   btn_shift(){
     void this.router.navigate(['test/shift/']);
@@ -120,7 +152,11 @@ export class WebHomeComponent implements OnInit, AfterViewInit {
     this.sukienTonghopComponent.btn_backInfo();
   }
   btn_vr360(){
-
+    this.mode = "VR360";
   }
 
+  btn_login(){
+    this.router.navigate(['login']);
+  }
+  loaidoituong:number
 }

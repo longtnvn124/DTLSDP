@@ -27,6 +27,7 @@ import { SukienTonghopComponent } from './features/web-home/sukien-tonghop/sukie
 import { ThongtinKythuatComponent } from './features/web-home/thongtin-kythuat/thongtin-kythuat.component';
 import {GalleriaModule} from "primeng/galleria";
 import {CarouselModule} from "primeng/carousel";
+import {ImageModule} from "primeng/image";
 
 
 @NgModule({
@@ -60,6 +61,7 @@ import {CarouselModule} from "primeng/carousel";
         TabMenuModule,
         GalleriaModule,
         CarouselModule,
+        ImageModule,
 
     ]
 })

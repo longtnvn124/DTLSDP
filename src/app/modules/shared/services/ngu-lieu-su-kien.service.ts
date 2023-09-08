@@ -5,9 +5,9 @@ import {HttpParamsHeplerService} from "@core/services/http-params-hepler.service
 import {ThemeSettingsService} from "@core/services/theme-settings.service";
 import {AuthService} from "@core/services/auth.service";
 import {map, Observable} from "rxjs";
-import {Ngulieu, SuKien} from "@shared/models/quan-ly-ngu-lieu";
+import {SuKien} from "@shared/models/quan-ly-ngu-lieu";
 import {Dto, OvicConditionParam, OvicQueryCondition} from "@core/models/dto"
-import {DonVi} from "@shared/models/danh-muc";
+
 @Injectable({
   providedIn: 'root'
 })
@@ -55,7 +55,7 @@ export class NguLieuSuKienService {
     return this.update(id, {is_deleted, deleted_by});
   }
 
-  searchData(page:number, search?: string, linhvuc?:string): Observable<{ recordsTotal: number, data: SuKien[] }> {
+  searchData(page:number, search?: string, linhvuc?:number): Observable<{ recordsTotal: number, data: SuKien[] }> {
     const conditions: OvicConditionParam[] = [
       {
         conditionName: 'is_deleted',
@@ -77,7 +77,7 @@ export class NguLieuSuKienService {
       const c2: OvicConditionParam = {
         conditionName: 'linhvuc',
         condition: OvicQueryCondition.equal,
-        value: linhvuc,
+        value: linhvuc.toString(10),
         orWhere: 'and'
       };
       conditions.push(c2);
@@ -112,5 +112,37 @@ export class NguLieuSuKienService {
     }
     const params = new HttpParams({fromObject});
     return this.http.get<Dto>(''.concat(this.api), {params}).pipe(map(res => res.data));
+  }
+
+  getDataBylinhvucAndRoot(linhvuc_id?: number):Observable<SuKien[]>{
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'is_deleted',
+        condition: OvicQueryCondition.equal,
+        value: '0'
+      },
+      {
+        conditionName: 'root',
+        condition: OvicQueryCondition.equal,
+        value: '1',
+        orWhere:'and'
+      },
+
+    ];
+
+    if(linhvuc_id){
+      conditions.push({
+        conditionName: 'linhvuc',
+        condition: OvicQueryCondition.equal,
+        value: linhvuc_id.toString(10),
+        orWhere:'and'
+      })
+    }
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+    }
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
+    return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
   }
 }

@@ -61,12 +61,11 @@
             </td>
             <td class="ovic-w-100px text-center">
               <div class="d-block --fs-14">
-                <p-button class="btn-p-10px" styleClass="" icon="pi pi-info-circle"
-                          (click)="btnInformation(item.id)"></p-button>
-                <p-button class="btn-p-10px mx-2" styleClass=" p-button-warning" icon="pi pi-pencil"
-                          (click)="btnEdit(item)"></p-button>
-                <p-button class="btn-p-10px" styleClass=" p-button-danger" icon="pi pi-trash"
-                          (click)="btnDelete(item.id)"></p-button>
+                <button *ngIf="item.root ===1" pButton pRipple class="btn-custom-size-30x30 p-button-success mr-1" icon="pi pi-check-circle" (click)="btnCheck(item)"></button>
+                <button *ngIf="item.root ===0" pButton pRipple class="btn-custom-size-30x30 p-button-secondary mr-1" icon="pi pi-circle" (click)="btnCheck(item)"></button>
+                <button pButton pRipple class="btn-custom-size-30x30 mr-1" icon="pi pi-info-circle" (click)="btnInformation(item.id)"></button>
+                <button pButton pRipple class="btn-custom-size-30x30 p-button-warning mr-1" icon="pi pi-pencil" (click)="btnEdit(item)"></button>
+                <button pButton pRipple class="btn-custom-size-30x30 p-button-danger" icon="pi pi-trash" (click)="btnDelete(item.id)"></button>
               </div>
             </td>
           </tr>
@@ -92,11 +91,19 @@
           <div class="row">
             <div class="col-4">
               <div class="row">
-                <div class="col-12">
+                <div class="col-7">
                   <p class="form-row">
                     <label>Tên sự kiện<span class="ovic-mark">*</span></label>
                     <input pRipple type="text" placeholder="Tiêu đề..." formControlName="title"
                            autocomplete="off">
+                  </p>
+                </div>
+                <div class="col-5">
+                  <p class="form-row">
+                    <label>Lĩnh vực<span class="ovic-mark">*</span></label>
+                    <p-dropdown placeholder="Chọn..." class="w-100" [options]="dataLinhvuc" optionLabel="ten"
+                                optionValue="id" [showClear]="true"
+                                formControlName='linhvuc'></p-dropdown>
                   </p>
                 </div>
               </div>
@@ -139,17 +146,6 @@
                   </p-multiSelect>
                 </div>
               </div>
-<!--              <div class="row">-->
-<!--                <div class="col-12">-->
-<!--                  <p class="form-row">-->
-<!--                    <label>Ảnh tiêu đề</label>-->
-<!--                    <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"-->
-<!--                                         [formField]="f['files']" [multiple]="true"-->
-<!--                                         [state]="1"></app-file-list-local>-->
-<!--                  </p>-->
-<!--                </div>-->
-<!--              </div>-->
-
               <div class="row">
                 <div class="col-12">
                   <p class="form-row">

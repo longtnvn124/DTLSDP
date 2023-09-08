@@ -3,11 +3,11 @@
   <ng-container *ngSwitchDefault>
     <ng-container *ngIf="!viewFull">
       <ng-container *ngIf="listData,else notData">
-        <div class="row row-cols-1 row-cols-md-3 g-4" style="margin-top: 24px;">
-          <div class="item-Sukien col mb-4" *ngFor="let item of listData" (click)="selectSukien(item.id)">
-            <div class="card">
+        <div class="row row-cols-1 row-cols-md-3 " style="margin-top: 24px;">
+          <div class="item-Sukien col flex-wrap col-md-3 mb-4" *ngFor="let item of listData" (click)="selectSukien(item.id)">
+            <div class="card " style="overflow: hidden">
               <img [src]="item['_bg_link'] !='' ? item['_bg_link'] : 'assets/images/placeholder-3x2.jpg'"
-                   class="card-img-top">
+                   class="card-img-top ovic-img-zoom">
               <div class="card-body">
                 <h5 class="card-title text-in-line">{{item.title}}</h5>
               </div>
@@ -26,7 +26,10 @@
       </div>
 
     </div>
+
   </ng-container>
+
+  <div style="height:111px"> </div>
 </ng-container>
 
 

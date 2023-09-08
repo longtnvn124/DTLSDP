@@ -1,19 +1,25 @@
 <ng-container [ngSwitch]="mode">
   <ng-container *ngSwitchDefault>
     <div class="row h-full">
-      <div class="set-width inline-block flex flex-wrap flex-row justify-content-between align-items-center col-md-3 p-3"
-           *ngFor="let item of listData">
-        <div class="w-full inline-block shadow-6 bg-white border ovic--parent-image position-relative" style="border-radius:4px">
-          <div class='head-card_hover w-100' (click)="btnSelectItem(item)" style="cursor: pointer;">
-            <div class="position-relative w-100 st-image img-child-max-width"
-                 [ovicLoadImageById]="item.files ? item.files : null"></div>
+      <div
+        class="set-width inline-block flex flex-wrap flex-row justify-content-between align-items-center col-md-3 p-3"
+        *ngFor="let item of listData">
+        <div class="w-full inline-block shadow-6 bg-white border ovic--parent-image position-relative"
+             style="border-radius:4px">
+          <div class='head-card_hover w-100 bg-image hover-zoom' (click)="btnSelectItem(item)" style="cursor: pointer;">
+            <div class="position-relative w-100 st-image img-child-max-width" style="overflow: hidden">
+              <img style="padding:0 10px 10px 10px" class="w-100 h-100 ovic-img-zoom"
+                   [src]="item.files ? item['image_convenrted'] : 'assets/images/placeholder.jpg'" alt="">
+            </div>
+            <!--            E:\PROJECT\Angular\v14\DTLSDP\src\assets\images\placeholder.jpg-->
+            <!--            <div class="position-relative w-100 st-image img-child-max-width"  [ovicLoadImageById]="item.files ? item.files : null"></div>-->
             <div class="m-2">
               <div
-                class="headding-card text-xl font-weight-bold text-capitalize text-center align-items-center p-2 text_hover text-primary"
+                class="headding-card text-xl font-weight-bold text-capitalize text-center align-items-center text_hover text-primary"
                 style="font-size: 16px; white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">
                 {{item.bietdanh}}
               </div>
-              <div class="text-lg font-medium border-top-1 p-2 text-center">
+              <div class="text-lg font-medium border-top-1 text-center">
                 <p class="font-weight-normal d-sm-inline-block mb-0" style="font-size: 13px">
                   {{item.nam}}
                 </p>
@@ -26,8 +32,8 @@
 
   </ng-container>
   <ng-container *ngSwitchCase="'INFO'">
-    <div class="row mx-0 h-100">
-      <div class="col-4 border-right h-100">
+    <div class="row mx-0 my-5 h-100 nhanvat__info">
+      <div class="col-4 h-100">
         <div *ngIf="dataSelect.files,else imgPlachoder"
              class="position-relative w-100 st-image img-child-max-width">
           <img [src]="dataSelect['image_convenrted']">
@@ -48,7 +54,7 @@
             class=""> {{dataSelect['__gioitinh_converted']}}</span></div>
         </div>
       </div>
-      <div class="col-8 scroll-ctn-right">
+      <div class="col-8 border-left scroll-ctn-right">
         <div class="mt-2 font-weight-normal" style="font-size: 16px"><b>Thông tin chi tiết:</b>
           <br><span>{{dataSelect.mota}}</span></div>
       </div>
