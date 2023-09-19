@@ -443,5 +443,34 @@ ovic-map {
 }
 
 .ovic-img-zoom:hover {
-  transform: scale(1.1);
+  transform: scale(1.2);
+}
+
+
+/* -------------resize btn > img -------------*/
+.btn-ctm img{
+  width:320px;
+}
+/*-------------------Text 1 inline---------------------*/
+
+.text-in-line{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/*----------------------Search-web---------------------------*/
+.search-dropdown .p-dropdown{
+  /*padding:9px !important;*/
+  height:42px!important;
+  width:165px!important;
+}
+.search-dropdown .p-element{
+  /*padding:9px !important;*/
+}
+.ovic-not-data{
+  font-size:14px;
+}
+/*-----------------------------custom tab menu -------------------------------*/
+.tabview-custom .p-tabview-nav{
+  justify-content: center;
 }

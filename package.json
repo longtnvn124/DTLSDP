@@ -28,6 +28,7 @@
     "@three-ts/orbit-controls": "^1.4.7",
     "@types/mapbox-gl": "^2.7.13",
     "@types/three": "^0.141.0",
+    "angular-resize-element": "^1.2.0",
     "apexcharts": "^3.40.0",
     "bootstrap": "^5.2.1",
     "browser-or-node": "^2.1.1",

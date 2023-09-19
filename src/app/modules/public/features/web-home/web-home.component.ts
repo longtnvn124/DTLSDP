@@ -10,6 +10,7 @@ import {DmLinhVuc} from "@shared/models/danh-muc";
 import {Ngulieu, SuKien} from "@shared/models/quan-ly-ngu-lieu";
 import {FileService} from "@core/services/file.service";
 import {NguLieuDanhSachService} from "@shared/services/ngu-lieu-danh-sach.service";
+import {NhanvatComponent} from "@modules/public/features/web-home/nhanvat/nhanvat.component";
 
 @Component({
   selector: 'app-web-home',
@@ -19,6 +20,7 @@ import {NguLieuDanhSachService} from "@shared/services/ngu-lieu-danh-sach.servic
 export class WebHomeComponent implements OnInit, AfterViewInit {
   @ViewChild('slider', {static: true}) slider: ElementRef<HTMLDivElement>;
   @ViewChild(SukienTonghopComponent) sukienTonghopComponent: SukienTonghopComponent;
+  @ViewChild(NhanvatComponent) nhanvatComponent: NhanvatComponent;
   @HostListener('window:scroll', []) onWindowScroll() {
     const header = document.getElementById('header');
     if (window.pageYOffset > 100) {
@@ -26,14 +28,17 @@ export class WebHomeComponent implements OnInit, AfterViewInit {
     } else {
       this.renderer.removeClass(header, 'header-scrolled');
     }
-
+  };
+  @HostListener('window:resize', ['$event']) onResize(event: Event): void {
+    this.isSmallScreen = window.innerWidth < 500;
+    this.updateNhanvatContent();
   }
-
+  isSmallScreen: boolean = window.innerWidth < 500;
+  titleNhanvat: string = "Nội dung mặc định";
   slides = [
     {index: 1, img: '/assets/slide/slide1.jpg'},
     {index: 2, img: '/assets/slide/slide2.jpg',}
   ];
-
 
   index = 0;
   mode: "CHUYENMUC" | "DANNHMUC_NGULIEUSO" |"VR360"| "NHANVAT" | "SUKIEN_TONGHOP" | "SEARCH" | "THONGTIN" | "HOME" = "HOME";
@@ -88,7 +93,7 @@ export class WebHomeComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-
+    this.updateNhanvatContent()
   }
   dataSukien:SuKien[];
   loadSukien(id :number){
@@ -99,7 +104,6 @@ export class WebHomeComponent implements OnInit, AfterViewInit {
           m['_img_thumbnail'] = m.files ? this.fileService.getPreviewLinkLocalFile(m.files): '';
           return m;
         })
-        console.log(this.dataSukien);
         this.notificationService.isProcessing(false);
       },error:()=>{
         this.notificationService.isProcessing(false);
@@ -107,7 +111,6 @@ export class WebHomeComponent implements OnInit, AfterViewInit {
     })
   }
   selectDataSukien(id:number){
-    console.log(id);
     this.loaidoituong = id;
     this.loadSukien(id);
   }
@@ -126,7 +129,6 @@ export class WebHomeComponent implements OnInit, AfterViewInit {
           m['_img_thumbnail']= m.file_thumbnail ? this.fileService.getPreviewLinkLocalFile(m.file_thumbnail) :'';
           return m;
         });
-        console.log(this.dataVr);
       },
       error:()=>{
       }
@@ -134,29 +136,61 @@ export class WebHomeComponent implements OnInit, AfterViewInit {
   }
 
 
+  btn_GoHome(){
+  this.mode= "HOME";
 
+  }
   btn_shift(){
     void this.router.navigate(['test/shift/']);
   }
   btn_sukien(){
     this.mode="SUKIEN_TONGHOP";
+    this.action_menu=false;
   }
   btn_nhanvat(){
     this.mode= "NHANVAT";
+    this.action_menu=false;
   }
 
   btn_exit(){
     this.mode= "HOME";
+    this.action_menu=false;
   }
   btnBackInfoSukien(){
     this.sukienTonghopComponent.btn_backInfo();
   }
   btn_vr360(){
     this.mode = "VR360";
+    this.action_menu=false;
   }
 
   btn_login(){
     this.router.navigate(['login']);
   }
   loaidoituong:number
+  btnBackNhanvat(){
+    this.nhanvatComponent.btnExit();
+  }
+  action_menu:boolean =false;
+  btnActionMenu(){
+    this.action_menu= !this.action_menu;
+  }
+
+  updateNhanvatContent(){
+    console.log(this.isSmallScreen);
+    if (this.isSmallScreen) {
+      this.titleNhanvat = "DNLS";
+    } else {
+      this.titleNhanvat = "Danh nhân lịch sử";
+    }
+  }
+
+  btn_search(){
+    this.mode ="SEARCH";
+    this.action_menu=false;
+  }
+
 }
+
+
+

@@ -37,11 +37,7 @@ const routes: Routes = [
     component: DanhSachNguLieuComponent,
     data: {state: 'quan-ly-ngu-lieu--danh-sach-ngu-lieu'}
   },
-  {
-    path: 'danh-sach-su-kien',
-    component: DanhSachSuKienComponent,
-    data: {state: 'quan-ly-ngu-lieu--sukien'}
-  },
+
 ];
 @NgModule({
   imports: [RouterModule.forChild(routes)],

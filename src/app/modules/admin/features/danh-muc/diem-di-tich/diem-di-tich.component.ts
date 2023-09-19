@@ -8,7 +8,6 @@ import {ThemeSettingsService} from "@core/services/theme-settings.service";
 import {DanhMucDiemDiTichService} from "@shared/services/danh-muc-diem-di-tich.service";
 import {NotificationService} from "@core/services/notification.service";
 import {OvicButton} from "@core/models/buttons";
-import {MediaVrManagerComponent} from "@shared/components/media-vr-manager/media-vr-manager.component";
 import {AuthService} from "@core/services/auth.service";
 import {Router} from '@angular/router';
 import {MediaService} from "@shared/services/media.service";
@@ -29,7 +28,6 @@ export class DiemDiTichComponent implements OnInit {
   @ViewChild('fromUpdate', {static: true}) template: TemplateRef<any>;
   @ViewChild('formMedia') formMedia: TemplateRef<any>;
   @ViewChild(Paginator) paginator: Paginator;
-  @ViewChild(MediaVrManagerComponent) MediaVr: MediaVrManagerComponent;
   statusList = [
     {
       value: 1,

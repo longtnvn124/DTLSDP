@@ -54,6 +54,10 @@ const routes : Routes = [
         path         : 'diem-truy-cap' ,
         loadChildren : () => import('@modules/admin/features/diem-truy-cap/diem-truy-cap.module').then( m => m.DiemTruyCapModule )
       } ,
+      {
+        path         : 'quan-ly-chuyen-de' ,
+        loadChildren : () => import('@modules/admin/features/quan-ly-chuyen-de/quan-ly-chuyen-de.module').then( m => m.QuanLyChuyenDeModule )
+      } ,
 			{
 				path         : 'tro-giup' ,
 				loadChildren : () => import('@modules/admin/features/tro-giup/tro-giup.module').then( m => m.TroGiupModule )

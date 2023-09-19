@@ -2,9 +2,10 @@
 <ng-container [ngSwitch]="mode">
   <ng-container *ngSwitchDefault>
     <ng-container *ngIf="!viewFull">
-      <ng-container *ngIf="listData,else notData">
-        <div class="row row-cols-1 row-cols-md-3 " style="margin-top: 24px;">
-          <div class="item-Sukien col flex-wrap col-md-3 mb-4" *ngFor="let item of listData" (click)="selectSukien(item.id)">
+      <ng-container *ngIf="listData !==[],else notData">
+<!--        <div class="row row-cols-1 row-cols-md-3 " style="margin-top: 24px;">-->
+        <div class="row row-cols-2 " style="margin-top: 20px;">
+          <div class="item-Sukien flex-wrap p-1 col-sm-6 col col-md-6 col-lg-3 mb-3" *ngFor="let item of listData" (click)="selectSukien(item.id)">
             <div class="card " style="overflow: hidden">
               <img [src]="item['_bg_link'] !='' ? item['_bg_link'] : 'assets/images/placeholder-3x2.jpg'"
                    class="card-img-top ovic-img-zoom">
@@ -15,6 +16,11 @@
           </div>
         </div>
       </ng-container>
+      <ng-template #notData>
+        <div class="w-100 h-100 d-flex justify-content-center align-items-center">
+          <p class="font-weight-bold ">Không có dữ liệu </p>
+        </div>
+      </ng-template>
     </ng-container>
 
   </ng-container>
@@ -33,10 +39,6 @@
 </ng-container>
 
 
-<ng-template #notData>
-  <div class="w-100 h-100 d-flex justify-content-center align-items-center">
-    <p class="font-weight-bold ">Không có dữ liệu </p>
-  </div>
-</ng-template>
+
 
 

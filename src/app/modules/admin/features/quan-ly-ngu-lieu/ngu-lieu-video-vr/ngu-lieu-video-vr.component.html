@@ -91,8 +91,9 @@
   <ng-container *ngSwitchCase="'MEDIAVR'" class="p-0 w-100 h-100">
     <div class="w-100 h-100">
       <div class="btn-exit" (click)="btnExit()">
-        <button pRipple pButton label="Thoát" icon="pi pi-sign-out" class="p-button-secondary"></button>
+        <button pRipple pButton label="Thoát" icon="pi pi-sign-out" style="z-index:10" class="p-button-secondary"></button>
       </div>
+<!--      <ovic-media-vr [_ngulieu]="objectVR" [showOnly]="false" class="w-100 h-100"></ovic-media-vr>-->
       <ovic-media-vr [_ngulieu]="objectVR" [showOnly]="false" class="w-100 h-100"></ovic-media-vr>
     </div>
 
@@ -172,14 +173,15 @@
                     <label>Phân loại</label>
                     <div class=" classify-container w-100">
                       <div class="mt-4">
-                        <button (click)="changeObjectType('TRUCTIEP')"
-                                [class]="loaidoituong ==='TRUCTIEP' ? 'p-button-primary' : 'ovic-button-none-selected'" pButton pRipple
+                        <button (click)="changeObjectType(0)"
+                                [class]="loaidoituong ===0 ? 'p-button-primary' : 'ovic-button-none-selected'" pButton pRipple
                                 class="p-button-rounded mr-3" icon="pi pi-wrench" label="Biên tập trực tiếp"></button>
-                        <button (click)="changeObjectType('GIANTIEP')"
-                                [class]="loaidoituong ==='GIANTIEP' ? 'p-button-primary' : 'ovic-button-none-selected'" pButton pRipple
+                        <button (click)="changeObjectType(1)"
+                                [class]="loaidoituong ===1 ? 'p-button-primary' : 'ovic-button-none-selected'" pButton pRipple
                                 class="p-button-rounded mr-3" icon="pi pi-download" label="Sản phẩm đóng gói"></button>
 
                       </div>
+                      <div style="font-size: 13px"><span class="ovic-mark"></span> Nguời dùng chọn 1 trong 2 chức năng</div>
                       <ng-container [ngSwitch]="loaidoituong">
                         <ng-container *ngSwitchDefault>
                           <div class="row">
@@ -203,7 +205,7 @@
                             </div>
                           </div>
                         </ng-container>
-                        <ng-container *ngSwitchCase="'GIANTIEP'">
+                        <ng-container *ngSwitchCase="1">
                           <div class="row">
                             <div class="col-12">
                               <p class="form-row">

@@ -20,6 +20,14 @@ const routes : Routes = [
 		path      : 'clear' ,
 		component : ClearComponent
 	} ,
+  {
+    path      : 'virtual-tour' ,
+    component : VirtualTourComponent
+  } ,
+  {
+    path      : 'home' ,
+    component : WebHomeComponent
+  } ,
 	{
 		path      : 'login' ,
 		component : LoginVideoComponent
@@ -40,14 +48,8 @@ const routes : Routes = [
 		path      : 'content-none' ,
 		component : ContentNoneComponent
 	} ,
-  {
-    path      : 'virtual-tour' ,
-    component : VirtualTourComponent
-  } ,
-  {
-    path      : 'home' ,
-    component : WebHomeComponent
-  } ,
+
+
   {
     path      : 'reset-password' ,
     component : ResetPasswordComponent

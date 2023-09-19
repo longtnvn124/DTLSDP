@@ -62,7 +62,10 @@ export class NguLieuVideoVrComponent implements OnInit {
     diemditich_ids:[[]],
     file_media: [[]],
     file_audio:[[]],
-    donvi_id:[null, Validators.required]
+    donvi_id:[null, Validators.required],
+    file_thumbnail:{},
+    file_product:[[]],
+    file_type:[0]
   });
   dataChuyemuc: DmChuyenMuc[];
   dataLoaingulieu: DmLoaiNguLieu[];
@@ -180,9 +183,12 @@ export class NguLieuVideoVrComponent implements OnInit {
       linhvuc: '',
       file_media: [],
       file_audio: [],
-      donvi_id:this.auth.userDonViId
+      donvi_id:this.auth.userDonViId,
+      file_thumbnail:{},
+      file_product:[],
+      file_type:0
     });
-
+    this.loaidoituong === 0;
     this.formActive = this.listForm[FormType.ADDITION];
     this.preSetupForm(this.menuName);
   }
@@ -207,8 +213,12 @@ export class NguLieuVideoVrComponent implements OnInit {
       linhvuc: object.linhvuc,
       file_media: object.file_media,
       file_audio: object.file_audio,
-      donvi_id:object.donvi_id
+      donvi_id:object.donvi_id,
+      file_thumbnail:object.file_thumbnail,
+      file_product:object.file_product,
+      file_type:object.file_type
     });
+    this.loaidoituong === object.file_type
     this.formActive = this.listForm[FormType.UPDATE];
     this.characterAvatar = object.file_thumbnail ? getLinkDownload(object.file_thumbnail.id) : '';
     this.formActive.object = object;
@@ -290,12 +300,16 @@ export class NguLieuVideoVrComponent implements OnInit {
 
 
   //  ========ảnh thumbnail=========
-  loaidoituong:"TRUCTIEP"|"GIANTIEP" = "TRUCTIEP";
+  loaidoituong:0|1 = 0;//0:bientap// 1 sp dongs goi
 
-  changeObjectType(type:"TRUCTIEP"|"GIANTIEP"){
+  changeObjectType(type:0|1){
     if (this.loaidoituong !== type) {
       this.loaidoituong = type;
-
+    }
+    if(type ===1){
+      this.f['file_type'].setValue(1);
+    }else{
+      this.f['file_type'].setValue(0);
     }
   }
 
@@ -305,7 +319,7 @@ export class NguLieuVideoVrComponent implements OnInit {
     try {
       const options: AvatarMakerSetting = {
         aspectRatio: 3 / 2,
-        resizeToWidth: 400,
+        resizeToWidth: 1000,
         format: 'jpeg',
         cropperMinWidth: 10,
         dirRectImage: {

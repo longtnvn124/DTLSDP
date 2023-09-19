@@ -1,43 +1,32 @@
-<div #tooltip class="tooltip"></div>
+<div #tooltip class="tooltip d-flex justify-content-center align-items-center flex-column ">
+  <img src="" alt="" style="width:250px" #imgtooltip>
+  <div class="p-1" #titletooltip></div>
+</div>
+
 
 <div #container class="container-vr ctn_body">
   <div class="onRight-bottom">
-    <button pButton pRipple icon="pi pi-info-circle" class="p-button-secondary m-2 " (click)="btnInfo()"></button>
-    <button pButton pRipple icon="pi pi-map" class="p-button-secondary m-2 " (click)="btnviewMap()"></button>
-    <button pButton pRipple [icon]="video360.paused ? 'pi pi-play' : 'pi pi-pause'" class="p-button-secondary m-2 "
+    <button pButton pRipple icon="pi pi-info-circle" class="btn-round p-button-secondary m-2 "
+            (click)="btnHelp()"></button>
+<!--    <button pButton pRipple icon="pi pi-map" class="btn-round p-button-secondary m-2 " (click)="btnviewMap()"></button>-->
+    <button *ngIf="isVideo" pButton pRipple [icon]="isVideoPlay ?'pi pi-pause' :'pi pi-play' "
+            class="btn-round p-button-secondary m-2 "
             (click)="btnPlayVideo()"></button>
-    <button pButton pRipple [icon]="souseAudio ? 'pi pi-volume-down':'pi pi-volume-off'" class="--surface-section m-2 "
+    <button pButton pRipple [icon]="souseAudio ? 'pi pi-volume-off':'pi pi-volume-down'"
+            class="btn-round --surface-section m-2 "
             (click)="btnPlayAudio()"></button>
-    <button pButton pRipple [icon]="rotate ? 'pi pi-spin pi-spinner':'pi pi-refresh'" class="p-button-warning m-2 "
+    <button pButton pRipple [icon]="rotate ? 'pi pi-spin pi-spinner':'pi pi-refresh'"
+            class="btn-round p-button-warning m-2 "
             (click)="btnplayRotate()"></button>
   </div>
 </div>
 
-<!--<div class="onCenter-bottom">-->
-<!--    <button pRipple pButton class="btn-outline-0" icon="pi pi-chevron-up"></button>&ndash;&gt;-->
-<!--    <button pRipple pButton class="btn-outline-0" icon="pi pi-chevron-down"></button>&ndash;&gt;-->
-<!--  <div class="onCenter-bottom_item" (click)="btnNext()">-->
-<!--    <svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 24 24" width="512"-->
-<!--         height="512">-->
-<!--      <path-->
-<!--        d="M18,20c-.384,0-.768-.146-1.061-.439l-4.938-4.939-4.94,4.939c-.586,.586-1.535,.586-2.121,0s-.586-1.536,0-2.121l6.001-6c.281-.281,.663-.439,1.061-.439h0c.397,0,.779,.158,1.061,.439l5.999,6c.586,.586,.586,1.536,0,2.121-.293,.293-.677,.439-1.061,.439Zm1.067-7.708c.582-.589,.576-1.539-.014-2.121l-3.922-3.873c-.837-.837-1.948-1.298-3.132-1.298s-2.295,.461-3.124,1.291l-3.93,3.88c-.59,.582-.596,1.532-.014,2.121,.581,.59,1.533,.595,2.121,.014l3.938-3.887c.537-.539,1.473-.546,2.025,.007l3.93,3.88c.292,.289,.673,.433,1.054,.433,.387,0,.774-.149,1.067-.446Z"/>-->
-<!--    </svg>-->
-<!--  </div>-->
-<!--  <div class="onCenter-bottom_item" (click)="btnBack()">-->
-<!--    <svg xmlns="http://www.w3.org/2000/svg" id="Bold" viewBox="0 0 24 24" width="512" height="512">-->
-<!--      <path-->
-<!--        d="M19.061,7.854a1.5,1.5,0,0,0-2.122,0l-4.586,4.585a.5.5,0,0,1-.707,0L7.061,7.854A1.5,1.5,0,0,0,4.939,9.975l4.586,4.586a3.5,3.5,0,0,0,4.95,0l4.586-4.586A1.5,1.5,0,0,0,19.061,7.854Z"/>-->
-<!--    </svg>-->
-<!--  </div>-->
-
-<!--</div>-->
-
 <p-contextMenu [target]="container" [model]="items" appendTo="body" *ngIf="!showOnly"></p-contextMenu>
 
 
-<!--<audio #audio autoplay loop class="d-none">-->
-<!--  <source [src]="audioLink | ovicSafeUrl" type="audio/mpeg">-->
-<!--</audio>-->
+<audio #audio autoplay loop class="d-none">
+  <source [src]="audioLink | ovicSafeUrl" type="audio/mpeg">
+</audio>
 
 <ng-template #fromUpdate>
   <div class="ovic-side-navigation-content h-100">
@@ -106,63 +95,6 @@
               </p>
             </div>
           </div>
-          <!--          <div class="row" *ngIf="f['type'].value === 'DIRECT'">-->
-          <!--            <div class="col-12">-->
-          <!--              <div class="form-row">-->
-          <!--                <label>Đích đến <span class="ovic-mark">*</span></label>-->
-          <!--                <div class="w-100">-->
-          <!--                  <button *ngIf="!destination; else showDestination" pRipple-->
-          <!--                          class="btn-vr-chooser justify-content-center align-items-center"-->
-          <!--                          [class.btn-vr-chooser&#45;&#45;invalid]="f['ds_ngulieu'].touched && formSave.getError('invalidPinable')"-->
-          <!--                          (click)="btnAddNgulieu('DIRECT')">-->
-          <!--                    <span class="btn-vr-chooser__icon"></span>-->
-          <!--                  </button>-->
-          <!--                  <ng-template #showDestination>-->
-          <!--                    <div class="list-vr-chooser" *ngIf="destination">-->
-          <!--                      <div class="d-flex align-items-center w-100 mb-0">-->
-          <!--                        <div class="btn-vr-chooser&#45;&#45;single w-100 p-0 border-0">-->
-          <!--                          <span class="btn-vr-chooser__icon"-->
-          <!--                                [class]="'btn-vr-chooser__icon&#45;&#45;'+destination.loaingulieu"></span>-->
-          <!--                          <p class="btn-vr-chooser__name">{{ destination.title }}</p>-->
-          <!--                        </div>-->
-          <!--                        <button class="btn-vr-chooser__control p-button-text p-button-rounded" pRipple pButton-->
-          <!--                                icon="pi pi-download"-->
-          <!--                                (click)="dowloadNgulieu(destination)"></button>-->
-          <!--                        <button class="btn-vr-chooser__control p-button-text p-button-danger p-button-rounded" pRipple-->
-          <!--                                pButton icon="pi pi-trash"-->
-          <!--                                (click)="deleteNguLieuOnForm(destination)"></button>-->
-          <!--                      </div>-->
-          <!--                    </div>-->
-          <!--                  </ng-template>-->
-          <!--                </div>-->
-          <!--              </div>-->
-          <!--            </div>-->
-          <!--          </div>-->
-          <!--          <div class="row">-->
-          <!--            <div class="col-12">-->
-          <!--              <div class="form-row">-->
-          <!--                <label>Danh mục ngữ liệu <span class="ovic-mark">*</span></label>-->
-          <!--                <div class="list-vr-chooser">-->
-          <!--                  <div class="d-flex align-items-center w-100" *ngFor="let n of otherInfo">-->
-          <!--                    <div class="btn-vr-chooser&#45;&#45;single pt-2 pb-2 px-0 border-0">-->
-          <!--                      <span class="btn-vr-chooser__icon" [class]="'btn-vr-chooser__icon&#45;&#45;'+n.loaingulieu"></span>-->
-          <!--                      <p class="btn-vr-chooser__name">{{ n.title }}</p>-->
-          <!--                    </div>-->
-          <!--                    <button class="btn-vr-chooser__control p-button-text p-button-rounded" pRipple pButton-->
-          <!--                            icon="pi pi-download"-->
-          <!--                            (click)="dowloadNgulieu(n)"></button>-->
-          <!--                    <button class="btn-vr-chooser__control p-button-text p-button-danger p-button-rounded" pRipple-->
-          <!--                            pButton icon="pi pi-trash"-->
-          <!--                            (click)="deleteNguLieuOnForm(n)"></button>-->
-          <!--                  </div>-->
-          <!--                  <div class="d-flex align-items-center w-100 border-0">-->
-          <!--                    <button class="p-button-success w-100" pRipple pButton icon="pi pi-plus"-->
-          <!--                            (click)="btnAddNgulieu('INFO')"></button>-->
-          <!--                  </div>-->
-          <!--                </div>-->
-          <!--              </div>-->
-          <!--            </div>-->
-          <!--          </div>-->
         </form>
       </div>
     </div>
@@ -176,142 +108,178 @@
   </div>
 </ng-template>
 
-<p-dialog header="Hướng dẫn sử dụng" [(visible)]="visibleHelp" [modal]="true" [style]="{ width: '650px'}"
-          styleClass="p-0"
-          [draggable]="false" [resizable]="false">
-  <div class="d-flex justify-content-center flex-column p-2 hd-dl-info w-100">
-    <div class="hd-dl-info-item ">
-      <svg xmlns="http://www.w3.org/2000/svg" id="Capa_1" enable-background="new 0 0 511.998 511.998" height="512"
-           viewBox="0 0 511.998 511.998" width="512">
-        <g>
-          <path
-            d="m208.923 45.771c8.284 0 15-6.716 15-15v-15.771c0-8.284-6.716-15-15-15s-15 6.716-15 15v15.771c0 8.285 6.716 15 15 15z"/>
-          <path
-            d="m284.153 76.934c3.839 0 7.678-1.465 10.606-4.394l11.152-11.152c5.858-5.857 5.858-15.355 0-21.213-5.857-5.857-15.355-5.857-21.213 0l-11.152 11.152c-5.858 5.857-5.858 15.355 0 21.213 2.93 2.929 6.768 4.394 10.607 4.394z"/>
-          <path
-            d="m300.315 137.164c0 8.284 6.716 15 15 15h15.771c8.284 0 15-6.716 15-15s-6.716-15-15-15h-15.771c-8.284 0-15 6.716-15 15z"/>
-          <path
-            d="m117.529 137.164c0-8.284-6.716-15-15-15h-15.771c-8.284 0-15 6.716-15 15s6.716 15 15 15h15.771c8.284 0 15-6.716 15-15z"/>
-          <path
-            d="m123.085 72.54c2.929 2.929 6.768 4.394 10.606 4.394s7.678-1.465 10.606-4.394c5.858-5.857 5.858-15.355 0-21.213l-11.152-11.152c-5.857-5.857-15.355-5.857-21.213 0s-5.858 15.355 0 21.213z"/>
-          <path
-            d="m394.32 222.999c-7.714 0-14.989 1.913-21.377 5.29-7.767-14.373-22.977-24.16-40.429-24.16-7.714 0-14.989 1.913-21.376 5.29-7.765-14.373-22.969-24.159-40.415-24.159-5.589 0-10.947 1.004-15.905 2.841l-.001-73.006c-.002-25.301-20.59-45.885-45.895-45.885-25.311 0-45.901 20.591-45.901 45.9l.003 144.009h-6.378c-25.306 0-45.896 20.596-45.896 45.911l-.002 31.233c-.003 47.07 18.447 92.999 50.828 127.029v33.705c0 8.284 6.716 15 15 15h208.662c8.284 0 15-6.716 15-15v-34.752c25.833-34.523 40.002-76.976 40.002-120.149v-73.178c0-25.319-20.599-45.919-45.92-45.919zm15.92 119.098c0 38.216-13.058 75.77-36.767 105.743-2.096 2.649-3.235 5.928-3.235 9.306v24.853h-178.662v-24.853c0-4.034-1.625-7.898-4.508-10.72-29.439-28.814-46.323-68.967-46.32-110.16l.002-31.233c.001-8.774 7.132-15.913 15.896-15.913h21.378c3.979 0 7.794-1.58 10.606-4.394 2.813-2.813 4.394-6.629 4.394-10.606l-.003-159.009c0-8.768 7.134-15.9 15.901-15.9 8.764 0 15.894 7.127 15.895 15.887l.003 148.43c0 8.284 6.716 15 15 15 8.283 0 14.999-6.716 15-14.999l.002-32.366c0-8.768 7.134-15.901 15.901-15.901 8.77 0 15.903 7.141 15.903 15.918v51.218c0 8.284 6.716 15 15 15s15-6.716 15-15v-32.379c0-8.761 7.127-15.888 15.888-15.888 8.777 0 15.919 7.142 15.919 15.92v60.649c0 8.284 6.716 15 15 15s15-6.716 15-15v-41.814c0-8.76 7.127-15.887 15.887-15.887 8.778 0 15.92 7.142 15.92 15.92z"/>
-        </g>
-      </svg>
-      <div class="hd-dl-info_title">
-        Người dùng sử dụng chuột(máy tính) hoặc chạm vào màn hình(điện thoại) để điều hướng xoay góc nhìn trong không
-        gian 3D
+
+<ng-container *ngIf="!isSmallScreen,else isSmall">
+  <p-dialog header="Hướng dẫn sử dụng" [(visible)]="visibleHelp" [modal]="true" [style]="{ width: '650px'}"
+            styleClass="p-0"
+            [draggable]="false" [resizable]="false">
+    <div class="d-flex justify-content-center flex-column p-2 hd-dl-info w-100">
+      <div class="hd-dl-info-item ">
+        <svg xmlns="http://www.w3.org/2000/svg" id="Capa_1" enable-background="new 0 0 511.998 511.998" height="512"
+             viewBox="0 0 511.998 511.998" width="512">
+          <g>
+            <path
+              d="m208.923 45.771c8.284 0 15-6.716 15-15v-15.771c0-8.284-6.716-15-15-15s-15 6.716-15 15v15.771c0 8.285 6.716 15 15 15z"/>
+            <path
+              d="m284.153 76.934c3.839 0 7.678-1.465 10.606-4.394l11.152-11.152c5.858-5.857 5.858-15.355 0-21.213-5.857-5.857-15.355-5.857-21.213 0l-11.152 11.152c-5.858 5.857-5.858 15.355 0 21.213 2.93 2.929 6.768 4.394 10.607 4.394z"/>
+            <path
+              d="m300.315 137.164c0 8.284 6.716 15 15 15h15.771c8.284 0 15-6.716 15-15s-6.716-15-15-15h-15.771c-8.284 0-15 6.716-15 15z"/>
+            <path
+              d="m117.529 137.164c0-8.284-6.716-15-15-15h-15.771c-8.284 0-15 6.716-15 15s6.716 15 15 15h15.771c8.284 0 15-6.716 15-15z"/>
+            <path
+              d="m123.085 72.54c2.929 2.929 6.768 4.394 10.606 4.394s7.678-1.465 10.606-4.394c5.858-5.857 5.858-15.355 0-21.213l-11.152-11.152c-5.857-5.857-15.355-5.857-21.213 0s-5.858 15.355 0 21.213z"/>
+            <path
+              d="m394.32 222.999c-7.714 0-14.989 1.913-21.377 5.29-7.767-14.373-22.977-24.16-40.429-24.16-7.714 0-14.989 1.913-21.376 5.29-7.765-14.373-22.969-24.159-40.415-24.159-5.589 0-10.947 1.004-15.905 2.841l-.001-73.006c-.002-25.301-20.59-45.885-45.895-45.885-25.311 0-45.901 20.591-45.901 45.9l.003 144.009h-6.378c-25.306 0-45.896 20.596-45.896 45.911l-.002 31.233c-.003 47.07 18.447 92.999 50.828 127.029v33.705c0 8.284 6.716 15 15 15h208.662c8.284 0 15-6.716 15-15v-34.752c25.833-34.523 40.002-76.976 40.002-120.149v-73.178c0-25.319-20.599-45.919-45.92-45.919zm15.92 119.098c0 38.216-13.058 75.77-36.767 105.743-2.096 2.649-3.235 5.928-3.235 9.306v24.853h-178.662v-24.853c0-4.034-1.625-7.898-4.508-10.72-29.439-28.814-46.323-68.967-46.32-110.16l.002-31.233c.001-8.774 7.132-15.913 15.896-15.913h21.378c3.979 0 7.794-1.58 10.606-4.394 2.813-2.813 4.394-6.629 4.394-10.606l-.003-159.009c0-8.768 7.134-15.9 15.901-15.9 8.764 0 15.894 7.127 15.895 15.887l.003 148.43c0 8.284 6.716 15 15 15 8.283 0 14.999-6.716 15-14.999l.002-32.366c0-8.768 7.134-15.901 15.901-15.901 8.77 0 15.903 7.141 15.903 15.918v51.218c0 8.284 6.716 15 15 15s15-6.716 15-15v-32.379c0-8.761 7.127-15.888 15.888-15.888 8.777 0 15.919 7.142 15.919 15.92v60.649c0 8.284 6.716 15 15 15s15-6.716 15-15v-41.814c0-8.76 7.127-15.887 15.887-15.887 8.778 0 15.92 7.142 15.92 15.92z"/>
+          </g>
+        </svg>
+        <div class="hd-dl-info_title">
+          Người dùng sử dụng chuột(máy tính) hoặc chạm vào màn hình(điện thoại) để điều hướng xoay góc nhìn trong không
+          gian 3D
+        </div>
+      </div>
+      <div class="bd-dl-info mt-2">
+
+        <table>
+          <tr>
+            <td>
+              <div class="bd-dl-info_item">
+
+                <div class="bd-dl-info_item-icon">
+                  <button pButton pRipple icon="pi pi-play" class='btn-round p-button-secondary'></button>
+                </div>
+                <div class="bd-dl-info_item-title">
+                  Chạm để xem video 3D
+                </div>
+
+              </div>
+            </td>
+            <td>
+              <div class="bd-dl-info_item">
+                <div class="bd-dl-info_item-icon">
+                  <img src="/assets/icon-png/pin.png" alt="">
+                </div>
+                <div class="bd-dl-info_item-title">
+                  Chạm để hiển thị vị trí mới
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="bd-dl-info_item">
+                <div class="bd-dl-info_item-icon">
+                  <button pButton pRipple icon="pi pi pi-volume-off" class="btn-round "></button>
+                </div>
+                <div class="bd-dl-info_item-title">
+                  Chạm để bật thuyết minh
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="bd-dl-info_item">
+                <div class="bd-dl-info_item-icon">
+                  <img src="/assets/icon-png/infomation.png" alt="">
+                </div>
+                <div class="bd-dl-info_item-title">
+                  Chạm để hiển thị thông tin
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="bd-dl-info_item">
+                <div class="bd-dl-info_item-icon">
+                  <button pButton pRipple icon="pi pi-refresh" class="btn-round p-button-warning"></button>
+                </div>
+                <div class="bd-dl-info_item-title">
+                  chạm để bật tự động quay
+                </div>
+              </div>
+            </td>
+            <td>
+            </td>
+          </tr>
+        </table>
       </div>
     </div>
-    <div class="bd-dl-info mt-2">
-
-      <table>
-        <tr>
-          <td>
-            <div class="bd-dl-info_item">
-
-              <div class="bd-dl-info_item-icon">
-                <button pButton pRipple icon="pi pi-play" class='btn-round p-button-secondary'></button>
-              </div>
-              <div class="bd-dl-info_item-title">
-                Chạm để xem video 3D
-              </div>
-
-            </div>
-          </td>
-          <td>
-            <div class="bd-dl-info_item">
-              <div class="bd-dl-info_item-icon">
-                <img src="/assets/icon-png/pin.png" alt="">
-              </div>
-              <div class="bd-dl-info_item-title">
-                Chạm để hiển thị vị trí mới
-              </div>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <div class="bd-dl-info_item">
-              <div class="bd-dl-info_item-icon">
-                <button pButton pRipple icon="pi pi pi-volume-off" class="btn-round "></button>
-              </div>
-              <div class="bd-dl-info_item-title">
-                Chạm để bật thuyết minh
-              </div>
-            </div>
-          </td>
-          <td>
-            <div class="bd-dl-info_item">
-              <div class="bd-dl-info_item-icon">
-                <img src="/assets/icon-png/infomation.png" alt="">
-              </div>
-              <div class="bd-dl-info_item-title">
-                Chạm để hiển thị thông tin
-              </div>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <div class="bd-dl-info_item">
-              <div class="bd-dl-info_item-icon">
-                <button pButton pRipple icon="pi pi-refresh" class="btn-round p-button-warning"></button>
-              </div>
-              <div class="bd-dl-info_item-title">
-                chạm để bật tự động quay
-              </div>
-            </div>
-          </td>
-          <td>
-
-          </td>
-        </tr>
-
-      </table>
-
+    <div>
 
     </div>
-  </div>
-  <div>
-
-  </div>
-</p-dialog>
-
-<p-dialog header="Thông tin chi tiết" [(visible)]="visibleInfo" [modal]="true" [style]="{ width: '50vw' }"
-          [draggable]="false" [resizable]="false" class="m-0">
-
-  <div class="w-100 h-100 d-flex justify-content-center align-items-center flex-column">
-    <ng-container *ngIf="datainfo,else notData">
-
-      <div class="datainfo-title">
-        <div *ngIf="datainfo['_type_media'] ==='video'" class="w-100 text-center">
-          <video class="datainfo-body__img" controls>
-            <source [src]="datainfo['_mediaLink'] ? datainfo['_mediaLink'] : 'assets/images/placeholder-3x2.jpg'"
-                    type="video/mp4">
-          </video>
-        </div>
-        <div  *ngIf="datainfo['_type_media'] ==='image'" class="w-100 text-center">
-          <div id="media" class="w-100 text-center">
-            <img [src]="datainfo['_mediaLink'] ? datainfo['_mediaLink'] : 'assets/images/placeholder-3x2.jpg'"
-                 class="datainfo-body__img">
+  </p-dialog>
+  <p-dialog header="Thông tin chi tiết" [(visible)]="visibleInfo" [modal]="true" [style]="{ width: '60vw' }"
+            [draggable]="false" [resizable]="false" class="m-0">
+    <div class="row row-cols-1">
+      <div class="col-lg-6 ctn-left d-block">
+        <ng-container *ngIf="datainfo">
+          <div *ngIf="datainfo['_type_media'] === 'video',else viewImg" class="w-100 text-center">
+            <video class="datainfo-body__img" controls>
+              <source [src]="datainfo['_file_media'] ? datainfo['_file_media'] : 'assets/images/placeholder-3x2.jpg'"
+                      type="video/mp4">
+            </video>
           </div>
-        </div>
-        <p class="datainfo-title__p ">{{datainfo.title}}</p>
-      </div>
-      <div class="datainfo-body mt-1">
-        <div class="datainfo-body__dec">Mô tả: <span>{{datainfo.mota}}</span></div>
-      </div>
+          <ng-template #viewImg>
+            <div class="w-100 text-center">
+              <img [src]="datainfo['_file_media'] ? datainfo['_file_media'] : 'assets/images/placeholder-3x2.jpg'"
+                   class="datainfo-body__img">
+            </div>
+          </ng-template>
 
-    </ng-container>
-    <ng-template #notData>
-      <p class="not-data">Không có dữ liệu</p>
-    </ng-template>
-  </div>
-</p-dialog>
+        </ng-container>
+      </div>
+      <div class="col-lg-6 ctn-right">
+        <ng-container *ngIf="datainfo">
+          <div class="datainfo-title">
+            <p class="datainfo-title__p m-auto">{{datainfo.title}}</p>
+          </div>
+          <div class="datainfo-body mt-1">
+            <div class="datainfo-body__dec">Mô tả: <span>{{datainfo.mota}}</span></div>
+          </div>
+
+        </ng-container>
+      </div>
+    </div>
+  </p-dialog>
+</ng-container>
+<ng-template #isSmall>
+  <p-dialog header="Thông tin chi tiết" [(visible)]="visibleInfo" [modal]="true" [style]="{ width: '94%' }"
+            [draggable]="false" [resizable]="false" class="m-0">
+    <div class="row row-cols-1">
+      <div class="col-lg-5 ctn-left d-block">
+        <ng-container *ngIf="datainfo">
+          <div *ngIf="datainfo['_type_media'] === 'video',else viewImg" class="w-100 text-center">
+            <video class="datainfo-body__img" controls>
+              <source [src]="datainfo['_file_media'] ? datainfo['_file_media'] : 'assets/images/placeholder-3x2.jpg'"
+                      type="video/mp4">
+            </video>
+          </div>
+          <ng-template #viewImg>
+            <div id="media" class="w-100 text-center">
+              <img [src]="datainfo['_file_media'] ? datainfo['_file_media'] : 'assets/images/placeholder-3x2.jpg'"
+                   class="datainfo-body__img">
+            </div>
+          </ng-template>
+
+        </ng-container>
+      </div>
+      <div class="col-lg-7 ctn-right">
+        <ng-container *ngIf="datainfo">
+          <div class="datainfo-title">
+            <p class="datainfo-title__p m-auto">{{datainfo.title}}</p>
+          </div>
+          <div class="datainfo-body mt-1">
+            <div class="datainfo-body__dec">Mô tả: <span>{{datainfo.mota}}</span></div>
+          </div>
+
+        </ng-container>
+      </div>
+    </div>
+  </p-dialog>
+</ng-template>
+
 
 <ng-container *ngIf="showMap">
   <div class="map-Resize">
-    <ovic-map [point]="pointSelect"></ovic-map>
+    <ovic-map [points]="dataPointsChild"></ovic-map>
   </div>
 </ng-container>

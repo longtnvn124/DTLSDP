@@ -200,8 +200,17 @@ export class OvicAvatarMakerComponent implements OnInit , AfterViewInit {
 		this.croppedPanelMode = 'open';
 	}
 
-	imageCropped( event : ImageCroppedEvent ) {
+	// imageCropped( event : ImageCroppedEvent ) {
+	// 	this.croppedImage = event;
+	// 	this.result.data  = event;
+	// }
+  imageCropped( event : ImageCroppedEvent ) {
 		this.croppedImage = event;
+    const clone = this.croppedImage;
+    if(this.croppedImage.width>=1000){
+      this.croppedImage.width = clone.width *2/5;
+      this.croppedImage.height = clone.height *2/5;
+    }
 		this.result.data  = event;
 	}
 

@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {NotificationService} from "@core/services/notification.service";
 import {NganHangCauHoiService} from "@shared/services/ngan-hang-cau-hoi.service";
@@ -19,15 +19,22 @@ import {HelperService} from "@core/services/helper.service";
   styleUrls: ['./panel.component.css']
 })
 export class PanelComponent implements OnInit, OnDestroy {
+  @HostListener('window:resize', ['$event']) onResize(event: Event): void {
+    console.log(this.isSmallScreen);
 
+    this.isSmallScreen = window.innerWidth < 500;
+    // this.updateNhanvatContent();
+  }
+
+  isSmallScreen: boolean = window.innerWidth < 500;
   mode: 'PANEL' | 'TEXTRESULTS';
   candiate = {
     name: 'Unknown',
     avatar: '',
     testName: '',
     date: '',
-    number_correct:'',
-    result:0,
+    number_correct: '',
+    result: 0,
   };
 
   shift: Shift;
@@ -65,14 +72,11 @@ export class PanelComponent implements OnInit, OnDestroy {
     const questionIds = this.anwserQuestions;
     if (time && questionIds && this.router.navigate(['/test/shift'])) {
       this.dotThiKetQuaService.update(this.shiftTest.id, {time: time, details: questionIds}).subscribe();
-    }else{
-      this.dotThiKetQuaService.update(this.shiftTest.id, {time: time, details: questionIds,state:-1}).subscribe();
+    } else {
+      this.dotThiKetQuaService.update(this.shiftTest.id, {time: time, details: questionIds, state: -1}).subscribe();
     }
     this.destroy$.next('closed');
     this.destroy$.complete()
-
-
-
 
 
   }
@@ -97,7 +101,7 @@ export class PanelComponent implements OnInit, OnDestroy {
 
   private updateTimeLeftToServer() {
     if (this.shiftTest && Math.max(this.remainingTimeClone, 0) && this.shiftTest.state === 1) {
-      this.dotThiKetQuaService.update(this.shiftTest.id, {time: this.remainingTimeClone}).subscribe();
+      this.dotThiKetQuaService.update(this.shiftTest.id, {state:1,time: this.remainingTimeClone}).subscribe();
     }
   }
 
@@ -125,13 +129,13 @@ export class PanelComponent implements OnInit, OnDestroy {
         this.remainingTimeClone = this.shiftTest.time;
         const d = new Date();
         if (this.shiftTest && this.shiftTest.state === 2) {
-          if(this.shiftTest ){
-            this.candiate={
+          if (this.shiftTest) {
+            this.candiate = {
               name: this.auth.user.display_name,
               avatar: this.auth.user.avatar,
               testName: this.shift.title,
               date: [d.getDate().toString().padStart(2, '0'), (d.getMonth() + 1).toString().padStart(2, '0'), d.getFullYear().toString()].join('/'),
-              number_correct:this.shiftTest.number_correct +'/'+ this.shiftTest.question_ids.length,
+              number_correct: this.shiftTest.number_correct + '/' + this.shiftTest.question_ids.length,
               result: this.shiftTest.score,
             }
           }
@@ -142,7 +146,7 @@ export class PanelComponent implements OnInit, OnDestroy {
             avatar: this.auth.user.avatar,
             testName: this.shift.title,
             date: [d.getDate().toString().padStart(2, '0'), (d.getMonth() + 1).toString().padStart(2, '0'), d.getFullYear().toString()].join('/'),
-            number_correct:'',
+            number_correct: '',
             result: 0,
           }
           this.enableDialog = true;
@@ -295,7 +299,7 @@ export class PanelComponent implements OnInit, OnDestroy {
             state: 2,
             time_end: timeconverted,
             details: this.anwserQuestions
-          }).pipe(switchMap(()=> this.dotThiKetQuaService.scoreTest(this.shiftTest.id)));
+          }).pipe(switchMap(() => this.dotThiKetQuaService.scoreTest(this.shiftTest.id)));
         })).subscribe({
           next: () => {
             this.shiftTest.state = 2;
@@ -319,16 +323,16 @@ export class PanelComponent implements OnInit, OnDestroy {
     if (id && value) {
       this.anwserQuestions[id] = value.split(',').map(m => parseInt(m));
 
-      this.dotThiKetQuaService.update(this.shiftTest.id, {
-        details: this.anwserQuestions,
-        time: this.remainingTimeClone
-      }).subscribe();
+      // this.dotThiKetQuaService.update(this.shiftTest.id, {
+      //   details: this.anwserQuestions,
+      //   time: this.remainingTimeClone
+      // }).subscribe();
     } else {
       delete this.anwserQuestions[id];
-      this.dotThiKetQuaService.update(this.shiftTest.id, {
-        details: this.anwserQuestions,
-        time: this.remainingTimeClone
-      }).subscribe();
+      // this.dotThiKetQuaService.update(this.shiftTest.id, {
+      //   details: this.anwserQuestions,
+      //   time: this.remainingTimeClone
+      // }).subscribe();
     }
   }
 
@@ -370,7 +374,8 @@ export class PanelComponent implements OnInit, OnDestroy {
   saveTheTest() {
     this.dotThiKetQuaService.update(this.shiftTest.id, {
       details: this.anwserQuestions,
-      time: this.remainingTimeClone
+      time: this.remainingTimeClone,
+      state:1
     }).subscribe(
       {
         next: () =>

@@ -105,13 +105,34 @@ export class NguLieuSuKienService {
     const params = new HttpParams({fromObject});
     return this.http.get<Dto>(''.concat(this.api), {params}).pipe(map(res => res.recordsFiltered));
   }
-  getAllData():Observable<SuKien[]>{
-    const fromObject = {
-      page:1,
-      limit:-1,
+  getAllData(search?:string):Observable<SuKien[]>{
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'is_deleted',
+        condition: OvicQueryCondition.equal,
+        value: '0'
+      },
+    ];
+    if (search) {
+      const c1: OvicConditionParam = {
+        conditionName: 'title',
+        condition: OvicQueryCondition.like,
+        value: `%${search}%`,
+        orWhere: 'and'
+      };
+      conditions.push(c1);
     }
-    const params = new HttpParams({fromObject});
-    return this.http.get<Dto>(''.concat(this.api), {params}).pipe(map(res => res.data));
+
+
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+      orderby: 'title',
+      order: "ASC"
+    }
+
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
+    return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
   }
 
   getDataBylinhvucAndRoot(linhvuc_id?: number):Observable<SuKien[]>{

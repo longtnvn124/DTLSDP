@@ -124,7 +124,7 @@ export class DanhSachSuKienComponent implements OnInit {
     this.notificationService.isProcessing(true);
     forkJoin<[DmDiemDiTich[], DmNhanVatLichSu[],DmLinhVuc[]]>(
       this.danhMucDiemDiTichService.getDataUnlimit(),
-      this.danhMucNhanVatLichSuService.getDataUnlimit(),
+      this.danhMucNhanVatLichSuService.getDataUnlimit(null),
       this.danhMucLinhVucService.getDataUnlimit()
     ).subscribe({
       next: ([dataDiemditich, dataNhanvatlichsu,linhvuc]) => {
@@ -423,7 +423,7 @@ export class DanhSachSuKienComponent implements OnInit {
     try {
       const options: AvatarMakerSetting = {
         aspectRatio: 3 / 2,
-        resizeToWidth: 400,
+        resizeToWidth: 1000,
         format: 'jpeg',
         cropperMinWidth: 10,
         dirRectImage: {

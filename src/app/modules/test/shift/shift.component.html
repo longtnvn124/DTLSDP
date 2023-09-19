@@ -2,52 +2,84 @@
 
   <ng-container [ngSwitch]="mode">
     <ng-container *ngSwitchDefault>
-      <div  style="position: absolute;left:50%; top:50%;transform: translate(-50%, -50%);z-index:9999;">
-        <div class="d-flex justify-content-center align-items-center h-100">
-          <div class="dotthi-container border">
-            <div class="dotthi-container__title p-2">
-              Danh sách đợt thi
-            </div>
-            <div *ngIf="dsDotthi" class="dotthi-container__body border-top-1">
-              <div *ngFor="let item of dsDotthi">
-                <div class="dotthi-item p-3">
-                  <div class="dotthi-item__logo box">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                         class="lucide w-12 h-12 text-pending">
-                      <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
-                      <polyline points="14 2 14 8 20 8"></polyline>
-                      <path d="m9 15 2 2 4-4"></path>
-                    </svg>
-                  </div>
-                  <div class="dotthi-item__body ml-4 w-100">
-                    <div class="dotthi-item__body-title ">
-                      <p class="mb-0">{{item.title}}</p>
-                    </div>
-                    <div class='dotthi-item__body-time'>
-                      <p class="mb-0">Thời gian thi: <span>{{item.duration}}</span></p>
-                    </div>
-                    <div class="dotthi-item__body-count-question">
-                      <p class="mb-0">Số câu hỏi: <span>{{item.totalQuestion}}</span> câu</p>
+      <div class="container h-100" style="padding: 90px 0;z-index: 5;position: relative;">
+        <div class="dotthi-container w-100 border">
+          <div class="dotthi-container__title p-2">Danh sách đợt thi</div>
 
-                    </div>
-                    <div class="dotthi-item__body_time-doit">
-                      <p class="mb-0">Thời gian làm bài: <span>{{item.totalTime}}</span></p>
-                    </div>
-                  </div>
-                  <div class="dotthi-item__button">
-                    <button [disabled]="item.state === -1" pRipple pButton [label]="item.button.label"
-                            [icon]="item.button.icon" [ngClass]="item.button.class" class="border-radius-0"
-                            (click)="btnTest(item)"></button>
-                  </div>
-                </div>
+          <div *ngIf="dsDotthi" class="dotthi-container__body h-100 border-top-1">
+            <div *ngFor="let item of dsDotthi" class="dotthi-item p-3">
+
+              <div class="dotthi-item__logo box">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                     class="lucide w-12 h-12 text-pending">
+                  <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <path d="m9 15 2 2 4-4"></path>
+                </svg>
+              </div>
+              <div class="dotthi-item__body ml-4 w-100">
+                <div><p class="dotthi-item__body-title text-left mb-0">{{item.title}}</p></div>
+                  <div><p class="dotthi-item__body-time text-left mb-0">Thời gian thi: <span>{{item.duration}}</span></p></div>
+                  <div><p class="dotthi-item__body-count-question text-left mb-0">Số câu hỏi: <span>{{item.totalQuestion}}</span> câu</p></div>
+                <div><p class="dotthi-item__body_time-doit text-left mb-0">Thời gian làm bài: <span>{{item.totalTime}}</span></div>
+              </div>
+              <div class="dotthi-item__button">
+                <button [disabled]="item.state === -1" pRipple pButton [label]="item.button.label"
+                        [icon]="item.button.icon" [ngClass]="item.button.class" class="border-radius-0"
+                        (click)="btnTest(item)"></button>
               </div>
             </div>
           </div>
         </div>
-
-
       </div>
+
+      <!--            <div  style="position: absolute;left:50%; top:50%;transform: translate(-50%, -50%);z-index:9999;">-->
+      <!--              <div class="container">-->
+      <!--                <div class="d-flex justify-content-center align-items-center">-->
+      <!--                  <div class="dotthi-container border">-->
+      <!--                    <div class="dotthi-container__title p-2">-->
+      <!--                      Danh sách đợt thi-->
+      <!--                    </div>-->
+      <!--                    <div *ngIf="dsDotthi" class="dotthi-container__body border-top-1">-->
+      <!--                      <div *ngFor="let item of dsDotthi">-->
+      <!--                        <div class="dotthi-item p-3">-->
+      <!--                          <div class="dotthi-item__logo box">-->
+      <!--                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"-->
+      <!--                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"-->
+      <!--                                 class="lucide w-12 h-12 text-pending">-->
+      <!--                              <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>-->
+      <!--                              <polyline points="14 2 14 8 20 8"></polyline>-->
+      <!--                              <path d="m9 15 2 2 4-4"></path>-->
+      <!--                            </svg>-->
+      <!--                          </div>-->
+      <!--                          <div class="dotthi-item__body ml-4 w-100">-->
+      <!--                            <div class="dotthi-item__body-title ">-->
+      <!--                              <p class="mb-0">{{item.title}}</p>-->
+      <!--                            </div>-->
+      <!--                            <div class='dotthi-item__body-time'>-->
+      <!--                              <p class="mb-0">Thời gian thi: <span>{{item.duration}}</span></p>-->
+      <!--                            </div>-->
+      <!--                            <div class="dotthi-item__body-count-question">-->
+      <!--                              <p class="mb-0">Số câu hỏi: <span>{{item.totalQuestion}}</span> câu</p>-->
+
+      <!--                            </div>-->
+      <!--                            <div class="dotthi-item__body_time-doit">-->
+      <!--                              <p class="mb-0">Thời gian làm bài: <span>{{item.totalTime}}</span></p>-->
+      <!--                            </div>-->
+      <!--                          </div>-->
+      <!--                          <div class="dotthi-item__button">-->
+      <!--                            <button [disabled]="item.state === -1" pRipple pButton [label]="item.button.label"-->
+      <!--                                    [icon]="item.button.icon" [ngClass]="item.button.class" class="border-radius-0"-->
+      <!--                                    (click)="btnTest(item)"></button>-->
+      <!--                          </div>-->
+      <!--                        </div>-->
+      <!--                      </div>-->
+      <!--                    </div>-->
+      <!--                  </div>-->
+      <!--                </div>-->
+      <!--              </div>-->
+      <!--            </div>-->
     </ng-container>
 
     <ng-container *ngSwitchCase="'EXAM'">

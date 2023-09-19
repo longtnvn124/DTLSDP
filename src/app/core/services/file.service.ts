@@ -24,6 +24,10 @@ import {catchError, distinctUntilChanged, filter, map, retry, scan} from 'rxjs/o
 import {Dto} from '@core/models/dto';
 import {saveAs} from 'file-saver';
 import {SAVER, Saver} from '@core/providers/saver.provider';
+import {AuthService} from "@core/services/auth.service";
+import { NotificationService } from './notification.service';
+import {HttpParamsHeplerService} from "@core/services/http-params-hepler.service";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 
 @Injectable({
   providedIn: 'root'
@@ -37,7 +41,11 @@ export class FileService {
 
   constructor(
     private http: HttpClient,
-    @Inject(SAVER) private save: Saver
+    @Inject(SAVER) private save: Saver,
+    private noitifi: NotificationService,
+    private modalService: NgbModal,
+    private httpHelper: HttpParamsHeplerService,
+    private auth: AuthService,
   ) {
   }
 
@@ -255,6 +263,7 @@ export class FileService {
   getFileAsBlobByName(fileName: string): Observable<Blob> {
     return this.http.get(''.concat(this.download, fileName), {responseType: 'blob'});
   }
+
 
   getExternalFileAsBlob(imageUrl: string): Observable<Blob> {
     return this.http.get(imageUrl, {responseType: 'blob'});
@@ -475,4 +484,5 @@ export class FileService {
     url.searchParams.append( 'token' , localStorage.getItem( ACCESS_TOKEN ) || '' );
     return url.toString();
   }
+
 }

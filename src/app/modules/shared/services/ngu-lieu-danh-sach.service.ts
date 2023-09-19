@@ -257,6 +257,28 @@ export class NguLieuDanhSachService {
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
   }
+  getdataById(ngulieu_id:number):Observable<Ngulieu>{
+
+  const conditions: OvicConditionParam[] = [
+    {
+      conditionName: 'is_deleted',
+      condition: OvicQueryCondition.equal,
+      value: '0'
+    },
+    {
+      conditionName:'id',
+      condition:OvicQueryCondition.equal,
+      value:ngulieu_id.toString(10),
+      orWhere:"and"
+    }
+  ]
+  const fromObject = {
+    paged: 1,
+    limit: -1,
+  }
+  const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
+  return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
+}
 
 }
 

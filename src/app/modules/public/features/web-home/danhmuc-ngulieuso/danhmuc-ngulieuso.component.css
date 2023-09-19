@@ -1,0 +1,12 @@
+.ngulieuso__title h3{
+  color:#3A4E42;
+  font-weight:400;
+  font-size:18px;
+}
+.ngulieuso_item_title {
+  font-size: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #3f604d;
+}

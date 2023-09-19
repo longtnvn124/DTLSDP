@@ -31,6 +31,7 @@ import {HomeEducationComponent} from "@modules/admin/features/home/home-educatio
 import {HomeSampleComponent} from "@modules/admin/features/home/home-sample/home-sample.component";
 import {CardWidgetComponent} from "@modules/admin/features/home/widgets/card-widget/card-widget.component";
 
+
 @NgModule( {
 	declarations : [
 		DashboardComponent ,
@@ -42,7 +43,8 @@ import {CardWidgetComponent} from "@modules/admin/features/home/widgets/card-wid
 		NewHomeComponent,
     HomeEducationComponent,
     HomeSampleComponent,
-    CardWidgetComponent
+    CardWidgetComponent,
+
 	] ,
 	imports      : [
 		CommonModule ,

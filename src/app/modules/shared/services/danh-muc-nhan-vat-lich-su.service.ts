@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {getRoute} from "@env";
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {HttpParamsHeplerService} from "@core/services/http-params-hepler.service";
@@ -89,7 +89,7 @@ export class DanhMucNhanVatLichSuService {
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data ));
   }
-  getDataUnlimit():Observable<DmNhanVatLichSu[]>{
+  getDataUnlimit(search:string):Observable<DmNhanVatLichSu[]>{
     const conditions: OvicConditionParam[] = [
       {
         conditionName: 'is_deleted',
@@ -97,6 +97,23 @@ export class DanhMucNhanVatLichSuService {
         value: '0'
       },
     ];
+    if (search) {
+      const c1: OvicConditionParam[] = [
+        {
+          conditionName: 'ten',
+          condition: OvicQueryCondition.like,
+          value: `%${search}%`,
+          orWhere: 'and'
+        },
+        {
+          conditionName: 'bietdanh',
+          condition: OvicQueryCondition.like,
+          value: `%${search}%`,
+          orWhere: 'or'
+        },
+      ];
+      conditions.push(...c1);
+    }
     const fromObject = {
       paged: 1,
       limit: -1,

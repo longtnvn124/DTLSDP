@@ -1,9 +1,7 @@
 <ng-container [ngSwitch]="mode">
   <ng-container *ngSwitchDefault>
-    <div class="row h-full">
-      <div
-        class="set-width inline-block flex flex-wrap flex-row justify-content-between align-items-center col-md-3 p-3"
-        *ngFor="let item of listData">
+    <div *ngIf="listData !== []" class="row row-cols-2 h-full">
+      <div class=" flex-wrap col-sm-6 col-md-4 col-lg-3 p-2" *ngFor="let item of listData">
         <div class="w-full inline-block shadow-6 bg-white border ovic--parent-image position-relative"
              style="border-radius:4px">
           <div class='head-card_hover w-100 bg-image hover-zoom' (click)="btnSelectItem(item)" style="cursor: pointer;">
@@ -11,8 +9,6 @@
               <img style="padding:0 10px 10px 10px" class="w-100 h-100 ovic-img-zoom"
                    [src]="item.files ? item['image_convenrted'] : 'assets/images/placeholder.jpg'" alt="">
             </div>
-            <!--            E:\PROJECT\Angular\v14\DTLSDP\src\assets\images\placeholder.jpg-->
-            <!--            <div class="position-relative w-100 st-image img-child-max-width"  [ovicLoadImageById]="item.files ? item.files : null"></div>-->
             <div class="m-2">
               <div
                 class="headding-card text-xl font-weight-bold text-capitalize text-center align-items-center text_hover text-primary"
@@ -29,6 +25,8 @@
         </div>
       </div>
     </div>
+
+    <div *ngIf="listData ==[]" class="ovic-not-data">Không có dữ liệu</div>
 
   </ng-container>
   <ng-container *ngSwitchCase="'INFO'">
@@ -56,7 +54,7 @@
       </div>
       <div class="col-8 border-left scroll-ctn-right">
         <div class="mt-2 font-weight-normal" style="font-size: 16px"><b>Thông tin chi tiết:</b>
-          <br><span>{{dataSelect.mota}}</span></div>
+          <br><span [innerHTML]="dataSelect.mota | htmlDecode"></span></div>
       </div>
     </div>
   </ng-container>

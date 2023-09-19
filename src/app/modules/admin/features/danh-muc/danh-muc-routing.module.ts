@@ -5,7 +5,6 @@ import {DiemDiTichComponent} from "@modules/admin/features/danh-muc/diem-di-tich
 import {LinhVucComponent} from "@modules/admin/features/danh-muc/linh-vuc/linh-vuc.component";
 import {LoaiNguLieuComponent} from "@modules/admin/features/danh-muc/loai-ngu-lieu/loai-ngu-lieu.component";
 import {NhanVatLichSuComponent} from "@modules/admin/features/danh-muc/nhan-vat-lich-su/nhan-vat-lich-su.component";
-import {MediaVrManagerComponent} from "@shared/components/media-vr-manager/media-vr-manager.component";
 import {MediavrComponent} from "@modules/admin/features/danh-muc/mediavr/mediavr.component";
 
 

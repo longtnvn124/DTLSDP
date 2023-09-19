@@ -143,7 +143,7 @@ export class DanhNhanLichSuComponent implements OnInit {
   }
 
   onOpenFormEdit() {
-    setTimeout(() => this.notificationService.openSideNavigationMenu({template: this.fromUpdate, size: 600}), 100);
+    setTimeout(() => this.notificationService.openSideNavigationMenu({template: this.fromUpdate, size: 1000}), 100);
   }
 
 

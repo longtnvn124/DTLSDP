@@ -1,7 +1,8 @@
 .dotthi-container {
-  width: 1000px;
+
   /*border-radius: 4px;*/
   background-color: #fff;
+  z-index: 102;
 }
 
 .dotthi-container__title {
@@ -13,6 +14,7 @@
   text-transform: uppercase;
   height: 60px;
   border-bottom: 1px solid #ffa500;
+
 }
 
 .dotthi-container__body {
@@ -46,10 +48,6 @@
 }
 
 .dotthi-item__body-title {
-  display: flex;
-  justify-content: start;
-  align-items: center;
-  text-align: center;
   margin: 0;
   font-size: 17px;
   font-weight: 600;
@@ -57,8 +55,6 @@
 }
 
 .dotthi-item__body-time {
-  display: flex;
-  justify-content: start;
 }
 
 .dotthi-item__body-time span {
@@ -66,13 +62,11 @@
 }
 
 .dotthi-item__body-count-question {
-  display: flex;
-  justify-content: start;
+
 }
 
 .dotthi-item__body_time-doit {
-  display: flex;
-  justify-content: start;
+
 }
 
 .dotthi-item__button {
@@ -129,9 +123,21 @@
   width:100%;
   height:100%;
 }
-@media(width <1024px){
-  .dotthi-container{
-    width:100%;
+/*@media(width <1024px){*/
+/*  .dotthi-container{*/
+/*    width:100%;*/
+/*  }*/
+
+/*}*/
+@media (max-width: 650px){
+  .dotthi-item__logo{
+    display: none;
+  }
+  .dotthi-item__button button{
+    width:100px
+  }
+  .dotthi-item__body{
+    margin-left:0 !important;
   }
 
 }

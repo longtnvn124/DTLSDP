@@ -59,6 +59,7 @@
   position: absolute;
   top: 25px;
   left: 25px;
+  z-index: 11;
 }
 
 .url-css {

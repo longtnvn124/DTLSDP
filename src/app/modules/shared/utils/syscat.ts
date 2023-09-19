@@ -160,3 +160,43 @@ export const TypeOptions: { value: string, label: string }[] = [
   {value: 'DIRECT', label: 'Chuyển cảnh'},
   {value: 'INFO', label: 'Thông tin'}
 ]
+export const MAXIMIZE_MODAL_OPTIONS: any = {
+  scrollable: true,
+  size: 'xl',
+  windowClass: 'modal-maximize ovic-modal-class',
+  centered: true
+};
+
+export const TYPE_FILE_LIST = {
+  docx: 'docx',
+  pptx: 'pptx',
+  ppt: 'ppt',
+  pdf: 'pdf',
+  xlsx: 'xlsx',
+  audio: 'audio',
+  video: 'video',
+  image: 'image',
+  text: 'text',
+  zip: 'zip'
+}
+export const OvicVideoSourceObject = {
+  local: 'local',
+  serverFile: 'serverFile',
+  vimeo: 'vimeo',
+  youtube: 'youtube',
+  googleDrive: 'googleDrive',
+  encrypted: 'encrypted',
+  serverAws: 'serverAws'
+};
+export const VIDEO_SOURCE = [
+  { name: 'Youtube', key: 'youtube' },
+  { name: 'Server Files', key: 'serverFile' }
+];
+
+export const WAITING_POPUP: any = {
+  scrollable: true,
+  size: 'xl',
+  windowClass: 'modal-xxl ovic-modal-class',
+  centered: true,
+  backdrop: 'static',
+};

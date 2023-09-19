@@ -24,6 +24,7 @@ export interface Ngulieu extends NguLieuChung {
   file_thumbnail?:OvicFile;
   file_product?:OvicFile[];
   root:number;
+  file_type:0|1; // 0:bientap,1:file đóng gói
 }
 
 export interface SuKien extends NguLieuChung {

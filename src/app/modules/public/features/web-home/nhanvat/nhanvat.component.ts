@@ -14,6 +14,7 @@ import {FileService} from "@core/services/file.service";
 })
 export class NhanvatComponent implements OnInit, AfterViewInit {
   @Input() selectItem: boolean = false;
+
   gioitinh = [{value: 1, label: 'Nam'}, {value: 0, label: 'Nữ'}];
   mode:'DATA'|'INFO' ="DATA";
   constructor(
@@ -23,7 +24,7 @@ export class NhanvatComponent implements OnInit, AfterViewInit {
     private fileSerivce: FileService
   ) {
   }
-
+  textSearch:string = '';
   ngAfterViewInit(): void {
     this.loadInit()
   }
@@ -34,9 +35,10 @@ export class NhanvatComponent implements OnInit, AfterViewInit {
 
   listData: DmNhanVatLichSu[];
 
-  loadInit() {
+  loadInit(text?:string) {
+    console.log(text);
     this.notificationService.isProcessing(true);
-    forkJoin<[DmNhanVatLichSu[], SuKien[]]>(this.DanhMucNhanVatLichSuService.getDataUnlimit(), this.sukienService.getAllData()).subscribe({
+    forkJoin<[DmNhanVatLichSu[], SuKien[]]>(this.DanhMucNhanVatLichSuService.getDataUnlimit(text), this.sukienService.getAllData()).subscribe({
       next: ([data, dataSukien]) => {
         this.listData = data.map(m => {
           m['_img_link'] = m.files ? this.fileSerivce.getPreviewLinkLocalFile(m.files) : '';
@@ -58,10 +60,8 @@ export class NhanvatComponent implements OnInit, AfterViewInit {
   dataSelect: DmNhanVatLichSu;
 
   btnSelectItem(Dm: DmNhanVatLichSu) {
-    console.log(Dm);
     if(this.selectItem){
       this.dataSelect = Dm;
-      console.log(this.dataSelect);
       this.mode="INFO";
     }
   }
@@ -70,4 +70,8 @@ export class NhanvatComponent implements OnInit, AfterViewInit {
       this.mode = "DATA";
     }
   }
+  btnLoadByTextseach(text:string){
+    this.loadInit(text);
+  }
+
 }

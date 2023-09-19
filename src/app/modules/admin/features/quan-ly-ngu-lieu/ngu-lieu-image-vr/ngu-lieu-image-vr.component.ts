@@ -66,7 +66,8 @@ export class NguLieuImageVrComponent implements OnInit {
     file_audio:[[]],
     donvi_id:[null, Validators.required],
     file_thumbnail:{},
-    file_product:[[]]
+    file_product:[[]],
+    file_type:[0]
   });
   dataChuyemuc: DmChuyenMuc[];
   dataLoaingulieu: DmLoaiNguLieu[];
@@ -154,7 +155,7 @@ export class NguLieuImageVrComponent implements OnInit {
   }
 
   private __processFrom({data, object, type}: FormNgulieu) {
-    console.log(data);
+
     const observer$: Observable<any> = type === FormType.ADDITION ? this.nguLieuDanhSachService.create(data) : this.nguLieuDanhSachService.update(object.id, data);
     observer$.subscribe({
       next: () => {
@@ -186,7 +187,8 @@ export class NguLieuImageVrComponent implements OnInit {
       file_audio: [],
       donvi_id:this.auth.userDonViId,
       file_thumbnail:{},
-      file_product:[]
+      file_product:[],
+      file_type:0
     });
     this.characterAvatar = '';
     this.formActive = this.listForm[FormType.ADDITION];
@@ -202,7 +204,7 @@ export class NguLieuImageVrComponent implements OnInit {
       offsetTop: '0px'
     });
 
-    this.loaidoituong === "TRUCTIEP";
+    this.loaidoituong === 0;
   }
 
   btnEdit(object: Ngulieu) {
@@ -217,8 +219,10 @@ export class NguLieuImageVrComponent implements OnInit {
       file_audio: object.file_audio,
       donvi_id:object.donvi_id,
       file_thumbnail:object.file_thumbnail,
-      file_product:object.file_product
+      file_product:object.file_product,
+      file_type:object.file_type
     });
+    this.loaidoituong = object.file_type;
     this.formActive = this.listForm[FormType.UPDATE];
     this.characterAvatar = object.file_thumbnail ? getLinkDownload(object.file_thumbnail.id) : '';
     this.formActive.object = object;
@@ -245,7 +249,7 @@ export class NguLieuImageVrComponent implements OnInit {
   mode: 'TABLE' | 'MEDIAVR' | 'INFO' = "TABLE";
 
   saveForm() {
-    console.log(this.formSave.value);
+
     if (this.formSave.valid) {
       this.formActive.data = this.formSave.value;
       this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
@@ -298,11 +302,16 @@ export class NguLieuImageVrComponent implements OnInit {
     this.mode = "TABLE";
   }
 
-  loaidoituong:"TRUCTIEP"|"GIANTIEP" = "TRUCTIEP";
+  loaidoituong:0|1 = 0;//0:bientap// 1 sp dongs goi
 
-  changeObjectType(type:"TRUCTIEP"|"GIANTIEP"){
+  changeObjectType(type:0|1){
     if (this.loaidoituong !== type) {
       this.loaidoituong = type;
+    }
+    if(type ===1){
+      this.f['file_type'].setValue(1);
+    }else{
+      this.f['file_type'].setValue(0);
     }
   }
 
@@ -314,7 +323,7 @@ export class NguLieuImageVrComponent implements OnInit {
     try {
       const options: AvatarMakerSetting = {
         aspectRatio: 3 / 2,
-        resizeToWidth: 400,
+        resizeToWidth: 1000,
         format: 'jpeg',
         cropperMinWidth: 10,
         dirRectImage: {

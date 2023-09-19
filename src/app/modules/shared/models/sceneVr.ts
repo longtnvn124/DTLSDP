@@ -5,7 +5,7 @@ import {
   Mesh,
   TextureLoader,
   SpriteMaterial,
-  Sprite, RepeatWrapping, DoubleSide, VideoTexture,
+  Sprite, RepeatWrapping, DoubleSide,BackSide,FrontSide, VideoTexture,
   Vector3,
 } from "three";
 import TweenLite from "gsap";
@@ -21,6 +21,7 @@ export interface OvicVrPointUserData {
   parentPointId: number,
   type: OvicVrPointType,
   ngulieu_id?:number
+
 }
 
 export interface OvicVrPoint {
@@ -32,9 +33,7 @@ export interface OvicVrPoint {
 
 export class sceneControl {
   image: string;
-  audio: string;
-
-  scene = new Scene();
+  scene : any;
   sprites: any = [];
   sphere= new Mesh();
   spheres: any = [];
@@ -43,15 +42,16 @@ export class sceneControl {
   point: any = {};
   state: any;
 
-  constructor(image, camera, audio) {
+  constructor(image, camera) {
     this.image = image;
     this.points = [];
     this.sprites = [];
-    this.scene = null;
+    this.scene = null;//{}
     this.camera = camera;
-    this.audio = audio;
+
   }
-  createScrene(scene, ovicPointId?: number, state?: boolean, userData?: OvicVrPointUserData) {
+  createScrene(scene, ovicPointId?: number, state?: boolean, userData?: OvicVrPointUserData, isToolTip?:boolean) {
+    this.scene= null;
     this.scene = scene;
     if (state) {
       this.state = scene;
@@ -60,10 +60,12 @@ export class sceneControl {
     const texture = new TextureLoader().load(this.image);// load hinh anh bat dau
     texture.wrapS = RepeatWrapping;
     texture.repeat.x = -1;
-    const material = new MeshBasicMaterial({map: texture, side: DoubleSide});
+    texture.generateMipmaps= true;
+    isToolTip = true;
+      // material.transparent = true;
+      const material = new MeshBasicMaterial({map: texture, side: DoubleSide});
+      this.sphere = new Mesh(geometry, material);
     // material.transparent = true;
-    this.sphere = new Mesh(geometry, material);
-    console.log(material);
     console.log(this.sphere);
 
     this.scene.add(this.sphere);
@@ -80,15 +82,18 @@ export class sceneControl {
     this.scene = scene;
     //=========================create videoTexture======================
     const videoTexture = new VideoTexture(videoDom);
+
     const geometry = new SphereGeometry(50, 32, 32);
-    const sphereMaterial = new MeshBasicMaterial({map: videoTexture, side: DoubleSide});
+    const sphereMaterial = new MeshBasicMaterial({map: videoTexture, side: DoubleSide });
     sphereMaterial.needsUpdate = true;
     this.sphere = new Mesh(geometry, sphereMaterial);
+    this.sphere.scale.x = -1;
     if (userData) {
       this.scene.userData = userData;
     }
     this.scene.add(this.sphere);
     videoTexture.needsUpdate = true;
+    videoTexture.generateMipmaps= true;
     if (userData) {
       this.scene.userData = userData;
     }
@@ -111,7 +116,8 @@ export class sceneControl {
   }
 
   async addTooltip(point) {
-
+    console.log(point);
+    console.log(this.scene);
     let spriteMap = new TextureLoader().load(point.userData.iconPoint);
     let spriteMaterial = new SpriteMaterial({map: spriteMap});
     let sprite = new Sprite(spriteMaterial)
@@ -128,7 +134,10 @@ export class sceneControl {
     this.sprites.push(sprite);
     sprite["onClick"] = () => {
       this.destroy();
-      const mediaFile= point.userData.dataPoint.file_media
+      this.scene.remove();
+      this.sphere.remove();
+
+      const mediaFile= point.userData.dataPoint.file_media;
       const typeMediaInFile = mediaFile ? mediaFile[0].type.split('/')[0]: null;
       if(typeMediaInFile =='image'){
         point.scene.createScrene(this.scene,point.id, false, point.userData);
@@ -169,28 +178,8 @@ export class sceneControl {
       opacity: 1,
     })
     this.sprites.forEach((sprite) => {
-      sprite.scale.set(0, 0, 0)
-      TweenLite.to(sprite.scale, 1, {x: 1, y: 1, z: 1})
+      sprite.scale.set(1, 1, 1)
+      TweenLite.to(sprite.scale, 1, {x: 2, y: 2, z: 2})
     })
   }
-
-  hoverUp() {
-    const originalScale = new Vector3();
-    this.sprites.forEach(sprite => {
-        TweenLite.to(sprite.scale, 0.2, {x: originalScale.x * 1.2, y: originalScale.y * 1.2, z: originalScale.z * 1.2});
-      }
-    )
-  }
-
-  hoverDown() {
-    const originalScale = new Vector3();
-
-    this.sprites.forEach(sprite => {
-        TweenLite.to(sprite.scale, 0.2, {x: originalScale.x, y: originalScale.y, z: originalScale.z});
-      }
-    )
-
-  }
-
-
 }

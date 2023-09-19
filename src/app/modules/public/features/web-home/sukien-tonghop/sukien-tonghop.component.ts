@@ -12,6 +12,7 @@ import {FileService} from "@core/services/file.service";
 export class SukienTonghopComponent implements OnInit, AfterViewInit {
   @Input() selectItem: boolean = false;
   @Input() viewFull: boolean = false;
+  @Input() textSearch: string;
 
   constructor(
     private nguLieuSuKienService: NguLieuSuKienService,
@@ -29,16 +30,15 @@ export class SukienTonghopComponent implements OnInit, AfterViewInit {
 
   listData: SuKien[];
 
-  loadInit() {
+  loadInit(search?:string) {
     this.notificationService.isProcessing(true);
-    this.nguLieuSuKienService.getAllData().subscribe({
+    this.nguLieuSuKienService.getAllData(search).subscribe({
       next: (data) => {
         this.listData = data.map(m => {
           m['_bg_link'] = m.files ? this.fileService.getPreviewLinkLocalFile(m.files) : "";
           m['_audio_link'] = m.file_audio && m.file_audio[0] ? this.fileService.getPreviewLinkLocalFile(m.file_audio[0]) : "";
           return m;
         })
-        console.log(this.listData);
         this.notificationService.isProcessing(false);
       },
 
@@ -63,6 +63,9 @@ export class SukienTonghopComponent implements OnInit, AfterViewInit {
      if(this.mode == 'INFO'){
        this.mode ="DATA";
      }
+  }
+  btnLoadByTextseach(text:string){
+    this.loadInit(text);
   }
 
 }

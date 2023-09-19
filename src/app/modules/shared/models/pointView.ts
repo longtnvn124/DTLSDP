@@ -1,41 +1,54 @@
 import {
-  Scene, PerspectiveCamera, Audio,
+  Scene, PerspectiveCamera,
   SphereGeometry,
   MeshBasicMaterial,
   Mesh,
   TextureLoader,
   SpriteMaterial,
-  Sprite, RepeatWrapping, DoubleSide, VideoTexture, AudioLoader,
-  Vector3, LinearFilter
+  Sprite, RepeatWrapping, DoubleSide, BackSide, FrontSide, VideoTexture,
+  Vector3, LinearFilter, RGFormat, RGBFormat,
 } from "three";
-
 import TweenLite from "gsap";
-interface OvicVrPoint {
-  userData: {
-    ovicPointId: number,
-    iconPoint: string,
-    [key: string]: any
-  };
-  name: string;
-  position: Vector3,
-  scene: sceneControl,
+import {Pinable} from "@shared/models/point";
+import {OvicFile} from "@core/models/file";
+
+
+export type OvicVrPointType = 'DIRECT' | 'INFO';
+
+export interface FilePointView {
+  file_type: string;
+  file: OvicFile;
+  url: string;
 }
 
+export interface OvicVrPointUserData {
+  ovicPointId: number,
+  iconPoint: string,
+  dataPoint: Pinable,
+  parentPointId: number,
+  type: OvicVrPointType,
+  ngulieu_id?: number
+  file_media?: FilePointView,
+}
 
-export class sceneControl {
+export interface OvicVrPoint {
+  userData: OvicVrPointUserData;
+  name: string;
+  position: Vector3,
+  scene: PointView,
+}
+
+export class PointView {
   image: string;
-  audio: string;
-
   scene = new Scene();
   sprites: any = [];
-  sphere: any = [];
+  sphere = new Mesh();
   spheres: any = [];
   camera: PerspectiveCamera;
   points: OvicVrPoint[] = [];
   point: any = {};
-  listener: any;
-  sound: Audio;
   state: any;
+  videoDom: any;
 
   constructor(image, camera) {
     this.image = image;
@@ -43,32 +56,81 @@ export class sceneControl {
     this.sprites = [];
     this.scene = null;
     this.camera = camera;
-
   }
 
-  createScrene(scene, ovicPointId?: number, state?: boolean) {
+  createScrene(scene, file: FilePointView, ovicPointId?: number, userData?: OvicVrPointUserData, state?: boolean,) {
+    this.scene = null;
     this.scene = scene;
     if (state) {
       this.state = scene;
     }
     const geometry = new SphereGeometry(50, 32, 32);
-    let textureLoader = new TextureLoader();
-    const texture = textureLoader.load(this.image);// load hinh anh bat dau
-    texture.wrapS = RepeatWrapping;
-    texture.repeat.x = -1;
-    const material = new MeshBasicMaterial({map: texture, side: DoubleSide});
-    // material.transparent = true;
-    this.sphere = new Mesh(geometry, material);
-    if (ovicPointId) {
-      this.sphere.userData = {ovicPointId: ovicPointId};
-      this.spheres.push(this.sphere);
+    if (file.file_type === 'image') {
+      const texture = new TextureLoader().load(file.url);// load hinh anh bat dau
+      texture.wrapS = RepeatWrapping;
+      texture.repeat.x = -1;
+      texture.generateMipmaps = true;
+      const material = new MeshBasicMaterial({map: texture, side: DoubleSide});
+      this.sphere = new Mesh(geometry, material);
+      this.scene.add(this.sphere);
+      if (ovicPointId) {
+        this.sphere.userData = {ovicPointId: ovicPointId};
+        this.spheres.push(this.sphere);
+      }
+      if (userData) {
+        this.sphere.userData = userData;
+        this.spheres.push(this.sphere);
+      }
+      // if (userData) {this.scene.userData = userData;}
     }
-    this.scene.add(this.sphere);
+    if (file.file_type === 'video') {
+      const media = file.url;
+      this.videoDom = document.createElement("video");
+      this.videoDom.setAttribute('control', 'true');
+      this.videoDom.setAttribute('loop', 'true');
+      this.videoDom.setAttribute('autoplay', 'true');
+      this.videoDom.setAttribute('playsinline', 'true');
+      this.videoDom.setAttribute('crossorigin', 'anonymous');
+      this.videoDom.setAttribute('src', media);
+      const videoTexture = new VideoTexture(this.videoDom);
+      videoTexture.minFilter = LinearFilter;
+      videoTexture.magFilter = LinearFilter;
+      const videoMaterial = new MeshBasicMaterial({map: videoTexture, side: DoubleSide});
+      videoMaterial.needsUpdate = true;
+      this.sphere = new Mesh(geometry, videoMaterial);
+      this.sphere.scale.x = -1; // Đảo hình ảnh để phù hợp với video 360
+      if (ovicPointId) {
+        this.sphere.userData = {ovicPointId: ovicPointId};
+        this.spheres.push(this.sphere);
+      }
+      if (userData) {
+        this.sphere.userData = userData;
+        this.spheres.push(this.sphere);
+      }
+      this.scene.add(this.sphere);
+      videoTexture.needsUpdate = true;
+      videoTexture.generateMipmaps = true;
+    }
     this.points.forEach((f) => {
       this.addTooltip(f);
     });
   }
 
+  btnOnorPauseVideo() {
+    if (this.videoDom.paused) {
+      this.videoDom.play();
+    } else {
+      this.videoDom.pause();
+    }
+  }
+
+
+  btnRemoveVideo() {
+    this.videoDom.pause();
+    this.videoDom.remove();
+  }
+
+  //
   addPoint(point: OvicVrPoint) {
     this.points.push(point);
   }
@@ -82,65 +144,31 @@ export class sceneControl {
     })
   }
 
-
-  editPoint(point: OvicVrPoint) {
-    this.deletePoint(point.userData.ovicPointId);
-    this.addPoint(point);
-  }
-
-  async addTooltip(point) {
+  // add point in scene
+  async addTooltip(point: OvicVrPoint) {
     let spriteMap = new TextureLoader().load(point.userData.iconPoint);
     let spriteMaterial = new SpriteMaterial({map: spriteMap});
     let sprite = new Sprite(spriteMaterial)
     sprite.name = point.name;
     sprite.userData = point.userData;
-    if (point !== undefined && point.position !== undefined) {
-      sprite.position.copy(point.position.clone().normalize().multiplyScalar(13));
-    } else {
-      // Xử lý trường hợp point không hợp lệ
-    }
-    sprite.scale.multiplyScalar(10);
+    sprite.position.copy(point.position.clone().normalize().multiplyScalar(15));
+    // material.transparent = true;//
+    // sprite.scale.multiplyScalar(10);
     this.scene.add(sprite);
     this.sprites.push(sprite);
     sprite["onClick"] = () => {
       this.destroy();
-      // point.scene.createScrene(screen);
-      point.scene.createScrene(this.scene, point.id);
-      point.scene.appear();
+      this.sphere.remove();
+      this.scene.remove();
+      if (this.videoDom) {
+        this.videoDom.pause();
+        this.videoDom.remove();
+      }
+      // point.scene.appear();
+      this.appear();
     };
-    sprite["mousemove"] = () => {
-      point.scene.appear();
-    }
-
-    // const originalScale = sprite.scale.clone();
-
-// // Hiệu ứng hover vào Sprite
-//     sprite.on('mouseover', () => {
-//       TweenLite.to(sprite.scale, 0.2, { x: originalScale.x * 1.2, y: originalScale.y * 1.2, z: originalScale.z * 1.2 });
-//     });
-//
-// // Hiệu ứng hover ra khỏi Sprite
-//     sprite.on('mouseout', () => {
-//       TweenLite.to(sprite.scale, 0.2, { x: originalScale.x, y: originalScale.y, z: originalScale.z });
-//     });
-
-
   }
 
-  createMovie(scene, videoDom: HTMLVideoElement) {
-    this.scene = scene;
-    //=========================create videoTexture======================
-    const videoTexture = new VideoTexture(videoDom);
-    const geometry = new SphereGeometry(50, 32, 32);
-    const sphereMaterial = new MeshBasicMaterial({map: videoTexture, side: DoubleSide});
-    sphereMaterial.needsUpdate = true;
-    this.sphere = new Mesh(geometry, sphereMaterial);
-    this.scene.add(this.sphere);
-    videoTexture.needsUpdate = true;
-    this.points.forEach((f) => {
-      this.addTooltip(f);
-    });
-  }
 
   destroy() {
     TweenLite.to(this.sphere.material, 1, {
@@ -160,7 +188,7 @@ export class sceneControl {
   }
 
   appear() {
-    this.sphere.material.opacity = 0
+    // this.sphere.material.opacity = 0;
     TweenLite.to(this.sphere.material, 1, {
       opacity: 1,
     })
@@ -170,23 +198,5 @@ export class sceneControl {
     })
   }
 
-  hoverUp() {
-    const originalScale = new Vector3();
-    this.sprites.forEach(sprite => {
-        TweenLite.to(sprite.scale, 0.2, {x: originalScale.x * 1.2, y: originalScale.y * 1.2, z: originalScale.z * 1.2});
-      }
-    )
-  }
-
-  hoverDown() {
-    const originalScale = new Vector3();
-
-    this.sprites.forEach(sprite => {
-        TweenLite.to(sprite.scale, 0.2, {x: originalScale.x, y: originalScale.y, z: originalScale.z});
-      }
-    )
-
-  }
 
 }
-

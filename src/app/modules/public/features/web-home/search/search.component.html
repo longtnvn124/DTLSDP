@@ -1,1 +1,29 @@
-<p>search works!</p>
+<div class="container" style="margin-top: 80px;min-height: 400px;">
+  <div class="search-nav d-flex justify-content-center align-items-center w-100" >
+
+    <input type="text" pInputText class="input-search-content" placeholder="Tìm kiếm" [(ngModel)]="textSearch"
+           (ngModelChange)="selectInput($event)"/>
+    <p-dropdown [options]="loai" class="search-dropdown" placeholder="Chọn..." optionValue="value" optionLabel="label" style="width:165px;"
+                (onChange)="selectDropdown($event)"></p-dropdown>
+
+    <button pRipple pButton label="Tìm kiếm" class="btn-search" (click)="selectSearch()"></button>
+  </div>
+
+
+  <div class="search-container">
+
+    <ng-container *ngIf="loaiSelect=== 0,else haveData">
+      <div style="font-size: 14px;">
+        Không có dữ liệu
+      </div>
+    </ng-container>
+
+    <ng-template #haveData>
+      <app-nhanvat *ngIf="loaiSelect===1 && textSearch"></app-nhanvat>
+
+      <app-sukien-tonghop *ngIf="loaiSelect===2 && textSearch" ></app-sukien-tonghop>
+
+      <danhmuc-ngulieuso *ngIf="loaiSelect===3 && textSearch" ></danhmuc-ngulieuso>
+    </ng-template>
+  </div>
+</div>

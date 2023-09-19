@@ -1,6 +1,6 @@
 import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {Paginator} from "primeng/paginator";
-import {MediaVrManagerComponent} from "@shared/components/media-vr-manager/media-vr-manager.component";
+
 import {FormType, NgPaginateEvent, OvicForm, OvicTableStructure} from "@shared/models/ovic-models";
 import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from "@angular/forms";
 import {debounceTime, filter, forkJoin, Observable, Subject, Subscription} from "rxjs";
@@ -48,7 +48,7 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
   @ViewChild('fromUpdate', {static: true}) template: TemplateRef<any>;
   @ViewChild('formMedia') formMedia: TemplateRef<any>;
   @ViewChild(Paginator) paginator: Paginator;
-  @ViewChild(MediaVrManagerComponent) MediaVr: MediaVrManagerComponent;
+
 
   mode: 'TABLE' | 'MEDIAVR' = "TABLE";
   btn_checkAdd:"Lưu lại"|"Xác nhận";

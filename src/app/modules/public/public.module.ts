@@ -28,6 +28,8 @@ import { ThongtinKythuatComponent } from './features/web-home/thongtin-kythuat/t
 import {GalleriaModule} from "primeng/galleria";
 import {CarouselModule} from "primeng/carousel";
 import {ImageModule} from "primeng/image";
+import {InputTextModule} from "primeng/inputtext";
+import {DropdownModule} from "primeng/dropdown";
 
 
 @NgModule({
@@ -48,22 +50,24 @@ import {ImageModule} from "primeng/image";
     SukienTonghopComponent,
     ThongtinKythuatComponent
   ],
-    imports: [
-        CommonModule,
-        PublicRoutingModule,
-        ReactiveFormsModule,
-        ButtonModule,
-        RippleModule,
-        InputMaskModule,
-        FormsModule,
-        SharedModule,
-        DialogModule,
-        TabMenuModule,
-        GalleriaModule,
-        CarouselModule,
-        ImageModule,
+  imports: [
+    CommonModule,
+    PublicRoutingModule,
+    ReactiveFormsModule,
+    ButtonModule,
+    RippleModule,
+    InputMaskModule,
+    FormsModule,
+    SharedModule,
+    DialogModule,
+    TabMenuModule,
+    GalleriaModule,
+    CarouselModule,
+    ImageModule,
+    InputTextModule,
+    DropdownModule,
 
-    ]
+  ]
 })
 export class PublicModule {
 }

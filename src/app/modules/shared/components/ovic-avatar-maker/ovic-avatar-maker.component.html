@@ -15,7 +15,8 @@
                 <div class="avatar-maker__section-content__prepare" *ngIf="!croppedImage">
                     <i class="fa fa-refresh fa-spin"></i>
                 </div>
-                <img *ngIf="croppedImage" [src]="croppedImage.base64 | ovicSafeUrl" alt="" [width]="croppedImage.width" [height]="croppedImage.height" class="avatar-maker__cropped-image">
+<!--                <img *ngIf="croppedImage" [src]="croppedImage.base64 | ovicSafeUrl" alt="" [width]="croppedImage.width" [height]="croppedImage.height" class="avatar-maker__cropped-image">-->
+                <img *ngIf="croppedImage" [src]="croppedImage.base64 | ovicSafeUrl" alt="" [width]="croppedImage.width" [height]="croppedImage.height" class="avatar-maker__cropped-image p-1">
             </div>
         </div>
         <div class="avatar-picker__section avatar-picker__section--bottom">

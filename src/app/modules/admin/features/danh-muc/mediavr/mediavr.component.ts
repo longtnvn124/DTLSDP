@@ -220,7 +220,7 @@ export class MediavrComponent implements OnInit, AfterViewInit, OnDestroy {
     this.camera.position.set(-0.1, 0, 0.1);
 
     // Sphere
-    this.s = new sceneControl(image, this.camera, audio);
+    this.s = new sceneControl(image, this.camera);
     // let s2 = new sceneControl('./assets/icon-png/pano1.jpg', this.camera,audio);
     // this.s.addPoint( { position: new Three.Vector3(14, 1.9, -47), name: 'Entrée', scene: s2 });
 
@@ -255,7 +255,7 @@ export class MediavrComponent implements OnInit, AfterViewInit, OnDestroy {
     const audio = fileAudio ? this.fileService.getPreviewLinkLocalFile(fileAudio) : null;
     const type = fileMedia.type.split('/')[0] === "video" ? 'video' : 'image';
     if (audio || media) {
-      let newPoint = new sceneControl(media, this.camera, audio);
+      let newPoint = new sceneControl(media, this.camera);
       const locationX = info.location['x'];
       const locationY = info.location['y'];
       const locationZ = info.location['z'];
