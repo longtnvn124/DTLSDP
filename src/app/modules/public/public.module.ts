@@ -20,7 +20,6 @@ import {DialogModule} from "primeng/dialog";
 import {TabMenuModule} from "primeng/tabmenu";
 import { WebHomeComponent } from './features/web-home/web-home.component';
 import { SearchComponent } from './features/web-home/search/search.component';
-import { ChuyenmucComponent } from './features/web-home/chuyenmuc/chuyenmuc.component';
 import { NhanvatComponent } from './features/web-home/nhanvat/nhanvat.component';
 import { DanhmucNgulieusoComponent } from './features/web-home/danhmuc-ngulieuso/danhmuc-ngulieuso.component';
 import { SukienTonghopComponent } from './features/web-home/sukien-tonghop/sukien-tonghop.component';
@@ -30,8 +29,10 @@ import {CarouselModule} from "primeng/carousel";
 import {ImageModule} from "primeng/image";
 import {InputTextModule} from "primeng/inputtext";
 import {DropdownModule} from "primeng/dropdown";
-
-
+import { ChuyenDeComponent } from './features/web-home/chuyen-de/chuyen-de.component';
+import { ChuyenDeMenuComponent } from './features/web-home/chuyen-de/chuyen-de-menu/chuyen-de-menu.component';
+import { ChuyenDeContentComponent } from './features/web-home/chuyen-de/chuyen-de-content/chuyen-de-content.component';
+import {PdfViewerModule} from "ng2-pdf-viewer";
 @NgModule({
   declarations: [
     LoginComponent,
@@ -44,11 +45,13 @@ import {DropdownModule} from "primeng/dropdown";
     VirtualTourComponent,
     WebHomeComponent,
     SearchComponent,
-    ChuyenmucComponent,
     NhanvatComponent,
     DanhmucNgulieusoComponent,
     SukienTonghopComponent,
-    ThongtinKythuatComponent
+    ThongtinKythuatComponent,
+    ChuyenDeComponent,
+    ChuyenDeMenuComponent,
+    ChuyenDeContentComponent,
   ],
   imports: [
     CommonModule,
@@ -66,6 +69,7 @@ import {DropdownModule} from "primeng/dropdown";
     ImageModule,
     InputTextModule,
     DropdownModule,
+    PdfViewerModule,
 
   ]
 })

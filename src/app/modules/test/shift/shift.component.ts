@@ -11,6 +11,8 @@ import {logMessages} from "@angular-devkit/build-angular/src/builders/browser-es
 import {AuthService} from "@core/services/auth.service";
 import {Router} from "@angular/router";
 import {ServerTimeService} from "@shared/services/server-time.service";
+import {OverlayPanel} from "primeng/overlaypanel/overlaypanel";
+import {BUTTON_NO, BUTTON_YES} from "@core/models/buttons";
 
 type ShiftState = -1 | 0 | 1; // o: chưa tới thời gian thi | 1 : trong thời gian cho phép thi | -1 : quá hạn thời gian được phép thi
 
@@ -171,5 +173,19 @@ export class ShiftComponent implements OnInit {
     })
   }
 
+  async signOut() {
+    this.notificationService.isProcessing( true );
+    await this.auth.logout();
+    this.router.navigate( [ 'home' ] ).then( () => this.notificationService.isProcessing( false ) , () => this.notificationService.isProcessing( false ) );
+  }
 
+  async confirmSignOut(  ) {
+    // panel.hide();
+    const headText = this.auth.userLanguage.translations.dashboard.confirm_logout;
+    const question = this.auth.userLanguage.translations.dashboard.confirm_logout_mess;
+    const confirm  = await this.notificationService.confirmRounded( `<p class="text-danger">${ question }</p>` , headText , [ BUTTON_YES, BUTTON_NO] );
+    if ( confirm && confirm.name && confirm.name === BUTTON_YES.name ) {
+      await this.signOut();
+    }
+  }
 }

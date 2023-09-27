@@ -25,6 +25,7 @@ export interface ConvertChuyenDe extends ChuyenDe {
   video: OvicFile[];
   audio: OvicFile[];
   documents: OvicFile[];// text COLLATE utf8_unicode_ci DEFAULT NULL //COMMENT 'json: link file tai lieu, bai tap',
+  file_scorm:OvicFile;
   ordering: number;// int(11) DEFAULT 1000,
   status: number;
   children: ChuyenDe[];
@@ -94,7 +95,8 @@ export class ChuyenDeComponent implements OnInit, OnChanges, AfterViewInit {
         documents: [[]],
         status: 1,
         audio: [[]],
-        parent_id:0
+        parent_id:0,
+        file_scorm:[null]
       }
     );
 
@@ -128,6 +130,8 @@ export class ChuyenDeComponent implements OnInit, OnChanges, AfterViewInit {
     this.chuyenDeService.loadDataUnlimit().subscribe({
       next: (data) => {
         this.listData = this.setNewData(data);
+        console.log(this.listData);
+
       }, error: () => {
       }
     })
@@ -150,9 +154,11 @@ export class ChuyenDeComponent implements OnInit, OnChanges, AfterViewInit {
         video: [],
         audio: [],
         documents: [],
+        file_scorm:null,
         type: 'LESSON',
         status: 1,
         children: [],
+
       }
       parent_['newInput'] = true;
       parent.push(parent_);
@@ -174,6 +180,7 @@ export class ChuyenDeComponent implements OnInit, OnChanges, AfterViewInit {
             audio: [],
             documents: [],
             children: [],
+            file_scorm:null,
             newInput: true,
 
           }
@@ -243,6 +250,11 @@ export class ChuyenDeComponent implements OnInit, OnChanges, AfterViewInit {
         this.chuyenDeService.update(this.objectId,this.object).subscribe({
           next: () => {
             this.notificationService.toastSuccess('Sửa nội dung thành công')
+              this.chuyenDeService.loadUrlScormById(this.objectId).subscribe({
+                next: (data) => {
+                  console.log(data);
+                }
+              });
             this.loadData();
           },
           error: () => {
@@ -470,6 +482,7 @@ export class ChuyenDeComponent implements OnInit, OnChanges, AfterViewInit {
         video: this.selectedChuyenMuc.video,
         audio: this.selectedChuyenMuc.audio,
         documents: this.selectedChuyenMuc.documents,
+        file_scorm:this.selectedChuyenMuc.file_scorm,
       });
     }
   }

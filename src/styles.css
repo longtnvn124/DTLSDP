@@ -12,7 +12,7 @@
 	--hover-main-color-3: #FD2E21;
 	--main-color-4: #009ED8;
 	--hover-main-color-4: #007AA6;
-	--main-color-5: #2196f3;
+	--main-color-5: rgba(106, 159, 127, 0.61);
 	--hover-main-color-5: #2f3c86;
 	--header-menu-nav: #6188e5;
 	--font-svn-poppins: 'svn-Poppins', sans-serif;
@@ -32,7 +32,7 @@
 	--panel-padding--negative: -15px;
 	--panel-background: rgb(247, 248, 250);
 	--main-wrap-content-size: 100%;
-	
+
 	--panel-left-menu-layout-bg: #ff;
 	--panel-left-menu-border: 1px solid #f3f3f3;
 	--panel-left-menu-bg: #f6f6f6;
@@ -50,7 +50,7 @@
 	--panel-left-menu-padding-child: 13px 7px 13px 20px;
 	--overflow-wrapper-animation: hidden;
 	--table-hind-color: #E0EBFF;
-	
+
 	--linear-gradient-deg: 158.84deg;
 	--linear-gradient-c1: linear-gradient(var(--linear-gradient-deg), rgba(97, 213, 228, 0.28) 11.11%, rgba(255, 255, 255, 0) 86.05%);
 	--linear-gradient-c2: linear-gradient(var(--linear-gradient-deg), rgba(97, 213, 228, 0.28) 11.11%, rgba(255, 255, 255, 0) 86.05%);
@@ -63,7 +63,7 @@
 	--linear-gradient-c9: linear-gradient(var(--linear-gradient-deg), rgba(223, 227, 231, 0.28) 11.11%, rgba(255, 255, 255, 0) 86.05%);
 	--linear-gradient-c10: linear-gradient(var(--linear-gradient-deg), rgba(144, 205, 147, 0.28) 11.11%, rgba(255, 255, 255, 0) 86.05%);
 	--linear-gradient-c11: linear-gradient(var(--linear-gradient-deg), rgba(136, 147, 209, 0.28) 11.11%, rgba(255, 255, 255, 0) 86.05%);
-	
+
 	--blue-50: #f5f9ff;
 	--blue-100: #d0e1fd;
 	--blue-200: #abc9fb;
@@ -179,7 +179,7 @@
 	--notification-list-avatar-size: 36px;
 	--notification-list-author-size: 170px;
 	--notification-list-date-size: 100px;
-	
+
 	--ovic-table-head-bg-color: #dedede;
 	--ovic-table-head-border: 1px solid #cccccc;
 	--ck-z-default: 999999;

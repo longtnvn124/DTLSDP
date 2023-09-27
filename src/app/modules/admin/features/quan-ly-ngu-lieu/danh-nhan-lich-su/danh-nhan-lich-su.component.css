@@ -13,7 +13,7 @@
 .st-image {
   display: flex;
   justify-content: center;
-  padding-top: 10px;
+  margin-top: 10px;
   width: 100%;
 }
 
@@ -22,10 +22,10 @@
   min-height: 42px;
 }
 
-.head-card_hover:hover {
-  background-color: #fff;
-  opacity: 0.3;
-}
+/*.head-card_hover:hover {*/
+/*  background-color: #fff;*/
+/*  opacity: 0.3;*/
+/*}*/
 
 .txt-label-nomal {
   margin-top: 20px;

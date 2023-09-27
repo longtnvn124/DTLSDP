@@ -17,25 +17,28 @@ import {RippleModule} from "primeng/ripple";
 import {TabMenuModule} from "primeng/tabmenu";
 import {EditorModule} from "primeng/editor";
 @NgModule({
-  declarations: [
-    ChuyenDeComponent
-  ],
-  imports: [
-    CommonModule,
-    QuanLyChuyenDeRoutingModule,
-    NgbTooltipModule,
-    ReactiveFormsModule,
-    TabViewModule,
-    SharedModule,
-    MultiSelectModule,
-    CheckboxModule,
-    RadioButtonModule,
-    MatProgressBarModule,
-    DragDropModule,
-    ButtonModule,
-    RippleModule,
-    TabMenuModule,
-    EditorModule
-  ]
+    declarations: [
+        ChuyenDeComponent
+    ],
+    exports: [
+        ChuyenDeComponent
+    ],
+    imports: [
+        CommonModule,
+        QuanLyChuyenDeRoutingModule,
+        NgbTooltipModule,
+        ReactiveFormsModule,
+        TabViewModule,
+        SharedModule,
+        MultiSelectModule,
+        CheckboxModule,
+        RadioButtonModule,
+        MatProgressBarModule,
+        DragDropModule,
+        ButtonModule,
+        RippleModule,
+        TabMenuModule,
+        EditorModule
+    ]
 })
 export class QuanLyChuyenDeModule { }

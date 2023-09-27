@@ -39,7 +39,7 @@ import {OvicDocumentViewerComponent} from '@shared/components/ovic-document-view
 import {
   OvicDownloadProgressComponent
 } from '@shared/components/ovic-download-progress/ovic-download-progress.component';
-import {OvicVideoPlayerNewComponent} from '@shared/components/ovic-video-player-new/ovic-video-player-new.component';
+
 import {
   OvicPersonalFileExplorerComponent
 } from '@shared/components/ovic-personal-file-explorer/ovic-personal-file-explorer.component';
@@ -158,7 +158,6 @@ import {AutoFocusDirective} from "@shared/directives/auto-focus.directive";
     OvicDocumentListComponent,
     OvicDocumentViewerComponent,
     OvicDownloadProgressComponent,
-    OvicVideoPlayerNewComponent,
     OvicPersonalFileExplorerComponent,
     OvicPreviewSingleGoogleDriveFileComponent,
     OvicDocumentDownloaderComponent,
@@ -280,7 +279,6 @@ import {AutoFocusDirective} from "@shared/directives/auto-focus.directive";
     OvicDocumentListComponent,
     OvicDocumentViewerComponent,
     OvicDownloadProgressComponent,
-    OvicVideoPlayerNewComponent,
     OvicPersonalFileExplorerComponent,
     OvicPreviewSingleGoogleDriveFileComponent,
     OvicDocumentDownloaderComponent,

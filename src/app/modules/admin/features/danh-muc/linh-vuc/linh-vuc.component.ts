@@ -125,7 +125,6 @@ export class LinhVucComponent implements OnInit {
     private themeSettingsService: ThemeSettingsService,
     private notificationService: NotificationService,
     private fb: FormBuilder,
-
     private danhMucLinhVucService: DanhMucLinhVucService
   ) {
     this.formSave = this.fb.group({

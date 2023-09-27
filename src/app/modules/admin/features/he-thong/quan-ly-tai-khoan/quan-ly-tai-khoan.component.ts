@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild, ElementRef} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {RoleService} from '@core/services/role.service';
 import {UserService} from '@core/services/user.service';
@@ -11,8 +11,6 @@ import {User} from '@core/models/user';
 import {Role} from '@core/models/role';
 import {OvicRightContextMenu} from '@shared/models/ovic-right-context-menu';
 import {ProfileService} from '@core/services/profile.service';
-import {map} from 'rxjs/operators';
-import {APP_CONFIGS} from '@env';
 import {UnsubscribeOnDestroy} from '@core/utils/decorator';
 import {OvicTableStructure} from '@shared/models/ovic-models';
 import {OvicButton} from '@core/models/buttons';
@@ -45,72 +43,103 @@ export class QuanLyTaiKhoanComponent implements OnInit {
     {
       fieldType: 'media',
       field: ['avatar'],
-      rowClass: 'ovic-img-minimal text-center img-child-max-width-30',
       header: 'Media',
       placeholder: true,
       sortable: false,
-      headClass: 'ovic-w-90px text-center'
+      headClass: 'ovic-w-90px text-center',
+      rowClass: 'ovic-img-minimal text-center img-child-max-width-30',
+
     },
     {
       fieldType: 'normal',
       field: ['username'],
-      rowClass: '',
       header: 'Tên tài khoản',
       sortable: true,
-      headClass: ''
+      headClass: 'ovic-w-180px text-center',
+      rowClass: 'ovic-w-180px text-center'
     },
     {
       fieldType: 'normal',
       field: ['display_name'],
-      rowClass: '',
       header: 'Tên hiển thị',
       sortable: false,
-      headClass: ''
+      headClass: 'ovic-w-180px text-center',
+      rowClass: 'ovic-w-180px text-center'
+
     },
     {
       fieldType: 'normal',
       field: ['email'],
-      rowClass: '',
       header: 'Email',
       sortable: false,
-      headClass: ''
+      headClass: '',
+      rowClass: '',
     },
     {
       fieldType: 'normal',
       field: ['u_role'],
       innerData: true,
-      rowClass: '',
+
       header: 'Vai trò',
       sortable: false,
-      headClass: ''
+      headClass: 'ovic-w-130px text-center',
+      rowClass: 'ovic-w-130px text-center'
+
+    },
+    {
+      fieldType: 'switch',
+      field: ['status'],
+      header: 'Active',
+      sortable: false,
+      headClass: 'ovic-w-110px text-center',
+      rowClass: 'ovic-w-110px text-center round'
+    },
+    {
+      tooltip: '',
+      fieldType: 'buttons',
+      field: [],
+      checker: 'fieldName',
+      header: 'Thao tác',
+      sortable: false,
+      rowClass: 'ovic-w-110px text-center',
+      headClass: 'ovic-w-110px text-center',
+      buttons: [
+        {
+          tooltip: 'Cập nhật',
+          label: '',
+          icon: 'pi pi-file-edit',
+          name: 'EDIT_DECISION',
+          cssClass: 'btn-primary rounded'
+        },
+        {
+          tooltip: 'Xoá',
+          label: '',
+          icon: 'pi pi-trash',
+          name: 'DELETE_DECISION',
+          cssClass: 'btn-danger rounded'
+        }
+      ]
     }
   ];
 
-  formFields = {
-    display_name: ['', Validators.required],
-    // username     : [ '' , [ Validators.required , Validators.pattern( '^(?=.{3,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$' ) ] ] ,
-    username: ['', [Validators.required, Validators.pattern('^\\S*$')]],
-    phone: ['', Validators.required],
-    email: ['', [Validators.required, Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$')]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
-    donvi_id: [''],
-    role_ids: [[], Validators.required],
-    status: [1, Validators.required]
-  };
-
-  /*
-   ^(?=.{3,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$
-   └─────┬────┘└───┬──┘└─────┬─────┘└─────┬─────┘ └───┬───┘
-   │         │         │            │           no _ or . at the end
-   │         │         │            │
-   │         │         │            allowed characters
-   │         │         │
-   │         │         no __ or _. or ._ or .. inside
-   │         │
-   │         no _ or . at the beginning
-   │
-   username is 3-20 characters long
-   */
+  headButtons = [
+    {
+      label: 'Refresh',
+      name: 'REFRESH_LIST',
+      icon: 'pi-refresh pi',
+      class: 'p-button-rounded p-button-secondary ml-3',
+      tooltip: 'Làm mới danh sách',
+      tooltipPosition: 'left'
+    },
+    {
+      label: 'Thêm mới',
+      name: 'ADD_NEW_ROW',
+      icon: 'pi-plus pi',
+      class: 'p-button-rounded p-button-primary ml-3 mr-2',
+      tooltip: 'Thêm tài khoản mới',
+      tooltipPosition: 'left'
+    }
+  ];
 
   canEdit: boolean;
 
@@ -132,72 +161,9 @@ export class QuanLyTaiKhoanComponent implements OnInit {
 
   subscriptions = new Subscription();
 
-  rightContextMenu: OvicRightContextMenu[] = [
-    {
-      label: 'Xem trước',
-      icon: 'fa fa-eye',
-      slug: 'preview'
-    },
-    {
-      label: 'Chi tiết',
-      icon: 'fa fa-info-circle',
-      slug: 'detail'
-    },
-    {
-      label: 'Tải xuống',
-      icon: 'fa fa-cloud-download',
-      slug: 'download'
-    },
-    {
-      label: 'Share',
-      icon: 'fa fa-share-alt',
-      slug: 'shared',
-      child: [
-        {label: 'Công khai', icon: 'fa fa-globe', slug: 'SharedPublic'},
-        {label: 'Trong nhóm', icon: 'fa fa-users', slug: 'sharedGroup'},
-        {label: 'Chỉ mình tôi', icon: 'fa fa-lock', slug: 'private'}
-      ]
-    },
-    {
-      label: 'Link file',
-      icon: 'fa fa-link',
-      slug: 'linkFile'
-    },
-    {
-      label: 'Xóa file',
-      icon: 'fa fa-trash',
-      slug: 'deleteFile'
-    }
-  ];
 
   currentRoute = 'he-thong/quan-ly-tai-khoan';
 
-  headButtons = [
-    {
-      label: 'Import',
-      name: 'ADD_NEW_ROW_FROM_EXCEL',
-      icon: 'pi-file-excel pi',
-      class: 'p-button-rounded p-button-success',
-      tooltip: 'Thêm mới tài khoản từ file excel',
-      tooltipPosition: 'left'
-    },
-    {
-      label: 'Refresh',
-      name: 'REFRESH_LIST',
-      icon: 'pi-refresh pi',
-      class: 'p-button-rounded p-button-secondary ml-3',
-      tooltip: 'Làm mới danh sách',
-      tooltipPosition: 'left'
-    },
-    {
-      label: 'Thêm mới',
-      name: 'ADD_NEW_ROW',
-      icon: 'pi-plus pi',
-      class: 'p-button-rounded p-button-primary ml-3 mr-2',
-      tooltip: 'Thêm tài khoản mới',
-      tooltipPosition: 'left'
-    }
-  ];
 
   private _reloadData$ = new Subject<any>();
 
@@ -210,7 +176,17 @@ export class QuanLyTaiKhoanComponent implements OnInit {
     private profileService: ProfileService,
     private auth: AuthService
   ) {
-    this.formSave = this.fb.group(this.formFields);
+    this.formSave = this.fb.group({
+      display_name: ['', Validators.required],
+      // username     : [ '' , [ Validators.required , Validators.pattern( '^(?=.{3,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$' ) ] ] ,
+      username: ['', [Validators.required, Validators.pattern('^\\S*$')]],
+      phone: ['', Validators.required],
+      email: ['', [Validators.required, Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$')]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      donvi_id: [''],
+      role_ids: [[], Validators.required],
+      status: [1, Validators.required]
+    });
     this.data = [];
     this.isUpdateForm = false;
     this.formTitle = 'Tạo tài khoản';
@@ -219,183 +195,91 @@ export class QuanLyTaiKhoanComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
+
     this.canEdit = this.auth.userCanEdit(this.currentRoute);
     this.canAdd = this.auth.userCanAdd(this.currentRoute);
     this.canDelete = this.auth.userCanDelete(this.currentRoute);
     this.isAdmin = this.auth.userHasRole('admin_dtlsdp');
     this.userDonviId = this.auth.user.donvi_id;
     this.f['donvi_id'].setValue(this.userDonviId);
-    const actions = [];
-    if (this.canEdit) {
-      this.cols.push({
-        fieldType: 'switch',
-        field: ['status'],
-        rowClass: 'round text-center',
-        header: 'Active',
-        sortable: false,
-        headClass: 'ovic-w-80px text-center'
-      });
-      actions.push('edit');
-    }
-    if (this.canDelete) {
-      actions.push('delete');
-    }
-    if (actions.length) {
-      this.cols.push({
-        tooltip: 'tài khoản',
-        fieldType: 'actions',
-        field: actions,
-        rowClass: 'text-center',
-        header: 'Thao tác',
-        sortable: false,
-        headClass: 'ovic-w-120px text-center'
-      });
-    }
-    this.loadData();
 
-    // this.userService.queryUsers( this.userDonviId ).subscribe( res => console.log( res ) );
+    this.loadData()
+
   }
 
-  loadUsersRoles(users: User[]): Observable<[User[], Role[]]> {
-    const setIds = new Set<string>();
-    users.forEach(u => {
-      if (u.role_ids && u.role_ids.length) {
-        u.role_ids.forEach(r => r ? setIds.add(r) : null);
-      }
-    });
-    if (setIds.size) {
-      const ids = Array.from(setIds).join(',');
-      return forkJoin([
-        of(users),
-        this.roleService.listRoles(ids).pipe(map(rs => rs.filter(r => r.realm === APP_CONFIGS.realm)))
-      ]);
-    } else {
-      return of([users, []]);
-    }
-  }
 
   loadData() {
-    this.data = [];
-    this.notificationService.isProcessing(true);
-    const userCanLoad = (this.canEdit || this.canAdd || this.canDelete);
+    this.notificationService.isProcessing(true)
+    const userCanLoad: boolean = this.canEdit || this.canAdd || this.canDelete;
     const loader$: Observable<User[]> = userCanLoad ? this.userService.listUsers(this.userDonviId) : of([this.auth.user]);
-    loader$.pipe(
-      map(users => userCanLoad ? (users.length ? users.filter(u => u.id !== this.auth.user.id) : []) : users),
-      switchMap(users => this.loadUsersRoles(users))
-    ).subscribe({
-      next: ([users, roles]) => {
+
+    loader$.subscribe({
+      next: (users) => {
+
+        const roles: SimpleRole[] = this.auth.roles;
         users.map(u => {
           const uRoles = [];
           // const uRoles = roles;
           if (u.role_ids && u.role_ids.length) {
             u.role_ids.forEach(r => {
+
               const index = r ? roles.findIndex(i => i.id === parseInt(r, 10)) : -1;
               if (index !== -1) {
                 uRoles.push('<span class="--user-role-label --role-' + roles[index].name + '">' + roles[index].title + '</span>');
               }
             }, []);
           }
+          u.avatar = u.avatar ? u.avatar : 'assets/images/a_none.jpg';
           u['u_role'] = uRoles.join(', ');
           return u;
         });
-        this.data = users;
-        this.data.push(this.auth.user);
+
+        this.data = users.filter(f => f.id !== this.auth.user.id);
+
         this.notificationService.isProcessing(false);
-      },
-      error: () => {
+
+      }, error: (error) => {
         this.notificationService.isProcessing(false);
         this.notificationService.toastError('Load dữ liệu không thành công');
       }
-    });
-    /*		forkJoin( [
-     this.roleService.listRoles() ,
-     this.userService.listUsers( this.userDonviId )
-     ] ).subscribe(
-     {
-     next  : ( [ roles , users ] ) => {
-     if ( users ) {
-     this.data = [];
-     for ( const user of users ) {
-     /!**
-     * loại trừ user hiện tại và
-     * những users có role id nhỏ user hiện tại
-     * role id càng nhỏ quyền càng lớn
-     * *!/
-     if ( user.id === this.auth.user.id || ( user.role_ids && user.role_ids.some( r => r <= this.highestRoleIdUser ) ) ) {
-     continue;
-     }
-     /!*them truong don vi de hien thi don vi tu don vi id*!/
-     // user.donvi  = this.truong.ten;
-     const u_roles = [];
-     if ( user.role_ids && this.dsNhomQuyen ) {
-     u_roles.push( '<div class="ovic-wrap-roles">' );
-     this.dsNhomQuyen.filter( nq => user.role_ids.includes( nq.id.toString( 10 ) ) ).forEach( role => {
-     switch ( role.name ) {
-     case 'admin':
-     u_roles.push( `<span class="pw-r-inline alert alert-danger">${ role.title }</span>` );
-     break;
-     case 'manager':
-     u_roles.push( `<span class="pw-r-inline alert alert-warning">${ role.title }</span>` );
-     break;
-     case 'sub-manager':
-     u_roles.push( `<span class="pw-r-inline alert alert-info">${ role.title }</span>` );
-     break;
-     default :
-     u_roles.push( `<span class="pw-r-inline alert alert-success">${ role.title }</span>` );
-     break;
-     }
-     } );
-     u_roles.push( '</div>' );
-     }
-     user[ 'u_role' ] = u_roles.length ? u_roles.join( '' ) : '';
-     this.data.push( user );
-     }
-     console.log( roles );
-     console.log( this.data );
-     }
-     } ,
-     error : () => this.notificationService.toastError( 'Không load được bảng user' )
-     }
-     );*/
+    })
   }
 
-  switchEvent(id) {
-    const index = this.data.findIndex(dt => dt.id === id);
-    if (index !== -1) {
-      const status = this.data[index].status ? 0 : 1;
-      const username = this.data[index].username;
-      this.userService.updateUserInfo(id, {status, username}).subscribe({
-        next: () => {
-          this.data[index].status = status;
-          this.notificationService.toastSuccess('Thay đổi trạng thái tài khoản thành công');
-        },
-        error: () => this.notificationService.toastError('Thay đổi trạng thái thất bại')
-      });
+
+  get f(): { [key: string]: AbstractControl<any> } {
+    return this.formSave.controls;
+  }
+
+  userActions(button: OvicButton) {
+    if (!button) {
+      return;
+    }
+    const decision = button.data && this.data ? this.data.find(f => f.id === button.data) : null;
+    switch (button.name) {
+      case 'DELETE_DECISION':
+        void this.deleteUser(decision.id);
+        break;
+      case 'EDIT_DECISION':
+        this.editUser(decision);
+        break;
+      case 'SWITCH':
+        this.switchEvent(decision.id);
+        break;
+      case 'ADD_NEW_ROW':
+        void this.creatUser(this.tplCreateAccount);
+        break;
+      case 'ADD_NEW_ROW_FROM_EXCEL':
+        break;
+      case 'REFRESH_LIST':
+        this.triggerReloadData();
+        break;
+      default :
+        break;
     }
   }
 
-  editUser(id) {
-    this.changPassState = false;
-    const user = this.data.find(u => u.id === id);
-    if (user) {
-      this.f['role_ids'].setValue(user.role_ids);
-      this.editUserId = id;
-      this.isUpdateForm = true;
-      this.formTitle = 'Cập nhật tài khoản';
-      this.f['display_name'].setValue(user.display_name);
-      this.f['username'].setValue(user.username);
-      this.f['phone'].setValue(user.phone);
-      this.f['email'].setValue(user.email);
-      this.f['password'].setValue(user.password);
-      this.f['donvi_id'].setValue(user.donvi_id);
-      this.f['role_ids'].setValue(user.role_ids.toString());
-      this.f['status'].setValue(user.status);
-      this.callActionForm(this.tplCreateAccount).then(() => this.loadData(), () => this.loadData());
-      this.defaultPass = user.password;
-    }
-  }
-
-  async deleteUser(id) {
+  async deleteUser(id: number) {
     const confirm = await this.notificationService.confirmDelete();
     if (confirm) {
       this.userService.deleteUser(id).subscribe(
@@ -410,47 +294,79 @@ export class QuanLyTaiKhoanComponent implements OnInit {
     }
   }
 
+  editUser(user) {
+
+    if (user) {
+      this.f['role_ids'].setValue(user.role_ids);
+      this.editUserId = user.id;
+      this.isUpdateForm = true;
+      this.formTitle = 'Cập nhật tài khoản';
+      this.f['display_name'].setValue(user.display_name);
+      this.f['username'].setValue(user.username);
+      this.f['phone'].setValue(user.phone);
+      this.f['email'].setValue(user.email);
+      this.f['password'].setValue(user.password);
+      this.f['donvi_id'].setValue(user.donvi_id);
+      this.f['role_ids'].setValue(user.role_ids.toString());
+      this.f['status'].setValue(user.status);
+      this.callActionForm(this.tplCreateAccount);
+      this.defaultPass = user.password;
+    }
+  }
+
+  switchEvent(id:number) {
+    const index = this.data.findIndex( dt => dt.id === id );
+    if ( index !== -1 ) {
+      const status   = this.data[ index ].status ? 0 : 1;
+      const username = this.data[ index ].username;
+      this.userService.updateUserInfo( id , { status , username } ).subscribe( {
+        next  : () => {
+          this.data[ index ].status = status;
+          this.notificationService.toastSuccess( 'Thay đổi trạng thái tài khoản thành công' );
+          this.loadData()
+        } ,
+        error : () => this.notificationService.toastError( 'Thay đổi trạng thái thất bại' )
+      } );
+    }
+  }
+
   async creatUser(frmTemplate) {
     this.changPassState = true;
     this.isUpdateForm = false;
     this.formTitle = 'Tạo tài khoản';
-    this.resetForm(this.formSave);
+    // this.resetForm( this.formSave );
+    this.formSave.reset({
+      display_name: '',
+      username: '',
+      phone: null,
+      email: '',
+      password: '',
+      role_ids: '',
+      status: 0,
+    });
+    this.f['username'].setValue('');
     try {
       await this.callActionForm(frmTemplate);
-      this.loadData();
     } catch (e) {
 
     }
   }
 
-  // loadAcceptableRoles() : Promise<Role[]> {
-  // const observer = this.roleService.listRolesFiltered();
-  // return lastValueFrom( observer );
-  // }
-
-  async callActionForm(template): Promise<any> {
-    if (this.dsNhomQuyen.length === 0) {
-      // const u = await this.loadRolesUserCanSet();
-      if (Array.isArray(this.auth.roles) && this.auth.roles.length > 1) {
-        const exceptHightRole = Math.min(...[...this.auth.roles].map( u => u.id));
-        this.dsNhomQuyen = [... this.auth.roles].filter( r => r.id !== exceptHightRole );
-        // this.notificationService.toastError('Không load được dữ liệu vui lòng kiểm tra lại kết nối mạng');
-        return Promise.resolve();
-      } else {
-        // if (u.roles && u.roles.length) {
-        //   this.dsNhomQuyen = u.roles;
-        // } else {
-        //   return this.notificationService.alertInfo('Lỗi phân quyền', 'Bạn chưa được phân quyền tạo tài khoản trên hệ thống này, vui lòng liên hệ quản trị viên để được giải đáp', 'Đóng');
-        // }
-        return Promise.resolve();
-      }
-    }
-    const createUserForm = this.modalService.open(template, DEFAULT_MODAL_OPTIONS);
-    return createUserForm.result;
+  triggerReloadData() {
+    this.loadData();
   }
 
-  get f() {
-    return this.formSave.controls;
+  clickChangedPass() {
+
+    const state = this.changPassState;
+    this.changPassState = !state;
+    if (!this.changPassState) {
+      this.f['password'].setValue(this.defaultPass);
+    }
+  }
+
+  creatUserChangeActive(value: number) {
+    this.f['status'].setValue(value);
   }
 
   taoTaiKhoan(form: FormGroup) {
@@ -483,6 +399,18 @@ export class QuanLyTaiKhoanComponent implements OnInit {
     }
   }
 
+  resetForm(form: FormGroup) {
+    form.reset({
+      display_name: '',
+      username: '',
+      phone: '',
+      email: '',
+      password: '',
+      role_ids: '',
+      status: 0,
+    });
+  }
+
   capNhatTaiKhoan(form: FormGroup) {
     if (form.valid) {
       const data = {...form.value};
@@ -498,6 +426,7 @@ export class QuanLyTaiKhoanComponent implements OnInit {
         next: () => {
           this.notificationService.toastSuccess('Cập nhật tài khoản thành công');
           this.modalService.dismissAll('');
+          this.loadData();
         },
         error: () => null
       });
@@ -506,81 +435,24 @@ export class QuanLyTaiKhoanComponent implements OnInit {
     }
   }
 
-  resetForm(form: FormGroup) {
-    form.reset({role_ids: '', status: 0});
-  }
-
-  clickChangedPass() {
-    const state = this.changPassState;
-    this.changPassState = !state;
-    if (!this.changPassState) {
-      this.f['password'].setValue(this.defaultPass);
-    }
-  }
-
-  menuItemClick(event: MouseEvent, data) {
-    event.preventDefault();
-    event.stopPropagation();
-    console.log(data);
-  }
-
-  rClick(data) {
-    console.log(data);
-  }
-
-  creatUserChangeActive(value: number) {
-    this.f['status'].setValue(value);
-  }
-
-  userActions(btn: OvicButton) {
-    switch (btn.name) {
-      case 'DELETE':
-        void this.deleteUser(btn.data);
-        break;
-      case 'EDIT':
-        this.editUser(btn.data);
-        break;
-      case 'SWITCH':
-        this.switchEvent(btn.data);
-        break;
-      case 'ADD_NEW_ROW':
-        void this.creatUser(this.tplCreateAccount);
-        break;
-      case 'ADD_NEW_ROW_FROM_EXCEL':
-        console.log('ADD_NEW_ROW_FROM_EXCEL');
-        break;
-      case 'REFRESH_LIST':
-        this.triggerReloadData();
-        break;
-      default :
-        break;
-    }
-  }
-
-  triggerReloadData() {
-    this._reloadData$.next('');
-  }
-
-  async loadRolesUserCanSet(): Promise<{ roles: Role[], error: boolean }> {
-    console.log(this.auth.roles)
-    const userRoleIds = this.auth.user.role_ids;
-    if (Array.isArray(userRoleIds) && userRoleIds.length > 1) {
-      const u = userRoleIds.map(u => parseInt(u, 10));
-      const min = Math.min(...u);
-      const s = u.filter(e => e !== min);
-      this.notificationService.startLoading();
-      try {
-        const error = false;
-        const roles = await firstValueFrom(this.roleService.listRolesFiltered(s.join(','), 'id,title,realm').pipe(map(r => r.filter(r => r.realm === APP_CONFIGS.realm))));
-        this.notificationService.stopLoading();
-        return Promise.resolve({error, roles});
-      } catch (e) {
-        this.notificationService.stopLoading();
-        return Promise.resolve({error: true, roles: []});
+  async callActionForm(template): Promise<any> {
+    console.log(this.auth.roles);
+    if (this.dsNhomQuyen.length === 0) {
+      if (Array.isArray(this.auth.roles) && this.auth.roles.length > 1) {
+        const exceptHightRole = Math.min(...[...this.auth.roles].map(u => u.id));
+        console.log(exceptHightRole);
+        this.dsNhomQuyen = [...this.auth.roles].filter(r => r.id !== exceptHightRole);
+        return Promise.resolve();
+      } else {
+        return Promise.resolve();
       }
-    } else {
-      return Promise.resolve({error: false, roles: []});
     }
+    const createUserForm = this.modalService.open(template, DEFAULT_MODAL_OPTIONS);
+    return createUserForm.result;
   }
+
+  paginate
 
 }
+
+

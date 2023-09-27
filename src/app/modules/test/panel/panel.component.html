@@ -1,4 +1,4 @@
-<div class="w-100 h-100" style="background-color:#f1f1f1">
+<div class="w-100 h-100" style="background-color: #5a725c52;">
   <ng-container [ngSwitch]="mode">
     <ng-container *ngSwitchCase="'PANEL'">
       <div class="d-flex justify-content-center align-items-center h-100 flex-column">
@@ -76,11 +76,11 @@
           </tr>
           <tr>
             <td class="font-weight-bold">Điểm:</td>
-            <td>{{candiate.result}}</td>
+            <td style="font-weight: 600;color:red;">{{candiate.result}}</td>
           </tr>
           <tr>
             <td class="font-weight-bold">Số câu trả lời đúng:</td>
-            <td>{{candiate.number_correct}}</td>
+            <td style="font-weight: 600;color:red;">{{candiate.number_correct}}</td>
           </tr>
 
         </table>

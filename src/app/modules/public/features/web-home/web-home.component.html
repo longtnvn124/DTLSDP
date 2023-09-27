@@ -1,18 +1,19 @@
-<div class="header" id="header">
-  <div class="container">
-    <div class="row d-flex justify-content-between align-items-center">
-      <div class="header-logo" (click)="btn_GoHome()">
+<div *ngIf="!unLesson" class="header" id="header">
+<!--  <div style="padding:0 40px">-->
+  <div >
+    <div class="row d-flex justify-content-between align-items-center" style="padding: 6px 22px;">
+      <div style="padding-left:15px" class="header-logo" (click)="btn_GoHome()">
         <a><img src="assets/images/quochuy.png"></a>
         <h3 class="header-logo_title ml-4">Ban tuyên giáo</h3>
       </div>
       <div class="nav-menu-container">
         <ul class="nav-menu">
-          <li><a>31 chuyên đề</a></li>
-          <li><a (click)="btn_vr360()">Vr 360</a></li>
-          <li><a (click)="btn_sukien()">Sự kiện</a></li>
-          <li><a (click)="btn_nhanvat()">Danh nhân lịch sử</a></li>
-          <li><a (click)="btn_search()">Tìm kiếm</a></li>
-          <li><a (click)="btn_login()">Đăng nhập</a></li>
+          <li class="btn-li-a btn-li-a-select" (click)="btn_31Chuyende()"><a>31 chuyên đề</a></li>
+          <li class="btn-li-a btn-li-a-select" (click)="btn_vr360()"><a>Vr 360</a></li>
+          <li class="btn-li-a btn-li-a-select" (click)="btn_sukien()"><a>Sự kiện</a></li>
+          <li class="btn-li-a btn-li-a-select" (click)="btn_nhanvat()"><a>Danh nhân lịch sử</a></li>
+          <li class="btn-li-a btn-li-a-select" (click)="btn_search()"><a>Tìm kiếm</a></li>
+          <li class="btn-li-a btn-li-a-select" (click)="btn_login()"><a>Đăng nhập</a></li>
         </ul>
       </div>
       <div *ngIf="!action_menu" class="nav-menu_btn" (click)="btnActionMenu()">
@@ -23,13 +24,13 @@
       </div>
     </div>
     <div *ngIf="action_menu" class="drop-nav-menu">
-      <li><a>31 chuyên đề</a></li>
-      <li><a (click)="btn_vr360()">Vr 360</a></li>
-      <li><a (click)="btn_sukien()">Sự kiện</a></li>
-      <li><a (click)="btn_nhanvat()">Danh nhân lịch sử</a></li>
-      <li><a (click)="btn_shift()">Đợt thi tìm hiểu</a></li>
-      <li><a (click)="btn_search()">Tìm kiếm</a></li>
-      <li><a (click)="btn_login()">Đăng nhập</a></li>
+      <li ><a (click)="btn_31Chuyende()">31 chuyên đề</a></li>
+      <li ><a (click)="btn_vr360()">Vr 360</a></li>
+      <li ><a (click)="btn_sukien()">Sự kiện</a></li>
+      <li ><a (click)="btn_nhanvat()">Danh nhân lịch sử</a></li>
+      <li ><a (click)="btn_shift()">Đợt thi tìm hiểu</a></li>
+      <li ><a (click)="btn_search()">Tìm kiếm</a></li>
+      <li ><a (click)="btn_login()">Đăng nhập</a></li>
     </div>
   </div>
 </div>
@@ -153,22 +154,23 @@
   <ng-container *ngSwitchCase="'VR360'">
     <div class="container" style="padding-top: 80px">
       <div class="header-custom">
-        <button pRipple pButton class="p-button-warning" label="Trở lại" icon iconPos="left" icon="pi pi-angle-left"
-                (click)="btn_exit()"></button>
+<!--        <button pRipple pButton class="p-button-warning" label="Trở lại" icon iconPos="left" icon="pi pi-angle-left"-->
+<!--                (click)="btn_exit()"></button>-->
         <p class="nhanvat-title"> Vr360 </p>
         <div>
           <button pButton pRipple class="p-button-secondary mr-2" icon="pi pi-angle-left"></button>
           <button pButton pRipple class="p-button-secondary " icon="pi pi-angle-right"></button>
         </div>
       </div>
-      <danhmuc-ngulieuso></danhmuc-ngulieuso>
+      <danhmuc-ngulieuso [selectItem]="true"
+                         style="min-height: calc(100vh - 58px - 84px - 134px);display: block;"></danhmuc-ngulieuso>
     </div>
   </ng-container>
   <ng-container *ngSwitchCase="'NHANVAT'">
     <div class="container" style="padding-top: 80px">
       <div class="header-custom">
-        <button pRipple pButton class="p-button-warning" label="Trở lại" icon iconPos="left" icon="pi pi-angle-left"
-                (click)="btn_exit()"></button>
+<!--        <button pRipple pButton class="p-button-warning" label="Trở lại" icon iconPos="left" icon="pi pi-angle-left"-->
+<!--                (click)="btn_exit()"></button>-->
         <p class="nhanvat-title"> {{titleNhanvat}} </p>
         <div>
           <button pButton pRipple class="p-button-secondary mr-2" icon="pi pi-angle-left"
@@ -176,16 +178,16 @@
           <button pButton pRipple class="p-button-secondary " icon="pi pi-angle-right"></button>
         </div>
       </div>
-      <app-nhanvat [selectItem]="true"></app-nhanvat>
+      <app-nhanvat [selectItem]="true" style="min-height: calc(100vh - 86px - 84px - 134px);display: block;"></app-nhanvat>
     </div>
 
   </ng-container>
   <ng-container *ngSwitchCase="'SUKIEN_TONGHOP'">
     <div class="container" style="padding-top: 80px">
       <div class="header-custom">
-        <button pRipple pButton class="p-button-warning" label="Trở lại" icon iconPos="left" icon="pi pi-angle-left"
-                (click)="btn_exit()"></button>
-        <p class="nhanvat-title"> Sự kiện </p>
+<!--        <button pRipple pButton class="p-button-warning" label="Trở lại" icon iconPos="left" icon="pi pi-angle-left"-->
+<!--                (click)="btn_exit()"></button>-->
+        <p class="nhanvat-title"> Sự kiện lịch sử VH-ĐP </p>
         <div>
           <button pButton pRipple class="p-button-secondary mr-2" icon="pi pi-angle-left"
                   (click)="btnBackInfoSukien()"></button>
@@ -193,19 +195,21 @@
         </div>
       </div>
 
-      <app-sukien-tonghop [selectItem]="true"></app-sukien-tonghop>
+      <app-sukien-tonghop [selectItem]="true"
+                          style="min-height: calc(100vh - 58px - 84px - 134px);display: block;"></app-sukien-tonghop>
     </div>
   </ng-container>
   <ng-container *ngSwitchCase="'SEARCH'">
-    <app-search></app-search>
+    <app-search style="min-height: calc(100vh - 84px - 134px);display: block;margin-top: 84px;"></app-search>
   </ng-container>
-  <ng-container *ngSwitchCase="'THONGTIN'">
-
+  <ng-container *ngSwitchCase="'CHUYENDE'">
+    <app-chuyen-de (eventEmitter)="handleEvent()" class="w-100 d-block"
+                   style="height:100vh;display: block;"></app-chuyen-de>
   </ng-container>
 
 </ng-container>
 
-<div class="footer_container" #footer>
+<div *ngIf="!unLesson" class="footer_container" #footer>
   <div class="footer-section">
     <div class="container section-footer__container">
       <div class="row justify-content-center">
@@ -227,7 +231,8 @@
           <address class="footer__address">
             <p>Địa chỉ: Số 28 - Đ.Phan Đình Phùng - TP.Thái Nguyên - T.Thái Nguyên</p>
             <p>Email: vanthu.btgtu@thainguyen.gov.vn </p>
-            <p>Tel: 0208 3855.529 | Fax: 0208 3855529</p></address>
+            <p>Tel: 0208 3855.529 | Fax: 0208 3855529</p>
+          </address>
         </div>
       </div>
 
@@ -237,3 +242,8 @@
     </div>
   </div>
 </div>
+
+<!--<div class="position-absolute w-100 h-100">-->
+<!--  <button class="btn-li-a btn-li-a-select"> select</button>-->
+
+<!--</div>-->

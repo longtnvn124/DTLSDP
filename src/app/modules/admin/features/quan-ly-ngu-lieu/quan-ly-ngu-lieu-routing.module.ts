@@ -33,9 +33,9 @@ const routes: Routes = [
     data: {state: 'quan-ly-ngu-lieu--danh-sach-ngu-lieu-video-vr'}
   },
   {
-    path: 'danh-sach-ngu-lieu',
-    component: DanhSachNguLieuComponent,
-    data: {state: 'quan-ly-ngu-lieu--danh-sach-ngu-lieu'}
+    path: 'danh-sach-su-kien',
+    component: DanhSachSuKienComponent,
+    data: {state: 'quan-ly-ngu-lieu--danh-sach-su-kien'}
   },
 
 ];

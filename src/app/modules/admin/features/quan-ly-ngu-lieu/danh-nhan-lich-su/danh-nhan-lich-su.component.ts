@@ -34,7 +34,7 @@ export class DanhNhanLichSuComponent implements OnInit {
   filter = {
     search: ''
   }
-  listData: DmNhanVatLichSu[];
+  listData: DmNhanVatLichSu[] = [];
 
   formState: {
     formType: 'add' | 'edit',
@@ -65,7 +65,7 @@ export class DanhNhanLichSuComponent implements OnInit {
     private danhMucNhanVatLichSuService: DanhMucNhanVatLichSuService,
     private mediaService: MediaService,
     private helperService: HelperService,
-    private auth: AuthService,
+    private  fileSerivce:FileService
   ) {
     this.formSave = this.fb.group({
       ten: ['', Validators.required],
@@ -96,8 +96,11 @@ export class DanhNhanLichSuComponent implements OnInit {
         this.listData = data.map(m => {
           const sIndex = this.gioitinh.findIndex(i => i.value === m.gioitinh);
           m['__gioitinh_converted'] = sIndex !== -1 ? this.gioitinh[sIndex].label : '';
+          m['image_convenrted'] =   m.files ? this.fileSerivce.getPreviewLinkLocalFile(m.files) : '';
+
           return m;
         })
+        console.log(this.listData);
         this.notificationService.isProcessing(false);
       }, error: () => {
         this.notificationService.isProcessing(false);

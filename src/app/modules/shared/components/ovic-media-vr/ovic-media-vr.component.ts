@@ -20,7 +20,7 @@ import {NotificationService} from "@core/services/notification.service";
 import {FileService} from "@core/services/file.service";
 import {AuthService} from "@core/services/auth.service";
 import {PointsService} from "@shared/services/points.service";
-import {FilePointView, PointView,OvicVrPointUserData} from "@shared/models/pointView";
+import {FilePointView, PointView, OvicVrPointUserData} from "@shared/models/pointView";
 
 export interface convertPoint extends Pinable {
   id: number;
@@ -41,7 +41,7 @@ export interface convertPoint extends Pinable {
   templateUrl: './ovic-media-vr.component.html',
   styleUrls: ['./ovic-media-vr.component.css']
 })
-export class OvicMediaVrComponent implements OnInit,OnDestroy {
+export class OvicMediaVrComponent implements OnInit, OnDestroy {
   @ViewChild('fromUpdate', {static: true}) formUpdate: TemplateRef<any>;
   @ViewChild('container', {static: true}) container: ElementRef<HTMLDivElement>;
   @ViewChild('tooltip', {static: true}) tooltip: ElementRef<HTMLDivElement>;
@@ -56,13 +56,13 @@ export class OvicMediaVrComponent implements OnInit,OnDestroy {
 
   @HostListener('window:resize', ['$event']) onResize1(event: Event): void {
     this.isSmallScreen = window.innerWidth < 500;
-    console.log(this.isSmallScreen);
   }
+
   isSmallScreen: boolean = window.innerWidth < 500;
 
   private audio: HTMLAudioElement = document.createElement('audio');
 
-  isVideo:boolean;
+  isVideo: boolean;
   index: number = 1;
 
   formState: {
@@ -176,7 +176,7 @@ export class OvicMediaVrComponent implements OnInit,OnDestroy {
 
 
     this.ngulieuStart = this._ngulieu;
-    console.log(this.ngulieuStart);
+
     this.ngulieuStart['_file_media'] = this.ngulieuStart.file_media && this.ngulieuStart.file_media[0] ? this.fileService.getPreviewLinkLocalFile(this.ngulieuStart.file_media[0]) : '';
     this.ngulieuStart['_file_audio'] = this.ngulieuStart.file_audio && this.ngulieuStart.file_audio[0] ? this.fileService.getPreviewLinkLocalFile(this.ngulieuStart.file_audio[0]) : '';
 
@@ -189,7 +189,6 @@ export class OvicMediaVrComponent implements OnInit,OnDestroy {
           m['_file_audio'] = m.file_audio && m.file_audio[0] ? this.fileService.getPreviewLinkLocalFile(m.file_audio[0]) : '';
           return m;
         }).filter(f => f.ngulieu_id === ngulieu_id && f.parent_id === 0) : [];
-        console.log(this.dataPointsChild);// pass
         this.ngulieuStart['_points_child'] = this.dataPointsChild ? this.dataPointsChild : [];
         this.loadInit(this.ngulieuStart);
         this.notificationService.isProcessing(false);
@@ -217,22 +216,21 @@ export class OvicMediaVrComponent implements OnInit,OnDestroy {
     this.camera.position.set(-0.1, 0, 0.1);
     // Sphere
     if (item.file_product && item.file_product[0]) {
-      console.log('file pruduct');
+
     } else {
       const src = item['_file_media'];
-      console.log(src);
+
       const file_type = item.file_media && item.file_media[0].type.split('/')[0] === "video" ? "video" : "image";
       this.file_param = {
         file: item.file_media[0],
         file_type: file_type,
         url: item['_file_media']
       };
-      this.isVideo = this.file_param.file_type ==='video'?true  :false;
+      this.isVideo = this.file_param.file_type === 'video' ? true : false;
       this.scenePrev = new PointView(src, this.camera);
-      console.log(this.dataPointsChild);
+
       if (this.dataPointsChild && this.dataPointsChild.length) {
         this.addPointInScene(this.dataPointsChild)
-        console.log(1)
       } else {
         console.log('data not point');
       }
@@ -318,7 +316,6 @@ export class OvicMediaVrComponent implements OnInit,OnDestroy {
         if (intersect.object.type === "Sprite") {
           intersect.object.onClick();
           const point = intersect.object.userData.dataPoint;
-          console.log(point);
           this.loadPoint(point);
           // this.backToScene = true;
           if (this.spriteActive) {
@@ -330,7 +327,6 @@ export class OvicMediaVrComponent implements OnInit,OnDestroy {
     } else if (userData.type === 'INFO') {
       const dataInfo = userData.dataPoint;
       this.datainfo = dataInfo;
-      console.log(dataInfo)
       this.datainfo['_type_media'] = dataInfo.file_media[0].type.split('/')[0] === 'video' ? 'video' : 'image';
       this.visibleInfo = true;
     }
@@ -353,7 +349,6 @@ export class OvicMediaVrComponent implements OnInit,OnDestroy {
           this.tooltip.nativeElement.style.top = ((-1 * p.y + 0.9) * this.container.nativeElement.offsetHeight / 2) + 'px';
           this.tooltip.nativeElement.style.left = ((p.x + 1) * this.container.nativeElement.offsetWidth / 2) + 'px';
           const src1 = intersect.object.userData.dataPoint['_file_media'];
-          console.log(src1);
           this.imgtooltip.nativeElement.src = src1
           this.titletooltip.nativeElement.innerHTML = intersect.object.name;
           this.tooltip.nativeElement.classList.add('is-active');
@@ -385,7 +380,7 @@ export class OvicMediaVrComponent implements OnInit,OnDestroy {
       this.intersectsVecter = this.rayCaster ? this.rayCaster.intersectObject(this.scenePrev.sphere) : [];
       this.rayCaster.setFromCamera(mouse, this.camera);
       let point = this.rayCaster.intersectObjects(this.scene.children);
-      console.log(point[0].object);
+
       this.varMouseRight = point[0].object.userData;
       if (point[0].object.name == '') {
         this.items = [
@@ -430,12 +425,12 @@ export class OvicMediaVrComponent implements OnInit,OnDestroy {
     this.pointSelect = point;
     this.audioLink = point.file_audio && point.file_audio[0] ? this.fileService.getPreviewLinkLocalFile(point.file_audio[0]) : null;
     const url = point.file_media && point.file_media[0] ? this.fileService.getPreviewLinkLocalFile(point.file_media[0]) : null;
-    this.file_param= {
+    this.file_param = {
       file: point.file_media[0],
       file_type: point.file_media[0].type.split('/')[0] === "video" ? "video" : 'image',
       url: this.fileService.getPreviewLinkLocalFile(point.file_media[0])
     }
-    this.isVideo = this.file_param.file_type ==='video'? true:false;
+    this.isVideo = this.file_param.file_type === 'video' ? true : false;
     const pointchild = point['_child'];
     this.scenePrev = new PointView(url, this.camera);
     if (pointchild && pointchild[0]) {
@@ -443,9 +438,9 @@ export class OvicMediaVrComponent implements OnInit,OnDestroy {
     }
     this.scenePrev.createScrene(this.scene, this.file_param, point.id,
       {
-        file_media:null,
-        type:point.type,
-        iconPoint:null,
+        file_media: null,
+        type: point.type,
+        iconPoint: null,
         parentPointId: point.id,
         dataPoint: point,
         ngulieu_id: this.ngulieuStart.id,
@@ -455,9 +450,10 @@ export class OvicMediaVrComponent implements OnInit,OnDestroy {
     this.renderSecene();
   }
 
-  isVideoPlay:boolean= true;
+  isVideoPlay: boolean = true;
+
   btnPlayVideo() {
-    this.isVideoPlay=!this.isVideoPlay;
+    this.isVideoPlay = !this.isVideoPlay;
     this.scenePrev.btnOnorPauseVideo();
   }
 
@@ -491,6 +487,7 @@ export class OvicMediaVrComponent implements OnInit,OnDestroy {
   btnHelp() {
     this.visibleHelp = !this.visibleHelp;
   }
+
 //==========================================================
   closeForm() {
     this.notificationService.closeSideNavigationMenu();
@@ -504,6 +501,7 @@ export class OvicMediaVrComponent implements OnInit,OnDestroy {
     }), 100);
     this.controls.saveState();
   }
+
   changeInputMode(formType: 'add' | 'edit', object: convertPoint | null = null, pointIdParent?: number) {
     this.formState.formTitle = formType === 'add' ? 'Thêm điểm truy cập mới ' : 'Cập nhật điểm truy cập';
     this.formState.formType = formType;
@@ -514,7 +512,7 @@ export class OvicMediaVrComponent implements OnInit,OnDestroy {
           mota: '',
           icon: '',
           location: this.intersectsVecter[0].point,// vi tri vector3
-          parent_id: pointIdParent === this._ngulieu.id ? 0: pointIdParent,
+          parent_id: pointIdParent === this._ngulieu.id ? 0 : pointIdParent,
           type: 'INFO', //DIRECT | INFO
           ds_ngulieu: [], // ảnh 360 | video360// audio thuyết minh
           donvi_id: this.auth.userDonViId,
@@ -543,19 +541,24 @@ export class OvicMediaVrComponent implements OnInit,OnDestroy {
     }
   }
 
-  btnFormAdd(pointData:OvicVrPointUserData) {
-    console.log(pointData)
+  btnFormAdd(pointData: OvicVrPointUserData) {
+    this.parentId = pointData.ovicPointId;
+    console.log(this.parentId);
     this.changeInputMode("add", null, pointData.ovicPointId)
     this.onOpenFormEdit();
   }
-  btnFormEdit(id:number) {
+
+  btnFormEdit(id: number) {
+    this.parentId = id;
     this.onOpenFormEdit();
     const object = this.dataPointsChild.find(f => f.id === id);
     this.changeInputMode("edit", object)
 
   }
 
-  async btnFormDelete(id:number) {
+  parentId: number;
+
+  async btnFormDelete(id: number) {
     // const idDelete = this.varMouseRight;
     const xacNhanXoa = await this.notificationService.confirmDelete();
     if (xacNhanXoa) {
@@ -573,16 +576,17 @@ export class OvicMediaVrComponent implements OnInit,OnDestroy {
       });
     }
   }
-  btnFormInformation(){
+
+  btnFormInformation() {
 
   }
+
   get f(): { [key: string]: AbstractControl<any> } {
     return this.formSave.controls;
   }
 
   saveForm() {
-    console.log(this.formSave.valid);
-    console.log(this.formSave.value);
+
     if (this.formSave.valid) {
       const newPin: convertPoint = {
         id: 0,
@@ -606,13 +610,13 @@ export class OvicMediaVrComponent implements OnInit,OnDestroy {
           next: (id) => {
             newPin.id = id;
 
-            if(newPin.parent_id ==0){
-            this.dataPointsChild.push(newPin);
-            this.pinInScene(newPin,true);
+            if (newPin.parent_id == 0) {
+              this.dataPointsChild.push(newPin);
+              this.pinInScene(newPin, true);
             }
-            if(newPin.parent_id !==0){
-              this.dataPointsChild.find(f=>f.id === newPin.parent_id)['_child'].push(newPin);
-              this.pinInScene(newPin,true);
+            if (newPin.parent_id !== 0) {
+              this.dataPointsChild.find(f => f.id === newPin.parent_id)['_child'].push(newPin);
+              this.pinInScene(newPin, true);
 
             }
             this.pointChild.push(newPin)
@@ -631,6 +635,8 @@ export class OvicMediaVrComponent implements OnInit,OnDestroy {
             });
             this.notificationService.isProcessing(false);
             this.notificationService.toastSuccess("Thêm mới thành công");
+            this.loadPointInDatabase(this.parentId);
+            this.closeForm();
           }, error: () => {
             this.notificationService.toastError("Thêm mới thất bại");
             this.notificationService.isProcessing(false);
@@ -657,9 +663,38 @@ export class OvicMediaVrComponent implements OnInit,OnDestroy {
     }
   }
 
-  showMap:boolean;
-  btnviewMap(){
+  showMap: boolean;
+
+  btnviewMap() {
     this.showMap = !this.showMap;
-    console.log(this.dataPointsChild);
+  }
+
+  loadPointInDatabase(idPoint: number) {
+    this.pointsService.getAllData().subscribe({
+      next: (data) => {
+        const ngulieu_id = this._ngulieu.id;
+        const dataPointsChild = data.find(f => f.ngulieu_id === ngulieu_id) ? data.map(m => {
+          m['_child'] = data.filter(f => f.parent_id === m.id);
+          m['_file_media'] = m.file_media && m.file_media[0] ? this.fileService.getPreviewLinkLocalFile(m.file_media[0]) : '';
+          m['_file_audio'] = m.file_audio && m.file_audio[0] ? this.fileService.getPreviewLinkLocalFile(m.file_audio[0]) : '';
+          return m;
+        }) : [];
+        console.log(idPoint);
+        console.log(this.dataPointsChild);// pass
+        this.pointSelect = dataPointsChild.find(f => f.id === idPoint) ? dataPointsChild.find(f => f.id === idPoint) : null;
+        console.log(this.pointSelect);
+        if (this.pointSelect) {
+
+          this.loadPoint(this.pointSelect);
+        }
+
+      }, error: () => {
+
+      }
+    })
+  }
+
+  loadStart(){
+    this.loadInit(this.ngulieuStart);
   }
 }

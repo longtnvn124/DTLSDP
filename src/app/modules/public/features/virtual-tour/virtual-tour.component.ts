@@ -9,7 +9,6 @@ import {
   ViewChild
 } from '@angular/core';
 import {PointsService} from "@shared/services/points.service";
-import {AuthService} from "@core/services/auth.service";
 import {NotificationService} from "@core/services/notification.service";
 import {FileService} from "@core/services/file.service";
 import {Pinable, Point} from '@modules/shared/models/point';
@@ -25,6 +24,8 @@ import {FilePointView, PointView} from "@shared/models/pointView";
 import {OvicVrPointUserData} from "@shared/models/sceneVr";
 import {OvicFile} from "@core/models/file";
 import {DownloadProcess} from "@shared/components/ovic-download-progress/ovic-download-progress.component";
+import {AuthService} from "@core/services/auth.service";
+import {BUTTON_NO, BUTTON_YES} from "@core/models/buttons";
 
 interface convertPoint extends Pinable {
   id: number;
@@ -56,10 +57,8 @@ export class VirtualTourComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('titletooltip', {static: true}) titletooltip: ElementRef<HTMLDivElement>;
 
   @HostListener('window:resize', ['$event']) onResize1(event: Event): void {
-    console.log(this.isSmallScreen);
     this.isSmallScreen = window.innerWidth < 500;
   }
-
   isSmallScreen: boolean = window.innerWidth < 500;
 
   mode: "BTNPLAY" | "MEDIAVR" = "BTNPLAY";
@@ -75,8 +74,9 @@ export class VirtualTourComponent implements OnInit, AfterViewInit, OnDestroy {
   intersectsVecter: any;
 
   constructor(
-    private auth: AuthService,
+
     private notificationService: NotificationService,
+    private auth:AuthService,
     private fileService: FileService,
     private mediaService: MediaService,
     private router: Router,
@@ -152,7 +152,6 @@ export class VirtualTourComponent implements OnInit, AfterViewInit, OnDestroy {
   s: PointView;
 
   loadNgulieuStart(item: Ngulieu) {
-    console.log(item);
     if(item.file_audio&& item.file_audio[0]){
         this.audio.src =item['_file_audio'];
         this.audio.setAttribute('autoplay','true');
@@ -167,19 +166,18 @@ export class VirtualTourComponent implements OnInit, AfterViewInit, OnDestroy {
     // Sphere
 
     if (item.file_product && item.file_product[0]) {
-      console.log('file pruduct');
+
     } else {
       const src = item['_file_media'];
-      console.log(src);
+
       const file_type = item.file_media && item.file_media[0].type.split('/')[0] === "video" ? "video" : "image";
       this.file_param = {file: item.file_media[0], file_type: file_type, url: item['_file_media']};
       this.isVideo = this.file_param.file_type ==='video'?true  :false;
       this.s = new PointView(src, this.camera);
-      console.log(this.dataPointsChild);
+
       if (this.dataPointsChild && this.dataPointsChild.length) {
         this.addPointInScene(this.dataPointsChild);
       } else {
-        console.log('data not point');
       }
 
       this.s.createScrene(this.scene, this.file_param, item.id);
@@ -284,15 +282,11 @@ export class VirtualTourComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     } else if (userData.type === 'INFO') {
       const dataInfo = userData.dataPoint;
-
       this.datainfo = dataInfo;
-      console.log(dataInfo)
       this.datainfo['_type_media'] = dataInfo.file_media[0].type.split('/')[0] === 'video' ? 'video' : 'image';
       this.visibleInfo = true;
     }
-    // intersects = this.rayCaster.intersectObject(this.s.sphere);
-    // if (intersects.length > 0) {
-    // }
+
   }
   datainfo: any;
   visibleInfo: boolean = false;
@@ -343,10 +337,7 @@ export class VirtualTourComponent implements OnInit, AfterViewInit, OnDestroy {
       this.intersectsVecter = this.rayCaster ? this.rayCaster.intersectObject(this.s.sphere) : [];
       this.rayCaster.setFromCamera(mouse, this.camera);
       let point = this.rayCaster.intersectObjects(this.scene.children);
-      console.log(point[0].object);
       this.varMouseRight = point[0].object.userData['ovicPointId'];
-      console.log(this.varMouseRight);
-
     }
   }
 
@@ -411,7 +402,19 @@ export class VirtualTourComponent implements OnInit, AfterViewInit, OnDestroy {
   btnHelp() {
     this.visibleHelp = !this.visibleHelp;
   }
+  loadStart(){
+    this.LoadNgulieu(this._ngulieu_id);
+  }
 
+  async gobackhome(){
+    const button = await this.notificationService.confirmRounded('Xác nhận','Trở lại trang chủ',[BUTTON_YES,BUTTON_NO]);
+    console.log(BUTTON_YES.name);
+    console.log(button);
+    if(button.name === BUTTON_YES.name){
+      console.log(BUTTON_YES.name);
+      console.log(button);
+      void this.router.navigate(['home/']);
+    }
 
-
+  }
 }

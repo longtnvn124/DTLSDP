@@ -270,7 +270,7 @@ app-virtual-tour, app-shift, app-panel {
 
 /*=================web view==================*/
 app-web-home {
-  background: url("assets/icon-png/bg-web.jpg") repeat-y;
+  /*background: url("assets/icon-png/bg-web.jpg") repeat-y;*/
   background-size: 100% auto;
 
 }
@@ -473,4 +473,43 @@ ovic-map {
 /*-----------------------------custom tab menu -------------------------------*/
 .tabview-custom .p-tabview-nav{
   justify-content: center;
+}
+app-chuyen-de{
+  height: 100%;
+}
+/*-----------------------------------------------------------------*/
+/*new-preset*/
+@media (min-width: 1200px) {
+  .element-hide-before-1200 {
+    display: none !important;
+  }
+}
+
+@media (max-width: 1199px) {
+  .element-hide-after-1200 {
+    display: none !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .element-hide-before-767 {
+    display: none !important;
+  }
+}
+
+.--role-thi-sinh{
+  width:100%;
+  display: block;
+  height: 28px;
+  line-height: 20px;
+  background: rgba(218, 218, 218, 0.85);
+  color:#393939;
+}
+.--role-chuyenvien_dtlsdp{
+  width:100%;
+  display: block;
+  height: 28px;
+  line-height: 20px;
+  background: #fcc7cc;
+  color:#393939;
 }

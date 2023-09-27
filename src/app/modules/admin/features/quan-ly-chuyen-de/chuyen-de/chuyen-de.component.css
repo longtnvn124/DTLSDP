@@ -182,8 +182,8 @@
   padding-left: 20px;
   height: calc(100vh - 58px - 60px);
   overflow: auto;
-  padding: 5px 10px 10px 10px;
-  background-color: #f6f6f6;
+  padding: 10px 10px 10px 10px;
+  background: #d7d7d769;
 }
 
 .bai-hoc-checkbox-group {

@@ -1,10 +1,17 @@
 <div class="row">
   <div class="col-12">
-    <!-- <ovic-table [headerButtons]="headButtons" [menuTemplate]="userMenu" [data]="data" styleClass="tbl-danhSachUser" dataKey="id" rowHover="false" [rows]="15" tableName="Danh sách tài khoản" [tblStructure]="cols" [enableSearch]="false" [globalFilterFields]="['name','email']" (editData)="editUser($event)" (deleteData)="deleteUser($event)" (switch)="switchEvent($event)" (addNewRow)="creatUser(tplCreateAccount)" (onButtonClick)="userActions($event)"></ovic-table>-->
-    <ovic-table [headerButtons]="headButtons" [menuTemplate]="userMenu" [data]="data" styleClass="tbl-danhSachUser tbl-noScroll"
-                dataKey="id" rowHover="true" [rows]="15" tableName="Danh sách tài khoản" [tblStructure]="cols"
-                [enableSearch]="false" [globalFilterFields]="['name','email']"
-                (onButtonClick)="userActions($event)"></ovic-table>
+
+
+    <ovic-table emptyMessage="Danh sách trống" [data]="data"
+                styleClass="tbl-danh-sach-tap-the head-input-size--normal head-input-size--250px" dataKey="id"
+                rowHover="true"
+                [rows]="15" tableName="Danh sách tài khoản" [tblStructure]="cols"
+                (onButtonClick)="userActions($event)" [enableSearch]="false" [enableSearchLocal]="false"
+                [searchDebounceTime]="800" [headerButtons]="headButtons"></ovic-table>
+    <p-paginator class="p-paginator--custom" [showCurrentPageReport]="true" [rows]="15"
+                     [totalRecords]="data.length" [pageLinkSize]="5"></p-paginator>
+
+
   </div>
 </div>
 
@@ -36,11 +43,20 @@
         </p>
         <p class="form-row form-group" [class.err-input]="changPassState && f['password'].invalid">
           <label for="new_password">Mật khẩu <span class="ovic-mark">*</span></label>
-          <input type="password" id="new_password" formControlName="password"
-                 [attr.disabled]=" !changPassState == true ? true : null" autocomplete="off">
+                    <input type="password" id="new_password" formControlName="password"
+                           [attr.disabled]=" !changPassState == true ? true : null" autocomplete="off">
+<!--          <p-password type="password" id="new_password" autocomplete="off" formControlName="password" [feedback]="false"-->
+<!--                      [toggleMask]="true" [attr.disabled]=" !changPassState == true ? true : null"></p-password>-->
           <button class="btn btn-checker" [class.checked]="changPassState" (click)="clickChangedPass()"
                   *ngIf="isUpdateForm"></button>
         </p>
+        <div class="warning-pass">
+          <div class="warning-pass_item font-weight-bold">Lưu ý:</div>
+          <div class="warning-pass_item">* Mật khẩu phải có ít nhất 8 ký tự</div>
+          <div class="warning-pass_item">* Mật khẩu phải có ký tự đặc biệt(!,@,#,$,%,^,&,*,...)</div>
+          <div class="warning-pass_item">* Mật khẩu phải có chữ in hoa</div>
+          <div class="warning-pass_item">* Mật khẩu phải có chữ và số</div>
+        </div>
         <p class="form-row">
           <label>Nhóm quyền <span class="ovic-mark">*</span></label>
           <ovic-multi-select [options]="dsNhomQuyen" placeholder="------" optionId="id" optionLabel="title"
@@ -81,7 +97,7 @@
 
 </ng-template>
 
-<!--right context menu template -->
-<ng-template #userMenu let-item>
-  <ovic-right-content-menu [menu]="rightContextMenu" [item]="item" (clicked)="rClick($event)"></ovic-right-content-menu>
-</ng-template>
+<!--&lt;!&ndash;right context menu template &ndash;&gt;-->
+<!--<ng-template #userMenu let-item>-->
+<!--  <ovic-right-content-menu [menu]="rightContextMenu" [item]="item" (clicked)="rClick($event)"></ovic-right-content-menu>-->
+<!--</ng-template>-->

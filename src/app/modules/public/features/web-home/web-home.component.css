@@ -2,7 +2,7 @@
 # Header
 --------------------------------------------------------------*/
 #header {
-  padding: 14px 0px 14px 0;
+  /*padding: 14px 0px 14px 0;*/
   position: fixed;
   left: 0;
   top: 0;
@@ -222,9 +222,9 @@
   text-transform: none;
 }
 
-.nav-menu ul li:hover > a {
-  color: #88d200;
-}
+/*.nav-menu ul li:hover > a {*/
+/*  color: #88d200;*/
+/*}*/
 
 .nav-menu ul ul {
   margin: 0;
@@ -436,7 +436,7 @@
 }
 
 .sukien-container-header_title {
-  font-size: 24px;
+  font-size: 20px;
 
 }
 
@@ -447,19 +447,19 @@
 
 .sukien-container-header_action:hover {
   color: #fff;
-  background-color: #3A4E42;
+  /*background-color: #3A4E42;*/
   cursor: pointer;
 }
 
 .nhanvat-title {
   font-weight: 600;
   margin: 0;
-  font-size: 24px;
+  font-size: 20px;
   text-transform: uppercase;
 }
 
 .vr-container_title {
-  font-size: 26px;
+  font-size: 20px;
   font-weight: 600;
   position: relative;
 }
@@ -560,6 +560,9 @@
   margin: 0;
   color: #eee;
 }
+.footer__address p{
+  margin-bottom: 8px;
+}
 
 /*=================btn shifttest*/
 
@@ -645,12 +648,18 @@
   .footer-right {
     text-align: center !important;
   }
-
+.footer_container{
+  font-size:70%
+}
 }
 /*css menu*/
 .nav-menu_item{}
+
+.nav-menu li a{
+  padding: 10px 20px;
+}
 .nav-menu li a:hover {
-  background-color: #3A4E42;
+  /*background-color: #3A4E42;*/
   color: #fff;
   cursor: pointer;
 }
@@ -671,7 +680,7 @@
   list-style: none;
   color:#fff;
   font-size:16px;
-  padding: 10px 5px;
+  padding: 10px 24px;
 }
 .drop-nav-menu li:hover{
   cursor: pointer;
@@ -682,3 +691,48 @@
   height:42px;
   border-radius:4px;
 }
+
+/* btn action hover*/
+
+.btn-li-a{
+  position: relative;
+  background:none;
+  font-family:"montserrat",sans-serif;
+  text-transform:uppercase;
+  padding:12px 20px;
+  /*min-width:200px;*/
+  margin:10px;
+  cursor:pointer;
+  transition:color 0.4s linear;
+  border:2px solid transparent;
+
+}
+
+.btn-li-a:hover{
+  color:#fff;
+  border:2px solid #3A4E42;
+
+}
+.btn-li-a::before{
+  content:"";
+  position: absolute;
+  left: 0;
+  top: 0;
+  right:0;
+  bottom:0;
+  width: 100%;
+  height: 100%;
+  background: #3A4E42;
+  z-index: -1;
+  transition: transform 0.5s;
+  transform-origin: 0 0;
+  transition-timing-function: cubic-bezier(0.5,1.6,0.4,0.7);
+}
+
+.btn-li-a-select::before{
+  transform: scaleX(0);
+}
+.btn-li-a-select:hover::before{
+  transform:scaleX(1);
+}
+

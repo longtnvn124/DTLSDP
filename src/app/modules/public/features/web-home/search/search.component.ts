@@ -32,10 +32,26 @@ export class SearchComponent implements OnInit, AfterViewInit {
   }
   selectInput(event:string){
     this.textSearch = event;
+    if(this.textSearch == ''){
+      if(this.loaiSelect ===1){
+        console.log(1)
+        this.nhanvatComponent.btnLoadByTextseach('');
+      }
+      if(this.loaiSelect ===2){
+        console.log(2)
+        this.sukienTonghopComponent.btnLoadByTextseach('');
+      }
+      if(this.loaiSelect ===3){
+        console.log(3)
+        this.danhmucNgulieusoComponent.btnLoadByTextseach('');
+      }
+    }
   }
   selectDropdown(event){
     this.loaiSelect = event.value;
   }
+
+
   selectSearch(){
 
     if(this.loaiSelect ===1){

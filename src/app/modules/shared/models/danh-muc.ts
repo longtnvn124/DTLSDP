@@ -18,6 +18,7 @@ export interface DmLinhVuc extends DmChung {
   status: number; //1 Active; 0: inactive
 }
 
+
 export interface DmLoaiNguLieu extends DmChung {
   id: number;
   ten: string;

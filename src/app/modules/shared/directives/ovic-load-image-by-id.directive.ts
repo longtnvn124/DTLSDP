@@ -22,6 +22,7 @@ export class OvicLoadImageByIdDirective implements AfterViewInit {
   ngAfterViewInit(): void {
     const image = this.renderer.createElement('img');
     this.renderer.setAttribute(image, 'src', this.plaholder);
+    this.renderer.setAttribute(image, 'class', 'ovic-img-zoom');
     this.renderer.appendChild(this.el.nativeElement, image);
     if (this.ovicLoadImageById) {
       this.renderer.addClass(this.el.nativeElement, 'ovic-is-loading--circle');

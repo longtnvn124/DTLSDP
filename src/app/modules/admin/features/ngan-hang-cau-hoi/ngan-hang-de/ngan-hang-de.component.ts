@@ -81,15 +81,15 @@ export class NganHangDeComponent implements OnInit {
       headClass: 'ovic-w-160px text-center',
       rowClass: 'ovic-w-160px text-center'
     },
-    {
-      fieldType: 'normal',
-      field: ['count'],
-      innerData: true,
-      header: 'Số đề đã tạo',
-      sortable: false,
-      headClass: 'ovic-w-150px text-center',
-      rowClass: 'ovic-w-150px text-center'
-    },
+    // {
+    //   fieldType: 'normal',
+    //   field: ['count'],
+    //   innerData: true,
+    //   header: 'Số đề đã tạo',
+    //   sortable: false,
+    //   headClass: 'ovic-w-150px text-center',
+    //   rowClass: 'ovic-w-150px text-center'
+    // },
     {
       fieldType: 'normal',
       field: ['__time_exam'],

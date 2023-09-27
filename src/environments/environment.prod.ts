@@ -65,34 +65,34 @@ const appDefaultLanguage = { name : 'vn' , label : 'Tiếng việt' };
 const appVersion = '2.0.1';
 
 export const APP_CONFIGS = {
-	defaultRedirect          : '/admin' ,
-	pageTitle                : 'Phần mềm thi đua khen thưởng' ,
-	multiLanguage            : true ,
-	defaultLanguage          : appDefaultLanguage , // không được bỏ trống trường này ngay cả khi multiLanguage = false
-	languages                : appLanguages ,
-	realm                    : 'elearning' , // app realm
-	dateStart                : '09/2020' , // 06/2020
-	maxUploadSize            : 838860800 , // (1024 * 1024 * 200) = 800mb
-	maxFileUploading         : 10 , // The maximum number of files allowed to upload per time
-	donvi_id                 : 1 , // default donvi id
-	coreVersion              : '2.0.0' ,
-	appVersion               : appVersion ,
-	pingTime                 : 30 , // unit seconds
-	storeLabels              : [ 'Server File' , 'ICTU Drive' ] ,
-	metaKeyStore             : '__store_dir' ,
-	metaKeyLanguage          : '__language' ,
-	showHttpInterceptorError : false ,
-	limitFileType            : false ,
-	info_console             : true ,
-	project_name             : `Core 14 V${ appVersion }` ,
-	author                   : 'OvicSoft' ,
-	bg_color_01              : '#008060' ,
-	bg_color_02              : '#4959bd' ,
-	acceptList               : acceptFileType ,
-	cloudStorage             : '1mkWmS69qTh_7uoS_wpKDju7OdHLSkA1y' , //driveFolder id
-	lectureCloudStorage      : '1Gwx6F72HUgM6ZDxonsvj8zLySGB6AYLJ' ,
-	teacherCloudStorage      : '1YZwbEC_OBOTg6OyzvWXMWqxJI63dehH6' ,
-	soundAlert               : true
+  defaultRedirect          : '/admin' ,
+  pageTitle                : 'Phần mềm quản lý di tích lịch sử địa phương' ,
+  multiLanguage            : true ,
+  defaultLanguage          : appDefaultLanguage , // không được bỏ trống trường này ngay cả khi multiLanguage = false
+  languages                : appLanguages ,
+  realm                    : 'dtlsdp' , // app realm
+  dateStart                : '06/2023' , // 06/2020
+  maxUploadSize            : 838860800 , // (1024 * 1024 * 200) = 800mb
+  maxFileUploading         : 10 , // The maximum number of files allowed to upload per time
+  donvi_id                 : 1 , // default donvi id
+  coreVersion              : '2.0.0' ,
+  appVersion               : appVersion ,
+  pingTime                 : 30 , // unit seconds
+  storeLabels              : [ 'Server File' , 'ICTU Drive' ] ,
+  metaKeyStore             : '__store_dir' ,
+  metaKeyLanguage          : '__language' ,
+  showHttpInterceptorError : false ,
+  limitFileType            : false ,
+  info_console             : true ,
+  project_name             : `Core 14 V${ appVersion }` ,
+  author                   : 'OvicSoft' ,
+  bg_color_01              : '#008060' ,
+  bg_color_02              : '#4959bd' ,
+  acceptList               : acceptFileType ,
+  cloudStorage             : '1mkWmS69qTh_7uoS_wpKDju7OdHLSkA1y' , //driveFolder id
+  lectureCloudStorage      : '1Gwx6F72HUgM6ZDxonsvj8zLySGB6AYLJ' ,
+  teacherCloudStorage      : '1YZwbEC_OBOTg6OyzvWXMWqxJI63dehH6' ,
+  soundAlert               : true
 };
 
 /* define menu filter */

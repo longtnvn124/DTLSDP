@@ -72,7 +72,7 @@ export const APP_CONFIGS = {
   defaultLanguage          : appDefaultLanguage , // không được bỏ trống trường này ngay cả khi multiLanguage = false
   languages                : appLanguages ,
   realm                    : 'dtlsdp' , // app realm
-  dateStart                : '09/2020' , // 06/2020
+  dateStart                : '06/2023' , // 06/2020
   maxUploadSize            : 838860800 , // (1024 * 1024 * 200) = 800mb
   maxFileUploading         : 10 , // The maximum number of files allowed to upload per time
   donvi_id                 : 1 , // default donvi id

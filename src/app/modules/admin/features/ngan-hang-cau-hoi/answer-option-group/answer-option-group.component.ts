@@ -14,7 +14,11 @@ export class AnswerOptionGroupComponent implements OnInit {
 
   @Input() correctAnswerControl: AbstractControl<number[]>;
 
-  options: AnswerOption[];
+  options: AnswerOption[] = [
+    {id:1, value:''},
+    {id:2, value:''},
+    {id:3, value:''},
+  ];
 
   correctAnswer: number[] = [];
 
@@ -41,6 +45,7 @@ export class AnswerOptionGroupComponent implements OnInit {
       oldValue.push({id: _id + 1, value});
       this._formControl.setValue(oldValue);
     }
+
   }
 
   deleteItem(id: number) {

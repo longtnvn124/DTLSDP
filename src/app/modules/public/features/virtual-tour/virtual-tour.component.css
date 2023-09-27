@@ -250,3 +250,14 @@
     padding:10px
   }
 }
+.btn-backStart{
+  position:fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.btn-backStart svg{
+  height: 50px;
+  width: 100%;
+  fill: #fff;
+}

@@ -76,4 +76,10 @@ export class ChuyenDeService {
     return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
   }
 
+  loadUrlScormById(id:number):Observable<string>{
+    // const url = ''.concat(this.api,'scorm/',id.toString(10));
+    // return this.http.get<string>(url);
+    return this.http.get<string>(''.concat(this.api,'scorm/',id.toString(10)));
+  }
+
 }

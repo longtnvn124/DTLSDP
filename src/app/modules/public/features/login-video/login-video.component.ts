@@ -180,16 +180,41 @@ export class LoginVideoComponent implements OnInit , AfterViewInit , OnDestroy {
 	}
 
 	async checkUserLoginStatus() {
-		if ( this.auth.isLoggedIn() ) {
-			const redirect  = this.params && this.params.hasOwnProperty( 'redirect' ) ? this.params[ 'redirect' ] : APP_CONFIGS.defaultRedirect;
-			const pageTitle = APP_CONFIGS.pageTitle || 'admin area';
-			this.title.setTitle( pageTitle );
-			await this.router.navigate( [ redirect ] , { queryParams : this.params } );
-			this.loading = false;
-		} else {
-			this.title.setTitle( 'Đăng nhập tài khoản' );
-			this.loading = false;
-		}
+		// if ( this.auth.isLoggedIn() ) {
+		// 	const redirect  = this.params && this.params.hasOwnProperty( 'redirect' ) ? this.params[ 'redirect' ] : APP_CONFIGS.defaultRedirect;
+		// 	const pageTitle = APP_CONFIGS.pageTitle || 'admin area';
+		// 	this.title.setTitle( pageTitle );
+		// 	await this.router.navigate( [ redirect ] , { queryParams : this.params } );
+		// 	this.loading = false;
+		// } else {
+		// 	this.title.setTitle( 'Đăng nhập tài khoản' );
+		// 	this.loading = false;
+		// }
+    if(this.auth.isLoggedIn()){
+      console.log(this.auth.roles);
+      const roles= this.auth.roles;
+      const  checkThisinh = roles.length ===1 && roles.find(f=>f.id === 87);
+      console.log(checkThisinh);
+      if ( this.auth.isLoggedIn() ) {
+        if(checkThisinh){
+          this.router.navigate(['test']);
+          this.loading = false;
+        }else{
+          const redirect  = this.params && this.params.hasOwnProperty( 'redirect' ) ? this.params[ 'redirect' ] : APP_CONFIGS.defaultRedirect;
+          const pageTitle = APP_CONFIGS.pageTitle || 'admin area';
+          this.title.setTitle( pageTitle );
+          await this.router.navigate( [ redirect ] , { queryParams : this.params } );
+          this.loading = false;
+        }
+      }
+      else{
+        	this.title.setTitle( 'Đăng nhập tài khoản' );
+        	this.loading = false;
+          this.notification.toastError("Sai tài khoản hoặc mật khẩu");
+      }
+
+
+    }
 	}
 
 	changePasswordMode() {

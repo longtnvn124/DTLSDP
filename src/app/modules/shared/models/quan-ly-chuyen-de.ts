@@ -10,6 +10,7 @@ export interface ChuyenDe {
   video:OvicFile[];
   audio:OvicFile[];
   documents:OvicFile[] ;// text COLLATE utf8_unicode_ci DEFAULT NULL //COMMENT 'json: link file tai lieu, bai tap',
+  file_scorm:OvicFile;
   ordering: number;// int(11) DEFAULT 1000,
   status:number ;// tinyint(4) DEFAULT 0 COMMENT '-1: delete; 0: inactive; 1: active',
 
@@ -24,3 +25,9 @@ export interface ChuyenDeDB extends ChuyenDe {
   created_at: string; // sql timestamp
   updated_at: string; // sql timestamp
 }
+
+export interface paramChuyenDe{
+  chuyende:ChuyenDe;
+  type:Loai;
+}
+export type Loai = 'video'|'documents'|'scorm'|'default';

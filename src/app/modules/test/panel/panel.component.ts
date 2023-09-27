@@ -136,7 +136,7 @@ export class PanelComponent implements OnInit, OnDestroy {
               testName: this.shift.title,
               date: [d.getDate().toString().padStart(2, '0'), (d.getMonth() + 1).toString().padStart(2, '0'), d.getFullYear().toString()].join('/'),
               number_correct: this.shiftTest.number_correct + '/' + this.shiftTest.question_ids.length,
-              result: this.shiftTest.score,
+              result: this.take_decimal_number(this.shiftTest.score,2),
             }
           }
           this.mode = "TEXTRESULTS";
@@ -164,6 +164,13 @@ export class PanelComponent implements OnInit, OnDestroy {
     })
   }
 
+  take_decimal_number(num,n){
+    //num : số cần xử lý
+    //n: số chữ số sau dấu phẩy cần lấy
+    let base = 10**n;
+    let result = Math.round(num * base) / base ;
+    return result;
+  }
 
   reInitTest() {
     this._initTest();
@@ -227,18 +234,6 @@ export class PanelComponent implements OnInit, OnDestroy {
     clearInterval(this.intervalId);
   }
 
-  // ramdomQuestionBank(array: NganHangCauHoi[], total: number) {
-  //   const shuffledArray = [...array]; // Tạo một bản sao của mảng để không làm thay đổi mảng gốc
-  //   for (let i = shuffledArray.length - 1; i > 0; i--) {
-  //     const j = Math.floor(Math.random() * (i + 1));
-  //     [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
-  //   }
-  //   if (total > shuffledArray.length) {
-  //     return shuffledArray;
-  //   }
-  //   return shuffledArray.slice(0, total);
-  // }
-
   randomQuestions(questions: number[], length: number): number[] {
     const shuffledArray = questions.sort(() => Math.random() - 0.5);
     shuffledArray.length = Math.min(length, shuffledArray.length);
@@ -247,7 +242,6 @@ export class PanelComponent implements OnInit, OnDestroy {
 
   startTheTest() {
     this.enableDialog = false;
-    // load questuion by ids from shiftTest.questions_ids
     this.loadQuestion();
     this.startTimer(this.shiftTest.time)
 
@@ -323,16 +317,16 @@ export class PanelComponent implements OnInit, OnDestroy {
     if (id && value) {
       this.anwserQuestions[id] = value.split(',').map(m => parseInt(m));
 
-      // this.dotThiKetQuaService.update(this.shiftTest.id, {
-      //   details: this.anwserQuestions,
-      //   time: this.remainingTimeClone
-      // }).subscribe();
+      this.dotThiKetQuaService.update(this.shiftTest.id, {
+        details: this.anwserQuestions,
+        time: this.remainingTimeClone
+      }).subscribe();
     } else {
       delete this.anwserQuestions[id];
-      // this.dotThiKetQuaService.update(this.shiftTest.id, {
-      //   details: this.anwserQuestions,
-      //   time: this.remainingTimeClone
-      // }).subscribe();
+      this.dotThiKetQuaService.update(this.shiftTest.id, {
+        details: this.anwserQuestions,
+        time: this.remainingTimeClone
+      }).subscribe();
     }
   }
 

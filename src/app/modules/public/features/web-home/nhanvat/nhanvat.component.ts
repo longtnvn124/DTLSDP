@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, OnInit} from '@angular/core';
+import {AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {DmNhanVatLichSu} from "@shared/models/danh-muc";
 import {DanhMucNhanVatLichSuService} from "@shared/services/danh-muc-nhan-vat-lich-su.service";
 import {NguLieuSuKienService} from "@shared/services/ngu-lieu-su-kien.service";
@@ -12,9 +12,9 @@ import {FileService} from "@core/services/file.service";
   templateUrl: './nhanvat.component.html',
   styleUrls: ['./nhanvat.component.css']
 })
-export class NhanvatComponent implements OnInit, AfterViewInit {
+export class NhanvatComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() selectItem: boolean = false;
-
+  @Input() search:string;
   gioitinh = [{value: 1, label: 'Nam'}, {value: 0, label: 'Nữ'}];
   mode:'DATA'|'INFO' ="DATA";
   constructor(
@@ -32,12 +32,20 @@ export class NhanvatComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     // this.loadInit()
   }
+  ngOnChanges(changes: SimpleChanges): void {
+    if(this.search){
+    this.loadInit(this.search);
+    }
+    else{
+      this.loadInit();
 
-  listData: DmNhanVatLichSu[];
+    }
+  }
+
+  listData: DmNhanVatLichSu[]= [];
 
   loadInit(text?:string) {
-    console.log(text);
-    this.notificationService.isProcessing(true);
+    // this.notificationService.isProcessing(true);
     forkJoin<[DmNhanVatLichSu[], SuKien[]]>(this.DanhMucNhanVatLichSuService.getDataUnlimit(text), this.sukienService.getAllData()).subscribe({
       next: ([data, dataSukien]) => {
         this.listData = data.map(m => {
@@ -49,10 +57,9 @@ export class NhanvatComponent implements OnInit, AfterViewInit {
           m['image_convenrted'] =   m.files ? this.fileSerivce.getPreviewLinkLocalFile(m.files) : '';
           return m;
         })
-        console.log(this.listData);
-        this.notificationService.isProcessing(false);
+        // this.notificationService.isProcessing(false);
       }, error: () => {
-        this.notificationService.isProcessing(false);
+        // this.notificationService.isProcessing(false);
       }
     })
   }
@@ -73,5 +80,7 @@ export class NhanvatComponent implements OnInit, AfterViewInit {
   btnLoadByTextseach(text:string){
     this.loadInit(text);
   }
+
+
 
 }

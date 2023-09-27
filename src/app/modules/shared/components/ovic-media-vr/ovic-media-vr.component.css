@@ -3,7 +3,9 @@
   width: 100%;
   height: 100%;
 }
-
+.container-vr{
+  cursor: pointer;
+}
 .hover {
   cursor: pointer;
 }
@@ -249,4 +251,15 @@
   .datainfo-body__img{
     padding:10px
   }
+}
+.btn-backStart{
+  position:fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.btn-backStart svg{
+  height: 50px;
+  width: 100%;
+  fill: #fff;
 }

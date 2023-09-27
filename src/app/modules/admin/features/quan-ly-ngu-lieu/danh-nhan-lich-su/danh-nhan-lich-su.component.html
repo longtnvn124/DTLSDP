@@ -13,12 +13,14 @@
     </div>
   </div>
   <!--   body -->
-  <div class="row h-full">
+  <div *ngIf="listData.length ?? 0 > 0,else notData" class="row h-full">
     <div class="set-width inline-block flex flex-wrap flex-row justify-content-between align-items-center col-md-3 p-3"
          *ngFor="let item of listData">
-      <div class="w-full inline-block shadow-6 bg-white border ovic--parent-image position-relative" style="border-radius:4px">
-        <div class='head-card_hover w-100' (click)="btnShowInfo(item)" style="cursor: pointer;">
-          <div class="position-relative w-100 st-image img-child-max-width"
+      <div class="w-full inline-block shadow-6 bg-white border ovic--parent-image position-relative"
+           style="border-radius:4px">
+        <div class='head-card_hover w-100 d-flex flex-column justify-content-center align-items-center '
+             (click)="btnShowInfo(item)" style="cursor: pointer;">
+          <div class="position-relative st-image img-child-max-width overflow-hidden" style="width:200px; height:300px"
                [ovicLoadImageById]="item.files ? item.files : null"></div>
           <div class="m-2">
             <div
@@ -26,7 +28,7 @@
               style="font-size: 16px; white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">
               {{item.bietdanh}}
             </div>
-            <div class="text-lg font-medium border-top-1 p-2 text-center">
+            <div class="text-lg font-medium border-top-1 p-1 text-center">
               <p class="text-base font-weight-normal d-sm-inline-block mb-0">
                 {{item.nam}}
               </p>
@@ -47,6 +49,38 @@
       </div>
     </div>
   </div>
+
+
+<!--  <div *ngIf="listData.length ?? 0 > 0,else notData" class="row row-cols-2 h-full">-->
+<!--    <div class=" flex-wrap col-sm-6 col-md-4 col-lg-3 p-2" *ngFor="let item of listData">-->
+<!--      <div class="w-full inline-block shadow-6 bg-white border ovic&#45;&#45;parent-image position-relative"-->
+<!--           style="border-radius:4px">-->
+<!--        <div class='head-card_hover w-100 bg-image hover-zoom' (click)="btnShowInfo(item)" style="cursor: pointer;">-->
+<!--          <div class="position-relative w-100 st-image img-child-max-width" style="overflow: hidden">-->
+<!--            <img style="padding:0 10px 10px 10px" class="w-100 h-100 ovic-img-zoom"-->
+<!--                 [src]="item['image_convenrted'] ? item['image_convenrted'] : 'assets/images/placeholder.jpg'" alt="">-->
+<!--          </div>-->
+<!--          <div class="m-2">-->
+<!--            <div-->
+<!--              class="headding-card text-xl font-weight-bold text-capitalize text-center align-items-center text_hover text-primary"-->
+<!--              style="font-size: 16px; white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">-->
+<!--              {{item.bietdanh}}-->
+<!--            </div>-->
+<!--            <div class="text-lg font-medium border-top-1 text-center">-->
+<!--              <p class="font-weight-normal d-sm-inline-block mb-0" style="font-size: 13px">-->
+<!--                {{item.nam}}-->
+<!--              </p>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+  <ng-template #notData>
+    <div class="d-flex justify-content-center align-items-center " style="    font-size: 16px;
+    margin-top: 28px;">Không có dữ liệu
+    </div>
+  </ng-template>
 </div>
 <input type="file" #fileChooser hidden="true" (change)="onInputAvatar($event , fileChooser)">
 
@@ -117,9 +151,9 @@
               <div class="row">
                 <div class="col-12">
                   <div class="form-row">
-                    <label >Mô tả</label>
-<!--                    <textarea formControlName="mota" placeholder="Mô tả..." autocomplete="off" id="mota" cols="30"-->
-<!--                              rows="5"></textarea>-->
+                    <label>Mô tả</label>
+                    <!--                    <textarea formControlName="mota" placeholder="Mô tả..." autocomplete="off" id="mota" cols="30"-->
+                    <!--                              rows="5"></textarea>-->
                     <p-editor class="w-100" formControlName="mota" [style]="{ height: '500px'}">
                       <p-header>
                           <span class="ql-formats">
@@ -139,13 +173,13 @@
                                   <option value="huge">Cỡ lớn</option>
                               </select>
                           </span>
-                                          <span class="ql-formats">
+                        <span class="ql-formats">
                               <button class="ql-bold" title="Kiểu chữ đậm"></button>
                               <button class="ql-italic" title="Kiểu chữ nghiêng"></button>
                               <button class="ql-underline" title="Kiểu chữ ghạch chân"></button>
                               <button class="ql-strike" title="Kiểu chữ ghạch ngang"></button>
                           </span>
-                                          <span class="ql-formats">
+                        <span class="ql-formats">
                               <select class="ql-align" title="Căn lề">
                                   <option selected></option>
                                   <option value="center"></option>
@@ -153,50 +187,72 @@
                                   <option value="justify"></option>
                               </select>
                               <select class="ql-color" title="Màu chữ"><option selected="selected"></option><option
-                                value="#e60000"></option><option value="#ff9900"></option><option value="#ffff00"></option><option
-                                value="#008a00"></option><option value="#0066cc"></option><option value="#9933ff"></option><option
-                                value="#ffffff"></option><option value="#facccc"></option><option value="#ffebcc"></option><option
-                                value="#ffffcc"></option><option value="#cce8cc"></option><option value="#cce0f5"></option><option
-                                value="#ebd6ff"></option><option value="#bbbbbb"></option><option value="#f06666"></option><option
-                                value="#ffc266"></option><option value="#ffff66"></option><option value="#66b966"></option><option
-                                value="#66a3e0"></option><option value="#c285ff"></option><option value="#888888"></option><option
-                                value="#a10000"></option><option value="#b26b00"></option><option value="#b2b200"></option><option
-                                value="#006100"></option><option value="#0047b2"></option><option value="#6b24b2"></option><option
-                                value="#444444"></option><option value="#5c0000"></option><option value="#663d00"></option><option
-                                value="#666600"></option><option value="#003700"></option><option value="#002966"></option><option
+                                value="#e60000"></option><option value="#ff9900"></option><option
+                                value="#ffff00"></option><option
+                                value="#008a00"></option><option value="#0066cc"></option><option
+                                value="#9933ff"></option><option
+                                value="#ffffff"></option><option value="#facccc"></option><option
+                                value="#ffebcc"></option><option
+                                value="#ffffcc"></option><option value="#cce8cc"></option><option
+                                value="#cce0f5"></option><option
+                                value="#ebd6ff"></option><option value="#bbbbbb"></option><option
+                                value="#f06666"></option><option
+                                value="#ffc266"></option><option value="#ffff66"></option><option
+                                value="#66b966"></option><option
+                                value="#66a3e0"></option><option value="#c285ff"></option><option
+                                value="#888888"></option><option
+                                value="#a10000"></option><option value="#b26b00"></option><option
+                                value="#b2b200"></option><option
+                                value="#006100"></option><option value="#0047b2"></option><option
+                                value="#6b24b2"></option><option
+                                value="#444444"></option><option value="#5c0000"></option><option
+                                value="#663d00"></option><option
+                                value="#666600"></option><option value="#003700"></option><option
+                                value="#002966"></option><option
                                 value="#3d1466"></option></select>
                               <select class="ql-background" title="Màu chữ"><option selected="selected"></option><option
-                                value="#e60000"></option><option value="#ff9900"></option><option value="#ffff00"></option><option
-                                value="#008a00"></option><option value="#0066cc"></option><option value="#9933ff"></option><option
-                                value="#ffffff"></option><option value="#facccc"></option><option value="#ffebcc"></option><option
-                                value="#ffffcc"></option><option value="#cce8cc"></option><option value="#cce0f5"></option><option
-                                value="#ebd6ff"></option><option value="#bbbbbb"></option><option value="#f06666"></option><option
-                                value="#ffc266"></option><option value="#ffff66"></option><option value="#66b966"></option><option
-                                value="#66a3e0"></option><option value="#c285ff"></option><option value="#888888"></option><option
-                                value="#a10000"></option><option value="#b26b00"></option><option value="#b2b200"></option><option
-                                value="#006100"></option><option value="#0047b2"></option><option value="#6b24b2"></option><option
-                                value="#444444"></option><option value="#5c0000"></option><option value="#663d00"></option><option
-                                value="#666600"></option><option value="#003700"></option><option value="#002966"></option><option
+                                value="#e60000"></option><option value="#ff9900"></option><option
+                                value="#ffff00"></option><option
+                                value="#008a00"></option><option value="#0066cc"></option><option
+                                value="#9933ff"></option><option
+                                value="#ffffff"></option><option value="#facccc"></option><option
+                                value="#ffebcc"></option><option
+                                value="#ffffcc"></option><option value="#cce8cc"></option><option
+                                value="#cce0f5"></option><option
+                                value="#ebd6ff"></option><option value="#bbbbbb"></option><option
+                                value="#f06666"></option><option
+                                value="#ffc266"></option><option value="#ffff66"></option><option
+                                value="#66b966"></option><option
+                                value="#66a3e0"></option><option value="#c285ff"></option><option
+                                value="#888888"></option><option
+                                value="#a10000"></option><option value="#b26b00"></option><option
+                                value="#b2b200"></option><option
+                                value="#006100"></option><option value="#0047b2"></option><option
+                                value="#6b24b2"></option><option
+                                value="#444444"></option><option value="#5c0000"></option><option
+                                value="#663d00"></option><option
+                                value="#666600"></option><option value="#003700"></option><option
+                                value="#002966"></option><option
                                 value="#3d1466"></option></select>
                           </span>
-                                          <span class="ql-formats">
+                        <span class="ql-formats">
                               <button class="ql-list" value="ordered" title="Danh sách số"></button>
                               <button class="ql-list" value="bullet" title="Danh sách chấm"></button>
                               <button class="ql-indent q1-box" value="+1" title="Thụt đầu dòng"></button>
                               <button class="ql-indent q2-box last" value="-1" title="Giảm thụt đầu dòng"></button>
                           </span>
-                                          <span class="ql-formats">
+                        <span class="ql-formats">
                               <button class="ql-link" aria-label="link" title="Thẻ liên kết"></button>
                               <button class="ql-image" aria-label="image" title="Chèn ảnh"></button>
                               <button class="ql-blockquote" aria-label="blockquote" title="Trích dẫn"></button>
                               <button class="ql-code-block" aria-label="code-block" title="code-block"></button>
                           </span>
-                                          <span class="ql-formats">
+                        <span class="ql-formats">
                               <button class="ql-script" value="sub"></button>
                               <button class="ql-script" value="super"></button>
                               <button class="ql-direction" value="rtl"></button>
                           </span>
-                                          <span class="ql-formats">
+                        <span class="ql-formats">
                               <button class="ql-clean"></button>
                           </span>
                       </p-header>

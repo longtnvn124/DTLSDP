@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import {NgModule} from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
 import {ShiftComponent} from "@modules/test/shift/shift.component";
 import {PanelComponent} from "@modules/test/panel/panel.component";
 
@@ -15,6 +15,11 @@ const routes: Routes = [
     component: PanelComponent,
     data: {state: 'test--panel'}
   },
+  {
+    path: '',
+    redirectTo: 'shift',
+    pathMatch: 'prefix'
+  },
 
 ];
 
@@ -22,4 +27,5 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class TestRoutingModule { }
+export class TestRoutingModule {
+}

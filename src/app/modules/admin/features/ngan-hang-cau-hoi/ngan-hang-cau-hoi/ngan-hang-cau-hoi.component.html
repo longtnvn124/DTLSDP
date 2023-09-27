@@ -38,7 +38,7 @@
                 </div>
               </div>
               <div class="row">
-                <div class="col-12">
+                <div class="col-12" *ngIf="dataQuestion ??0 >0,else notData">
                   <div *ngFor="let item of dataQuestion, index as i" class='mb-3'>
                     <div >
                       <div class="ctn-question border">
@@ -88,7 +88,9 @@
 
                   </div>
                 </div>
-
+                <ng-template #notData>
+                  <div class="d-flex justify-content-center align-items-center mx-1" style="font-size:14px">Không tìm thấy câu hỏi</div>
+                </ng-template>
               </div>
             </div>
 

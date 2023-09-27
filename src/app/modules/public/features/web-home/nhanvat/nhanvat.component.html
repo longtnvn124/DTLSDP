@@ -1,12 +1,12 @@
 <ng-container [ngSwitch]="mode">
   <ng-container *ngSwitchDefault>
-    <div *ngIf="listData !== []" class="row row-cols-2 h-full">
+    <div *ngIf="listData.length ?? 0 > 0,else notData" class="row row-cols-2 h-full">
       <div class=" flex-wrap col-sm-6 col-md-4 col-lg-3 p-2" *ngFor="let item of listData">
         <div class="w-full inline-block shadow-6 bg-white border ovic--parent-image position-relative"
              style="border-radius:4px">
           <div class='head-card_hover w-100 bg-image hover-zoom' (click)="btnSelectItem(item)" style="cursor: pointer;">
             <div class="position-relative w-100 st-image img-child-max-width" style="overflow: hidden">
-              <img style="padding:0 10px 10px 10px" class="w-100 h-100 ovic-img-zoom"
+              <img class="w-100 h-100 ovic-img-zoom"
                    [src]="item.files ? item['image_convenrted'] : 'assets/images/placeholder.jpg'" alt="">
             </div>
             <div class="m-2">
@@ -26,13 +26,17 @@
       </div>
     </div>
 
-    <div *ngIf="listData ==[]" class="ovic-not-data">Không có dữ liệu</div>
+    <ng-template #notData>
+      <div class="d-flex justify-content-center align-items-center mx-1" style="font-size:14px">Không có dữ liệu</div>
+    </ng-template>
+
+
 
   </ng-container>
   <ng-container *ngSwitchCase="'INFO'">
-    <div class="row mx-0 my-5 h-100 nhanvat__info">
+    <div class="width-max-500px row row-cols-1 mx-0 my-5 h-100 nhanvat__info">
       <div class="col-4 h-100">
-        <div *ngIf="dataSelect.files,else imgPlachoder"
+        <div *ngIf="dataSelect['image_convenrted'] ,else imgPlachoder"
              class="position-relative w-100 st-image img-child-max-width">
           <img [src]="dataSelect['image_convenrted']">
         </div>
@@ -54,8 +58,41 @@
       </div>
       <div class="col-8 border-left scroll-ctn-right">
         <div class="mt-2 font-weight-normal" style="font-size: 16px"><b>Thông tin chi tiết:</b>
-          <br><span [innerHTML]="dataSelect.mota | htmlDecode"></span></div>
+          <br><span [innerHTML]="dataSelect.mota | htmlDecode"></span>
+        </div>
       </div>
+    </div>
+    <div class="w-100 h-100 width-min-500px">
+      <div class="d-flex justify-content-center align-items-center flex-column">
+        <div *ngIf="dataSelect['image_convenrted'] ,else imgPlachoder"
+             class="position-relative w-100 st-image img-child-max-width">
+          <img [src]="dataSelect['image_convenrted']">
+        </div>
+        <ng-template #imgPlachoder>
+          <div class="position-relative w-100 st-image img-child-max-width">
+            <img src="./assets/images/placeholder.jpg">
+          </div>
+        </ng-template>
+
+      </div>
+      <div class="">
+        <div class="m-3">
+          <div class="mt-2 font-weight-normal" style="font-size: 16px"><b>Biệt danh : </b> <span
+            class="text-capitalize"> {{dataSelect.bietdanh}}</span></div>
+          <div class="mt-2 font-weight-normal" style="font-size: 16px"><b>Tên thật:</b> <span
+            class="text-capitalize"> {{dataSelect.ten}}</span></div>
+          <div class="mt-2 font-weight-normal" style="font-size: 16px"><b>Năm sinh - Năm mất:</b> <span
+            class=""> {{dataSelect.nam}}</span></div>
+          <div class="mt-2 font-weight-normal" style="font-size: 16px"><b>Giới tính:</b> <span
+            class=""> {{dataSelect['__gioitinh_converted']}}</span>
+          </div>
+          <div class="mt-2 font-weight-normal text-justify" style="font-size: 16px"><b>Thông tin chi tiết:</b>
+            <br><span [innerHTML]="dataSelect.mota | htmlDecode"></span>
+          </div>
+        </div>
+      </div>
+
     </div>
   </ng-container>
 </ng-container>
+

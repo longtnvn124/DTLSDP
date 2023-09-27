@@ -3,6 +3,7 @@ import { RouterModule , Routes } from '@angular/router';
 import { ModuleGuard } from '@core/guards/module.guard';
 
 const routes : Routes = [
+
 	{
 		path         : 'admin' ,
 		canActivate  : [ ModuleGuard ] ,
@@ -18,9 +19,10 @@ const routes : Routes = [
 	} ,
 	{
 		path       : '**' ,
-		redirectTo : 'login' ,
+		redirectTo : 'home' ,
 		pathMatch  : 'full'
 	}
+
 ];
 
 @NgModule( {

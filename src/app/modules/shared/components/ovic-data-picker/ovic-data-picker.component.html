@@ -27,10 +27,12 @@
             </ng-template>
             <ng-template pTemplate="header">
                 <tr>
+
                     <th style="padding: 0; text-align: center; width: 30px;">TT</th>
                     <th *ngFor="let col of columns" [style.width]="col.width" class="{{col.classes}}">
                         {{col.header}}
                     </th>
+
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-option let-rowIndex="rowIndex">

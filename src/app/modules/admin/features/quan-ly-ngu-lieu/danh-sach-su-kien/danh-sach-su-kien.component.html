@@ -62,7 +62,7 @@
             <td class="ovic-w-100px text-center">
               <div class="d-block --fs-14">
                 <button *ngIf="item.root ===1" pButton pRipple class="btn-custom-size-30x30 p-button-success mr-1" icon="pi pi-check-circle" (click)="btnCheck(item)"></button>
-                <button *ngIf="item.root ===0" pButton pRipple class="btn-custom-size-30x30 p-button-secondary mr-1" icon="pi pi-circle" (click)="btnCheck(item)"></button>
+                <button *ngIf="item.root ===0" pButton pRipple class="btn-custom-size-30x30 p-button-secondary mr-1" icon="pi pi-ban" (click)="btnCheck(item)"></button>
                 <button pButton pRipple class="btn-custom-size-30x30 mr-1" icon="pi pi-info-circle" (click)="btnInformation(item.id)"></button>
                 <button pButton pRipple class="btn-custom-size-30x30 p-button-warning mr-1" icon="pi pi-pencil" (click)="btnEdit(item)"></button>
                 <button pButton pRipple class="btn-custom-size-30x30 p-button-danger" icon="pi pi-trash" (click)="btnDelete(item.id)"></button>

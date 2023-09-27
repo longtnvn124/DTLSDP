@@ -28,7 +28,7 @@ export class NganHangCauHoiComponent implements OnInit {
   needUpdate: boolean = false;
   search: string = '';
   listData: NganHangDe[];
-  dataQuestion: NganHangCauHoi[];
+  dataQuestion: NganHangCauHoi[]=[];
   loadInitFail = false;
   index = 1;
   sizeFullWidth = 1024;
@@ -66,15 +66,15 @@ export class NganHangCauHoiComponent implements OnInit {
       headClass: 'ovic-w-160px text-center',
       rowClass: 'ovic-w-160px text-center'
     },
-    {
-      fieldType: 'normal',
-      field: ['count'],
-      innerData: true,
-      header: 'Số đề đã tạo',
-      sortable: false,
-      headClass: 'ovic-w-150px text-center',
-      rowClass: 'ovic-w-150px text-center'
-    },
+    // {
+    //   fieldType: 'normal',
+    //   field: ['count'],
+    //   innerData: true,
+    //   header: 'Số đề đã tạo',
+    //   sortable: false,
+    //   headClass: 'ovic-w-150px text-center',
+    //   rowClass: 'ovic-w-150px text-center'
+    // },
     {
       fieldType: 'normal',
       field: ['__time_exam'],

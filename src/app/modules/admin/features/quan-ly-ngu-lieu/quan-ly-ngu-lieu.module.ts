@@ -21,6 +21,8 @@ import { NguLieuImageVrComponent } from './ngu-lieu-image-vr/ngu-lieu-image-vr.c
 import { DanhNhanLichSuComponent } from './danh-nhan-lich-su/danh-nhan-lich-su.component';
 import {EditorModule} from "primeng/editor";
 import {TabViewModule} from "primeng/tabview";
+import {MatMenuModule} from "@angular/material/menu";
+import {MatIconModule} from "@angular/material/icon";
 
 
 @NgModule({
@@ -31,23 +33,25 @@ import {TabViewModule} from "primeng/tabview";
     NguLieuImageVrComponent,
     DanhNhanLichSuComponent,
   ],
-    imports: [
-        CommonModule,
-        QuanLyNguLieuRoutingModule,
-        ContextMenuModule,
-        SharedModule,
-        PaginatorModule,
-        ReactiveFormsModule,
-        ButtonModule,
-        MultiSelectModule,
-        RippleModule,
-        TableModule,
-        InputMaskModule,
-        InputTextModule,
-        DialogModule,
-        InputTextareaModule,
-        EditorModule,
-        TabViewModule
-    ]
+  imports: [
+    CommonModule,
+    QuanLyNguLieuRoutingModule,
+    ContextMenuModule,
+    SharedModule,
+    PaginatorModule,
+    ReactiveFormsModule,
+    ButtonModule,
+    MultiSelectModule,
+    RippleModule,
+    TableModule,
+    InputMaskModule,
+    InputTextModule,
+    DialogModule,
+    InputTextareaModule,
+    EditorModule,
+    TabViewModule,
+    MatMenuModule,
+    MatIconModule
+  ]
 })
 export class QuanLyNguLieuModule { }

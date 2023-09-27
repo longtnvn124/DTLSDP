@@ -126,8 +126,10 @@ export class PointView {
 
 
   btnRemoveVideo() {
-    this.videoDom.pause();
-    this.videoDom.remove();
+    if(this.videoDom){
+      this.videoDom.pause();
+      this.videoDom.remove();
+    }
   }
 
   //

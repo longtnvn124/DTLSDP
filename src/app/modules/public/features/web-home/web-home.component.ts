@@ -32,16 +32,23 @@ export class WebHomeComponent implements OnInit, AfterViewInit {
   @HostListener('window:resize', ['$event']) onResize(event: Event): void {
     this.isSmallScreen = window.innerWidth < 500;
     this.updateNhanvatContent();
+    this.minheight500 = window.innerHeight < 500;
   }
+  minheight500:boolean = window.innerHeight < 500;
   isSmallScreen: boolean = window.innerWidth < 500;
+
+
+  unLesson:boolean=false;
   titleNhanvat: string = "Nội dung mặc định";
   slides = [
     {index: 1, img: '/assets/slide/slide1.jpg'},
-    {index: 2, img: '/assets/slide/slide2.jpg',}
+    {index: 2, img: '/assets/slide/slide2.jpg',},
+    {index: 3, img: '/assets/slide/slide3.jpg',},
+    {index: 4, img: '/assets/slide/slide4.jpg',},
   ];
 
   index = 0;
-  mode: "CHUYENMUC" | "DANNHMUC_NGULIEUSO" |"VR360"| "NHANVAT" | "SUKIEN_TONGHOP" | "SEARCH" | "THONGTIN" | "HOME" = "HOME";
+  mode:"DANNHMUC_NGULIEUSO" |"VR360"| "NHANVAT" | "SUKIEN_TONGHOP" | "SEARCH" | "THONGTIN" | "HOME"|"CHUYENDE" = "HOME";
   responsiveOptions = [
     {
       breakpoint: '1024px',
@@ -66,10 +73,10 @@ export class WebHomeComponent implements OnInit, AfterViewInit {
     private dotthiKetquaService: DotThiKetQuaService,
     private notificationService: NotificationService,
     private router: Router,
+    private fileService:FileService,
     private danhMucLinhVucService:DanhMucLinhVucService,
     private nguLieuSuKienService: NguLieuSuKienService,
     private nguLieuDanhSachService: NguLieuDanhSachService,
-    private fileService:FileService
   ) {
   }
 
@@ -135,25 +142,28 @@ export class WebHomeComponent implements OnInit, AfterViewInit {
     })
   }
 
-
   btn_GoHome(){
   this.mode= "HOME";
-
+  this.action_menu=false;
+  this.unLesson= false;
   }
   btn_shift(){
     void this.router.navigate(['test/shift/']);
   }
   btn_sukien(){
     this.mode="SUKIEN_TONGHOP";
+    this.unLesson= false;
     this.action_menu=false;
   }
   btn_nhanvat(){
     this.mode= "NHANVAT";
+    this.unLesson= false;
     this.action_menu=false;
   }
 
   btn_exit(){
     this.mode= "HOME";
+    this.unLesson= false;
     this.action_menu=false;
   }
   btnBackInfoSukien(){
@@ -161,6 +171,7 @@ export class WebHomeComponent implements OnInit, AfterViewInit {
   }
   btn_vr360(){
     this.mode = "VR360";
+    this.unLesson= false;
     this.action_menu=false;
   }
 
@@ -177,7 +188,6 @@ export class WebHomeComponent implements OnInit, AfterViewInit {
   }
 
   updateNhanvatContent(){
-    console.log(this.isSmallScreen);
     if (this.isSmallScreen) {
       this.titleNhanvat = "DNLS";
     } else {
@@ -188,6 +198,14 @@ export class WebHomeComponent implements OnInit, AfterViewInit {
   btn_search(){
     this.mode ="SEARCH";
     this.action_menu=false;
+  }
+  btn_31Chuyende(){
+    this.mode ="CHUYENDE";
+    this.action_menu=false;
+    this.unLesson= true;
+  }
+  handleEvent(){
+    this.btn_GoHome();
   }
 
 }

@@ -142,6 +142,9 @@ export class NguLieuImageVrComponent implements OnInit {
           m['loaingulieu_converted'] = loaingulieu ? loaingulieu.ten : '';
           m['fileType'] = m.file_media && m.file_media[0] && FileType.has(m.file_media[0].type) && (FileType.get(m.file_media[0].type)==='img'|| FileType.get(m.file_media[0].type)==='mp4') ? 'mediaVr' : 'info';
           m['__media_link']=m.file_media&& m.file_media[0] ? this.fileService.getPreviewLinkLocalFile(m.file_media[0]) :null;
+          m['__media_link']=m.file_media&& m.file_media[0] ? this.fileService.getPreviewLinkLocalFile(m.file_media[0]) :null;
+          m['__file_thumbnail'] = m.file_thumbnail ? this.fileService.getPreviewLinkLocalFile(m.file_thumbnail): '';
+
           return m;
         });
         this.recordsTotal = this.listData.length;
@@ -367,7 +370,7 @@ export class NguLieuImageVrComponent implements OnInit {
         next:()=>{
           this.listData.find(f=>f.id === ngulieu.id).root =0;
           this.notificationService.isProcessing(false);
-          this.notificationService.toastSuccess("Câp nhật thành công");
+          this.notificationService.toastSuccess("Tắt ngữ liệu nổi bật");
         },
         error:()=>{
           this.notificationService.isProcessing(false);
@@ -379,13 +382,21 @@ export class NguLieuImageVrComponent implements OnInit {
         next:()=>{
           this.listData.find(f=>f.id === ngulieu.id).root =1;
           this.notificationService.isProcessing(false);
-          this.notificationService.toastSuccess("Câp nhật thành công");
+          this.notificationService.toastSuccess("Bật ngữ liệu nổi bật");
         },
         error:()=>{
           this.notificationService.isProcessing(false);
           this.notificationService.toastError("Cập nhật không thành công");
         }
       })
+    }
+  }
+
+  changeTb:0|1 = 0;//0:list// 1 card
+
+  selectChangeTb(select:1|0){
+    if (this.changeTb !== select) {
+      this.changeTb = select;
     }
   }
 

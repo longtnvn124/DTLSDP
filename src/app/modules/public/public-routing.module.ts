@@ -11,7 +11,6 @@ import {ResetPasswordComponent} from "@modules/public/features/reset-password/re
 import {WebHomeComponent} from "@modules/public/features/web-home/web-home.component";
 
 const routes : Routes = [
-
 	{
 		path      : 'unauthorized' ,
 		component : UnauthorizedComponent
@@ -21,10 +20,6 @@ const routes : Routes = [
 		component : ClearComponent
 	} ,
   {
-    path      : 'virtual-tour' ,
-    component : VirtualTourComponent
-  } ,
-  {
     path      : 'home' ,
     component : WebHomeComponent
   } ,
@@ -32,23 +27,23 @@ const routes : Routes = [
 		path      : 'login' ,
 		component : LoginVideoComponent
 	} ,
-  // {
-	// 	path      : 'login' ,
-	// 	component : LoginComponent
+
+	// {
+	// 	path      : 'login-video' ,
+	// 	component : LoginVideoComponent
 	// } ,
-	{
-		path      : 'login-video' ,
-		component : LoginVideoComponent
-	} ,
-	{
-		path      : 'login-2' ,
-		component : LoginV2Component
-	} ,
+	// {
+	// 	path      : 'login-2' ,
+	//  component : LoginV2Component
+	// } ,
+  {
+    path      : 'virtual-tour' ,
+    component : VirtualTourComponent
+  } ,
 	{
 		path      : 'content-none' ,
 		component : ContentNoneComponent
 	} ,
-
 
   {
     path      : 'reset-password' ,
@@ -56,12 +51,12 @@ const routes : Routes = [
   } ,
 	{
 		path       : '' ,
-		redirectTo : 'login' ,
+		redirectTo : 'home' ,
 		pathMatch  : 'prefix'
 	} ,
 	{
 		path       : '**' ,
-		redirectTo : 'content-none' ,
+		redirectTo : 'home' ,
 		pathMatch  : 'prefix'
 	}
 ];

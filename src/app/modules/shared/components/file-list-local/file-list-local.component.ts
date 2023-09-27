@@ -7,6 +7,7 @@ import {map, tap} from 'rxjs/operators';
 import {AuthService} from '@core/services/auth.service';
 import {NotificationService} from '@core/services/notification.service';
 import {DownloadProcess} from '@shared/components/ovic-download-progress/ovic-download-progress.component';
+import {ChuyenDeService} from "@shared/services/chuyen-de.service";
 
 @Component({
   selector: 'app-file-list-local',
@@ -14,6 +15,8 @@ import {DownloadProcess} from '@shared/components/ovic-download-progress/ovic-do
   styleUrls: ['./file-list-local.component.css']
 })
 export class FileListLocalComponent implements OnInit, OnChanges {
+
+  @Input() chuyendeId:number;
 
   @Input() emptyMess = 'Không có file đính kèm';
 
@@ -40,7 +43,8 @@ export class FileListLocalComponent implements OnInit, OnChanges {
     private mediaService: MediaService,
     private auth: AuthService,
     private notificationService: NotificationService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private chuyenDeService:ChuyenDeService
   ) {
   }
 
@@ -116,7 +120,7 @@ export class FileListLocalComponent implements OnInit, OnChanges {
   async addMoreFile() {
 
   }
-
+  check_chuyende_id:boolean = true;
   onSelectFiles(event: Event) {
     if (event.target['files'].length) {
       const length = event.target['files'].length;
@@ -125,6 +129,7 @@ export class FileListLocalComponent implements OnInit, OnChanges {
       this.notificationService.isProcessing(true);
       for (let i = 0; i < length; i++) {
         const file = event.target['files'][i];
+        console.log(typeof file);
         setTimeout(() => this.fileService.uploadFile(file, this.state).subscribe({
           next: (f) => {
             fileUploaded.push({
@@ -135,6 +140,15 @@ export class FileListLocalComponent implements OnInit, OnChanges {
               type: f.type,
               size: f.size
             });
+
+            // if(this.chuyendeId){
+            //   console.log(this.chuyendeId);
+            //   this.chuyenDeService.loadUrlScormById(this.chuyendeId).subscribe({
+            //     next: (data) => {
+            //       console.log(data);
+            //     }
+            //   });
+            // }
             if (++dem === length) {
               this.notificationService.isProcessing(false);
               if (this.formField.value && Array.isArray(this.formField.value)) {

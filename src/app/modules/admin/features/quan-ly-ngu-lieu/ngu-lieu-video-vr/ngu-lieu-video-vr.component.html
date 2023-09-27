@@ -7,8 +7,8 @@
           <button class="btn btn-primary border-circle --fs-13 ml-2" (click)="loadInit()">Reload</button>
         </div>
         <ng-template #tableData>
-          <div class="p-datatable-header">
-            <h3 class="tbl-title ng-star-inserted">Danh sách ngữ liệu hình ảnh 3D 360</h3>
+          <div class="p-datatable-header" style="border-bottom:1px solid #CCC;">
+            <h3 class="tbl-title ng-star-inserted">Danh sách video 3D 360</h3>
             <div class="search-block ui-table-globalfilter-container ng-star-inserted">
               <div class="d-flex align-items-center">
                 <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
@@ -28,8 +28,16 @@
                       </span>
                     </div>
                     <div class="ml-2">
-                      <p-button icon="pi pi-plus" label="Thêm mới ngữ liệu" (click)="btnAddNew()"
+                      <p-button icon="pi pi-plus" label="Thêm mới" (click)="btnAddNew()"
                                 [style]="{'height':'42px'}"></p-button>
+                    </div>
+                    <div class="ml-2 border border-radius-0 select-height-42px" style="width:74px">
+                      <button pRipple pButton class=" select-height-42px"
+                              [class]="changeTb ===0 ? 'p-button-primary' : 'ovic-button-none-selected'"
+                              icon="pi pi-list" (click)="selectChangeTb(0)"></button>
+                      <button pRipple pButton class=" select-height-42px"
+                              [class]="changeTb ===1 ? 'p-button-primary' : 'ovic-button-none-selected'"
+                              icon="pi pi-th-large" (click)="selectChangeTb(1)"></button>
                     </div>
                   </div>
                 </div>
@@ -39,7 +47,7 @@
           <p-table [value]="listData" [showCurrentPageReport]="false"
                    [tableStyle]="{ 'min-width': '100px' }">
             <ng-template pTemplate="header">
-              <tr>
+              <tr *ngIf="changeTb===0">
                 <th class="ovic-w-50px text-center">#</th>
                 <th class="text-left">Tiêu đề ngữ liệu</th>
                 <th class="ovic-w-180px text-left p-1">Lĩnh vực</th>
@@ -54,7 +62,7 @@
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-item>
-              <tr>
+              <tr *ngIf="changeTb===0">
                 <td class="ovic-w-50px text-center">{{item['indexTable']}}</td>
                 <td>
                   <div class="d-block --fs-14">{{item['title']}}</div>
@@ -68,20 +76,81 @@
                 </td>
                 <td class="ovic-w-100px text-center">
                   <div class="d-block --fs-14">
-                    <button *ngIf="item.root ===1" pButton pRipple class="btn-custom-size-30x30 p-button-success mr-2" icon="pi pi-check-circle" (click)="btnCheck(item)"></button>
-                    <button *ngIf="item.root ===0" pButton pRipple class="btn-custom-size-30x30 p-button-secondary mr-2" icon="pi pi-circle" (click)="btnCheck(item)"></button>
-                    <button pRipple pButton class="btn-custom-size-30x30 mr-2 " icon="pi pi-info-circle"
-                              (click)="btnInformation(item)"></button>
-                    <button pRipple pButton class="btn-custom-size-30x30 mr-2 p-button-warning" icon="pi pi-pencil"
-                              (click)="btnEdit(item)"></button>
-                    <button pRipple pButton class="btn-custom-size-30x30 p-button-danger" icon="pi pi-trash"
-                              (click)="btnDelete(item)"></button>
+                    <button *ngIf="item.root ===1" pButton pRipple class="btn-custom-size-30x30 p-button-success mr-2"
+                            icon="pi pi-check-circle" (click)="btnCheck(item)"></button>
+                    <button *ngIf="item.root ===0" pButton pRipple class="btn-custom-size-30x30 p-button-secondary mr-2"
+                            icon="pi pi-ban" (click)="btnCheck(item)"></button>
+                    <button pButton pRipple class="btn-custom-size-30x30 mr-2 " icon="pi pi-info-circle"
+                            (click)="btnInformation(item)"></button>
+                    <button pButton pRipple class="btn-custom-size-30x30 mr-2 p-button-warning" icon="pi pi-pencil"
+                            (click)="btnEdit(item)"></button>
+                    <button pButton pRipple class="btn-custom-size-30x30 p-button-danger" icon="pi pi-trash"
+                            (click)="btnDelete(item)"></button>
                   </div>
                 </td>
               </tr>
             </ng-template>
+
           </p-table>
-          <p-paginator class="p-paginator--custom" [showCurrentPageReport]="true" [rows]="rows"
+          <div *ngIf="changeTb===1" class="w-100 type-cash">
+            <div style="padding: 0 15px;" class="row row-cols-2">
+              <div
+                class="d-flex flex-wrap flex-row justify-content-between align-items-center col-sm-6 col-md-3 col-lg-3 custom-col-lg-2 p-2"
+                *ngFor="let item of listData">
+                <!--              (click)="btnInformation(item)"-->
+                <div class="w-100 d-inline-block s  hadow-sm bg-white border ovic--parent-image position-relative"
+                     style="border-radius:4px">
+                  <div class='head-card_hover w-100 bg-image hover-zoom' style="cursor: pointer;">
+                    <div class="position-relative w-100 st-image img-child-max-width" style="overflow: hidden">
+                      <img class="w-100 h-100 ovic-img-zoom"
+                           [src]="item['__file_thumbnail'] ? item['__file_thumbnail'] : 'assets/images/placeholder-3x2.jpg'"
+                           alt="">
+                    </div>
+                    <div class=" d-flex justify-content-between align-items-center" style="padding:10px 6px;">
+                      <div
+                        class="headding-card text-xl font-weight-bold text-capitalize text-center align-items-center text_hover ngulieuso_item_title">
+                        <i [class]="item.root===0? 'pi pi-circle': 'pi pi-circle-fill active-hot'"></i>
+                        {{item.title}}
+                      </div>
+                      <div>
+                        <i class="pi pi-ellipsis-v p-1" mat-icon-button [matMenuTriggerFor]="menu"></i>
+                        <mat-menu #menu="matMenu">
+                          <button *ngIf="item.root === 0" mat-menu-item (click)="btnCheck(item)">
+                            <mat-icon>check_circle_outline</mat-icon>
+                            <span>Actice</span>
+                          </button>
+
+                          <button *ngIf="item.root === 1" mat-menu-item (click)="btnCheck(item)">
+                            <mat-icon>block</mat-icon>
+                            <span>Inactive</span>
+                          </button>
+
+                          <button mat-menu-item (click)="btnInformation(item)">
+                            <mat-icon> 3d_rotation </mat-icon>
+                            <span>Truy cập Vr</span>
+                          </button>
+                          <button mat-menu-item (click)="btnEdit(item)">
+                            <mat-icon>edit</mat-icon>
+                            <span>Cập nhật</span>
+                          </button>
+                          <button mat-menu-item (click)="btnDelete(item)">
+                            <mat-icon>delete_forever</mat-icon>
+                            <span>Xoá</span>
+                          </button>
+                        </mat-menu>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <p-paginator *ngIf="changeTb===0" class="p-paginator--custom" [showCurrentPageReport]="true" [rows]="rows"
+                       [totalRecords]="recordsTotal" [pageLinkSize]="5" (onPageChange)="paginate($event)"></p-paginator>
+          <p-paginator *ngIf="changeTb===1" class="panigitor-select-1 p-paginator--custom"
+                       [showCurrentPageReport]="true" [rows]="rows"
                        [totalRecords]="recordsTotal" [pageLinkSize]="5" (onPageChange)="paginate($event)"></p-paginator>
         </ng-template>
 
@@ -90,10 +159,11 @@
   </ng-container>
   <ng-container *ngSwitchCase="'MEDIAVR'" class="p-0 w-100 h-100">
     <div class="w-100 h-100">
-      <div class="btn-exit" (click)="btnExit()">
-        <button pRipple pButton label="Thoát" icon="pi pi-sign-out" style="z-index:10" class="p-button-secondary"></button>
-      </div>
-<!--      <ovic-media-vr [_ngulieu]="objectVR" [showOnly]="false" class="w-100 h-100"></ovic-media-vr>-->
+      <!--      <div class="btn-exit" (click)="btnExit()">-->
+      <!--        <button pRipple pButton label="Thoát" icon="pi pi-sign-out" class="p-button-secondary"></button>-->
+      <!--      </div>-->
+      <button pButton pRipple label="thoát" icon="pi pi-sign-out" class="btn-exit p-button-secondary" iconPos="left"
+              (click)="btnExit()"></button>
       <ovic-media-vr [_ngulieu]="objectVR" [showOnly]="false" class="w-100 h-100"></ovic-media-vr>
     </div>
 
@@ -169,60 +239,22 @@
               </div>
               <div class="row">
                 <div class="col-12">
-                  <div class="form-row">
-                    <label>Phân loại</label>
-                    <div class=" classify-container w-100">
-                      <div class="mt-4">
-                        <button (click)="changeObjectType(0)"
-                                [class]="loaidoituong ===0 ? 'p-button-primary' : 'ovic-button-none-selected'" pButton pRipple
-                                class="p-button-rounded mr-3" icon="pi pi-wrench" label="Biên tập trực tiếp"></button>
-                        <button (click)="changeObjectType(1)"
-                                [class]="loaidoituong ===1 ? 'p-button-primary' : 'ovic-button-none-selected'" pButton pRipple
-                                class="p-button-rounded mr-3" icon="pi pi-download" label="Sản phẩm đóng gói"></button>
-
-                      </div>
-                      <div style="font-size: 13px"><span class="ovic-mark"></span> Nguời dùng chọn 1 trong 2 chức năng</div>
-                      <ng-container [ngSwitch]="loaidoituong">
-                        <ng-container *ngSwitchDefault>
-                          <div class="row">
-                            <div class="col-12">
-                              <p class="form-row">
-                                <label>Ảnh nền 3D 360 <span class="ovic-mark">*</span></label>
-                                <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"
-                                                     [formField]="f['file_media']" [multiple]="false"
-                                                     [state]="1"></app-file-list-local>
-                              </p>
-                            </div>
-                          </div>
-                          <div class="row">
-                            <div class="col-12">
-                              <p class="form-row">
-                                <label>File thuyết minh <span class="ovic-mark">*</span></label>
-                                <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"
-                                                     [formField]="f['file_audio']" [multiple]="false"
-                                                     [state]="1"></app-file-list-local>
-                              </p>
-                            </div>
-                          </div>
-                        </ng-container>
-                        <ng-container *ngSwitchCase="1">
-                          <div class="row">
-                            <div class="col-12">
-                              <p class="form-row">
-                                <label>File sản phẩm <span class="ovic-mark">*</span></label>
-                                <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"
-                                                     [formField]="f['file_product']" [multiple]="false"
-                                                     [state]="1"></app-file-list-local>
-                              </p>
-                            </div>
-                          </div>
-
-
-                        </ng-container>
-                      </ng-container>
-                    </div>
-
-                  </div>
+                  <p class="form-row">
+                    <label>Ảnh nền 3D 360 <span class="ovic-mark">*</span></label>
+                    <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"
+                                         [formField]="f['file_media']" [multiple]="false"
+                                         [state]="1"></app-file-list-local>
+                  </p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  <p class="form-row">
+                    <label>File thuyết minh <span class="ovic-mark">*</span></label>
+                    <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"
+                                         [formField]="f['file_audio']" [multiple]="false"
+                                         [state]="1"></app-file-list-local>
+                  </p>
                 </div>
               </div>
 
@@ -374,3 +406,5 @@
   </div>
 </p-dialog>
 <input type="file" #fileChooser hidden="true" (change)="onInputAvatar($event , fileChooser)">
+
+

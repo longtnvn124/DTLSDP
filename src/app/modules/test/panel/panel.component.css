@@ -14,7 +14,8 @@
 }
 
 .info_container {
-  background: #f1f1f1;
+  /*background: #f1f1f1;*/
+  background-color: #5a725c52;
   width: 100%;
   font-size: 14px;
   font-weight: 400;
@@ -126,7 +127,7 @@
 }
 
 .tbl-in-dialog {
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.4;
 }
 

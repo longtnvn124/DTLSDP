@@ -17,6 +17,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule } from 'primeng/paginator';
 import { PhanQuyenDuLieuComponent } from './phan-quyen-du-lieu/phan-quyen-du-lieu.component';
 import { MatMenuModule } from '@angular/material/menu';
+import {PasswordModule} from "primeng/password";
 
 @NgModule( {
 	declarations : [
@@ -25,21 +26,22 @@ import { MatMenuModule } from '@angular/material/menu';
 		ThongTinHeThongComponent,
   PhanQuyenDuLieuComponent
 	] ,
-	imports : [
-		CommonModule ,
-		HeThongRoutingModule ,
-		FormsModule ,
-		ReactiveFormsModule ,
-		SharedModule ,
-		ButtonModule ,
-		RippleModule ,
-		InputTextModule ,
-		ContextMenuModule ,
-		CheckboxModule ,
-		RadioButtonModule ,
-		DropdownModule ,
-		PaginatorModule ,
-		MatMenuModule
-	]
+    imports: [
+        CommonModule,
+        HeThongRoutingModule,
+        FormsModule,
+        ReactiveFormsModule,
+        SharedModule,
+        ButtonModule,
+        RippleModule,
+        InputTextModule,
+        ContextMenuModule,
+        CheckboxModule,
+        RadioButtonModule,
+        DropdownModule,
+        PaginatorModule,
+        MatMenuModule,
+        PasswordModule
+    ]
 } )
 export class HeThongModule {}
