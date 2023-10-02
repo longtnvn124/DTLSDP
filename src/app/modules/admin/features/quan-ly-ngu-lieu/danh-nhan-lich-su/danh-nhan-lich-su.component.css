@@ -8,6 +8,7 @@
 .tbl-title {
   margin: auto;
   font-size: 20px;
+  font-weight: 600;
 }
 
 .st-image {
@@ -40,3 +41,14 @@
   overflow-y: auto;
 }
 
+@media (width > 1400px) {
+  .custom-col-lg-2 {
+    flex: 0 0 calc(20%); /* Để hiển thị 5 cột trên một hàng */
+    max-width: calc(20%); /* Để hiển thị 5 cột trên một hàng */
+  }
+}
+@media(width<500px){
+  .st-image{
+    margin-top: 0;
+  }
+}

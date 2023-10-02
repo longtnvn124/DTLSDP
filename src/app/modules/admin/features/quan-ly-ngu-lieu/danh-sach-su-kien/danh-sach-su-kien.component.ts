@@ -47,7 +47,7 @@ export class DanhSachSuKienComponent implements OnInit {
   };
   headButtons = [
     {
-      label: 'Thêm sự kiện',
+      label: 'Thêm mới',
       name: 'BUTTON_ADD_NEW',
       icon: 'pi-plus pi',
       class: 'p-button-rounded p-button-success ml-3 mr-2'
@@ -180,6 +180,7 @@ export class DanhSachSuKienComponent implements OnInit {
           m['__nhanvat_converted'] = nhanvat ? nhanvat :'';
           m['__diemditich_ids_coverted'] = ditich? ditich :'';
           m['__decode_mota'] = this.helperService.decodeHTML(m.mota);
+          m['__file_thumbnail'] = m.files ? this.fileService.getPreviewLinkLocalFile(m.files): '';
           return m;
         })
         console.log(this.listData);
@@ -365,6 +366,9 @@ export class DanhSachSuKienComponent implements OnInit {
     }), 100);
   }
   btnEdit(object1:SuKien){
+
+    this.btnNameSave ="Cập nhật";
+
     // const object1 = this.listData.find(u => u.id === decision.id);
     this.formSave.reset({
       title: object1.title,
@@ -477,4 +481,11 @@ export class DanhSachSuKienComponent implements OnInit {
     }
   }
 
+
+  changeTb:0|1 = 0;//0:list// 1 card
+  selectChangeTb(select:1|0){
+    if (this.changeTb !== select) {
+      this.changeTb = select;
+    }
+  }
 }

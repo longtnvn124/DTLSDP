@@ -73,3 +73,33 @@
   height: 30px;
   border-radius: 4px;
 }
+/*-------------------------------------*/
+.select-height-42px {
+  height: 42px;
+  border-radius: 0;
+}
+
+.panigitor-select-1 {
+  display: flex;
+  /*position: absolute;*/
+  width: 100%;
+  margin-right: 30px;
+  bottom: 10px;
+  border-top: 1px solid #CCC;
+}
+
+@media (width > 1400px) {
+  .custom-col-lg-2 {
+    flex: 0 0 calc(20%); /* Để hiển thị 5 cột trên một hàng */
+    max-width: calc(20%); /* Để hiển thị 5 cột trên một hàng */
+  }
+}
+
+.active-hot {
+  color: #2eb85c;
+}
+
+.type-cash {
+  display: block;
+  height: calc(100% - 64px - 60px);
+}

@@ -188,4 +188,7 @@ export class ShiftComponent implements OnInit {
       await this.signOut();
     }
   }
+  backHome(){
+    this.router.navigate(['home/']);
+  }
 }

@@ -52,10 +52,10 @@ export class NguLieuDanhSachService {
   delete(id: number): Observable<any> {
     const is_deleted = 1;
     const deleted_by = this.auth.user.id;
-    return this.update(id, { is_deleted, deleted_by });
+    return this.update(id, {is_deleted, deleted_by});
   }
 
-  searchData(page:number, search?: string): Observable<Ngulieu[]> {
+  searchData(page: number, search?: string): Observable<Ngulieu[]> {
     const conditions: OvicConditionParam[] = [
       {
         conditionName: 'is_deleted',
@@ -82,7 +82,8 @@ export class NguLieuDanhSachService {
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
     return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
   }
-  getDataUnlimit(search?:string):Observable<Ngulieu[]>{
+
+  getDataUnlimit(search?: string): Observable<Ngulieu[]> {
     const conditions: OvicConditionParam[] = [
       {
         conditionName: 'is_deleted',
@@ -109,7 +110,7 @@ export class NguLieuDanhSachService {
     return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
   }
 
-  getDataByDitichId(diemditich_id:number,page?:number ,search?:string) :Observable<{ recordsTotal: number, data: Ngulieu[] }>{
+  getDataByDitichId(diemditich_id: number, page?: number, search?: string): Observable<{ recordsTotal: number, data: Ngulieu[] }> {
     const conditions: OvicConditionParam[] = [
       {
         conditionName: 'is_deleted',
@@ -120,17 +121,17 @@ export class NguLieuDanhSachService {
         conditionName: 'diemditich_id',
         condition: OvicQueryCondition.equal,
         value: diemditich_id.toString(10),
-        orWhere:'and'
+        orWhere: 'and'
       },
     ];
 
-    if(search){
-      const searchData :OvicConditionParam[]=[
+    if (search) {
+      const searchData: OvicConditionParam[] = [
         {
           conditionName: 'title',
           condition: OvicQueryCondition.like,
           value: search,
-          orWhere:'and',
+          orWhere: 'and',
         }
       ];
       conditions.push(...searchData);
@@ -147,84 +148,86 @@ export class NguLieuDanhSachService {
       data: res.data
     })));
   }
-    getDataByLinhvucIdAndSearch(page:number,linhvuc_id:number,search:string, loaingulieu?:string):Observable<{recordsTotal: number, data: Ngulieu[]}>{
-      const conditions: OvicConditionParam[] = [
-        {
-          conditionName: 'is_deleted',
-          condition: OvicQueryCondition.equal,
-          value: '0'
-        }
-        ]
-      if(linhvuc_id){
-        const diemditich:OvicConditionParam={
-          conditionName:'linhvuc',
-          condition:OvicQueryCondition.equal,
-          value:linhvuc_id.toString(10),
-          orWhere:'and'
-        }
-        conditions.push(...[diemditich]);
-      }
-      if(search){
-        const searchdata:OvicConditionParam={
-          conditionName:'title',
-          condition:OvicQueryCondition.like,
-          value:`%${search}%`,
-          orWhere:'and'
-        }
-        conditions.push(...[searchdata]);
-      }
-      if(loaingulieu){
-        const data :OvicConditionParam={
-          conditionName:'loaingulieu',
-          condition:OvicQueryCondition.equal,
-          value:loaingulieu,
-          orWhere:'and'
-        };
-        conditions.push(...[data]);
-      }
 
-      const fromObject = {
-        paged: page,
-        limit: this.themeSettingsService.settings.rows,
-        orderby: 'title',
-        order: "ASC"
+  getDataByLinhvucIdAndSearch(page: number, linhvuc_id: number, search: string, loaingulieu?: string): Observable<{ recordsTotal: number, data: Ngulieu[] }> {
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'is_deleted',
+        condition: OvicQueryCondition.equal,
+        value: '0'
       }
-      const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
-      return this.http.get<Dto>(this.api, {params}).pipe(map(res => ({
-        recordsTotal: res.recordsTotal,
-        data: res.data
-      })));
+    ]
+    if (linhvuc_id) {
+      const diemditich: OvicConditionParam = {
+        conditionName: 'linhvuc',
+        condition: OvicQueryCondition.equal,
+        value: linhvuc_id.toString(10),
+        orWhere: 'and'
+      }
+      conditions.push(...[diemditich]);
+    }
+    if (search) {
+      const searchdata: OvicConditionParam = {
+        conditionName: 'title',
+        condition: OvicQueryCondition.like,
+        value: `%${search}%`,
+        orWhere: 'and'
+      }
+      conditions.push(...[searchdata]);
+    }
+    if (loaingulieu) {
+      const data: OvicConditionParam = {
+        conditionName: 'loaingulieu',
+        condition: OvicQueryCondition.equal,
+        value: loaingulieu,
+        orWhere: 'and'
+      };
+      conditions.push(...[data]);
     }
 
-  getdataBydonviIdandSelect(donvi_id: number, select = '', isPer = false, loaingulieu?:string): Observable<Ngulieu[]> {
-    const fromObject = { limit: -1, orderby: 'title', order: 'ASC' };
+    const fromObject = {
+      paged: page,
+      limit: this.themeSettingsService.settings.rows,
+      orderby: 'title',
+      order: "ASC"
+    }
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
+    return this.http.get<Dto>(this.api, {params}).pipe(map(res => ({
+      recordsTotal: res.recordsTotal,
+      data: res.data
+    })));
+  }
+
+  getdataBydonviIdandSelect(donvi_id: number, select = '', isPer = false, loaingulieu?: string): Observable<Ngulieu[]> {
+    const fromObject = {limit: -1, orderby: 'title', order: 'ASC'};
     if (select) {
-      Object.assign(fromObject, { select });
+      Object.assign(fromObject, {select});
     }
-    const conditions:OvicConditionParam[] = [{
+    const conditions: OvicConditionParam[] = [{
       conditionName: 'donvi_id',
       condition: OvicQueryCondition.equal,
       value: donvi_id.toString(10)
-    },{
+    }, {
       conditionName: 'is_deleted',
       condition: OvicQueryCondition.equal,
       value: '0',
       orWhere: 'and'
     }
     ];
-    if(loaingulieu){
-      const loadNguLieu:OvicConditionParam={
-        conditionName:'loaingulieu',
+    if (loaingulieu) {
+      const loadNguLieu: OvicConditionParam = {
+        conditionName: 'loaingulieu',
         condition: OvicQueryCondition.equal,
-        value:loaingulieu,
-        orWhere:"and"
+        value: loaingulieu,
+        orWhere: "and"
       }
       conditions.push(loadNguLieu);
     }
-    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
-    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
+    return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
   }
-  countAllItems():Observable<number>{
+
+  countAllItems(): Observable<number> {
     const fromObject = {
       paged: 1,
       limit: 1,
@@ -233,7 +236,8 @@ export class NguLieuDanhSachService {
     const params = new HttpParams({fromObject});
     return this.http.get<Dto>(''.concat(this.api), {params}).pipe(map(res => res.recordsFiltered));
   }
-  getDataByLinhvucAndRoot(linhvuc?:number):Observable<Ngulieu[]>{
+
+  getDataByLinhvucAndRoot(linhvuc?: number): Observable<Ngulieu[]> {
     const conditions: OvicConditionParam[] = [
       {
         conditionName: 'is_deleted',
@@ -241,12 +245,12 @@ export class NguLieuDanhSachService {
         value: '0'
       }
     ]
-    if(linhvuc){
-      const diemditich:OvicConditionParam={
-        conditionName:'linhvuc',
-        condition:OvicQueryCondition.equal,
-        value:linhvuc.toString(10),
-        orWhere:'and'
+    if (linhvuc) {
+      const diemditich: OvicConditionParam = {
+        conditionName: 'linhvuc',
+        condition: OvicQueryCondition.equal,
+        value: linhvuc.toString(10),
+        orWhere: 'and'
       }
       conditions.push(...[diemditich]);
     }
@@ -254,31 +258,37 @@ export class NguLieuDanhSachService {
       paged: 1,
       limit: -1,
     }
-    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
-    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
+    return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
   }
-  getdataById(ngulieu_id:number):Observable<Ngulieu>{
 
-  const conditions: OvicConditionParam[] = [
-    {
-      conditionName: 'is_deleted',
-      condition: OvicQueryCondition.equal,
-      value: '0'
-    },
-    {
-      conditionName:'id',
-      condition:OvicQueryCondition.equal,
-      value:ngulieu_id.toString(10),
-      orWhere:"and"
+  getdataById(ngulieu_id: number): Observable<Ngulieu> {
+
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'is_deleted',
+        condition: OvicQueryCondition.equal,
+        value: '0'
+      },
+      {
+        conditionName: 'id',
+        condition: OvicQueryCondition.equal,
+        value: ngulieu_id.toString(10),
+        orWhere: "and"
+      }
+    ]
+    const fromObject = {
+      paged: 1,
+      limit: -1,
     }
-  ]
-  const fromObject = {
-    paged: 1,
-    limit: -1,
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
+    return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
   }
-  const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
-  return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
-}
+  loadUrlNgulieuById(id:number):Observable<string>{
+    // const url = ''.concat(this.api,'scorm/',id.toString(10));
+    // return this.http.get<string>(url);
+    return this.http.get<string>(''.concat(this.api,'file/',id.toString(10)));
+  }
 
 }
 

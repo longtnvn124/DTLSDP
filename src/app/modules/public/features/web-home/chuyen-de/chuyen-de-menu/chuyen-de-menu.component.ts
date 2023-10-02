@@ -37,7 +37,7 @@ export class ChuyenDeMenuComponent implements OnInit {
           let text: any;
           f['children'] = data.filter(m => m.parent_id === f.id);
           f['_video_link'] = f.video && f.video[0] ? this.fileService.getPreviewLinkLocalFile(f.video[0]) : '';
-          f['_documents_link'] = f.video && f.video[0] ? f.documents.map(m => this.fileService.getPreviewLinkLocalFile(m)) : [];
+          f['_documents_link'] = f.documents && f.documents[0] ? f.documents.map(m => this.fileService.getPreviewLinkLocalFile(m)) : [];
           if (f.file_scorm && f.file_scorm[0]) {
             this.chuyenDeService.loadUrlScormById(f.id).subscribe({
               next: (value) => {

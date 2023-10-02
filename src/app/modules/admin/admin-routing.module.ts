@@ -62,14 +62,6 @@ const routes : Routes = [
 				path         : 'tro-giup' ,
 				loadChildren : () => import('@modules/admin/features/tro-giup/tro-giup.module').then( m => m.TroGiupModule )
 			} ,
-			// {
-			// 	path         : 'phong-trao-thi-dua' ,
-			// 	loadChildren : () => import('@modules/admin/features/phong-trao-thi-dua/phong-trao-thi-dua.module').then( m => m.PhongTraoThiDuaModule )
-			// } ,
-			// {
-			// 	path         : 'thong-ke' ,
-			// 	loadChildren : () => import('@modules/admin/features/thong-ke/thong-ke.module').then( m => m.ThongKeModule )
-			// } ,
 			{
 				path       : '**' ,
 				redirectTo : '/admin/content-none' ,

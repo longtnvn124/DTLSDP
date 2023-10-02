@@ -144,3 +144,8 @@
 .btn-logout{
   border-radius:0;
 }
+@media(width<650px){
+  .svg-left{
+    display:none;
+  }
+}

@@ -9,8 +9,10 @@
   background-color: transparent;
   color: #333333;
   font-size: 13px;
-  padding-right: 65px;
-  padding-left: calc(2em + 5px);
+  /*padding-right: 65px;*/
+  /*padding-left: calc(2em + 5px);*/
+  padding-left: 10px;
+  padding-right: 10px;
   border-right: 1px solid #c8c8c8;
   border-left: 1px solid #c8c8c8;
 
@@ -47,7 +49,9 @@
 
 .menu-maker-childrens {
   width: calc(100% - 1.5em);
-
+  margin: 0;
+  padding: 0;
+  width: 100%;
 }
 
 .menu-maker-edit-children {
@@ -87,8 +91,10 @@
   /* border-bottom: none !important; */
   /* width: 100%; */
   height: 32px;
-  padding-right: 95px;
-  padding-left: 2em;
+  /*padding-right: 95px;*/
+  /*padding-left: 2em;*/
+  padding-left: 10px;
+  padding-right: 10px;
   color: #333333;
   font-size: 13px;
   flex: 1;
@@ -110,9 +116,9 @@
   /* margin-bottom: 5px; */
 }
 
-.menu-maker-childrens {
-  margin: 0 0.75em;
-}
+/*.menu-maker-childrens {*/
+/*  margin: 0 0.75em;*/
+/*}*/
 
 .menu-maker-edit-parent:hover,
 .menu-maker-edit-children:hover {
@@ -944,3 +950,5 @@ ovic-file-manager {
 .popup-waiting-loading{
   padding:10px;
 }
+/*----------------------------------------------*/
+

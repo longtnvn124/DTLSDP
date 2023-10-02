@@ -235,6 +235,7 @@ export class ChuyenDeComponent implements OnInit, OnChanges, AfterViewInit {
           delete data.updated_by;
           delete data.updated_at;
         }
+        delete data.status_check;
         this.object = {...data};
       }
       if (this.formChuyenDe.valid && !isTitle) {
@@ -250,11 +251,6 @@ export class ChuyenDeComponent implements OnInit, OnChanges, AfterViewInit {
         this.chuyenDeService.update(this.objectId,this.object).subscribe({
           next: () => {
             this.notificationService.toastSuccess('Sửa nội dung thành công')
-              this.chuyenDeService.loadUrlScormById(this.objectId).subscribe({
-                next: (data) => {
-                  console.log(data);
-                }
-              });
             this.loadData();
           },
           error: () => {
@@ -262,6 +258,7 @@ export class ChuyenDeComponent implements OnInit, OnChanges, AfterViewInit {
           }
         });
       } else {
+        console.log(this.object);
         this.chuyenDeService.create(this.object).subscribe({
           next: () => {
             this.notificationService.toastSuccess('Thêm chuyên đề thành công');

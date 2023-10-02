@@ -9,7 +9,9 @@
               Danh sách đợt thi
             </div>
             <div>
-              <button pButton pRipple label="Đăng xuất" class="btn-logout p-button-warning" icon="pi pi-sign-out" iconPos="right"
+              <button pButton pRipple label="Đăng xuất" class="btn-logout p-button--fade" icon="pi pi-home" iconPos="right"
+                      (click)="backHome()"></button>
+              <button pButton pRipple label="Đăng xuất" class="ml-1 btn-logout p-button-warning" icon="pi pi-sign-out" iconPos="right"
                       (click)="confirmSignOut()"></button>
             </div>
           </div>

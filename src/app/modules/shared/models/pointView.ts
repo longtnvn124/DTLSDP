@@ -117,7 +117,7 @@ export class PointView {
   }
 
   btnOnorPauseVideo() {
-    if (this.videoDom.paused) {
+    if (this.videoDom && this.videoDom.paused) {
       this.videoDom.play();
     } else {
       this.videoDom.pause();

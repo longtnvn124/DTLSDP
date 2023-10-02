@@ -51,6 +51,7 @@ export class NguLieuImageVrComponent implements OnInit {
     canDownload: true,
     canUpload: true
   };
+  isUpdate:boolean;//true : update ,false: create
   listForm = {
     [FormType.ADDITION]: {type: FormType.ADDITION, title: 'Thêm mới ngữ liệu hình ảnh 360', object: null, data: null},
     [FormType.UPDATE]: {type: FormType.UPDATE, title: 'Cập nhật ngữ liệu hình ảnh 360', object: null, data: null}
@@ -144,7 +145,15 @@ export class NguLieuImageVrComponent implements OnInit {
           m['__media_link']=m.file_media&& m.file_media[0] ? this.fileService.getPreviewLinkLocalFile(m.file_media[0]) :null;
           m['__media_link']=m.file_media&& m.file_media[0] ? this.fileService.getPreviewLinkLocalFile(m.file_media[0]) :null;
           m['__file_thumbnail'] = m.file_thumbnail ? this.fileService.getPreviewLinkLocalFile(m.file_thumbnail): '';
-
+          if(m.file_product && m.file_product[0]){
+            this.nguLieuDanhSachService.loadUrlNgulieuById(m.id).subscribe({
+              next:(link)=>{
+                m['__url_product'] = link['data'];
+              }
+            })
+          }else{
+            m['__url_product'] ='';
+          }
           return m;
         });
         this.recordsTotal = this.listData.length;
@@ -179,6 +188,7 @@ export class NguLieuImageVrComponent implements OnInit {
   }
 
   btnAddNew() {
+    this.isUpdate = false;
     this.formSave.reset({
       title: '',
       mota: '',
@@ -210,7 +220,10 @@ export class NguLieuImageVrComponent implements OnInit {
     this.loaidoituong === 0;
   }
 
+  objectEdit:Ngulieu;
   btnEdit(object: Ngulieu) {
+    this.objectEdit =object;
+    this.isUpdate= true;
     this.formSave.reset({
       title: object.title,
       mota: object.mota,
@@ -271,9 +284,10 @@ export class NguLieuImageVrComponent implements OnInit {
   objectVR: Ngulieu;
   visible:boolean= false;
   ngulieuInfo:Ngulieu;
-
+  ngulieu_type:1|0;
 
   btnInformation(object: Ngulieu) {
+    this.ngulieu_type=object.file_type;
     if (object.loaingulieu=== "video360" || object.loaingulieu === "image360") {
       this.mode = "MEDIAVR";
       this.objectVR = object;

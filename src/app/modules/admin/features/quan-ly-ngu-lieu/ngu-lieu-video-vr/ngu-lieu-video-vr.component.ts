@@ -141,6 +141,17 @@ export class NguLieuVideoVrComponent implements OnInit {
           m['fileType'] = m.file_media && m.file_media[0] && FileType.has(m.file_media[0].type) && (FileType.get(m.file_media[0].type)==='img'|| FileType.get(m.file_media[0].type)==='mp4') ? 'mediaVr' : 'info';
           m['__media_link']=m.file_media&& m.file_media[0] ? this.fileService.getPreviewLinkLocalFile(m.file_media[0]) :null;
           m['__file_thumbnail'] = m.file_thumbnail ? this.fileService.getPreviewLinkLocalFile(m.file_thumbnail): '';
+          if(m.file_product && m.file_product[0]){
+            this.nguLieuDanhSachService.loadUrlNgulieuById(m.id).subscribe({
+              next:(link)=>{
+                console.log(link);
+                m['__url_product'] = link['data'];
+              }
+            })
+          }else{
+            m['__url_product'] ='';
+          }
+
           return m;
         });
         this.recordsTotal = this.listData.length;
@@ -203,8 +214,9 @@ export class NguLieuVideoVrComponent implements OnInit {
       offsetTop: '0px'
     });
   }
-
+  objectEdit:Ngulieu;
   btnEdit(object: Ngulieu) {
+    this.objectEdit = object;
     this.formSave.reset({
       title: object.title,
       mota: object.mota,
@@ -266,8 +278,9 @@ export class NguLieuVideoVrComponent implements OnInit {
   visible:boolean= false;
   ngulieuInfo:Ngulieu;
 
-
+  ngulieu_type:0|1;
   btnInformation(object: Ngulieu) {
+    this.ngulieu_type= object.file_type;
     if (object.loaingulieu=== "video360" || object.loaingulieu === "image360") {
       this.mode = "MEDIAVR";
       this.objectVR = object;

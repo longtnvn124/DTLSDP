@@ -74,7 +74,7 @@ export class DotThiThiSinhComponent implements OnInit {
     },
     {
       fieldType: 'normal',
-      field: ['score'],
+      field: ['_score'],
       innerData: true,
       header: 'Điểm',
       sortable: false,
@@ -314,11 +314,12 @@ export class DotThiThiSinhComponent implements OnInit {
           const index = i++;
           const _shift_name = this.listData.find(f=>f.id ===m.shift_id).title;
           const _number_correct_converted = m.number_correct +'/'+m.question_ids.length;
+          const _score =m.score? this.take_decimal_number(m.score,2): '';
           const  _bank_id= bank_id;
           const _user_name = m['users']['display_name'];
           const _total_exam_time = (shift['total_time']*60 - m.time)%60 +' phút ' +(shift['total_time']-(shift['total_time'] - m.time)%60) +' giây';
           const _time_loadExam = this.listData.find(f=>f.id === m.shift_id)['__time_converted'];
-          return {... m,index,_shift_name,_number_correct_converted,_bank_id,_user_name,_total_exam_time,_time_loadExam};
+          return {... m,index,_shift_name,_number_correct_converted,_bank_id,_user_name,_total_exam_time,_time_loadExam,_score};
         });
         console.log(this.dataShiftTest)
         this.notificationService.isProcessing(false);
@@ -340,4 +341,11 @@ export class DotThiThiSinhComponent implements OnInit {
     'Stt','Tên thi sinh','Số câu trả lời đúng', 'Điểm','Thời gian làm bài'
   ]
 
+  take_decimal_number(num,n){
+    //num : số cần xử lý
+    //n: số chữ số sau dấu phẩy cần lấy
+    let base = 10**n;
+    let result = Math.round(num * base) / base ;
+    return result;
+  }
 }
