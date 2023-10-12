@@ -2,7 +2,7 @@ import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import {OvicForm} from "@shared/models/ovic-models";
 import {DmNhanVatLichSu} from "@shared/models/danh-muc";
 import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {filter, Subscription } from 'rxjs';
+import {filter, Subscription, timer} from 'rxjs';
 import {ThemeSettingsService } from '@core/services/theme-settings.service';
 import { DanhMucNhanVatLichSuService } from '@modules/shared/services/danh-muc-nhan-vat-lich-su.service';
 import { NotificationService } from '@core/services/notification.service';

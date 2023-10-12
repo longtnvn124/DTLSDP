@@ -1,6 +1,12 @@
 import {Component, EventEmitter, Input, OnInit, Output, SimpleChanges} from '@angular/core';
 import {AbstractControl} from "@angular/forms";
 
+interface GroupsRadioQuestion {
+  id: number;
+  value: string;
+
+}
+
 @Component({
   selector: 'groups-radio',
   templateUrl: './groups-radio.component.html',
@@ -13,115 +19,73 @@ export class GroupsRadioComponent implements OnInit {
   constructor() {
   }
 
-  @Input() options: any;
+  private _options: GroupsRadioQuestion[];
 
-  @Input() default: any;
+  @Input() set options(options: GroupsRadioQuestion[]) {
+    this._options = (options || []).map(o => {
+      o.value = o['_url_file'] ? '<img src="' + o['_url_file'] + '">' : o.value
+      return o;
+    })
+  }
 
-  @Input() correctAnswer: any; // only work with inputType = 'radio' , avoid 0 value pls
+  get options(): GroupsRadioQuestion[] {
+    return this._options;
+  }
 
-  @Input() optionId: string;
+  //
 
-  @Input() optionLabel: string;
+  @Input() default: string; //'1,3';
+
+  @Input() correctAnswer: string; // only work with inputType = 'radio' , avoid 0 value pls
 
   @Input() freeze = false; // đóng băng hành động khi đã công bố kết quả
 
   @Input() formField: AbstractControl;
 
-  @Input() rawHtml = false;
-
-  @Input() verticalMode = false;
-
-  @Input() columns: 1 | 2 | 3 | 4 = 1;
-
   @Input() inputType = 'radio'; // radio | checkbox
 
   @Output() onChange = new EventEmitter<any>();
 
-  active: any;
+  selectedSet: Set<number> = new Set<number>();
 
-  index: number[];
-
-  _correctAnswer = [];
+  correctAnswerSet: Set<number>;
 
   ngOnInit(): void {
-
-    if (this.default && this.options && this.optionId) {
-      if (this.inputType === 'checkbox') {
-        if (this.default) {
-          this.index = this.default.split(',').map(m => parseInt(m)).reduce((collector, selected) => ([...collector,
-            -1 !== this.options.findIndex(elm => elm.hasOwnProperty(this.optionId) && elm[this.optionId] === selected) ? selected : null
-          ]), new Array<number>()).filter(Boolean);
-        }
-
-      } else {
-        this.index = [this.options.findIndex(elm => elm.hasOwnProperty(this.optionId) && elm[this.optionId] === this.default)];
-      }
-    } else {
-      this.index = [];
-
+    if (this.default) {
+      this.selectedSet = new Set(this.default.split(',').map(str => parseInt(str)));
     }
-    this._correctAnswer = this.correctAnswer || null;
+    if (this.correctAnswer) {
+      this.correctAnswerSet = new Set(this.correctAnswer.split(',').map(str => parseInt(str)));
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['default']) {
-      if (this.default) {
-        this.active = this.default;
-        if (this.options && this.optionId) {
-          if (this.inputType === 'checkbox') {
-            // this.index = [];
-            // this.default.split(',').map(m => parseInt(m)).forEach(elmDefault => {
-            //   const _i = this.options.findIndex(elm => elm.hasOwnProperty(this.optionId) && elm[this.optionId] === elmDefault);
-            //   if (_i !== -1) {
-            //     this.index.push(_i);
-            //   }
-            // });
-
-            this.index = this.default.split(',').map(m => parseInt(m)).reduce((collector, selected) => ([...collector,
-              -1 !== this.options.findIndex(elm => elm.hasOwnProperty(this.optionId) && elm[this.optionId] === selected) ? selected : null
-            ]), new Array<number>()).filter(Boolean);
-
-
-          } else {
-            this.index = [this.options.findIndex(elm => elm.hasOwnProperty(this.optionId) && elm[this.optionId] === this.default)];
-          }
-        }
-      }
+      this.selectedSet = new Set((changes['default'].currentValue || '').split(',').map(str => parseInt(str)));
     }
     if (changes['correctAnswer']) {
-      this._correctAnswer = this.correctAnswer || null;
+      this.selectedSet = new Set((changes['correctAnswer'].currentValue || '').split(',').map(str => parseInt(str)));
     }
   }
 
-  updateValue(value: any, index: number) {
+  updateValue({id}: GroupsRadioQuestion) {
     if (this.freeze) {
       return;
     }
     if (this.inputType === 'checkbox') {
-      if (this.active) {
-        const _arr = this.active.split(',');
-        if (_arr.includes(value.toString())) {
-          const _idx = _arr.findIndex(p => p === value.toString());
-          _arr.splice(_idx, 1);
-          this.active = _arr.join(',');
-          const _idx2 = this.index.findIndex(p => p === index);
-          this.index.splice(_idx2, 1);
-        } else {
-          this.active = this.active.concat(',', value.toString());
-          this.index.push(index);
-        }
+      if (this.selectedSet.has(id)) {
+        this.selectedSet.delete(id)
       } else {
-        this.active = ''.concat(value);
-        this.index = [index];
+        this.selectedSet.add(id);
       }
     } else {
-      this.index = [index];
-      this.active = value;
+      this.selectedSet.clear();
+      this.selectedSet.add(id);
     }
     if (this.formField) {
-      this.formField.setValue(this.active);
+      this.formField.setValue([...this.selectedSet].join(','));
     }
-    this.onChange.emit(this.active);
+    this.onChange.emit([...this.selectedSet].join(','));
   }
 
 }

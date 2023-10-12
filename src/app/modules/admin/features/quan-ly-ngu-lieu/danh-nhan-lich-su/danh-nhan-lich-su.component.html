@@ -2,7 +2,7 @@
   <!-- headding -->
   <div class="p-2 d-flex justify-content-between header-container">
     <div class="d-flex align-items-center">
-      <h3 class="tbl-title">Danh nhân lịch sử</h3>
+      <h3 class="tbl-title">Nhân vật lịch sử</h3>
     </div>
     <div class="d-flex justify-content-center align-items-center ">
       <input type="text" [(ngModel)]="filter.search" placeholder="Tìm kiếm" (ngModelChange)="onSearch($event)"
@@ -50,32 +50,6 @@
     </div>
   </div>
 
-
-<!--  <div *ngIf="listData.length ?? 0 > 0,else notData" class="row row-cols-2 h-full">-->
-<!--    <div class=" flex-wrap col-sm-6 col-md-4 col-lg-3 p-2" *ngFor="let item of listData">-->
-<!--      <div class="w-full inline-block shadow-6 bg-white border ovic&#45;&#45;parent-image position-relative"-->
-<!--           style="border-radius:4px">-->
-<!--        <div class='head-card_hover w-100 bg-image hover-zoom' (click)="btnShowInfo(item)" style="cursor: pointer;">-->
-<!--          <div class="position-relative w-100 st-image img-child-max-width" style="overflow: hidden">-->
-<!--            <img style="padding:0 10px 10px 10px" class="w-100 h-100 ovic-img-zoom"-->
-<!--                 [src]="item['image_convenrted'] ? item['image_convenrted'] : 'assets/images/placeholder.jpg'" alt="">-->
-<!--          </div>-->
-<!--          <div class="m-2">-->
-<!--            <div-->
-<!--              class="headding-card text-xl font-weight-bold text-capitalize text-center align-items-center text_hover text-primary"-->
-<!--              style="font-size: 16px; white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">-->
-<!--              {{item.bietdanh}}-->
-<!--            </div>-->
-<!--            <div class="text-lg font-medium border-top-1 text-center">-->
-<!--              <p class="font-weight-normal d-sm-inline-block mb-0" style="font-size: 13px">-->
-<!--                {{item.nam}}-->
-<!--              </p>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
   <ng-template #notData>
     <div class="d-flex justify-content-center align-items-center " style="    font-size: 16px;
     margin-top: 28px;">Không có dữ liệu
@@ -154,7 +128,9 @@
                     <label>Mô tả</label>
                     <!--                    <textarea formControlName="mota" placeholder="Mô tả..." autocomplete="off" id="mota" cols="30"-->
                     <!--                              rows="5"></textarea>-->
-                    <p-editor class="w-100" formControlName="mota" [style]="{ height: '500px'}">
+                    <p-editor [curentFormControl]="f['mota']" #edtitor [editor]="edtitor" [Resize_img]="true"
+                              class="w-100" formControlName="mota" placeholder="Nội dung..."
+                              [style]="{ 'min-height': '500px'}">
                       <p-header>
                           <span class="ql-formats">
                               <select class="ql-header" title="Thẻ tiêu đề">
@@ -246,14 +222,6 @@
                               <button class="ql-image" aria-label="image" title="Chèn ảnh"></button>
                               <button class="ql-blockquote" aria-label="blockquote" title="Trích dẫn"></button>
                               <button class="ql-code-block" aria-label="code-block" title="code-block"></button>
-                          </span>
-                        <span class="ql-formats">
-                              <button class="ql-script" value="sub"></button>
-                              <button class="ql-script" value="super"></button>
-                              <button class="ql-direction" value="rtl"></button>
-                          </span>
-                        <span class="ql-formats">
-                              <button class="ql-clean"></button>
                           </span>
                       </p-header>
                     </p-editor>

@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import {Ngulieu} from "@shared/models/quan-ly-ngu-lieu";
 import {Pinable, Point} from "@shared/models/point";
-import {TypeOptions} from "@shared/utils/syscat";
+import {TypeOptions, WAITING_POPUP, WAITING_POPUP_SPIN} from "@shared/utils/syscat";
 import {PerspectiveCamera, Raycaster, Scene, Vector2, Vector3, WebGLRenderer} from "three";
 import {OrbitControls} from "@three-ts/orbit-controls";
 import {MenuItem} from "primeng/api/menuitem";
@@ -23,6 +23,7 @@ import {PointsService} from "@shared/services/points.service";
 import {FilePointView, PointView, OvicVrPointUserData} from "@shared/models/pointView";
 import {Router} from "@angular/router";
 import {BUTTON_NO, BUTTON_YES} from '@core/models/buttons';
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 
 export interface convertPoint extends Pinable {
   id: number;
@@ -44,6 +45,7 @@ export interface convertPoint extends Pinable {
   styleUrls: ['./ovic-media-vr.component.css']
 })
 export class OvicMediaVrComponent implements OnInit, OnDestroy {
+  @ViewChild('templateWaiting') templateWaiting: ElementRef;
   @ViewChild('fromUpdate', {static: true}) formUpdate: TemplateRef<any>;
   @ViewChild('container', {static: true}) container: ElementRef<HTMLDivElement>;
   @ViewChild('tooltip', {static: true}) tooltip: ElementRef<HTMLDivElement>;
@@ -62,7 +64,8 @@ export class OvicMediaVrComponent implements OnInit, OnDestroy {
 
   isSmallScreen: boolean = window.innerWidth < 500;
 
-  private audio: HTMLAudioElement = document.createElement('audio');
+  audio: HTMLAudioElement;
+
 
   isVideo: boolean;
   index: number = 1;
@@ -116,7 +119,8 @@ export class OvicMediaVrComponent implements OnInit, OnDestroy {
     private auth: AuthService,
     private fb: FormBuilder,
     private pointsService: PointsService,
-    private router: Router
+    private router: Router,
+    private modalService: NgbModal
   ) {
     this.formSave = this.fb.group({
       title: ['', Validators.required],
@@ -131,6 +135,9 @@ export class OvicMediaVrComponent implements OnInit, OnDestroy {
       file_media: [[]],
       file_audio: [[]],
     });
+    this.audio =  document.createElement('audio');
+    this.audio.setAttribute('playsinline', 'true');
+
   }
 
   ngOnDestroy(): void {
@@ -184,8 +191,8 @@ export class OvicMediaVrComponent implements OnInit, OnDestroy {
       next: (data) => {
         this.dataPointsChild = data.find(f => f.ngulieu_id === ngulieu_id) ? data.map(m => {
           m['_child'] = data.filter(f => f.parent_id === m.id);
-          m['_file_media'] = m.file_media && m.file_media[0] ? this.fileService.getPreviewLinkLocalFile(m.file_media[0]) : '';
-          m['_file_audio'] = m.file_audio && m.file_audio[0] ? this.fileService.getPreviewLinkLocalFile(m.file_audio[0]) : '';
+          m['_file_media'] = m.file_media && m.file_media[0] ? this.fileService.getPreviewLinkLocalFileNotToken(m.file_media[0]) : '';
+          m['_file_audio'] = m.file_audio && m.file_audio[0] ? this.fileService.getPreviewLinkLocalFileNotToken(m.file_audio[0]) : '';
           return m;
         }).filter(f => f.ngulieu_id === ngulieu_id && f.parent_id === 0) : [];
         this.ngulieuStart['_points_child'] = this.dataPointsChild ? this.dataPointsChild : [];
@@ -204,9 +211,21 @@ export class OvicMediaVrComponent implements OnInit, OnDestroy {
   scenePrev: PointView;
 
   loadInit(item: Ngulieu) {
+    if (this.audio){
+      this.audio.pause();
+      this.audio.remove();
+    }
     if (item.file_audio && item.file_audio[0]) {
-      this.audio.src = item['_file_audio'];
-      this.audio.setAttribute('autoplay', 'true');
+      const audiodom = new Audio();
+      audiodom.setAttribute('autoplay', 'true');
+      const sourceAudio = document.createElement('source');
+      sourceAudio.src = item['_file_audio'];
+      sourceAudio.type = item.file_audio[0].type;
+      audiodom.appendChild(sourceAudio);
+      audiodom.play();
+
+      this.audio = audiodom;
+
     }
     //scene and controls
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
@@ -418,32 +437,62 @@ export class OvicMediaVrComponent implements OnInit, OnDestroy {
   pointSelect: Point;
 
   loadPoint(point: Point) {
+    this.notificationService.isProcessing(true);
     this.pointSelect = point;
-    this.audioLink = point.file_audio && point.file_audio[0] ? this.fileService.getPreviewLinkLocalFile(point.file_audio[0]) : null;
-    const url = point.file_media && point.file_media[0] ? this.fileService.getPreviewLinkLocalFile(point.file_media[0]) : null;
-    this.file_param = {
-      file: point.file_media[0],
-      file_type: point.file_media[0].type.split('/')[0] === "video" ? "video" : 'image',
-      url: this.fileService.getPreviewLinkLocalFile(point.file_media[0])
-    }
-    this.isVideo = this.file_param.file_type === 'video' ? true : false;
-    const pointchild = point['_child'];
-    this.scenePrev = new PointView(url, this.camera);
-    if (pointchild && pointchild[0]) {
-      this.addPointInScene(pointchild);
-    }
-    this.scenePrev.createScrene(this.scene, this.file_param, point.id,
-      {
-        file_media: null,
-        type: point.type,
-        iconPoint: null,
-        parentPointId: point.id,
-        dataPoint: point,
-        ngulieu_id: this.ngulieuStart.id,
-        ovicPointId: point.id
-      });
 
-    this.renderSecene();
+    if (point.file_audio && point.file_audio[0] && this.audio) {
+      this.audio.pause()
+      this.audioLink = point.file_audio && point.file_audio[0] ? this.fileService.getPreviewLinkLocalFileNotToken(point.file_audio[0]) : null;
+      const audiopoint =new Audio();
+      const sourceAudio =document.createElement('source');
+      sourceAudio.src= this.audioLink ;
+      sourceAudio.type = point.file_audio[0].type;
+      audiopoint.appendChild(sourceAudio);
+      void audiopoint.play();
+      if(this.audio){
+        this.audio.remove();
+        console.log(this.audio);
+      }
+      this.audio= audiopoint;
+
+      console.log(this.audio);
+    }
+
+    this.modalService.open(this.templateWaiting, WAITING_POPUP_SPIN);
+    setTimeout(() => {
+      const url = point.file_media && point.file_media[0] ? this.fileService.getPreviewLinkLocalFile(point.file_media[0]) : null;
+      this.file_param = {
+        file: point.file_media[0],
+        file_type: point.file_media[0].type.split('/')[0] === "video" ? "video" : 'image',
+        url: this.fileService.getPreviewLinkLocalFile(point.file_media[0])
+      }
+      this.isVideo = this.file_param.file_type === 'video' ? true : false;
+      const pointchild = point['_child'];
+      this.scenePrev = new PointView(url, this.camera);
+      if (pointchild && pointchild[0]) {
+        this.addPointInScene(pointchild);
+      }
+      if (this.scene) {
+        this.scene = null;
+        this.scene = new Scene();
+      }
+      this.scenePrev.createScrene(this.scene, this.file_param, point.id,
+        {
+          file_media: null,
+          type: point.type,
+          iconPoint: null,
+          parentPointId: point.id,
+          dataPoint: point,
+          ngulieu_id: this.ngulieuStart.id,
+          ovicPointId: point.id
+        });
+      this.renderSecene();
+      this.modalService.dismissAll();
+
+    }, 1000);
+
+
+    this.notificationService.isProcessing(false);
   }
 
   isVideoPlay: boolean = true;
@@ -492,7 +541,7 @@ export class OvicMediaVrComponent implements OnInit, OnDestroy {
   onOpenFormEdit() {
     setTimeout(() => this.notificationService.openSideNavigationMenu({
       template: this.formUpdate,
-      size: 700,
+      size: 1024,
       offsetTop: '0'
     }), 100);
     this.controls.saveState();
@@ -661,9 +710,6 @@ export class OvicMediaVrComponent implements OnInit, OnDestroy {
 
   showMap: boolean;
 
-  btnviewMap() {
-    this.showMap = !this.showMap;
-  }
 
   loadPointInDatabase(idPoint: number) {
     this.pointsService.getAllData().subscribe({
@@ -675,8 +721,6 @@ export class OvicMediaVrComponent implements OnInit, OnDestroy {
           m['_file_audio'] = m.file_audio && m.file_audio[0] ? this.fileService.getPreviewLinkLocalFile(m.file_audio[0]) : '';
           return m;
         }) : [];
-        console.log(idPoint);
-        console.log(this.dataPointsChild);// pass
         this.pointSelect = dataPointsChild.find(f => f.id === idPoint) ? dataPointsChild.find(f => f.id === idPoint) : null;
         console.log(this.pointSelect);
         if (this.pointSelect) {
@@ -696,13 +740,8 @@ export class OvicMediaVrComponent implements OnInit, OnDestroy {
 
   async gobackhome() {
     const button = await this.notificationService.confirmRounded('Xác nhận', 'Trở lại trang chủ', [BUTTON_YES, BUTTON_NO]);
-    console.log(BUTTON_YES.name);
-    console.log(button);
     if (button.name === BUTTON_YES.name) {
-      console.log(BUTTON_YES.name);
-      console.log(button);
       void this.router.navigate(['home/']);
     }
-
   }
 }

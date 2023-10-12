@@ -35,28 +35,30 @@
     <div class="d-flex flex-column justify-content-center align-items-center">
       <div class="sukien_title">{{sukienActive.title}}</div>
       <div class="my-3">
-        <button pRipple pButton style="border-radius: 50%;" class="mr-2" icon="pi pi-play"
-                (click)="playAudio(1)"></button>
-        <button pRipple pButton style="border-radius: 50%;" class="p-button-warning" icon="pi pi-pause"
-                (click)="playAudio(0)"></button>
+
+        <button class="btn-bd-rd-50" pButton pRipple icon="pi pi-play" (click)="playAudio(1)"> </button>
+        <button class="btn-bd-rd-50 ml-1 p-button-warning" pButton pRipple icon="pi pi-pause" (click)="playAudio(0)"> </button>
       </div>
+
       <div class="sukien_desc" [innerHTML]="sukienActive.mota | htmlDecode">
       </div>
       <div class="sukien_desc mx-1">
         <div class="mx-1" *ngIf="sukienActive['_diemditich_convented'] ?? 0>0">Diễn ra tại: <span
-          *ngFor="let item of sukienActive['_diemditich_convented']">{{item}}', '</span></div>
-        <div class="mx-1" *ngIf="sukienActive['_nhanvat_convented'] ?? 0>0">Danh nhân lịch sử: <span
-          *ngFor="let item of sukienActive['_nhanvat_convented']">{{item}}', '</span></div>
+          *ngFor="let item of sukienActive['_diemditich_convented']">{{item}}, </span></div>
+        <div class="mx-1" *ngIf="sukienActive['_nhanvat_convented'] ?? 0>0">Nhân vật lịch sử: <span
+          *ngFor="let item of sukienActive['_nhanvat_convented']">{{item}}, </span></div>
       </div>
 
     </div>
 
   </ng-container>
-
-
 </ng-container>
 
 
+<!--<video src="https://api-dev.ictu.vn:10091/dtlsdp/api/uploads/file/416" controls playsinline></video>-->
 
+<!--<audio  playsinline controls autoplay >-->
+<!--  <source src="https://api-dev.ictu.vn:10091/dtlsdp/api/uploads/file/231" type='audio/mp4'>-->
+<!--</audio>-->
 
 

@@ -1,3 +1,5 @@
+import {OvicFile} from "@core/models/file";
+
 export interface ThongTinChung {
   is_deleted: number; //1: deleted; 0: not deleted
   deleted_by: number;
@@ -28,4 +30,4 @@ export interface NganHangCauHoi extends ThongTinChung {
 }
 
 
-export type AnswerOption = { id: number, value: string };
+export type AnswerOption = { id: number, value: string, type_input?:1|0,file?:OvicFile  };

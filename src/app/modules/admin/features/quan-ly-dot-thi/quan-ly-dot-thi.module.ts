@@ -12,6 +12,7 @@ import {CalendarModule} from "primeng/calendar";
 import {RippleModule} from "primeng/ripple";
 import {TableModule} from "primeng/table";
 import {TestModule} from "@modules/test/test.module";
+import {EditorModule} from "primeng/editor";
 
 
 @NgModule({
@@ -29,7 +30,8 @@ import {TestModule} from "@modules/test/test.module";
         CalendarModule,
         RippleModule,
         TableModule,
-        TestModule
+        TestModule,
+        EditorModule
     ]
 })
 export class QuanLyDotThiModule { }

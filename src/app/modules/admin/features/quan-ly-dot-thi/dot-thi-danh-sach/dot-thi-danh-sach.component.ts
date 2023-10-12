@@ -239,7 +239,7 @@ export class DotThiDanhSachComponent implements OnInit {
     this.notificationService.openSideNavigationMenu({
       name,
       template: this.fromUpdate,
-      size: 600,
+      size: 1024,
       offsetTop: '0px'
     });
   }

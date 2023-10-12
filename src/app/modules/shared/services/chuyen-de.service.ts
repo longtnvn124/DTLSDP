@@ -59,13 +59,34 @@ export class ChuyenDeService {
     const deleted_by = this.auth.user.id;
     return this.update(id, {is_deleted, deleted_by});
   }
-
   loadDataUnlimit(): Observable<ChuyenDeDB[]> {
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName:'is_deleted',
+        condition:OvicQueryCondition.equal,
+        value:'0'
+      },
+    ]
+    const fromObject={
+      page:1,
+      limit:-1,
+    }
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
+    return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
+  }
+
+  loadDataUnlimitAndActive(): Observable<ChuyenDeDB[]> {
     const conditions: OvicConditionParam[] = [
       {
        conditionName:'is_deleted',
        condition:OvicQueryCondition.equal,
        value:'0'
+      },
+      {
+        conditionName:'status',
+        condition:OvicQueryCondition.equal,
+        value:'1',
+        orWhere:'and'
       }
     ]
     const fromObject={

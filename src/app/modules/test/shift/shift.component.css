@@ -148,4 +148,16 @@
   .svg-left{
     display:none;
   }
+
+  .font-size-13px{
+    font-size:13px;
+
+  }
+
+  .dotthi-container__title{
+    font-size:14px;
+  }
+  .dotthi-item__body-title{
+   font-size:13px;
+  }
 }

@@ -30,7 +30,7 @@ export class ChuyenDeMenuComponent implements OnInit {
   loadData() {
     this.notificationService.isProcessing(true)
 
-    this.chuyenDeService.loadDataUnlimit().subscribe({
+    this.chuyenDeService.loadDataUnlimitAndActive().subscribe({
       next: (data) => {
         this.notificationService.isProcessing(false)
         const dataconvert = data.map(f => {

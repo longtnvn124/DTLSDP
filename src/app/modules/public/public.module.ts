@@ -33,6 +33,8 @@ import { ChuyenDeComponent } from './features/web-home/chuyen-de/chuyen-de.compo
 import { ChuyenDeMenuComponent } from './features/web-home/chuyen-de/chuyen-de-menu/chuyen-de-menu.component';
 import { ChuyenDeContentComponent } from './features/web-home/chuyen-de/chuyen-de-content/chuyen-de-content.component';
 import {PdfViewerModule} from "ng2-pdf-viewer";
+import { GioiThieuComponent } from './features/web-home/gioi-thieu/gioi-thieu.component';
+
 @NgModule({
   declarations: [
     LoginComponent,
@@ -52,26 +54,26 @@ import {PdfViewerModule} from "ng2-pdf-viewer";
     ChuyenDeComponent,
     ChuyenDeMenuComponent,
     ChuyenDeContentComponent,
+    GioiThieuComponent,
   ],
-  imports: [
-    CommonModule,
-    PublicRoutingModule,
-    ReactiveFormsModule,
-    ButtonModule,
-    RippleModule,
-    InputMaskModule,
-    FormsModule,
-    SharedModule,
-    DialogModule,
-    TabMenuModule,
-    GalleriaModule,
-    CarouselModule,
-    ImageModule,
-    InputTextModule,
-    DropdownModule,
-    PdfViewerModule,
-
-  ]
+    imports: [
+        CommonModule,
+        PublicRoutingModule,
+        ReactiveFormsModule,
+        ButtonModule,
+        RippleModule,
+        InputMaskModule,
+        FormsModule,
+        SharedModule,
+        DialogModule,
+        TabMenuModule,
+        GalleriaModule,
+        CarouselModule,
+        ImageModule,
+        InputTextModule,
+        DropdownModule,
+        PdfViewerModule,
+    ]
 })
 export class PublicModule {
 }

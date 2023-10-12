@@ -13,10 +13,11 @@ import {Pinable} from "@shared/models/point";
 import {OvicFile} from "@core/models/file";
 
 
+
 export type OvicVrPointType = 'DIRECT' | 'INFO';
 
 export interface FilePointView {
-  file_type: string;
+  file_type: string;// video/ image
   file: OvicFile;
   url: string;
 }
@@ -48,7 +49,7 @@ export class PointView {
   points: OvicVrPoint[] = [];
   point: any = {};
   state: any;
-  videoDom: any;
+  videoDom: HTMLVideoElement;
 
   constructor(image, camera) {
     this.image = image;
@@ -59,7 +60,9 @@ export class PointView {
   }
 
   createScrene(scene, file: FilePointView, ovicPointId?: number, userData?: OvicVrPointUserData, state?: boolean,) {
-    this.scene = null;
+    if (this.scene){
+      this.scene.remove();
+    }
     this.scene = scene;
     if (state) {
       this.state = scene;
@@ -86,12 +89,23 @@ export class PointView {
     if (file.file_type === 'video') {
       const media = file.url;
       this.videoDom = document.createElement("video");
-      this.videoDom.setAttribute('control', 'true');
-      this.videoDom.setAttribute('loop', 'true');
-      this.videoDom.setAttribute('autoplay', 'true');
-      this.videoDom.setAttribute('playsinline', 'true');
-      this.videoDom.setAttribute('crossorigin', 'anonymous');
-      this.videoDom.setAttribute('src', media);
+
+      const video:HTMLVideoElement = document.createElement('video');
+      video.setAttribute('control', 'true');
+      video.setAttribute('loop', 'true');
+      video.setAttribute('autoplay', 'true');
+      video.setAttribute('playsinline', 'true');
+      video.setAttribute('crossorigin', 'anonymous');
+      const source = document.createElement('source')
+      source.setAttribute('src', media);
+      source.setAttribute('type', file.file.type);
+      video.appendChild(source);
+      void video.play();
+      if (this.videoDom) {
+        this.videoDom.remove();
+      }
+      this.videoDom = video;
+
       const videoTexture = new VideoTexture(this.videoDom);
       videoTexture.minFilter = LinearFilter;
       videoTexture.magFilter = LinearFilter;

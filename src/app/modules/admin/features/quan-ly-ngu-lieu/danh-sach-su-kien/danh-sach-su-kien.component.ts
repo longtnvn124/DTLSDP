@@ -20,7 +20,6 @@ import {DanhMucNhanVatLichSuService} from "@shared/services/danh-muc-nhan-vat-li
 import { EmployeesPickerService } from '@modules/shared/services/employees-picker.service';
 import { FileService } from '@core/services/file.service';
 import {Cache} from "three";
-import files = Cache.files;
 import {AvatarMakerSetting, MediaService} from "@shared/services/media.service";
 import {getLinkDownload} from "@env";
 
@@ -37,6 +36,8 @@ export class DanhSachSuKienComponent implements OnInit {
   @ViewChild('fromUpdate', {static: true}) template: TemplateRef<any>;
   @ViewChild('formInformation', {static: true}) formInformation: TemplateRef<any>;
   @ViewChild(Paginator) paginator: Paginator;
+
+  stream: HTMLAudioElement;
 
   listData: SuKien[];
 
@@ -114,6 +115,9 @@ export class DanhSachSuKienComponent implements OnInit {
     this.subscription.add(observeProcessCloseForm);
     const observerOnResize = this.notificationService.observeScreenSize.subscribe(size => this.sizeFullWidth = size.width)
     this.subscription.add(observerOnResize);
+
+    this.stream = document.createElement('audio');
+    this.stream.setAttribute('playsinline', 'true');
   }
 
   dataDiemditich: DmDiemDiTich[];
@@ -154,8 +158,6 @@ export class DanhSachSuKienComponent implements OnInit {
     return Array.isArray(input);
   }
   loadData(page) {
-    // const limit = this.themeSettingsService.settings.rows;
-    // this.index = (page * limit) - limit + 1;
     this.page = page;
     this.nguLieuSuKienService.searchData(page, this.search).subscribe({
       next: ({data, recordsTotal}) => {
@@ -181,6 +183,7 @@ export class DanhSachSuKienComponent implements OnInit {
           m['__diemditich_ids_coverted'] = ditich? ditich :'';
           m['__decode_mota'] = this.helperService.decodeHTML(m.mota);
           m['__file_thumbnail'] = m.files ? this.fileService.getPreviewLinkLocalFile(m.files): '';
+          m['__file_audio'] = m.file_audio && m.file_audio[0] ? this.fileService.getPreviewLinkLocalFileNotToken(m.file_audio[0]): '';
           return m;
         })
         console.log(this.listData);
@@ -252,6 +255,7 @@ export class DanhSachSuKienComponent implements OnInit {
 
   closeForm() {
     this.loadInit();
+    this.stream.pause();
     this.notificationService.closeSideNavigationMenu(this.menuName);
   }
   changeInput(event: string) {
@@ -259,79 +263,7 @@ export class DanhSachSuKienComponent implements OnInit {
       this.loadData(1);
     },1000);
   }
-  async handleClickOnTable(button: OvicButton) {
-    if (!button) {
-      return;
-    }
-    const decision = button.data && this.listData ? this.listData.find(u => u.id === button.data) : null;
-    switch (button.name) {
-      case 'BUTTON_ADD_NEW':
-        this.btnNameSave = "Lưu lại";
-        this.formSave.reset({
-          title: '',
-          mota: '',
-          diemditich_ids: null,
-          thoigian_batdau: '',
-          thoigian_ketthuc: '',
-          files: null,
-          nhanvat_ids: null,
-          donvi_id: this.auth.userDonViId
-        });
-        this.formActive = this.listForm[FormType.ADDITION];
-        this.preSetupForm(this.menuName,this.sizeFullWidth);
-        break;
-      case 'EDIT_DECISION':
-        this.btnNameSave ="Cập nhật";
-        const object1 = this.listData.find(u => u.id === decision.id);
-        this.formSave.reset({
-          title: object1.title,
-          mota: object1.mota,
-          diemditich_ids: object1.diemditich_ids,
-          thoigian_batdau: object1.thoigian_batdau,
-          thoigian_ketthuc: object1.thoigian_ketthuc,
-          files: object1.files,
-          nhanvat_ids: object1.nhanvat_ids,
-          donvi_id: object1.donvi_id,
-          ngulieu_ids: object1.ngulieu_ids,
-        })
 
-        this.formSave.enable();
-        this.formActive = this.listForm[FormType.UPDATE];
-        this.formActive.object = object1;
-        this.preSetupForm(this.menuName,this.sizeFullWidth);
-        break;
-      case 'DELETE_DECISION':
-        const confirm = await this.notificationService.confirmDelete();
-        if (confirm) {
-          this.nguLieuDanhSachService.delete(decision.id).subscribe({
-            next: () => {
-              this.page = Math.max(1, this.page - (this.listData.length > 1 ? 0 : 1));
-              this.notificationService.isProcessing(false);
-              this.notificationService.toastSuccess('Thao tác thành công');
-              this.loadData(this.page);
-
-            }, error: () => {
-              this.notificationService.isProcessing(false);
-              this.notificationService.toastError('Thao tác không thành công');
-            }
-          })
-        }
-        break;
-      case 'INFO_DECISION':
-        this.dataInfo = this.listData.find(f => f.id === decision.id);
-        console.log(this.dataInfo);
-        setTimeout(() => this.notificationService.openSideNavigationMenu({
-          name: this.menuName,
-          template: this.formInformation,
-          size: this.sizeFullWidth,
-          offsetTop: '0px',
-          offCanvas: false
-        }), 100);
-        break;
-      default:
-        break;
-    }
-  }
 
   btnAdd(){
     this.formSave.reset({
@@ -351,7 +283,7 @@ export class DanhSachSuKienComponent implements OnInit {
     this.preSetupForm(this.menuName,this.sizeFullWidth);
   }
 
-  dataInfoFiles :any;
+
   btnInformation(id:number){
     this.dataInfo = this.listData.find(f => f.id === id);
     console.log(this.dataInfo);
@@ -364,6 +296,17 @@ export class DanhSachSuKienComponent implements OnInit {
       offsetTop: '0px',
       offCanvas: false
     }), 100);
+
+    const audio = new Audio();
+    const source = document.createElement('source')
+    source.setAttribute('src', this.dataInfo['__file_audio']);
+    source.setAttribute('type', this.dataInfo.file_audio[0].type);
+    audio.appendChild(source);
+    void audio.play();
+    if (this.stream) {
+      this.stream.remove();
+    }
+    this.stream = audio;
   }
   btnEdit(object1:SuKien){
 
@@ -488,4 +431,15 @@ export class DanhSachSuKienComponent implements OnInit {
       this.changeTb = select;
     }
   }
+
+  playAudio(num:1|0){
+    if (num === 1) {
+      this.stream.play();
+    }
+    if (num === 0) {
+      this.stream.pause();
+    }
+  }
 }
+
+

@@ -46,16 +46,17 @@
               <div class="h-100" style="width:100%;max-width:900px;">
                 <div class="exam-container">
                   <div class="exam-container__item " *ngFor="let question of nganhangCauhoi, index as i">
-                    <div class="exam-container__item-label mb-2">Câu {{i + 1}}: <span>{{question.title}}</span></div>
-                    <groups-radio [options]="question.answer_options" optionLabel="value" optionId="id"
-                                  [verticalMode]="true" inputType="checkbox" [default]="question['per_select_question']" [freeze]="true">
-                    </groups-radio>
+                    <div class="exam-container__item-label mb-2">Câu {{i + 1}}: <span [innerHTML]="question.title |htmlDecode"></span></div>
+                    <groups-radio [options]="question.answer_options" inputType="checkbox" [default]="question['per_select_question']" [freeze]="true"></groups-radio>
                     <div class='exam-container__correct-answer'>
                       <div class="exam-container__correct-answer_title">
                         Đáp án:
                       </div>
                       <div class='exam-container__correct-answer_for' *ngFor="let answer of question['correct_answer_coverted']">
-                        <div class="exam-container__correct-answer_for_item">{{answer}}</div>
+                        <div *ngIf="answer.type_input === 0" class="exam-container__correct-answer_for_item">{{answer['value']}}</div>
+                        <div *ngIf="answer.type_input === 1" class="exam-container__correct-answer_for_item">
+                          <img class="img-h-200px" [src]="answer['_url_file'] ? answer['_url_file'] : 'src/assets/images/placeholder-3x2.jpg'  " alt="">
+                        </div>
                       </div>
                     </div>
                   </div>

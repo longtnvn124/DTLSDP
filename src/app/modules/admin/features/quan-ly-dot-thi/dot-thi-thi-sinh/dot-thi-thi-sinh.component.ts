@@ -65,6 +65,15 @@ export class DotThiThiSinhComponent implements OnInit {
     },
     {
       fieldType: 'normal',
+      field: ['_time_start_shifttest'],
+      innerData: true,
+      header: 'Ngày làm bài',
+      sortable: false,
+      headClass: 'ovic-w-100px text-center',
+      rowClass: 'ovic-w-100px text-center'
+    },
+    {
+      fieldType: 'normal',
       field: ['_number_correct_converted'],
       innerData: true,
       header: 'Kết quả làm bài',
@@ -280,7 +289,9 @@ export class DotThiThiSinhComponent implements OnInit {
             this.nganhangCauhoi= quesition_ids.map(m =>{
               const item =data.find(f=>f.id === m);
               item['per_select_question'] = details[m].join(',').toString();
-              item['correct_answer_coverted'] = item.correct_answer.map(t=> item.answer_options.find(f=>f.id === t).value);
+              item['correct_answer_coverted'] = item.correct_answer.map(t=> item.answer_options.find(f=>f.id === t));
+
+              console.log(item['correct_answer_coverted']);
               return item;
             });
             console.log(this.nganhangCauhoi);
@@ -314,7 +325,7 @@ export class DotThiThiSinhComponent implements OnInit {
           const index = i++;
           const _shift_name = this.listData.find(f=>f.id ===m.shift_id).title;
           const _number_correct_converted = m.number_correct +'/'+m.question_ids.length;
-          const _score =m.score? this.take_decimal_number(m.score,2): '';
+          const _score =m.score? this.take_decimal_number(m.score,2): 0;
           const  _bank_id= bank_id;
           const _user_name = m['users']['display_name'];
           const _total_exam_time = (shift['total_time']*60 - m.time)%60 +' phút ' +(shift['total_time']-(shift['total_time'] - m.time)%60) +' giây';
@@ -347,5 +358,16 @@ export class DotThiThiSinhComponent implements OnInit {
     let base = 10**n;
     let result = Math.round(num * base) / base ;
     return result;
+  }
+
+  getdate(time:string){
+    const date = new Date(time);
+
+// Lấy ngày, tháng và năm từ đối tượng Date
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // Lưu ý rằng tháng bắt đầu từ 0, nên cần cộng thêm 1.
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
   }
 }

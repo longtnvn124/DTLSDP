@@ -1,9 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import {
-  DanhSachDiemTruyCapComponent
-} from "@modules/admin/features/diem-truy-cap/danh-sach-diem-truy-cap/danh-sach-diem-truy-cap.component";
-import {
   NganHangCauHoiComponent
 } from "@modules/admin/features/ngan-hang-cau-hoi/ngan-hang-cau-hoi/ngan-hang-cau-hoi.component";
 import {NganHangDeComponent} from "@modules/admin/features/ngan-hang-cau-hoi/ngan-hang-de/ngan-hang-de.component";

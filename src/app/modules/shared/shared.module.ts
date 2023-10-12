@@ -125,6 +125,7 @@ import {OvicMediaVrComponent} from '@shared/components/ovic-media-vr/ovic-media-
 import { TreeCustomComponent } from '@shared/components/tree-custom/tree-custom.component';
 import {AutoFocusDirective} from "@shared/directives/auto-focus.directive";
 import { OvicMediaVrProductComponent } from './components/ovic-media-vr-product/ovic-media-vr-product.component';
+import { OvicResizeDropdowDirective } from './directives/ovic-resize-dropdow.directive';
 
 
 
@@ -210,7 +211,8 @@ import { OvicMediaVrProductComponent } from './components/ovic-media-vr-product/
     OvicMediaVrComponent,
     TreeCustomComponent,
     AutoFocusDirective,
-    OvicMediaVrProductComponent
+    OvicMediaVrProductComponent,
+    OvicResizeDropdowDirective
   ],
   imports: [
     EditorModule,
@@ -324,6 +326,7 @@ import { OvicMediaVrProductComponent } from './components/ovic-media-vr-product/
         TreeCustomComponent,
         AutoFocusDirective,
         OvicMediaVrProductComponent,
+        OvicResizeDropdowDirective,
 
     ]
 })

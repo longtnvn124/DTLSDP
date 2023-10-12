@@ -90,8 +90,9 @@
 }
 .datainfo-body__img{
   padding:0 10px 10px 10px;
-  max-height:300px;
+  /*max-height:300px;*/
   /*max-width:300px;*/
+  width:100%;
   background-size: contain;
 }
 .datainfo-body__audio{
@@ -223,7 +224,7 @@
 }
 
 .btn-round {
-  wdith: 36px;
+  width: 36px;
   height: 36px;
   border-radius: 50%;
 }
@@ -262,4 +263,8 @@
   height: 50px;
   width: 100%;
   fill: #fff;
+}
+
+.popup-waiting-loading{
+  padding:10px;
 }

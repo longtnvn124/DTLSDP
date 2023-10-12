@@ -4,31 +4,46 @@
       <div class="d-flex justify-content-center align-items-center h-100 flex-column">
         <div class="container sceen-contailer border">
           <div class="header_container">
-            <div class="info_container">
-              <div class="info_container-left">
-                <div class="info_container-head d-flex">
-                  <div class="d-flex justify-content-center align-items-center mr-1">Tài khoản :</div>
-                  <div class="info-avata"><img src="{{candiate.avatar}}" alt=""><span>{{candiate.name}}</span></div>
-                </div>
-                <div class="info_container-head">Bài thi : <span>{{candiate.testName}}</span></div>
-                <div class="info_container-head">Ngày thi: <span>{{ candiate.date}}</span></div>
+<!--            <div class="info_container">-->
+<!--              <div class="info_container-left">-->
+<!--                <div class="info_container-head d-flex">-->
+<!--                  <div class="d-flex justify-content-center align-items-center mr-1">Tài khoản :</div>-->
+<!--                  <div class="info-avata"><img src="{{candiate.avatar}}" alt=""><span>{{candiate.name}}</span></div>-->
+<!--                </div>-->
+<!--                <div class="info_container-head">Bài thi : <span>{{candiate.testName}}</span></div>-->
+<!--                <div class="info_container-head">Ngày thi: <span>{{ candiate.date}}</span></div>-->
+<!--              </div>-->
+<!--              <div *ngIf="!isSmallScreen" class="info_container-right border-left border-right">-->
+<!--                <div class="countdown-timer">-->
+<!--                  <h1>Thời gian:</h1>-->
+<!--                  <div class="timer">{{ getFormattedTime() }}</div>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              <div *ngIf="!isSmallScreen" class="d-flex justify-content-center align-items-center flex-column"-->
+<!--                   style="width:15%;">-->
+<!--                <button pButton pRipple class="border-radius-0 w-100 h-100 ml-3 mb-2 p-button-warning" label="Lưu bài"-->
+<!--                        (click)="saveTheTest()"></button>-->
+
+<!--                <button pButton pRipple label="Nộp bài"-->
+<!--                        class="border-radius-0 w-100 h-100 ml-3 p-button-success" (click)="btSubmit()"></button>-->
+
+<!--              </div>-->
+
+<!--            </div>-->
+
+            <div *ngIf="!isSmallScreen" class="info_container-new">
+              <div class="info_container-head-new d-flex">
+                <div class="d-flex justify-content-center align-items-center mr-1">Tài khoản :</div>
+                <div class="info-avata"><img src="{{candiate.avatar}}" alt=""><span>{{candiate.name}}</span></div>
               </div>
-              <div *ngIf="!isSmallScreen" class="info_container-right border-left border-right">
-                <div class="countdown-timer">
-                  <h1>Thời gian:</h1>
-                  <div class="timer">{{ getFormattedTime() }}</div>
-                </div>
-              </div>
-              <div *ngIf="!isSmallScreen" class="d-flex justify-content-center align-items-center flex-column"
-                   style="width:15%;">
-                <button pButton pRipple class="border-radius-0 w-100 h-100 ml-3 mb-2 p-button-warning" label="Lưu bài"
+              <div class="d-flex justify-content-center"><div  class="d-inline timer">{{ getFormattedTime() }}</div> </div>
+              <div>
+                <button pButton pRipple class=" p-button-warning" label="Lưu bài"
                         (click)="saveTheTest()"></button>
 
                 <button pButton pRipple label="Nộp bài"
-                        class="border-radius-0 w-100 h-100 ml-3 p-button-success" (click)="btSubmit()"></button>
-
+                        class=" ml-2 p-button-success" (click)="btSubmit()"></button>
               </div>
-
             </div>
             <!--           @mobile-->
             <div *ngIf="isSmallScreen" class="d-flex justify-content-between align-items-center w-100 mt-2 px-2 border-left border-right">
@@ -49,11 +64,8 @@
           </div>
           <div class="exam-container">
             <div class="exam-container__item " *ngFor="let question of dataQuestion, index as i">
-              <div class="exam-container__item-label mb-2">Câu {{i + 1}}: <span>{{question.title}}</span></div>
-              <groups-radio [options]="question.answer_options" optionLabel="value" optionId="id"
-                            [verticalMode]="true" inputType="checkbox" [default]="question['answer_per_select']"
-                            (onChange)="selectQuestion(question.id, $event)">
-              </groups-radio>
+              <div class="exam-container__item-label mb-2">Câu {{i + 1}}: <span [innerHTML]="question.title |htmlDecode"></span></div>
+              <groups-radio [options]="question.answer_options" inputType="checkbox" [default]="question['answer_per_select']" (onChange)="selectQuestion(question.id, $event)"></groups-radio>
             </div>
           </div>
 
@@ -130,3 +142,6 @@
     <button pButton pRipple class="p-button-success" label="Xác nhận" (click)="submitTimeisOver()"></button>
   </div>
 </p-dialog>
+
+
+

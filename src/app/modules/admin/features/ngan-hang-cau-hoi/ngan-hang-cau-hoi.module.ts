@@ -13,13 +13,14 @@ import {AnswerOptionGroupComponent} from './answer-option-group/answer-option-gr
 import {CheckboxModule} from "primeng/checkbox";
 import {RadioButtonModule} from "primeng/radiobutton";
 import {InputTextModule} from "primeng/inputtext";
+import {EditorModule} from "primeng/editor";
 
 
 @NgModule({
   declarations: [
     NganHangCauHoiComponent,
     NganHangDeComponent,
-    AnswerOptionGroupComponent
+    AnswerOptionGroupComponent,
   ],
     imports: [
         CommonModule,
@@ -31,7 +32,8 @@ import {InputTextModule} from "primeng/inputtext";
         RippleModule,
         CheckboxModule,
         RadioButtonModule,
-        InputTextModule
+        InputTextModule,
+        EditorModule
     ]
 })
 export class NganHangCauHoiModule {

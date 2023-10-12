@@ -1,18 +1,14 @@
-import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {Component, Input, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {NganHangDeService} from "@shared/services/ngan-hang-de.service";
 import {NotificationService} from "@core/services/notification.service";
 import {NganHangCauHoi, NganHangDe} from "@shared/models/quan-ly-ngan-hang";
-import {FormType, NgPaginateEvent, OvicForm, OvicTableStructure} from "@shared/models/ovic-models";
+import {NgPaginateEvent, OvicTableStructure} from "@shared/models/ovic-models";
 import {ThemeSettingsService} from "@core/services/theme-settings.service";
 import {OvicButton} from "@core/models/buttons";
-import {debounceTime, filter, forkJoin, Observable, Subject, Subscription} from "rxjs";
+import {forkJoin, Subscription} from "rxjs";
 import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {FileService} from "@core/services/file.service";
 import {NganHangCauHoiService} from "@shared/services/ngan-hang-cau-hoi.service";
-
-interface FormNganHangCauhoi extends OvicForm {
-  object: NganHangCauHoi;
-}
 
 @Component({
   selector: 'app-ngan-hang-cau-hoi',
@@ -20,15 +16,22 @@ interface FormNganHangCauhoi extends OvicForm {
   styleUrls: ['./ngan-hang-cau-hoi.component.css']
 })
 export class NganHangCauHoiComponent implements OnInit {
+
   @ViewChild('formUpdate', {static: true}) formUpdate: TemplateRef<any>;
+
   @ViewChild('formAddQuestion', {static: true}) formAddQuestion: TemplateRef<any>;
+
+  @Input() columns: 1 | 2 | 3 | 4 = 1;
+  @Input() verticalMode:boolean =false;
+  @Input() rawHtml = false;
+
   btn_checkAdd: 'Lưu lại' | 'Cập nhật';
   isLoading: boolean = false;
   recordsTotal = 1;
   needUpdate: boolean = false;
   search: string = '';
   listData: NganHangDe[];
-  dataQuestion: NganHangCauHoi[]=[];
+  dataQuestion: NganHangCauHoi[] = [];
   loadInitFail = false;
   index = 1;
   sizeFullWidth = 1024;
@@ -36,7 +39,7 @@ export class NganHangCauHoiComponent implements OnInit {
   formActive: NganHangCauHoi;
   _bank_id: number;
   searchQuestion: string
-  mode: 'TABLE' | 'FORM' = "TABLE";
+
   page = 1;
   rows = this.themeSettingsService.settings.rows;
   tblStructure: OvicTableStructure[] = [
@@ -66,15 +69,6 @@ export class NganHangCauHoiComponent implements OnInit {
       headClass: 'ovic-w-160px text-center',
       rowClass: 'ovic-w-160px text-center'
     },
-    // {
-    //   fieldType: 'normal',
-    //   field: ['count'],
-    //   innerData: true,
-    //   header: 'Số đề đã tạo',
-    //   sortable: false,
-    //   headClass: 'ovic-w-150px text-center',
-    //   rowClass: 'ovic-w-150px text-center'
-    // },
     {
       fieldType: 'normal',
       field: ['__time_exam'],
@@ -101,24 +95,14 @@ export class NganHangCauHoiComponent implements OnInit {
           name: 'CREATE_QUESTION_DECISION',
           cssClass: 'btn-warning rounded'
         },
-        // {
-        //   tooltip: 'Tạo câu hỏi',
-        //   label: '',
-        //   icon: 'pi pi-user-plus',
-        //   name: 'ADD_EXAM',
-        //   cssClass: 'btn-secondary rounded'
-        // },
+
       ]
     }
   ];
   subscription = new Subscription();
   formSave: FormGroup;
-  private OBSERVE_PROCESS_FORM_DATA = new Subject<FormNganHangCauhoi>();
 
-  listForm = {
-    [FormType.ADDITION]: {type: FormType.ADDITION, title: 'Thêm mới câu hỏi', object: null, data: null},
-    [FormType.UPDATE]: {type: FormType.UPDATE, title: 'Cập nhật câu hỏi ', object: null, data: null}
-  };
+  contentHeader: 'Thêm mới câu hỏi' | 'Cập nhật câu hỏi' = "Thêm mới câu hỏi";
 
   constructor(
     private nganHangDeService: NganHangDeService,
@@ -132,12 +116,8 @@ export class NganHangCauHoiComponent implements OnInit {
       title: ['', Validators.required],
       bank_id: [0, Validators.required],
       answer_options: [[], Validators.required],
-      correct_answer: [[], Validators.required]
+      correct_answer: [[]]
     })
-    const observeProcessFormData = this.OBSERVE_PROCESS_FORM_DATA.asObservable().pipe(debounceTime(100)).subscribe(form => this.__processFrom(form));
-    this.subscription.add(observeProcessFormData);
-    const observeProcessCloseForm = this.notificationService.onSideNavigationMenuClosed().pipe(filter(menuName => menuName === this.menuName && this.needUpdate)).subscribe(() => this.loadData(this.page));
-    this.subscription.add(observeProcessCloseForm);
     const observerOnResize = this.notificationService.observeScreenSize.subscribe(size => this.sizeFullWidth = size.width)
     this.subscription.add(observerOnResize);
   }
@@ -152,6 +132,7 @@ export class NganHangCauHoiComponent implements OnInit {
 
   loadData(page) {
     this.isLoading = true;
+    this.notificationService.isProcessing(true);
     this.nganHangDeService.load(page, this.search).subscribe({
       next: ({data, recordsTotal}) => {
         this.listData = data.map(m => {
@@ -161,29 +142,12 @@ export class NganHangCauHoiComponent implements OnInit {
         });
         this.recordsTotal = recordsTotal;
         this.isLoading = false;
+        this.notificationService.isProcessing(false);
 
-      }, error: () => {
-        this.isLoading = false;
-        this.notificationService.toastError("Mất kết nối với máy chủ");
-      }
-    })
-  }
-
-  get f(): { [key: string]: AbstractControl<any> } {
-    return this.formSave.controls;
-  }
-
-  loadQuestion(id: number) {
-    this.nganHangCauHoiService.getDataByBankId(id, this.searchQuestion).subscribe({
-      next: (data) => {
-        this.dataQuestion = data.map(m => {
-          m['state'] = 0; // 1: chọn, 0 :bỏ chọn;
-          m['_bank_id']= id;
-          return m;
-        })
       }, error: () => {
         this.notificationService.isProcessing(false);
-        this.notificationService.toastError('Mất kết nối với máy chủ');
+        this.isLoading = false;
+        this.notificationService.toastError("Mất kết nối với máy chủ");
       }
     })
   }
@@ -193,31 +157,20 @@ export class NganHangCauHoiComponent implements OnInit {
     this.loadData(1);
   }
 
-
   paginate({page}: NgPaginateEvent) {
     this.page = page + 1;
     this.loadData(this.page);
   }
 
   async handleClickOnTable(button: OvicButton) {
+
     if (!button) {
       return;
     }
-    // const decision = button.data && this.listData ? this.listData.find(u => u.id === button.data) : null;
     switch (button.name) {
-      case 'ADD_EXAM':
-        this.btn_checkAdd = "Lưu lại";
-        this.formSave.reset({
-          title: '',
-          bank_id: button.data,
-          answer_options: [],
-          correct_answer: 0,
-        });
-
-        break;
-
       case 'CREATE_QUESTION_DECISION':
         this._bank_id = button.data;
+        console.log(this._bank_id);
         this.loadQuestion(button.data);
         setTimeout(() => this.notificationService.openSideNavigationMenu({
           name: this.menuName,
@@ -226,27 +179,17 @@ export class NganHangCauHoiComponent implements OnInit {
           offsetTop: '0px',
           offCanvas: false
         }), 100);
-        this.mode = "TABLE";
+        this.formSave.reset({
+          title: '',
+          bank_id: this._bank_id,
+          answer_options: [],
+          correct_answer: [],
+        })
+        console.log(this.formSave.value);
         break;
       default:
         break;
     }
-  }
-
-  btnAddExam() {
-    this.btn_checkAdd = "Lưu lại";
-    this.formSave.reset({
-      title: '',
-      bank_id: this._bank_id,
-      answer_options: [],
-      correct_answer: 0,
-    });
-    this.mode = "FORM"
-  }
-
-  closeFormAdd() {
-    this.loadQuestion(this._bank_id);
-    this.mode = "TABLE";
   }
 
   closeForm() {
@@ -254,23 +197,55 @@ export class NganHangCauHoiComponent implements OnInit {
     this.loadData(1);
   }
 
-//=====================add exam=================================
-  private __processFrom({data, object, type}: FormNganHangCauhoi) {
-    const observer$: Observable<any> = type === FormType.ADDITION ? this.nganHangCauHoiService.create(data) : this.nganHangCauHoiService.update(object.id, data);
-    observer$.subscribe({
-      next: () => {
-        this.needUpdate = true;
-        this.notificationService.toastSuccess('Thao tác thành công', 'Thông báo');
-        if(type === FormType.ADDITION){
-          this.nganHangDeService.update(this._bank_id, {total: this.dataQuestion.length + 1}).subscribe();
-        }
-      },
-      error: () => this.notificationService.toastError('Thao tác thất bại', 'Thông báo')
-    });
+  //==========================================-----------------------------------------
+  get f(): { [key: string]: AbstractControl<any> } {
+    return this.formSave.controls;
   }
 
+  loadQuestion(id: number) {
+    this.notificationService.isProcessing(true);
+    this.nganHangCauHoiService.getDataByBankId(id, this.searchQuestion).subscribe({
+      next: (data) => {
+        this.dataQuestion = data.map(m => {
+          m['state'] = 0; // 1: chọn, 0 :bỏ chọn;
+          m['_bank_id'] = id;
+          return m;
+        })
+        console.log(this.dataQuestion);
+        this.notificationService.isProcessing(false);
+
+      }, error: () => {
+        this.notificationService.isProcessing(false);
+        this.notificationService.toastError('Mất kết nối với máy chủ');
+      }
+    })
+  }
+
+  onSearchQuestion(text: string) {
+    this.searchQuestion = text;
+    if (this._bank_id) {
+      this.loadQuestion(this._bank_id);
+    }
+  }
+
+
+  resetForm() {
+    this.contentHeader = "Thêm mới câu hỏi";
+    console.log(this._bank_id)
+    this.formSave.reset(
+      {
+        title: '',
+        bank_id: this._bank_id,
+        answer_options: null,
+        correct_answer: null,
+      }
+    )
+  }
+
+
+//=====================add exam=================================
   saveForm() {
-    if(this.formSave.valid){
+    if (this.formSave.valid) {
       const index = this.listData.findIndex(u => u.id === this.formSave.get('bank_id').value);
       forkJoin([
         this.nganHangDeService.update(this._bank_id, {total: this.dataQuestion.length + 1}),
@@ -282,46 +257,35 @@ export class NganHangCauHoiComponent implements OnInit {
               title: '',
               bank_id:this._bank_id,
               answer_options: [],
-              correct_answer: 0,
+              correct_answer: [],
             }
           )
           this.listData[index].total = this.listData[index].total + 1;
+          this.loadQuestion(this._bank_id);
           this.notificationService.toastSuccess('Thao tác thành công', 'Thông báo');
         },
         error: () => this.notificationService.toastError('Thao tác thất bại', 'Thông báo')
       })
-    }else{
+    } else {
       this.notificationService.toastError('Yêu cầu nhập đủ thông tin');
     }
 
   }
 
   btnEdit(item: NganHangCauHoi) {
-    if (!item['_formSave']) {
-      item['_formSave'] = this.fb.group({
-        title: ['', Validators.required],
-        bank_id: [0, Validators.required],
-        answer_options: [[], Validators.required],
-        correct_answer: [[], Validators.required],
-        multiple: [0]
-      });
-      item['_formSave'].get('correct_answer').valueChanges.subscribe((value: number[]) => {
-        item['_formSave'].get('multiple').setValue(Array.isArray(value) && value.length ? 1 : 0);
-      })
-    }
-    item['_formSave'].reset({
-      title: item.title,
-      bank_id: item.bank_id,
-      answer_options: item.answer_options,
-      correct_answer: item.correct_answer,
-      multiple: item.multiple,
-    });
-    item['state'] = 1;
+    this.contentHeader = "Cập nhật câu hỏi";
+
+    this.objectEdit = item;
+    this.formSave.reset({
+      title: this.objectEdit.title,
+      bank_id: this._bank_id,
+      answer_options: this.objectEdit.answer_options,
+      correct_answer: this.objectEdit.correct_answer,
+      multiple: this.objectEdit.correct_answer.length > 1 ? 1 : 0
+    })
   }
 
-  btnExit(item: NganHangCauHoi) {
-    item['state'] = 0;
-  }
+  objectEdit: NganHangCauHoi;
 
   async btnDelete(item: NganHangCauHoi) {
     const confirm = await this.notificationService.confirmDelete();
@@ -341,14 +305,14 @@ export class NganHangCauHoiComponent implements OnInit {
     }
   }
 
-  saveEdit(item: NganHangCauHoi) {
-    const newValues = item['_formSave'].value
+
+  saveEdit() {
     this.notificationService.isProcessing(true);
-    this.nganHangCauHoiService.update(item.id, newValues).subscribe({
+    this.nganHangCauHoiService.update(this.objectEdit.id, this.formSave.value).subscribe({
       next: () => {
         // Object.keys(item['_formSave'].value).forEach(key => item[key] = newValues[key]);
-        Object.assign(item, newValues);
-        item['state'] = 0;
+        // Object.assign(item, newValues);
+        this.loadQuestion(this._bank_id);
         this.notificationService.isProcessing(false);
         this.notificationService.toastSuccess('Thao tác thành công');
       }, error: () => {
@@ -358,15 +322,5 @@ export class NganHangCauHoiComponent implements OnInit {
     })
   }
 
-  onSearchQuestion(text: string) {
-    this.searchQuestion = text;
-    if (this._bank_id) {
-      this.loadQuestion(this._bank_id);
-    }
-  }
-
-  btnStartExam() {
-
-  }
 
 }

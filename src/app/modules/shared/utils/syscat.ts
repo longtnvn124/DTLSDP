@@ -200,3 +200,11 @@ export const WAITING_POPUP: any = {
   centered: true,
   backdrop: 'static',
 };
+
+export const WAITING_POPUP_SPIN: any = {
+  scrollable: true,
+  size: 'xl',
+  windowClass: 'modal-xxl ovic-modal-class popup-spin',
+  centered: true,
+  backdrop: 'static',
+};

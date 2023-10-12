@@ -52,7 +52,7 @@
 .width-min-500px{
   display: none;
 }
-@media(width < 500px){
+@media(width <= 500px){
   .width-max-500px{
     display: none;
   }

@@ -20,169 +20,212 @@
 <ng-template #formAddQuestion>
   <div class="ovic-side-navigation-content">
     <div class="ovic-side-navigation-content__head">
-      <h4 class="ovic-side-navigation-content__head__title">Danh sách câu câu hỏi ngân hàng đề</h4>
+      <h4 class="ovic-side-navigation-content__head__title">Danh sách câu hỏi trong ngân hàng đề</h4>
       <button (click)="closeForm()" pButton pRipple type="button" icon="pi pi-times"
               class="p-button-rounded p-button-danger p-button-text close ovic-side-navigation-content__head__btn-close"></button>
     </div>
-    <div class="ovic-side-navigation-content__body ovic-scroll-style p-0 --no-footer">
-      <ng-container [ngSwitch]="mode">
-        <ng-container *ngSwitchDefault>
-          <div class="d-flex justify-content-center w-100 h-100">
-            <div style="width:1000px">
-              <div class="mt-3 row">
-                <div class="col-10 m-0" style="padding-right: 0;">
-                  <input pInputText type="text" placeholder="Tìm kiếm..." class="input-search pi pi-search" [(ngModel)]="searchQuestion" (ngModelChange)=onSearchQuestion($event) >
-                </div>
-                <div class="col-2">
-                  <button pRipple pButton icon="pi pi-plus" class="w-100 border-radius-0 " style="height:42px" label="Thêm mới" (click)="btnAddExam()"></button>
+    <div class="ovic-side-navigation-content__body p-0 --no-footer">
+      <div class="container-content ">
+        <div class="left-content border-right">
+          <div class="left-header">{{contentHeader}}</div>
+          <div class="left-body">
+            <div class="ctn-question w-100 h-100">
+              <div class="ovic-side-navigation-content__body p-0 ovic-scroll-style">
+                <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
+                  <form [formGroup]="formSave" autocomplete="off">
+                    <div class="row">
+                      <div class="col-12">
+                        <div class="form-row">
+                          <label>Nội dung câu hỏi <span class="ovic-mark">*</span></label>
+                          <!--                          <textarea type="text" placeholder="Nội dung..." formControlName="title"-->
+                          <!--                                    autocomplete="off"></textarea>-->
+                          <p-editor #edtitor [editor]="edtitor" [curentFormControl]="f['title']" [Resize_img]="true"
+                                    class="w-100" formControlName="title" placeholder="Nội dung..."
+                                    [style]="{ 'min-height': '250px'}">
+                            <p-header>
+                          <span class="ql-formats">
+                              <select class="ql-header" title="Thẻ tiêu đề">
+                                  <option selected>Chữ thường </option>
+                                  <option value="1">Tiêu đề 1</option>
+                                  <option value="2">Tiêu đề 2</option>
+                                  <option value="3">Tiêu đề 3</option>
+                                  <option value="4">Tiêu đề 4</option>
+                                  <option value="5">Tiêu đề 5</option>
+                                  <option value="6">Tiêu đề 6</option>
+                              </select>
+                               <select id="--ql-size" class="ql-size" title="Kích thước chữ">
+                                  <option value="small">Cỡ nhỏ</option>
+                                  <option value="false" selected>Cỡ thường</option>
+                                  <option value="large">Cỡ vừa</option>
+                                  <option value="huge">Cỡ lớn</option>
+                              </select>
+                          </span>
+                              <span class="ql-formats">
+                              <button class="ql-bold" title="Kiểu chữ đậm"></button>
+                              <button class="ql-italic" title="Kiểu chữ nghiêng"></button>
+                              <button class="ql-underline" title="Kiểu chữ ghạch chân"></button>
+                              <button class="ql-strike" title="Kiểu chữ ghạch ngang"></button>
+                          </span>
+                              <span class="ql-formats">
+                              <select class="ql-align" title="Căn lề">
+                                  <option selected></option>
+                                  <option value="center"></option>
+                                  <option value="right"></option>
+                                  <option value="justify"></option>
+                              </select>
+                              <select class="ql-color" title="Màu chữ"><option selected="selected"></option><option
+                                value="#e60000"></option><option value="#ff9900"></option><option
+                                value="#ffff00"></option><option
+                                value="#008a00"></option><option value="#0066cc"></option><option
+                                value="#9933ff"></option><option
+                                value="#ffffff"></option><option value="#facccc"></option><option
+                                value="#ffebcc"></option><option
+                                value="#ffffcc"></option><option value="#cce8cc"></option><option
+                                value="#cce0f5"></option><option
+                                value="#ebd6ff"></option><option value="#bbbbbb"></option><option
+                                value="#f06666"></option><option
+                                value="#ffc266"></option><option value="#ffff66"></option><option
+                                value="#66b966"></option><option
+                                value="#66a3e0"></option><option value="#c285ff"></option><option
+                                value="#888888"></option><option
+                                value="#a10000"></option><option value="#b26b00"></option><option
+                                value="#b2b200"></option><option
+                                value="#006100"></option><option value="#0047b2"></option><option
+                                value="#6b24b2"></option><option
+                                value="#444444"></option><option value="#5c0000"></option><option
+                                value="#663d00"></option><option
+                                value="#666600"></option><option value="#003700"></option><option
+                                value="#002966"></option><option
+                                value="#3d1466"></option></select>
+                              <select class="ql-background" title="Màu chữ"><option selected="selected"></option><option
+                                value="#e60000"></option><option value="#ff9900"></option><option
+                                value="#ffff00"></option><option
+                                value="#008a00"></option><option value="#0066cc"></option><option
+                                value="#9933ff"></option><option
+                                value="#ffffff"></option><option value="#facccc"></option><option
+                                value="#ffebcc"></option><option
+                                value="#ffffcc"></option><option value="#cce8cc"></option><option
+                                value="#cce0f5"></option><option
+                                value="#ebd6ff"></option><option value="#bbbbbb"></option><option
+                                value="#f06666"></option><option
+                                value="#ffc266"></option><option value="#ffff66"></option><option
+                                value="#66b966"></option><option
+                                value="#66a3e0"></option><option value="#c285ff"></option><option
+                                value="#888888"></option><option
+                                value="#a10000"></option><option value="#b26b00"></option><option
+                                value="#b2b200"></option><option
+                                value="#006100"></option><option value="#0047b2"></option><option
+                                value="#6b24b2"></option><option
+                                value="#444444"></option><option value="#5c0000"></option><option
+                                value="#663d00"></option><option
+                                value="#666600"></option><option value="#003700"></option><option
+                                value="#002966"></option><option
+                                value="#3d1466"></option></select>
+                          </span>
+                              <span class="ql-formats">
+                              <button class="ql-list" value="ordered" title="Danh sách số"></button>
+                              <button class="ql-list" value="bullet" title="Danh sách chấm"></button>
+                              <button class="ql-indent q1-box" value="+1" title="Thụt đầu dòng"></button>
+                              <button class="ql-indent q2-box last" value="-1" title="Giảm thụt đầu dòng"></button>
+                          </span>
+                              <span class="ql-formats">
+                              <button class="ql-link" aria-label="link" title="Thẻ liên kết"></button>
+                              <button class="ql-image" aria-label="image" title="Chèn ảnh"></button>
+                              <button class="ql-blockquote" aria-label="blockquote" title="Trích dẫn"></button>
+                              <button class="ql-code-block" aria-label="code-block" title="code-block"></button>
+                          </span>
+                            </p-header>
+                          </p-editor>
+
+                        </div>
+                      </div>
+                    </div>
+                    <app-answer-option-group class="h-100 mt-1 d-block"
+                                             [_formControl]="formSave.get('answer_options')"
+                                             [correctAnswerControl]="f['correct_answer']"></app-answer-option-group>
+                  </form>
                 </div>
               </div>
-              <div class="row">
-                <div class="col-12" *ngIf="dataQuestion ??0 >0,else notData">
+
+
+            </div>
+          </div>
+          <div class="left-footer w-100">
+            <button *ngIf="contentHeader ==='Thêm mới câu hỏi'" pButton pRipple icon="pi pi-check-square"
+                    label="Lưu lại" class="p-button-success mr-1 "
+                    (click)="saveForm()"></button>
+            <button *ngIf="contentHeader ==='Cập nhật câu hỏi'" pButton pRipple icon="pi pi-check-square"
+                    label="Cập nhật" class="p-button-success mr-1 "
+                    (click)="saveEdit()"></button>
+            <button pButton pRipple icon="pi pi-times" label="Reset form" class='p-button-danger'
+                    [ngClass]="formSave.valid ?'p-button-danger':'disabled p-button-secondary' "
+                    (click)="resetForm()"></button>
+          </div>
+        </div>
+        <div class="right-content ovic-scroll-style">
+          <div class="container">
+            <div class="w-100">
+                  <span class="p-input-icon-left w-100">
+                      <i class="pi pi-search"></i>
+
+                      <input pInputText type="text" placeholder="Tìm kiếm..." class="input-search pi pi-search"
+                             [(ngModel)]="searchQuestion" (ngModelChange)=onSearchQuestion($event)>
+                  </span>
+
+              <div class="row mt-2">
+                <div class="col-12" *ngIf="dataQuestion.length ??0 >0,else notData">
                   <div *ngFor="let item of dataQuestion, index as i" class='mb-3'>
-                    <div >
-                      <div class="ctn-question border">
-                        <div class="ctn-question__left">
-                          <ng-container *ngIf="item['state']===1,else showInfo">
-                            <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
-                              <form [formGroup]="item['_formSave']" autocomplete="off">
-                                <div class="row">
-                                  <div class="col-12">
-                                    <p class="form-row">
-                                      <label>Nội dung câu hỏi <span class="ovic-mark">*</span></label>
-                                      <textarea type="text" placeholder="Nội dung..." formControlName="title"
-                                                autocomplete="off"></textarea>
-                                    </p>
-                                  </div>
-                                </div>
-                                <app-answer-option-group class="h-100 mt-3 d-block" [_formControl]="item['_formSave'].get('answer_options')"
-                                                         [correctAnswerControl]="item['_formSave'].get('correct_answer')"></app-answer-option-group>
-                              </form>
-                            </div>
-                          </ng-container>
-                          <ng-template #showInfo>
-                            <div class="w-100 h-100">
-                              <div class="ctn-question__title">
-                                <p class="mb-0">Câu {{i+1}} : </p> <span> {{item.title}}</span>
-                              </div>
-                              <div *ngFor="let answer of item.answer_options">
-                                <div class="ctn-question__answer-item" [ngClass]="item.correct_answer.includes(answer.id) ? 'avtive-bg':''">{{answer.value}}</div>
-                              </div>
-                            </div>
-                          </ng-template>
+                    <div class="ctn-question border">
+                      <div class="ctn-question__left">
 
+                        <div class="w-100 h-100">
+                          <div class="ctn-question__title d-flex align-items-center">
+                            <p class="mb-0" style="width: 100%;line-height: 37px;">Câu {{i + 1}} : <span
+                              class="d-inline" [innerHTML]="item.title |htmlDecode"> </span></p>
+                            <div class="hover-title -intro-x">
+                              <button pButton pRipple icon="pi pi-file-edit" class="p-button-warning "
+                                      (click)="btnEdit(item)"></button>
+                              <button pButton pRipple icon="pi pi-trash" class="p-button-danger ml-2"
+                                      (click)="btnDelete(item)"></button>
+                            </div>
+                          </div>
+                          <div *ngFor="let answer of item.answer_options, let i=index "
+                               [ngClass]="verticalMode ? 'ovic-radios__elm' : ''.concat('ovic-radios__elm ','layout-',columns.toString(),'-columns')">
+                            <div *ngIf="answer.type_input===0"
+                                 class="ctn-question__answer-item ov-btn-radio ov-btn-radio-type--checkbox"
+                                 [ngClass]="item.correct_answer.includes(answer.id) ? 'avtive-bg':''">
+                              <span class="ov-prefix"></span>
+                              {{answer.value}}</div>
+                            <div *ngIf="answer.type_input===1"
+                                 class="ctn-question__answer-item ov-btn-radio ov-btn-radio-type--checkbox"
+                                 [ngClass]="item.correct_answer.includes(answer.id) ? 'avtive-bg':''">
+                              <span class="ov-prefix"></span>
+                              <img style="height:200px"
+                                   [src]="answer['_url_file'] ? answer['_url_file'] : 'src/assets/images/placeholder-3x2.jpg' "
+                                   alt="">
+                            </div>
+                          </div>
                         </div>
-                        <div class="ctn-question__right">
-                          <ng-container *ngIf="item['state'] ===1">
-                            <button pButton pRipple icon="pi pi-check-square" class="p-button-success p-button-text " (click)="saveEdit(item)" ></button>
-                            <button pButton pRipple icon="pi pi-times" class="p-button-danger p-button-text mt-1" (click)="btnExit(item)" ></button>
-                          </ng-container>
-                          <ng-container *ngIf="item['state']===0">
-                            <button  pButton pRipple icon="pi pi-file-edit" class="p-button-warning p-button-text " (click)="btnEdit(item)"></button>
-                            <button pButton pRipple icon="pi pi-trash" class="p-button-danger p-button-text mt-1" (click)="btnDelete(item)"></button>
-                          </ng-container>
-                        </div>
-
                       </div>
                     </div>
 
+
                   </div>
                 </div>
+
+
                 <ng-template #notData>
-                  <div class="d-flex justify-content-center align-items-center mx-1" style="font-size:14px">Không tìm thấy câu hỏi</div>
+                  <div class="d-flex justify-content-center align-items-center mt-4 w-100" style="font-size:16px">Không
+                    tìm thấy câu hỏi
+                  </div>
                 </ng-template>
               </div>
             </div>
-
           </div>
-        </ng-container>
-        <ng-container *ngSwitchCase="'FORM'">
-          <div class="d-flex justify-content-center w-100 h-100">
-            <div style="width:1000px " class="h-100">
-              <div class="ovic-side-navigation-content h-100">
-                <div class="ovic-side-navigation-content__head">
-                  <h4 class="ovic-side-navigation-content__head__title">Thêm mới câu hỏi</h4>
-<!--                  <button (click)="closeFormAdd()" pButton pRipple type="button" icon="pi pi-times"-->
-<!--                          class="p-button-rounded p-button-danger p-button-text close ovic-side-navigation-content__head__btn-close"></button>-->
-                </div>
-                <div class="ovic-side-navigation-content__body ovic-scroll-style">
-                  <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
-                    <form [formGroup]="formSave" autocomplete="off">
-                      <div class="row">
-                        <div class="col-12">
-                          <p class="form-row">
-                            <label>Nội dung câu hỏi <span class="ovic-mark">*</span></label>
-                            <textarea type="text" placeholder="Nội dung..." formControlName="title"
-                                      autocomplete="off"></textarea>
-                          </p>
-                        </div>
-                      </div>
-                      <app-answer-option-group class="h-100 mt-3 d-block" [_formControl]="formSave.get('answer_options')"
-                                               [correctAnswerControl]="f['correct_answer']"></app-answer-option-group>
-                    </form>
-                  </div>
-                </div>
-                <div class="ovic-side-navigation-content__foot">
-                  <span class="ovic-side-navigation-content__foot__notice mr-auto"><mark>(*)</mark> bắt buộc phải nhập</span>
-                  <button pButton pRipple type="button" label="Lưu lại" icon="pi pi-save" (click)="saveForm()"
-                          class="p-button-success"></button>
-                  <button pButton pRipple type="button" label="Đóng" class="p-button-secondary ml-3" icon="pi pi-times"
-                          (click)="closeFormAdd()"></button>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </ng-container>
-      </ng-container>
-
+        </div>
       </div>
-    </div>
-
-
-</ng-template>
-
-<ng-template #formUpdate>
-  <div class="ovic-side-navigation-content">
-    <div class="ovic-side-navigation-content__head">
-      <h4 class="ovic-side-navigation-content__head__title">Thêm mới câu hỏi</h4>
-      <button (click)="closeForm()" pButton pRipple type="button" icon="pi pi-times"
-              class="p-button-rounded p-button-danger p-button-text close ovic-side-navigation-content__head__btn-close"></button>
-    </div>
-    <div class="ovic-side-navigation-content__body ovic-scroll-style ">
-      <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
-        <form [formGroup]="formSave" autocomplete="off">
-          <div class="row">
-            <div class="col-12">
-              <p class="form-row">
-                <label>Nội dung câu hỏi <span class="ovic-mark">*</span></label>
-                <textarea type="text" placeholder="Nội dung..." formControlName="title"
-                          autocomplete="off"></textarea>
-              </p>
-            </div>
-          </div>
-          <app-answer-option-group class="h-100 mt-3 d-block" [_formControl]="formSave.get('answer_options')"
-                                   [correctAnswerControl]="f['correct_answer']"></app-answer-option-group>
-        </form>
-      </div>
-    </div>
-    <div class="ovic-side-navigation-content__foot">
-      <span class="ovic-side-navigation-content__foot__notice mr-auto"><mark>(*)</mark> bắt buộc phải nhập</span>
-      <button pButton pRipple type="button" label="Lưu lại" icon="pi pi-save" (click)="saveForm()"
-              class="p-button-success"></button>
-      <button pButton pRipple type="button" label="Đóng" class="p-button-secondary ml-3" icon="pi pi-times"
-              (click)="closeForm()"></button>
     </div>
   </div>
 
 
 </ng-template>
-
-
-<!--                  <button pButton pRipple [icon]="item.correct_answer.includes(answer.id) ? 'pi pi-check-circle' : 'pi pi-times-circle'"-->
-<!--                          [ngClass]="item.correct_answer.includes(answer.id) ? 'p-button-success' : 'p-button-danger'"-->
-<!--                          class="answer-option-group__answer__button p-button-text"-->
-<!--                  ></button>-->
-<!--                  <button pButton pRipple [icon]=""></button>-->
-<!--                  <div class="w-100 " [class]="answer.id === item.correct_answer ? correntAnswer : ''">-->
-<!--                    <input type="text" placeholder="...."  value="{{answer.value}}" autocomplete="off">-->

@@ -2,7 +2,7 @@ import {AfterViewInit, Component, ElementRef, HostListener, OnInit, Renderer2, V
 import {DotThiDanhSachService} from "@shared/services/dot-thi-danh-sach.service";
 import {DotThiKetQuaService} from "@shared/services/dot-thi-ket-qua.service";
 import {NotificationService} from "@core/services/notification.service";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {SukienTonghopComponent} from "@modules/public/features/web-home/sukien-tonghop/sukien-tonghop.component";
 import {DanhMucLinhVucService} from "@shared/services/danh-muc-linh-vuc.service";
 import {NguLieuSuKienService} from "@shared/services/ngu-lieu-su-kien.service";
@@ -21,6 +21,7 @@ export class WebHomeComponent implements OnInit, AfterViewInit {
   @ViewChild('slider', {static: true}) slider: ElementRef<HTMLDivElement>;
   @ViewChild(SukienTonghopComponent) sukienTonghopComponent: SukienTonghopComponent;
   @ViewChild(NhanvatComponent) nhanvatComponent: NhanvatComponent;
+
   @HostListener('window:scroll', []) onWindowScroll() {
     const header = document.getElementById('header');
     if (window.pageYOffset > 100) {
@@ -29,16 +30,18 @@ export class WebHomeComponent implements OnInit, AfterViewInit {
       this.renderer.removeClass(header, 'header-scrolled');
     }
   };
+
   @HostListener('window:resize', ['$event']) onResize(event: Event): void {
     this.isSmallScreen = window.innerWidth < 500;
     this.updateNhanvatContent();
     this.minheight500 = window.innerHeight < 500;
   }
-  minheight500:boolean = window.innerHeight < 500;
+
+  minheight500: boolean = window.innerHeight < 500;
   isSmallScreen: boolean = window.innerWidth < 500;
 
 
-  unLesson:boolean=false;
+  unLesson: boolean = false;
   titleNhanvat: string = "Nội dung mặc định";
   slides = [
     {index: 1, img: '/assets/slide/slide1.jpg'},
@@ -48,7 +51,7 @@ export class WebHomeComponent implements OnInit, AfterViewInit {
   ];
 
   index = 0;
-  mode:"DANNHMUC_NGULIEUSO" |"VR360"| "NHANVAT" | "SUKIEN_TONGHOP" | "SEARCH" | "THONGTIN" | "HOME"|"CHUYENDE" = "HOME";
+  mode: "DANNHMUC_NGULIEUSO" | "VR360" | "NHANVAT" | "SUKIEN_TONGHOP" | "SEARCH" | "THONGTIN" | "HOME" | "CHUYENDE" | "GIOITHIEU" = "HOME";
   responsiveOptions = [
     {
       breakpoint: '1024px',
@@ -73,20 +76,21 @@ export class WebHomeComponent implements OnInit, AfterViewInit {
     private dotthiKetquaService: DotThiKetQuaService,
     private notificationService: NotificationService,
     private router: Router,
-    private fileService:FileService,
-    private danhMucLinhVucService:DanhMucLinhVucService,
+    private activatedRoute: ActivatedRoute,
+    private fileService: FileService,
+    private danhMucLinhVucService: DanhMucLinhVucService,
     private nguLieuSuKienService: NguLieuSuKienService,
     private nguLieuDanhSachService: NguLieuDanhSachService,
   ) {
   }
 
-  dataLinhvuc:DmLinhVuc[];
+  dataLinhvuc: DmLinhVuc[];
 
   ngOnInit() {
     this.danhMucLinhVucService.getDataUnlimit().subscribe({
-      next:data=>{
+      next: data => {
         this.dataLinhvuc = data;
-        if(this.dataLinhvuc ){
+        if (this.dataLinhvuc) {
           const first = this.dataLinhvuc[0].id;
           this.loaidoituong = first;
           this.loadSukien(first);
@@ -96,118 +100,143 @@ export class WebHomeComponent implements OnInit, AfterViewInit {
       },
 
     })
-
+    const viewMode = this.activatedRoute.snapshot.queryParamMap.has('view-mode') ? this.activatedRoute.snapshot.queryParamMap.get('view-mode') : 'desktop';
+    if (viewMode === 'mobile') {
+      console.log(viewMode);
+      this.unLesson = true ;
+    }
   }
 
   ngAfterViewInit() {
     this.updateNhanvatContent()
   }
-  dataSukien:SuKien[];
-  loadSukien(id :number){
+
+  dataSukien: SuKien[];
+
+  loadSukien(id: number) {
     this.notificationService.isProcessing(true)
     this.nguLieuSuKienService.getDataBylinhvucAndRoot(id).subscribe({
-      next:data=>{
-        this.dataSukien= data.map(m=>{
-          m['_img_thumbnail'] = m.files ? this.fileService.getPreviewLinkLocalFile(m.files): '';
+      next: data => {
+        this.dataSukien = data.map(m => {
+          m['_img_thumbnail'] = m.files ? this.fileService.getPreviewLinkLocalFile(m.files) : '';
           return m;
         })
         this.notificationService.isProcessing(false);
-      },error:()=>{
+      }, error: () => {
         this.notificationService.isProcessing(false);
       }
     })
   }
-  selectDataSukien(id:number){
+
+  selectDataSukien(id: number) {
     this.loaidoituong = id;
     this.loadSukien(id);
   }
 
-  linhvucId:number;
-  selectDatavr(id:number){
+  linhvucId: number;
+
+  selectDatavr(id: number) {
     this.linhvucId = id;
     this.loadVr(id);
   }
-  dataVr:Ngulieu[];
-  loadVr(id){
+
+  dataVr: Ngulieu[];
+
+  loadVr(id) {
 
     this.nguLieuDanhSachService.getDataByLinhvucAndRoot(id).subscribe({
-      next:(data)=>{
-        this.dataVr = data.filter(f=>f.loaingulieu === "video360" || f.loaingulieu ==="image360").map(m=>{
-          m['_img_thumbnail']= m.file_thumbnail ? this.fileService.getPreviewLinkLocalFile(m.file_thumbnail) :'';
+      next: (data) => {
+        this.dataVr = data.filter(f => f.loaingulieu === "video360" || f.loaingulieu === "image360").map(m => {
+          m['_img_thumbnail'] = m.file_thumbnail ? this.fileService.getPreviewLinkLocalFile(m.file_thumbnail) : '';
           return m;
         });
       },
-      error:()=>{
+      error: () => {
       }
     })
   }
 
-  btn_GoHome(){
-  this.mode= "HOME";
-  this.action_menu=false;
-  this.unLesson= false;
+  btn_GoHome() {
+    this.mode = "HOME";
+    this.action_menu = false;
+    this.unLesson = false;
   }
-  btn_shift(){
+
+  btn_shift() {
     void this.router.navigate(['test/shift/']);
   }
-  btn_sukien(){
-    this.mode="SUKIEN_TONGHOP";
-    this.unLesson= false;
-    this.action_menu=false;
-  }
-  btn_nhanvat(){
-    this.mode= "NHANVAT";
-    this.unLesson= false;
-    this.action_menu=false;
+
+  btn_sukien() {
+    this.mode = "SUKIEN_TONGHOP";
+    this.unLesson = false;
+    this.action_menu = false;
   }
 
-  btn_exit(){
-    this.mode= "HOME";
-    this.unLesson= false;
-    this.action_menu=false;
+  btn_nhanvat() {
+    this.mode = "NHANVAT";
+    this.unLesson = false;
+    this.action_menu = false;
   }
-  btnBackInfoSukien(){
+
+  btn_exit() {
+    this.mode = "HOME";
+    this.unLesson = false;
+    this.action_menu = false;
+  }
+
+  btnBackInfoSukien() {
     this.sukienTonghopComponent.btn_backInfo();
   }
-  btn_vr360(){
+
+  btn_vr360() {
     this.mode = "VR360";
-    this.unLesson= false;
-    this.action_menu=false;
+    this.unLesson = false;
+    this.action_menu = false;
   }
 
-  btn_login(){
+  btn_login() {
     this.router.navigate(['login']);
   }
-  loaidoituong:number
-  btnBackNhanvat(){
+
+  loaidoituong: number
+
+  btnBackNhanvat() {
     this.nhanvatComponent.btnExit();
   }
-  action_menu:boolean =false;
-  btnActionMenu(){
-    this.action_menu= !this.action_menu;
+
+  action_menu: boolean = false;
+
+  btnActionMenu() {
+    this.action_menu = !this.action_menu;
   }
 
-  updateNhanvatContent(){
+  updateNhanvatContent() {
     if (this.isSmallScreen) {
       this.titleNhanvat = "DNLS";
     } else {
-      this.titleNhanvat = "Danh nhân lịch sử";
+      this.titleNhanvat = "Nhân vật lịch sử";
     }
   }
 
-  btn_search(){
-    this.mode ="SEARCH";
-    this.action_menu=false;
+  btn_search() {
+    this.mode = "SEARCH";
+    this.action_menu = false;
   }
-  btn_31Chuyende(){
-    this.mode ="CHUYENDE";
-    this.action_menu=false;
-    this.unLesson= true;
+
+  btn_31Chuyende() {
+    this.mode = "CHUYENDE";
+    this.action_menu = false;
+    this.unLesson = true;
   }
-  handleEvent(){
+
+  handleEvent() {
     this.btn_GoHome();
   }
 
+  btn_gioithieu() {
+    this.mode = "GIOITHIEU";
+    this.action_menu = false;
+  }
 }
 
 

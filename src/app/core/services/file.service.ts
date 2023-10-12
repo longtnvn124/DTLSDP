@@ -485,4 +485,9 @@ export class FileService {
     return url.toString();
   }
 
+  getPreviewLinkLocalFileNotToken( { id } : OvicFile | { id : number } ) : string {
+    const url = new URL( getLinkDownload( id ) );
+    return url.toString();
+  }
+
 }

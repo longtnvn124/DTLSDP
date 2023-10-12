@@ -24,7 +24,6 @@
   display:flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 40px;
 }
 .news-container_title p{
   font-size: 30px;
@@ -102,4 +101,7 @@
 .type-cash {
   display: block;
   height: calc(100% - 64px - 60px);
+}
+.btn-bd-rd-50{
+  border-radius:50%;
 }

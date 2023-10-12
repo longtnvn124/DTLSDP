@@ -1,6 +1,6 @@
 <div *ngIf="!unLesson" class="header" id="header">
-<!--  <div style="padding:0 40px">-->
-  <div >
+  <!--  <div style="padding:0 40px">-->
+  <div class="w-100 d-block">
     <div class="row d-flex justify-content-between align-items-center" style="padding: 6px 22px;">
       <div style="padding-left:15px;cursor: pointer" class="header-logo" (click)="btn_GoHome()">
         <a><img src="assets/images/quochuy.png"></a>
@@ -8,10 +8,11 @@
       </div>
       <div class="nav-menu-container">
         <ul class="nav-menu">
+          <li class="btn-li-a btn-li-a-select" (click)="btn_gioithieu()"><a>Giới thiệu</a></li>
           <li class="btn-li-a btn-li-a-select" (click)="btn_31Chuyende()"><a>31 chuyên đề</a></li>
           <li class="btn-li-a btn-li-a-select" (click)="btn_vr360()"><a>Vr 360</a></li>
           <li class="btn-li-a btn-li-a-select" (click)="btn_sukien()"><a>Sự kiện</a></li>
-          <li class="btn-li-a btn-li-a-select" (click)="btn_nhanvat()"><a>Danh nhân lịch sử</a></li>
+          <li class="btn-li-a btn-li-a-select" (click)="btn_nhanvat()"><a>Nhân vật lịch sử</a></li>
           <li class="btn-li-a btn-li-a-select" (click)="btn_search()"><a>Tìm kiếm</a></li>
           <li class="btn-li-a btn-li-a-select" (click)="btn_login()"><a>Đăng nhập</a></li>
         </ul>
@@ -24,13 +25,14 @@
       </div>
     </div>
     <div *ngIf="action_menu" class="drop-nav-menu">
-      <li ><a (click)="btn_31Chuyende()">31 chuyên đề</a></li>
-      <li ><a (click)="btn_vr360()">Vr 360</a></li>
-      <li ><a (click)="btn_sukien()">Sự kiện</a></li>
-      <li ><a (click)="btn_nhanvat()">Danh nhân lịch sử</a></li>
-      <li ><a (click)="btn_shift()">Đợt thi tìm hiểu</a></li>
-      <li ><a (click)="btn_search()">Tìm kiếm</a></li>
-      <li ><a (click)="btn_login()">Đăng nhập</a></li>
+      <li (click)="btn_gioithieu()"><a>Giới thiệu</a></li>
+      <li (click)="btn_31Chuyende()"><a>31 chuyên đề</a></li>
+      <li (click)="btn_vr360()"><a>Vr 360</a></li>
+      <li (click)="btn_sukien()"><a>Sự kiện</a></li>
+      <li (click)="btn_nhanvat()"><a>Nhân vật lịch sử</a></li>
+      <li (click)="btn_shift()"><a>Đợt thi tìm hiểu</a></li>
+      <li (click)="btn_search()"><a>Tìm kiếm</a></li>
+      <li (click)="btn_login()"><a>Đăng nhập</a></li>
     </div>
   </div>
 </div>
@@ -89,12 +91,12 @@
 
     </div>
 
-    <div class="shift-test-container mt-5" style="background: #75837ad4;">
+    <div class="shift-test-container mt-5" style="background: #75837ad4;max-width: 100%;overflow: hidden; ">
       <div class=" container d-flex justify-content-center align-items-center flex-column py-5">
-<!--        <div class="row container">-->
+        <!--        <div class="row container">-->
         <div class="row ">
           <div class="col text-right shif-test-left shif-test__img">
-            <img class="w-100" src="assets/icon-png/shift-test.png" alt="">
+            <img class="w-100" style="max-width:100%"t src="assets/icon-png/shift-test.png" alt="">
           </div>
           <div class="col shif-test-right resize-test-right">
             <!--            <div class="w-100 h-100 d-flex justify-content-center align-items-center flex-column">-->
@@ -155,8 +157,8 @@
   <ng-container *ngSwitchCase="'VR360'">
     <div class="container" style="padding-top: 80px">
       <div class="header-custom">
-<!--        <button pRipple pButton class="p-button-warning" label="Trở lại" icon iconPos="left" icon="pi pi-angle-left"-->
-<!--                (click)="btn_exit()"></button>-->
+        <!--        <button pRipple pButton class="p-button-warning" label="Trở lại" icon iconPos="left" icon="pi pi-angle-left"-->
+        <!--                (click)="btn_exit()"></button>-->
         <p class="nhanvat-title"> Vr360 </p>
         <div>
           <button pButton pRipple class="p-button-secondary mr-2" icon="pi pi-angle-left"></button>
@@ -170,8 +172,8 @@
   <ng-container *ngSwitchCase="'NHANVAT'">
     <div class="container" style="padding-top: 80px">
       <div class="header-custom">
-<!--        <button pRipple pButton class="p-button-warning" label="Trở lại" icon iconPos="left" icon="pi pi-angle-left"-->
-<!--                (click)="btn_exit()"></button>-->
+        <!--        <button pRipple pButton class="p-button-warning" label="Trở lại" icon iconPos="left" icon="pi pi-angle-left"-->
+        <!--                (click)="btn_exit()"></button>-->
         <p class="nhanvat-title"> {{titleNhanvat}} </p>
         <div>
           <button pButton pRipple class="p-button-secondary mr-2" icon="pi pi-angle-left"
@@ -179,15 +181,16 @@
           <button pButton pRipple class="p-button-secondary " icon="pi pi-angle-right"></button>
         </div>
       </div>
-      <app-nhanvat [selectItem]="true" style="min-height: calc(100vh - 86px - 84px - 134px);display: block;"></app-nhanvat>
+      <app-nhanvat [selectItem]="true"
+                   style="min-height: calc(100vh - 86px - 84px - 134px);display: block;"></app-nhanvat>
     </div>
 
   </ng-container>
   <ng-container *ngSwitchCase="'SUKIEN_TONGHOP'">
     <div class="container" style="padding-top: 80px">
       <div class="header-custom">
-<!--        <button pRipple pButton class="p-button-warning" label="Trở lại" icon iconPos="left" icon="pi pi-angle-left"-->
-<!--                (click)="btn_exit()"></button>-->
+        <!--        <button pRipple pButton class="p-button-warning" label="Trở lại" icon iconPos="left" icon="pi pi-angle-left"-->
+        <!--                (click)="btn_exit()"></button>-->
         <p class="nhanvat-title"> Sự kiện lịch sử VH-ĐP </p>
         <div>
           <button pButton pRipple class="p-button-secondary mr-2" icon="pi pi-angle-left"
@@ -197,7 +200,7 @@
       </div>
 
       <app-sukien-tonghop [selectItem]="true"
-                          style="min-height: calc(100vh - 58px - 84px - 134px);display: block;"></app-sukien-tonghop>
+                          style="min-height: calc(100vh - 44px - 84px - 134px);display: block;"></app-sukien-tonghop>
     </div>
   </ng-container>
   <ng-container *ngSwitchCase="'SEARCH'">
@@ -207,8 +210,12 @@
     <app-chuyen-de (eventEmitter)="handleEvent()" class="w-100 d-block"
                    style="height:100vh;display: block;"></app-chuyen-de>
   </ng-container>
+  <ng-container *ngSwitchCase="'GIOITHIEU'">
+    <app-gioi-thieu style="min-height: calc(100vh - 84px - 134px);display: block;margin-top: 84px;"></app-gioi-thieu>
+  </ng-container>
 
 </ng-container>
+
 
 <div *ngIf="!unLesson" class="footer_container" #footer>
   <div class="footer-section">
@@ -216,16 +223,17 @@
       <div class="row justify-content-center">
         <div class="col-md-6 text-right footer-left">
           <div class="d-inline-flex flex-column justify-content-center h-100">
+            <h3 class="footer__title"> Ban Tuyên Giáo</h3>
             <h3 class="footer__title"> Tỉnh uỷ Tỉnh Thái Nguyên</h3>
-            <div class="footer__social text-center">
-              <a href="https://www.facebook.com/" class="footer__social__link">
-                <i class="fa fa-facebook"></i></a>
-              <a href="https://twitter.com/" class="footer__social__link">
-                <i class="fa fa-twitter"></i></a>
-              <a href="https://www.youtube.com/" class="footer__social__link">
-                <i class="fa fa-google"></i>
-              </a>
-            </div>
+<!--            <div class="footer__social text-center">-->
+<!--              <a href="https://www.facebook.com/" class="footer__social__link">-->
+<!--                <i class="fa fa-facebook"></i></a>-->
+<!--              <a href="https://twitter.com/" class="footer__social__link">-->
+<!--                <i class="fa fa-twitter"></i></a>-->
+<!--              <a href="https://www.youtube.com/" class="footer__social__link">-->
+<!--                <i class="fa fa-google"></i>-->
+<!--              </a>-->
+<!--            </div>-->
           </div>
         </div>
         <div class=" col-md-6 footer-right">

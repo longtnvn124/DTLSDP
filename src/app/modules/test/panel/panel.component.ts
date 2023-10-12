@@ -22,11 +22,11 @@ export class PanelComponent implements OnInit, OnDestroy {
   @HostListener('window:resize', ['$event']) onResize(event: Event): void {
     console.log(this.isSmallScreen);
 
-    this.isSmallScreen = window.innerWidth < 500;
+    this.isSmallScreen = window.innerWidth <= 500;
     // this.updateNhanvatContent();
   }
 
-  isSmallScreen: boolean = window.innerWidth < 500;
+  isSmallScreen: boolean = window.innerWidth <= 500;
   mode: 'PANEL' | 'TEXTRESULTS';
   candiate = {
     name: 'Unknown',
@@ -268,6 +268,7 @@ export class PanelComponent implements OnInit, OnDestroy {
           return item;
         })
 
+        console.log(this.dataQuestion);
         this.notificationService.isProcessing(false)
       }, error: (e) => {
         this.notificationService.isProcessing(false)
@@ -348,11 +349,12 @@ export class PanelComponent implements OnInit, OnDestroy {
       });
     })).subscribe({
       next: () => {
+        this.notificationService.isProcessing(false);
         this.mode = "TEXTRESULTS";
         this.dotThiKetQuaService.scoreTest(this.shiftTest.id).subscribe();
-        this.notificationService.isProcessing(false);
         this.notificationService.toastSuccess("Nộp bài thành công");
         this.reInitTest()
+        this.isTimeOver=false;
       },
       error: () => {
         this.notificationService.isProcessing(false);
