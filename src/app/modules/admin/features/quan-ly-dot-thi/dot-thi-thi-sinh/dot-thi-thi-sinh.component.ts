@@ -69,8 +69,8 @@ export class DotThiThiSinhComponent implements OnInit {
       innerData: true,
       header: 'Ngày làm bài',
       sortable: false,
-      headClass: 'ovic-w-100px text-center',
-      rowClass: 'ovic-w-100px text-center'
+      headClass: 'ovic-w-150px text-center',
+      rowClass: 'ovic-w-150px text-center'
     },
     {
       fieldType: 'normal',
@@ -257,7 +257,7 @@ export class DotThiThiSinhComponent implements OnInit {
     const decision = button.data && this.listData ? this.listData.find(u => u.id === button.data) : null;
     switch (button.name) {
       case 'TEST-TAKER':
-        console.log(decision);
+
         this.loadTestTaker(decision.id, decision.bank_id,decision);
         this.notificationService.openSideNavigationMenu({
           name:this.menuName,
@@ -283,6 +283,7 @@ export class DotThiThiSinhComponent implements OnInit {
         const quesition_ids = decision.question_ids;
         const details = decision.details;
         const bank_id = decision['_bank_id'];
+
         this.notificationService.isProcessing(true);
         this.nganHangCauHoiService.getDataByBankId(bank_id,null).subscribe({
           next:(data)=>{
@@ -291,10 +292,8 @@ export class DotThiThiSinhComponent implements OnInit {
               item['per_select_question'] = details[m].join(',').toString();
               item['correct_answer_coverted'] = item.correct_answer.map(t=> item.answer_options.find(f=>f.id === t));
 
-              console.log(item['correct_answer_coverted']);
               return item;
             });
-            console.log(this.nganhangCauhoi);
             this.notificationService.isProcessing(false);
           },error:()=>{
             this.notificationService.isProcessing(false);
@@ -306,7 +305,6 @@ export class DotThiThiSinhComponent implements OnInit {
         const heading  = this.dataShiftTest[0]._shift_name;
         const subHeading = this.dataShiftTest[0]._time_loadExam;
         const data = this.dataShiftTest.map(({index,_user_name,_number_correct_converted,score,_total_exam_time})=>({index,_user_name,_number_correct_converted,score,_total_exam_time}));
-        console.log(data);
         this.exportExcelService.exportAsExcelFile(heading,subHeading,this.columns,data,heading,'sheet1');
         break;
       default:
@@ -325,14 +323,14 @@ export class DotThiThiSinhComponent implements OnInit {
           const index = i++;
           const _shift_name = this.listData.find(f=>f.id ===m.shift_id).title;
           const _number_correct_converted = m.number_correct +'/'+m.question_ids.length;
-          const _score =m.score? this.take_decimal_number(m.score,2): 0;
+          const _score =m.score ? this.take_decimal_number(m.score,2): 0;
           const  _bank_id= bank_id;
           const _user_name = m['users']['display_name'];
           const _total_exam_time = (shift['total_time']*60 - m.time)%60 +' phút ' +(shift['total_time']-(shift['total_time'] - m.time)%60) +' giây';
+          const _time_start_shifttest =m.time_start ?  this.getdate(m.time_start) :'';
           const _time_loadExam = this.listData.find(f=>f.id === m.shift_id)['__time_converted'];
-          return {... m,index,_shift_name,_number_correct_converted,_bank_id,_user_name,_total_exam_time,_time_loadExam,_score};
+          return {... m,index,_shift_name,_number_correct_converted,_bank_id,_user_name,_total_exam_time,_time_loadExam,_score, _time_start_shifttest};
         });
-        console.log(this.dataShiftTest)
         this.notificationService.isProcessing(false);
       },error:()=>{
         this.notificationService.isProcessing(false);
@@ -363,11 +361,16 @@ export class DotThiThiSinhComponent implements OnInit {
   getdate(time:string){
     const date = new Date(time);
 
-// Lấy ngày, tháng và năm từ đối tượng Date
-    const day = date.getDate();
-    const month = date.getMonth() + 1; // Lưu ý rằng tháng bắt đầu từ 0, nên cần cộng thêm 1.
+    // Lấy ngày, tháng và năm từ đối tượng Date
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Lưu ý rằng tháng bắt đầu từ 0, nên cần cộng thêm 1.
     const year = date.getFullYear();
 
-    return `${day}/${month}/${year}`;
+    // Lấy giờ và phút
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    // Kết quả
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
   }
 }

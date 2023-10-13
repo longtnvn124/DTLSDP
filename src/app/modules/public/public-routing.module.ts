@@ -49,6 +49,12 @@ const routes : Routes = [
     path      : 'reset-password' ,
     component : ResetPasswordComponent
   } ,
+  {
+    path         : 'mobile' ,
+    loadChildren : () => import('@modules/public/features/mobile-app/mobile-app.module').then( m => m.MobileAppModule )
+  } ,
+
+
 	{
 		path       : '' ,
 		redirectTo : 'home' ,

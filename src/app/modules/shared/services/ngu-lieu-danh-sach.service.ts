@@ -243,7 +243,14 @@ export class NguLieuDanhSachService {
         conditionName: 'is_deleted',
         condition: OvicQueryCondition.equal,
         value: '0'
-      }
+      },
+      {
+        conditionName: 'root',
+        condition: OvicQueryCondition.equal,
+        value: '1',
+        orWhere:'and'
+      },
+
     ]
     if (linhvuc) {
       const diemditich: OvicConditionParam = {

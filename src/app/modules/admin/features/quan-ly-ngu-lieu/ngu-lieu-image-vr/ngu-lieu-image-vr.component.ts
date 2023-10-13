@@ -339,7 +339,7 @@ export class NguLieuImageVrComponent implements OnInit {
   async makeCharacterAvatar(file: File, characterName: string): Promise<File> {
     try {
       const options: AvatarMakerSetting = {
-        aspectRatio: 1,
+        aspectRatio: 3 / 2,
         resizeToWidth: 1000,
         format: 'jpeg',
         cropperMinWidth: 10,

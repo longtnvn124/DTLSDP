@@ -96,9 +96,8 @@ export class SukienTonghopComponent implements OnInit, AfterViewInit, OnChanges,
         this.listData = data.map(m => {
           m['_bg_link'] = m.files ? this.fileService.getPreviewLinkLocalFile(m.files) : "";
           m['_audio_link'] = m.file_audio && m.file_audio[0] ? this.fileService.getPreviewLinkLocalFileNotToken(m.file_audio[0]) : "";
-          m['_nhanvat_convented'] = m.nhanvat_ids ? m.nhanvat_ids.map(f => this.dataNhanvatlichsu.find(c => c.id === f).bietdanh) : [];
+          m['_nhanvat_convented'] = m.nhanvat_ids? m.nhanvat_ids.map(f => this.dataNhanvatlichsu.find(c => c.id === f)? this.dataNhanvatlichsu.find(c => c.id === f).bietdanh :'') : [];
           m['_diemditich_convented'] = m.diemditich_ids ? m.nhanvat_ids.map(f => {
-
             const ten = this.dataDiemditich.find(c => c.id === f) ? this.dataDiemditich.find(c => c.id === f).ten : '';
             return ten;
           }) : [];

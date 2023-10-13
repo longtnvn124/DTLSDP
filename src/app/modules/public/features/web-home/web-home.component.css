@@ -9,7 +9,8 @@
   right: 0;
   z-index: 997;
   /*background: rgba(0, 0, 0, 0.5);*/
-  background: rgba(162, 1, 2, 0.5);
+  /*background: rgba(162, 1, 2, 0.5);*/
+  background: #A20102;
   transition: background-color 0.3s ease-in-out;
 
 }

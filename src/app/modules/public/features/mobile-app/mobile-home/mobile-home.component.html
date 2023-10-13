@@ -1,0 +1,130 @@
+<div class="w-100 h-100 d-flex flex-column " style="background: #F9FAFB; padding:10px;">
+  <div class="header-container" style="width:100%">
+
+    <div class="header-icon">
+      <img src="assets/svg/UBND%20tinh.svg" alt="">
+    </div>
+    <div class="header-icon">
+      <img src="assets/svg/Dang%20bo%20tinh%20thai%20nguyen.svg" alt="">
+    </div>
+    <div class="header-icon">
+      <img src="assets/svg/UBND%20tinh.svg" alt="">
+    </div>
+    <div class="header-icon">
+      <img src="assets/svg/Ban%20tuyên%20giáo.svg" alt="">
+    </div>
+  </div>
+
+  <div *ngIf="!slideparam ?? 0 > 0" class="slide-mobile-app w-100 h-100 " style="margin-top: 20px;">
+    <p-galleria class="slide-ctm" [autoPlay]="true" [value]="slideparam" [numVisible]="1" [circular]="true"
+                [showItemNavigators]="false" [showIndicators]="true"
+                [showThumbnails]="false" [showIndicatorsOnItem]="true"
+                [containerStyle]="{ 'width': '100%','height':'150px' }">
+      <ng-template pTemplate="item" let-item>
+        <img [src]="item.path "
+             style="width: 100%; height:100% ; max-height:150px ;display: block;object-fit: cover"/>
+      </ng-template>
+    </p-galleria>
+
+  </div>
+
+  <div class="nhanvat_slide_mobile" style="margin-top: 20px;">
+    <div class="nhanvat_header">
+      <div class="nhanvat_header-title">
+        Nhân vật lịch sử
+      </div>
+      <div class=" nhanvat_header-full-content">
+        Xem tất cả
+      </div>
+    </div>
+    <div class="slide-nhanvat-mobile">
+      <div class=" nhanvat_item" *ngFor="let nhanvat of nhanvatLichSu" style="">
+        <img class="nhanvat_item-img"
+             [src]="nhanvat['_file_url']? nhanvat['_file_url']: 'src/assets/images/placeholder.jpg'" alt="">
+        <div class="nhanvat_item-title">
+          {{nhanvat.bietdanh}}
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="vr360_slide_mobile " style="margin-top: 20px;">
+    <div class="vr360_header">
+      <div class="vr360_header-title">
+        Di tích lịch sử VR360
+      </div>
+      <div class=" vr360_header-full-content">
+        Xem tất cả
+      </div>
+    </div>
+
+    <div class="vr360_mobile-content">
+      <div class="row row-cols-2 mx-0 p-0">
+        <div class="d-flex flex-wrap flex-row justify-content-between align-items-center col-sm-6 col-md-4 col-lg-3" style="padding:10px"
+             *ngFor="let item of ngulieuvr">
+          <div class="w-100 d-inline-block shadow-sm bg-white border ovic--parent-image position-relative">
+            <div class='head-card_hover w-100 bg-image hover-zoom' style="cursor: pointer;">
+              <div class="position-relative w-100 st-image img-child-max-width" style="overflow: hidden">
+                <img class="w-100 h-100 ovic-img-zoom"
+                     [src]="item['_img_thumbnail'] ? item['_img_thumbnail'] : 'assets/images/placeholder-3x2.jpg'"
+                     alt="">
+              </div>
+              <div class="m-1">
+                <div
+                  class="headding-card text_hover vr-360_mobile-title">
+                  {{item.title}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div *ngIf="!slideparam ?? 0 > 0" class="slide-mobile-app w-100 h-100 " style="margin-top: 20px;">
+    <p-galleria class="slide-ctm" [autoPlay]="true" [value]="slideparam" [numVisible]="1" [circular]="true"
+                [showItemNavigators]="false" [showIndicators]="true"
+                [showThumbnails]="false" [showIndicatorsOnItem]="true"
+                [containerStyle]="{ 'width': '100%','height':'150px' }">
+      <ng-template pTemplate="item" let-item>
+        <img [src]="item.path "
+             style="width: 100%; height:100% ; max-height:150px ;display: block;object-fit: cover"/>
+      </ng-template>
+    </p-galleria>
+
+  </div>
+
+  <div class="chuyende-mobile" style="margin-top: 20px;">
+    <div class="vr360_header">
+      <div class="vr360_header-title">
+        Bài giảng 31 chuyên đề
+      </div>
+      <div class=" vr360_header-full-content">
+        Xem tất cả
+      </div>
+    </div>
+    <div class="chuyende-container">
+      <div class="d-flex flex-row mb-2" *ngFor="let chuyende of dataChuyenDeChild, let i = index" >
+        <div class="chuyende-side-left">
+          <i class="chuyende-side-left-icon pi pi-images" style="font-size:40px"></i>
+        </div>
+
+        <div class="chuyende-content">
+          <div class="chuyende-title">{{chuyende.title}}</div>
+          <div class="chuyende-tooltip d-flex ">
+            <div class="chuyende-tooltip-left">
+              <i class="pi pi-heart mr-2"></i>
+              <i class="pi pi-external-link"></i>
+            </div>
+            <div class="chuyende-tooltip-right mr-1">
+              300 lượt xem
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

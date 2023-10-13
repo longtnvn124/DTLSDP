@@ -540,3 +540,7 @@ span p img{
 .popup-spin .modal-content{
   background: none;
 }
+/*-----------------------------mobile app------------------------------------*/
+.slide-mobile-app .p-galleria-indicators{
+  background:none !important;
+}
