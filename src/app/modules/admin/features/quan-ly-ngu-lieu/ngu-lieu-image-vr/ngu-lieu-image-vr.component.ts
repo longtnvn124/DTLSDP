@@ -192,7 +192,7 @@ export class NguLieuImageVrComponent implements OnInit {
     this.formSave.reset({
       title: '',
       mota: '',
-      chuyenmuc: '',
+      chuyenmuc: 0,
       loaingulieu:'image360',
       diemditich_ids: [],
       linhvuc: '',
@@ -222,6 +222,7 @@ export class NguLieuImageVrComponent implements OnInit {
 
   objectEdit:Ngulieu;
   btnEdit(object: Ngulieu) {
+    console.log(object);
     this.objectEdit =object;
     this.isUpdate= true;
     this.formSave.reset({

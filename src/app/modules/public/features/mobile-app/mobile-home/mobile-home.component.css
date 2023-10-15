@@ -20,7 +20,7 @@
 }
 
 .nhanvat_header-title {
-  font-size: 14px;
+    font-size: 15px;;
   color: #0B9419;
   font-weight: 700;
   text-transform: uppercase;
@@ -28,7 +28,7 @@
 }
 
 .nhanvat_header-full-content {
-  font-size: 12px;
+    font-size: 13px;;
   color: #0D9CEC;
   font-style: italic;
 
@@ -60,7 +60,7 @@
 
 .nhanvat_item-title {
   text-transform: uppercase;
-  font-size: 13px;
+  font-size: 14px;
   color: #fff;
   position: absolute;
   bottom: 0;
@@ -88,30 +88,32 @@
 }
 
 .vr360_header-title {
-  font-size: 14px;
+    font-size: 15px;;
   color: #0B9419;
   font-weight: 700;
   text-transform: uppercase;
 }
 
 .vr360_header-full-content {
-  font-size: 12px;
+    font-size: 13px;;
   color: #0D9CEC;
   font-style: italic;
 }
 
-.vr360_mobile-content{
-  margin-left: -10px;
-  margin-right: -10px;
+.vr360_mobile-content {
+  /*margin-left: -10px;*/
+  /*margin-right: -10px;*/
 }
+
 .vr-360_mobile-title {
   font-weight: 500;
-  font-size: 12px;
-  line-height: 12px;
-  height: 24px;
+    font-size: 13px;;
+  line-height: 15px;
+  height: 32px;
   overflow: hidden;
   text-overflow: ellipsis;
-  /*white-space: nowrap;*/
+  font-family: roboto;
+
 }
 
 .chuyende-mobile {
@@ -131,9 +133,10 @@
   background: rgba(204, 204, 204, 0.6);
 }
 
-.chuyende-side-left-icon{
-  color:#656565
+.chuyende-side-left-icon {
+  color: #656565
 }
+
 .chuyende-content {
   width: calc(100% - 60px);
   display: flex;
@@ -144,17 +147,23 @@
 
 }
 
+.chuyende-container > *:nth-child(even) {
+  background: #fff;
+}
+
 .chuyende-container > *:nth-child(odd) {
-  background: #f1efef;
+  background: #fbfbfb;
 }
 
 .chuyende-title {
-  font-size: 12px;
+    font-size: 13px;;
   font-weight: 500;
   /*line-height: 12px;*/
   height: 24px;
   overflow: hidden;
   text-overflow: ellipsis;
+
+
 
 }
 
@@ -170,8 +179,8 @@
 }
 
 .chuyende-tooltip-right {
-  font-size: 12px;
+    font-size: 13px;;
   font-style: italic;
-  color:#797676;
+  color: #797676;
 
 }

@@ -1,0 +1,70 @@
+<div *ngIf="!unLesson" class="header" id="header">
+  <!--  <div style="padding:0 40px">-->
+  <div class="w-100 d-block">
+    <div class="row d-flex justify-content-between align-items-center" style="padding: 6px 22px;">
+      <div style="padding-left:15px;cursor: pointer" class="header-logo" (click)="btn_GoHome()">
+        <a><img src="assets/images/quochuy.png"></a>
+        <h3 class="header-logo_title ml-2">Ban tuyên giáo</h3>
+      </div>
+      <div class="nav-menu-container">
+        <ul class="nav-menu">
+          <li class="btn-li-a btn-li-a-select" (click)="btn_gioithieu()"><a>Giới thiệu</a></li>
+          <li class="btn-li-a btn-li-a-select" (click)="btn_chuyenmuc()"><a>Chuyên mục</a></li>
+          <li class="btn-li-a btn-li-a-select" (click)="btn_31Chuyende()"><a>31 chuyên đề</a></li>
+          <li class="btn-li-a btn-li-a-select" (click)="btn_vr360()"><a>Vr 360</a></li>
+          <li class="btn-li-a btn-li-a-select" (click)="btn_sukien()"><a>Sự kiện</a></li>
+          <li class="btn-li-a btn-li-a-select" (click)="btn_nhanvat()"><a>Nhân vật lịch sử</a></li>
+          <li class="btn-li-a btn-li-a-select" (click)="btn_search()"><a>Tìm kiếm</a></li>
+          <li class="btn-li-a btn-li-a-select" (click)="btn_login()"><a>Đăng nhập</a></li>
+        </ul>
+      </div>
+      <div *ngIf="!action_menu" class="nav-menu_btn" (click)="btnActionMenu()">
+        <i class="fa fa-bars" aria-hidden="true"></i>
+      </div>
+      <div *ngIf="action_menu" class="nav-menu_btn nav-menu_btn-active" (click)="btnActionMenu()">
+        <i class="fa fa-bars" aria-hidden="true"></i>
+      </div>
+    </div>
+    <div *ngIf="action_menu" class="drop-nav-menu">
+      <li (click)="btn_gioithieu()"><a>Giới thiệu</a></li>
+      <li (click)="btn_chuyenmuc()"><a >Chuyên mục</a></li>
+      <li (click)="btn_31Chuyende()"><a >31 chuyên đề</a></li>
+      <li (click)="btn_vr360()"><a>Vr 360</a></li>
+      <li (click)="btn_sukien()"><a>Sự kiện</a></li>
+      <li (click)="btn_nhanvat()"><a>Nhân vật lịch sử</a></li>
+      <li (click)="btn_shift()"><a>Đợt thi tìm hiểu</a></li>
+      <li (click)="btn_search()"><a>Tìm kiếm</a></li>
+      <li (click)="btn_login()"><a>Đăng nhập</a></li>
+    </div>
+  </div>
+</div>
+
+<router-outlet ></router-outlet>
+
+
+<div *ngIf="!unLesson" class="footer_container" #footer>
+  <div class="footer-section">
+    <div class="container section-footer__container">
+      <div class="row justify-content-center">
+        <div class="col-md-6 text-right footer-left">
+          <div class="d-inline-flex flex-column justify-content-center h-100">
+            <h3 class="footer__title"> Ban Tuyên Giáo</h3>
+            <h3 class="footer__title"> Tỉnh uỷ Tỉnh Thái Nguyên</h3>
+          </div>
+        </div>
+        <div class=" col-md-6 footer-right">
+          <address class="footer__address">
+            <p>Địa chỉ: Số 28 - Đ.Phan Đình Phùng - TP.Thái Nguyên - T.Thái Nguyên</p>
+            <p>Email: vanthu.btgtu@thainguyen.gov.vn </p>
+            <p>Tel: 0208 3855.529 | Fax: 0208 3855529</p>
+          </address>
+        </div>
+      </div>
+
+    </div>
+    <div class="container d-flex align-items-center justify-content-center border-top mt-2" style="font-size: 12px">
+      Bản quyền thuộc Tỉnh uỷ tỉnh Thái Nguyên
+    </div>
+  </div>
+</div>
+

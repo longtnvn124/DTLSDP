@@ -70,14 +70,17 @@
         <div class="w-100 mt-3">
           <div class="row row-cols-2 h-100">
             <div class=" flex-wrap justify-content-between align-items-center col-sm-6 col-md-3 p-0"
-                 *ngFor="let item of dataVr">
-              <div class="w-100 d-inline-block shadow-6 bg-white ovic--parent-image position-relative">
+                 *ngFor="let item of dataVr" (click)="btnSelectNgulieu(item)">
+              <div class="d-inline-block" style=" max-width:300px; width:100%; overflow: hidden;cursor: pointer">
+                <img class="w-100 h-100 ovic-img-zoom" [src]="item.file_thumbnail ? item['_img_thumbnail']: 'assets/images/placeholder-3x2.jpg'" alt="">
+              </div>
+              <!--<div class="w-100 d-inline-block  ovic&#45;&#45;parent-image position-relative">
                 <div class='head-card_hover w-100' style="cursor: pointer;">
                   <p-image [src]="item.file_thumbnail ? item['_img_thumbnail']: 'assets/images/placeholder-3x2.jpg'"
                            alt="Image"
                            width="100%" [preview]="true"></p-image>
                 </div>
-              </div>
+              </div>-->
             </div>
           </div>
         </div>

@@ -543,4 +543,7 @@ span p img{
 /*-----------------------------mobile app------------------------------------*/
 .slide-mobile-app .p-galleria-indicators{
   background:none !important;
+  justify-content: flex-end;
 }
+/*.slide-mobile-app .p-galleria-indicators{*/
+/*}*/

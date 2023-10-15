@@ -1,22 +1,22 @@
-<div class="w-100 h-100 d-flex flex-column " style="background: #F9FAFB; padding:10px;">
+<div class="w-100 h-100 d-flex flex-column " style="background: #ecf1f7; padding:10px;">
   <div class="header-container" style="width:100%">
 
     <div class="header-icon">
-      <img src="assets/svg/UBND%20tinh.svg" alt="">
+      <img src="assets/svg/cthainguyen.svg" alt="">
     </div>
     <div class="header-icon">
-      <img src="assets/svg/Dang%20bo%20tinh%20thai%20nguyen.svg" alt="">
+      <img src="assets/svg/Dangbotinhthainguyen.svg" alt="">
     </div>
     <div class="header-icon">
-      <img src="assets/svg/UBND%20tinh.svg" alt="">
+      <img src="assets/svg/UBNDtinh.svg" alt="">
     </div>
     <div class="header-icon">
-      <img src="assets/svg/Ban%20tuyên%20giáo.svg" alt="">
+      <img src="assets/svg/bantuyengiao.svg" alt="">
     </div>
   </div>
 
-  <div *ngIf="!slideparam ?? 0 > 0" class="slide-mobile-app w-100 h-100 " style="margin-top: 20px;">
-    <p-galleria class="slide-ctm" [autoPlay]="true" [value]="slideparam" [numVisible]="1" [circular]="true"
+  <div *ngIf="slides ?? 0 > 0" class="slide-mobile-app w-100 h-100 " style="margin-top: 20px;">
+    <p-galleria class="slide-ctm" [autoPlay]="true" [value]="slides" [numVisible]="1" [circular]="true"
                 [showItemNavigators]="false" [showIndicators]="true"
                 [showThumbnails]="false" [showIndicatorsOnItem]="true"
                 [containerStyle]="{ 'width': '100%','height':'150px' }">
@@ -33,7 +33,7 @@
       <div class="nhanvat_header-title">
         Nhân vật lịch sử
       </div>
-      <div class=" nhanvat_header-full-content">
+      <div class=" nhanvat_header-full-content" (click)="showfullNhanvat()">
         Xem tất cả
       </div>
     </div>
@@ -61,9 +61,10 @@
 
     <div class="vr360_mobile-content">
       <div class="row row-cols-2 mx-0 p-0">
-        <div class="d-flex flex-wrap flex-row justify-content-between align-items-center col-sm-6 col-md-4 col-lg-3" style="padding:10px"
+        <div class="d-flex flex-wrap flex-row justify-content-between align-items-center col-sm-6 col-md-4 col-lg-3"
+             style="margin-bottom:2px;padding:0"
              *ngFor="let item of ngulieuvr">
-          <div class="w-100 d-inline-block shadow-sm bg-white border ovic--parent-image position-relative">
+          <div class="w-100 d-inline-block  bg-white ovic--parent-image position-relative" style="border: 1px solid #ecf1f7">
             <div class='head-card_hover w-100 bg-image hover-zoom' style="cursor: pointer;">
               <div class="position-relative w-100 st-image img-child-max-width" style="overflow: hidden">
                 <img class="w-100 h-100 ovic-img-zoom"
@@ -84,8 +85,8 @@
     </div>
   </div>
 
-  <div *ngIf="!slideparam ?? 0 > 0" class="slide-mobile-app w-100 h-100 " style="margin-top: 20px;">
-    <p-galleria class="slide-ctm" [autoPlay]="true" [value]="slideparam" [numVisible]="1" [circular]="true"
+  <div *ngIf="slides ?? 0 > 0" class="slide-mobile-app w-100 h-100 " style="margin-top: 20px;">
+    <p-galleria class="slide-ctm" [autoPlay]="true" [value]="slides" [numVisible]="1" [circular]="true"
                 [showItemNavigators]="false" [showIndicators]="true"
                 [showThumbnails]="false" [showIndicatorsOnItem]="true"
                 [containerStyle]="{ 'width': '100%','height':'150px' }">
@@ -107,9 +108,12 @@
       </div>
     </div>
     <div class="chuyende-container">
-      <div class="d-flex flex-row mb-2" *ngFor="let chuyende of dataChuyenDeChild, let i = index" >
+      <div class="d-flex flex-row mb-1" *ngFor="let chuyende of dataChuyenDeChild, let i = index" style="margin-left: -10px;
+    margin-right: -10px;
+    padding: 10px;">
         <div class="chuyende-side-left">
-          <i class="chuyende-side-left-icon pi pi-images" style="font-size:40px"></i>
+          <i [ngClass]="chuyende.file_scorm ? 'pi pi-box': chuyende.video ?'pi pi-video': 'pi pi-file-pdf' "
+             class="chuyende-side-left-icon" style="font-size:30px"></i>
         </div>
 
         <div class="chuyende-content">

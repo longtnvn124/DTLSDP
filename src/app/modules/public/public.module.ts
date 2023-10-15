@@ -30,10 +30,11 @@ import {ImageModule} from "primeng/image";
 import {InputTextModule} from "primeng/inputtext";
 import {DropdownModule} from "primeng/dropdown";
 import { ChuyenDeComponent } from './features/web-home/chuyen-de/chuyen-de.component';
-import { ChuyenDeMenuComponent } from './features/web-home/chuyen-de/chuyen-de-menu/chuyen-de-menu.component';
-import { ChuyenDeContentComponent } from './features/web-home/chuyen-de/chuyen-de-content/chuyen-de-content.component';
+import { ChuyenDeMenuComponent } from './features/home/layouts/content-chuyen-de/chuyen-de-menu/chuyen-de-menu.component';
+import { ChuyenDeContentComponent } from './features/home/layouts/content-chuyen-de/chuyen-de-content/chuyen-de-content.component';
 import {PdfViewerModule} from "ng2-pdf-viewer";
 import { GioiThieuComponent } from './features/web-home/gioi-thieu/gioi-thieu.component';
+import { DanhMucChuyenMucComponent } from './features/web-home/danh-muc-chuyen-muc/danh-muc-chuyen-muc.component';
 
 @NgModule({
   declarations: [
@@ -55,25 +56,33 @@ import { GioiThieuComponent } from './features/web-home/gioi-thieu/gioi-thieu.co
     ChuyenDeMenuComponent,
     ChuyenDeContentComponent,
     GioiThieuComponent,
+    DanhMucChuyenMucComponent,
   ],
-    imports: [
-        CommonModule,
-        PublicRoutingModule,
-        ReactiveFormsModule,
-        ButtonModule,
-        RippleModule,
-        InputMaskModule,
-        FormsModule,
-        SharedModule,
-        DialogModule,
-        TabMenuModule,
-        GalleriaModule,
-        CarouselModule,
-        ImageModule,
-        InputTextModule,
-        DropdownModule,
-        PdfViewerModule,
-    ]
+  exports: [
+    ChuyenDeMenuComponent,
+    ChuyenDeContentComponent,
+    NhanvatComponent,
+    SukienTonghopComponent,
+    DanhmucNgulieusoComponent
+  ],
+  imports: [
+    CommonModule,
+    PublicRoutingModule,
+    ReactiveFormsModule,
+    ButtonModule,
+    RippleModule,
+    InputMaskModule,
+    FormsModule,
+    SharedModule,
+    DialogModule,
+    TabMenuModule,
+    GalleriaModule,
+    CarouselModule,
+    ImageModule,
+    InputTextModule,
+    DropdownModule,
+    PdfViewerModule,
+  ]
 })
 export class PublicModule {
 }

@@ -291,12 +291,43 @@ export class NguLieuDanhSachService {
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
     return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
   }
+
+
+
+
   loadUrlNgulieuById(id:number):Observable<string>{
     // const url = ''.concat(this.api,'scorm/',id.toString(10));
     // return this.http.get<string>(url);
     return this.http.get<string>(''.concat(this.api,'file/',id.toString(10)));
   }
 
+
+  getDataByChuyenmucID(chuyenmuc_id?: number): Observable<Ngulieu[]> {
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'is_deleted',
+        condition: OvicQueryCondition.equal,
+        value: '0'
+      },
+
+
+    ]
+    if (chuyenmuc_id) {
+      const diemditich: OvicConditionParam = {
+        conditionName: 'chuyenmuc',
+        condition: OvicQueryCondition.equal,
+        value: chuyenmuc_id.toString(10),
+        orWhere: 'and'
+      }
+      conditions.push(...[diemditich]);
+    }
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+    }
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
+    return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
+  }
 }
 
 

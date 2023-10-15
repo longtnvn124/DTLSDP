@@ -131,7 +131,7 @@
 .left-footer{
   display: flex;
   height: 44px;
-  justify-content: end;
+  justify-content: flex-end;
   align-items: center;
   border-top: 1px solid #ccc;
   padding-top: 3px;
@@ -145,7 +145,7 @@
 .ctn-question:hover .hover-title{
   display: flex;
   width: 10%;
-  justify-content: end;
+  justify-content: flex-end;
 }
 .padding-14px{
   padding:14px;

@@ -11,6 +11,7 @@ import {Ngulieu, SuKien} from "@shared/models/quan-ly-ngu-lieu";
 import {FileService} from "@core/services/file.service";
 import {NguLieuDanhSachService} from "@shared/services/ngu-lieu-danh-sach.service";
 import {NhanvatComponent} from "@modules/public/features/web-home/nhanvat/nhanvat.component";
+import {AuthService} from "@core/services/auth.service";
 
 @Component({
   selector: 'app-web-home',
@@ -81,6 +82,7 @@ export class WebHomeComponent implements OnInit, AfterViewInit {
     private danhMucLinhVucService: DanhMucLinhVucService,
     private nguLieuSuKienService: NguLieuSuKienService,
     private nguLieuDanhSachService: NguLieuDanhSachService,
+    private authService:AuthService
   ) {
   }
 
@@ -100,11 +102,11 @@ export class WebHomeComponent implements OnInit, AfterViewInit {
       },
 
     })
-    const viewMode = this.activatedRoute.snapshot.queryParamMap.has('view-mode') ? this.activatedRoute.snapshot.queryParamMap.get('view-mode') : 'desktop';
-    if (viewMode === 'mobile') {
-      console.log(viewMode);
-      this.unLesson = true ;
-    }
+    // const viewMode = this.activatedRoute.snapshot.queryParamMap.has('view-mode') ? this.activatedRoute.snapshot.queryParamMap.get('view-mode') : 'desktop';
+    // if (viewMode === 'mobile') {
+    //   console.log(viewMode);
+    //   this.unLesson = true ;
+    // }
   }
 
   ngAfterViewInit() {
@@ -236,6 +238,12 @@ export class WebHomeComponent implements OnInit, AfterViewInit {
   btn_gioithieu() {
     this.mode = "GIOITHIEU";
     this.action_menu = false;
+  }
+
+
+  btnSelectNgulieu(item:Ngulieu){
+      const code = this.authService.encryptData(JSON.stringify({ngulieu_id :item.id}));
+      void this.router.navigate(['virtual-tour'], {queryParams: {code}});
   }
 }
 

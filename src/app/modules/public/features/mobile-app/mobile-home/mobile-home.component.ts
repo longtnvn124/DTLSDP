@@ -7,6 +7,7 @@ import {NguLieuDanhSachService} from "@shared/services/ngu-lieu-danh-sach.servic
 import {NotificationService} from "@core/services/notification.service";
 import {ChuyenDeService} from "@shared/services/chuyen-de.service";
 import {ChuyenDe} from "@shared/models/quan-ly-chuyen-de";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-mobile-home',
@@ -40,7 +41,8 @@ export class MobileHomeComponent implements OnInit {
     private fileService:FileService,
     private nguLieuDanhSachService: NguLieuDanhSachService,
     private notificationService:NotificationService,
-    private chuyende:ChuyenDeService
+    private chuyende:ChuyenDeService,
+    private router:Router
   ) {
 
   }
@@ -89,18 +91,32 @@ export class MobileHomeComponent implements OnInit {
   dataChuyenDe:ChuyenDe[];
   dataChuyenDeChild:ChuyenDe[];
   LoadChuyenDe(){
+    this.notificationService.isProcessing(true)
     this.chuyende.loadDataUnlimitAndActive().subscribe({
       next:(data)=>{
         const newdata = data.map(m=>{
           m['_child']= data.filter(f=>f.parent_id ===m.id);
           return m;
+
         });
         this.dataChuyenDe = newdata.filter(f=>f.parent_id ===0);
-        console.log(this.dataChuyenDe);
         this.dataChuyenDeChild = this.dataChuyenDe[0]['_child'];
-        console.log(this.dataChuyenDeChild);
-      }
+        this.notificationService.isProcessing(false)
+
+      },error:()=>{
+      this.notificationService.isProcessing(false)
+
+    }
     })
+  }
+  showfullNhanvat(){
+    this.router.navigate(['mobile/mobile-nhan-vat']);
+  }
+  showfullvr(){
+    this.router.navigate(['mobile/mobile-ngu-lieu-vr']);
+  }
+  showfull31chuyenmuc(){
+    this.router.navigate(['mobile/mobile-chuyen-muc']);
   }
 
 }
