@@ -170,7 +170,7 @@ export class NganHangCauHoiComponent implements OnInit {
     switch (button.name) {
       case 'CREATE_QUESTION_DECISION':
         this._bank_id = button.data;
-        console.log(this._bank_id);
+
         this.loadQuestion(button.data);
         setTimeout(() => this.notificationService.openSideNavigationMenu({
           name: this.menuName,
@@ -185,7 +185,7 @@ export class NganHangCauHoiComponent implements OnInit {
           answer_options: [],
           correct_answer: [],
         })
-        console.log(this.formSave.value);
+
         break;
       default:
         break;
@@ -211,7 +211,7 @@ export class NganHangCauHoiComponent implements OnInit {
           m['_bank_id'] = id;
           return m;
         })
-        console.log(this.dataQuestion);
+
         this.notificationService.isProcessing(false);
 
       }, error: () => {
@@ -231,7 +231,6 @@ export class NganHangCauHoiComponent implements OnInit {
 
   resetForm() {
     this.contentHeader = "Thêm mới câu hỏi";
-    console.log(this._bank_id)
     this.formSave.reset(
       {
         title: '',

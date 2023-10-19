@@ -193,7 +193,7 @@
   line-height: 2;
   font-size: 15px;
   font-style: italic;
-  font-weight: 800;
+  font-weight: 600;
   margin-left: 4px;
 }
 
@@ -267,4 +267,24 @@
 
 .popup-waiting-loading{
   padding:10px;
+}
+
+@media(width<= 600px) {
+
+  .hd-dl-info_title{
+    line-height: 2;
+    font-size: 13px;
+    font-style: italic;
+    font-weight: 600;
+    margin-left: 4px;
+  }
+  .ctn-right{
+    padding: 0px 10px;
+  }
+}
+
+@media(width<= 1024px){
+  .ctn-left{
+    border:0;
+  }
 }

@@ -69,15 +69,15 @@
             </td>
             <td class="ovic-w-100px text-center">
               <div class="d-block --fs-14">
-                <button *ngIf="item.root ===1" pButton pRipple class="btn-custom-size-30x30 p-button-success mr-1"
+                <button [pTooltip]="'Inactive'" [tooltipPosition]="'top'"  *ngIf="item.root ===1" pButton pRipple class="btn-custom-size-30x30 p-button-success mr-1"
                         icon="pi pi-check-circle" (click)="btnCheck(item)"></button>
-                <button *ngIf="item.root ===0" pButton pRipple class="btn-custom-size-30x30 p-button-secondary mr-1"
+                <button [pTooltip]="'Active'" [tooltipPosition]="'top'"  *ngIf="item.root ===0" pButton pRipple class="btn-custom-size-30x30 p-button-secondary mr-1"
                         icon="pi pi-ban" (click)="btnCheck(item)"></button>
-                <button pButton pRipple class="btn-custom-size-30x30 mr-1" icon="pi pi-info-circle"
+                <button [pTooltip]="'Thông tin chi tiết'" [tooltipPosition]="'top'" pButton pRipple class="btn-custom-size-30x30 mr-1" icon="pi pi-info-circle"
                         (click)="btnInformation(item.id)"></button>
-                <button pButton pRipple class="btn-custom-size-30x30 p-button-warning mr-1" icon="pi pi-pencil"
+                <button [pTooltip]="'Sửa'" [tooltipPosition]="'top'" pButton pRipple class="btn-custom-size-30x30 p-button-warning mr-1" icon="pi pi-pencil"
                         (click)="btnEdit(item)"></button>
-                <button pButton pRipple class="btn-custom-size-30x30 p-button-danger" icon="pi pi-trash"
+                <button [pTooltip]="'Xoá'" [tooltipPosition]="'top'" pButton pRipple class="btn-custom-size-30x30 p-button-danger" icon="pi pi-trash"
                         (click)="btnDelete(item.id)"></button>
               </div>
             </td>
@@ -99,9 +99,10 @@
                 </div>
                 <div class=" d-flex justify-content-between align-items-center" style="padding:10px 6px; height:55px">
                   <div
-                    class="headding-card text-xl font-weight-bold text-capitalize text-center align-items-center text_hover ngulieuso_item_title">
-                    <i [class]="item.root===0? 'pi pi-circle': 'pi pi-circle-fill active-hot'"></i>
-                    {{item.title}}
+                    class="headding-card text_hover ngulieuso_item_title">
+                    <i [class]="item.root===0? 'pi pi-circle': 'pi pi-circle-fill active-hot'" style="padding:2px"></i>
+                    <div class="ngulieuso_item_title_div">{{item.title}}</div>
+
                   </div>
                   <div>
                     <i class="pi pi-ellipsis-v p-1" mat-icon-button [matMenuTriggerFor]="menu"></i>

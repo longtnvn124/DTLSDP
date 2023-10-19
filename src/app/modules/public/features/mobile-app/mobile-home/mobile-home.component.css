@@ -20,7 +20,7 @@
 }
 
 .nhanvat_header-title {
-    font-size: 15px;;
+  font-size: 15px;;
   color: #0B9419;
   font-weight: 700;
   text-transform: uppercase;
@@ -28,10 +28,14 @@
 }
 
 .nhanvat_header-full-content {
-    font-size: 13px;;
+  font-size: 13px;;
   color: #0D9CEC;
   font-style: italic;
 
+}
+
+nhanvat_header-full-content:hover {
+  color: #0b69e3;
 }
 
 .slide-nhanvat-mobile {
@@ -50,12 +54,13 @@
   display: inline-block;
   position: relative;
   margin-right: 10px;
+
 }
 
 .nhanvat_item-img {
   width: 150px;
   height: 200px;
-
+  overflow: hidden;
 }
 
 .nhanvat_item-title {
@@ -78,24 +83,26 @@
 }
 
 .vr360_slide_mobile {
-
+  margin-top: 20px;
 }
 
 .vr360_header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 6px;
+
 }
 
 .vr360_header-title {
-    font-size: 15px;;
+  font-size: 15px;;
   color: #0B9419;
   font-weight: 700;
   text-transform: uppercase;
 }
 
 .vr360_header-full-content {
-    font-size: 13px;;
+  font-size: 13px;;
   color: #0D9CEC;
   font-style: italic;
 }
@@ -105,19 +112,35 @@
   /*margin-right: -10px;*/
 }
 
+.ngulieu_item {
+  margin-bottom: 2px;
+  padding: 0;
+
+}
+
+.vr360_mobile-content > *:nth-child(odd) {
+  padding-right: 1px;
+}
+
+.vr360_mobile-content > *:nth-child(even) {
+  padding-left: 1px;
+}
+
+
 .vr-360_mobile-title {
   font-weight: 500;
-    font-size: 13px;;
+  font-size: 13px;;
   line-height: 15px;
   height: 32px;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-family: roboto;
+  font-family: "Roboto", sans-serif;
 
 }
 
 .chuyende-mobile {
   width: 100%;
+  margin-top: 20px;
 }
 
 .chuyende-container {
@@ -156,13 +179,12 @@
 }
 
 .chuyende-title {
-    font-size: 13px;;
+  font-size: 13px;;
   font-weight: 500;
   /*line-height: 12px;*/
   height: 24px;
   overflow: hidden;
   text-overflow: ellipsis;
-
 
 
 }
@@ -179,8 +201,23 @@
 }
 
 .chuyende-tooltip-right {
-    font-size: 13px;;
+  font-size: 13px;;
   font-style: italic;
   color: #797676;
+
+}
+
+.chuyende-container_item {
+  margin-left: -10px;
+  margin-right: -10px;
+  padding: 10px;
+}
+
+.chuyende-container_item:hover {
+  background: #f1e2e2;
+}
+
+.chuyende-container_item:focus {
+  background: #f1e2e2;
 
 }

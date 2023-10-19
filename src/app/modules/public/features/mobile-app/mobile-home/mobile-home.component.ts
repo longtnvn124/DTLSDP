@@ -8,6 +8,7 @@ import {NotificationService} from "@core/services/notification.service";
 import {ChuyenDeService} from "@shared/services/chuyen-de.service";
 import {ChuyenDe} from "@shared/models/quan-ly-chuyen-de";
 import {Router} from "@angular/router";
+import {AuthService} from "@core/services/auth.service";
 
 @Component({
   selector: 'app-mobile-home',
@@ -42,7 +43,8 @@ export class MobileHomeComponent implements OnInit {
     private nguLieuDanhSachService: NguLieuDanhSachService,
     private notificationService:NotificationService,
     private chuyende:ChuyenDeService,
-    private router:Router
+    private router:Router,
+    private authService:AuthService
   ) {
 
   }
@@ -100,7 +102,7 @@ export class MobileHomeComponent implements OnInit {
 
         });
         this.dataChuyenDe = newdata.filter(f=>f.parent_id ===0);
-        this.dataChuyenDeChild = this.dataChuyenDe[0]['_child'];
+        this.dataChuyenDeChild = this.dataChuyenDe[0]['_child'].length>3 ? this.dataChuyenDe[0]['_child'].slice(0,3) : this.dataChuyenDe[0]['_child'];
         this.notificationService.isProcessing(false)
 
       },error:()=>{
@@ -113,10 +115,23 @@ export class MobileHomeComponent implements OnInit {
     this.router.navigate(['mobile/mobile-nhan-vat']);
   }
   showfullvr(){
-    this.router.navigate(['mobile/mobile-ngu-lieu-vr']);
+    this.router.navigate(['mobile/mobile-vr-360']);
   }
-  showfull31chuyenmuc(){
-    this.router.navigate(['mobile/mobile-chuyen-muc']);
+  showfull31chuyende(){
+    this.router.navigate(['mobile/mobile-chuyen-de']);
+  }
+
+  btnSelectNhanvat(item:DmNhanVatLichSu){
+    console.log(item);
+    this.router.navigate(['/mobile/mobile-nhan-vat/'], {queryParams:{param:item.id}});
+    // this.router.navigate(['/destination-route', { id: yourId }]);
+  }
+  btnSelectNgulieu(item: Ngulieu) {
+    const code = this.authService.encryptData(JSON.stringify({ngulieu_id: item.id}));
+    void this.router.navigate(['virtual-tour'], {queryParams: {code,tag:'mobile'}},);
+  }
+  btnSelectChuyende(item:ChuyenDe){
+    this.router.navigate(['/mobile/mobile-chuyen-de/'], {queryParams:{param:item.id}});
   }
 
 }

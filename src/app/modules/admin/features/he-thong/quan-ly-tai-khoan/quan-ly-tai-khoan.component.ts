@@ -436,11 +436,10 @@ export class QuanLyTaiKhoanComponent implements OnInit {
   }
 
   async callActionForm(template): Promise<any> {
-    console.log(this.auth.roles);
+
     if (this.dsNhomQuyen.length === 0) {
       if (Array.isArray(this.auth.roles) && this.auth.roles.length > 1) {
         const exceptHightRole = Math.min(...[...this.auth.roles].map(u => u.id));
-        console.log(exceptHightRole);
         this.dsNhomQuyen = [...this.auth.roles].filter(r => r.id !== exceptHightRole);
         return Promise.resolve();
       } else {

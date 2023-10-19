@@ -100,7 +100,7 @@ export class DanhNhanLichSuComponent implements OnInit {
 
           return m;
         })
-        console.log(this.listData);
+
         this.notificationService.isProcessing(false);
       }, error: () => {
         this.notificationService.isProcessing(false);

@@ -129,7 +129,7 @@ export class FileListLocalComponent implements OnInit, OnChanges {
       this.notificationService.isProcessing(true);
       for (let i = 0; i < length; i++) {
         const file = event.target['files'][i];
-        console.log(typeof file);
+
         setTimeout(() => this.fileService.uploadFile(file, this.state).subscribe({
           next: (f) => {
             fileUploaded.push({

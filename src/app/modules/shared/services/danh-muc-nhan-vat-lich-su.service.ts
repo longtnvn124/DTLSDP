@@ -123,4 +123,34 @@ export class DanhMucNhanVatLichSuService {
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data ));
   }
+
+  getDataUnlimitById(search?:number):Observable<DmNhanVatLichSu[]>{
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'is_deleted',
+        condition: OvicQueryCondition.equal,
+        value: '0'
+      },
+    ];
+    if (search) {
+      const c1: OvicConditionParam[] = [
+        {
+          conditionName: 'id',
+          condition: OvicQueryCondition.equal,
+          value: search.toString(10),
+          orWhere: 'and'
+        },
+
+      ];
+      conditions.push(...c1);
+    }
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+      orderby: 'bietdanh',
+      order: 'ASC'
+    };
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data ));
+  }
 }

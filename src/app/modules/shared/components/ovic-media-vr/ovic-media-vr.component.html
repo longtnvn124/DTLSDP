@@ -23,7 +23,7 @@
             (click)="btnplayRotate()"></button>
   </div>
 
-  <div class="btn-backStart" (click)="loadStart()">
+  <div *ngIf="isStartvr" class="btn-backStart" (click)="loadStart()">
     <svg class="ovic-img-zoom" xmlns="http://www.w3.org/2000/svg" id="arrow-circle-down" viewBox="0 0 24 24" width="512"
          height="512">
       <g id="_01_align_center" data-name=" 01 align center">
@@ -127,7 +127,8 @@
                     <!--                  <textarea formControlName="mota" placeholder="Mô tả..." autocomplete="off" cols="30"-->
                     <!--                            rows="5"></textarea>-->
 
-                    <p-editor [curentFormControl]="f['mota']" #edtitor [editor]="edtitor" [Resize_img]="true" class="w-100"
+                    <p-editor [curentFormControl]="f['mota']" #edtitor [editor]="edtitor" [Resize_img]="true"
+                              class="w-100"
                               formControlName="mota" placeholder="Nội dung..." [style]="{ 'min-height': '250px'}">
                       <p-header>
                           <span class="ql-formats">
@@ -375,6 +376,90 @@
   </p-dialog>
 </ng-container>
 <ng-template #isSmall>
+  <p-dialog header="Hướng dẫn sử dụng" [(visible)]="visibleHelp" [modal]="true" [style]="{ width: '94%' }"
+            [draggable]="false" [resizable]="false" class="m-0">
+    <div class="d-flex justify-content-center flex-column p-2 hd-dl-info w-100">
+      <div class="hd-dl-info-item ">
+        <svg xmlns="http://www.w3.org/2000/svg" id="Capa_1" enable-background="new 0 0 511.998 511.998" height="512"
+             viewBox="0 0 511.998 511.998" width="512">
+          <g>
+            <path
+              d="m208.923 45.771c8.284 0 15-6.716 15-15v-15.771c0-8.284-6.716-15-15-15s-15 6.716-15 15v15.771c0 8.285 6.716 15 15 15z"/>
+            <path
+              d="m284.153 76.934c3.839 0 7.678-1.465 10.606-4.394l11.152-11.152c5.858-5.857 5.858-15.355 0-21.213-5.857-5.857-15.355-5.857-21.213 0l-11.152 11.152c-5.858 5.857-5.858 15.355 0 21.213 2.93 2.929 6.768 4.394 10.607 4.394z"/>
+            <path
+              d="m300.315 137.164c0 8.284 6.716 15 15 15h15.771c8.284 0 15-6.716 15-15s-6.716-15-15-15h-15.771c-8.284 0-15 6.716-15 15z"/>
+            <path
+              d="m117.529 137.164c0-8.284-6.716-15-15-15h-15.771c-8.284 0-15 6.716-15 15s6.716 15 15 15h15.771c8.284 0 15-6.716 15-15z"/>
+            <path
+              d="m123.085 72.54c2.929 2.929 6.768 4.394 10.606 4.394s7.678-1.465 10.606-4.394c5.858-5.857 5.858-15.355 0-21.213l-11.152-11.152c-5.857-5.857-15.355-5.857-21.213 0s-5.858 15.355 0 21.213z"/>
+            <path
+              d="m394.32 222.999c-7.714 0-14.989 1.913-21.377 5.29-7.767-14.373-22.977-24.16-40.429-24.16-7.714 0-14.989 1.913-21.376 5.29-7.765-14.373-22.969-24.159-40.415-24.159-5.589 0-10.947 1.004-15.905 2.841l-.001-73.006c-.002-25.301-20.59-45.885-45.895-45.885-25.311 0-45.901 20.591-45.901 45.9l.003 144.009h-6.378c-25.306 0-45.896 20.596-45.896 45.911l-.002 31.233c-.003 47.07 18.447 92.999 50.828 127.029v33.705c0 8.284 6.716 15 15 15h208.662c8.284 0 15-6.716 15-15v-34.752c25.833-34.523 40.002-76.976 40.002-120.149v-73.178c0-25.319-20.599-45.919-45.92-45.919zm15.92 119.098c0 38.216-13.058 75.77-36.767 105.743-2.096 2.649-3.235 5.928-3.235 9.306v24.853h-178.662v-24.853c0-4.034-1.625-7.898-4.508-10.72-29.439-28.814-46.323-68.967-46.32-110.16l.002-31.233c.001-8.774 7.132-15.913 15.896-15.913h21.378c3.979 0 7.794-1.58 10.606-4.394 2.813-2.813 4.394-6.629 4.394-10.606l-.003-159.009c0-8.768 7.134-15.9 15.901-15.9 8.764 0 15.894 7.127 15.895 15.887l.003 148.43c0 8.284 6.716 15 15 15 8.283 0 14.999-6.716 15-14.999l.002-32.366c0-8.768 7.134-15.901 15.901-15.901 8.77 0 15.903 7.141 15.903 15.918v51.218c0 8.284 6.716 15 15 15s15-6.716 15-15v-32.379c0-8.761 7.127-15.888 15.888-15.888 8.777 0 15.919 7.142 15.919 15.92v60.649c0 8.284 6.716 15 15 15s15-6.716 15-15v-41.814c0-8.76 7.127-15.887 15.887-15.887 8.778 0 15.92 7.142 15.92 15.92z"/>
+          </g>
+        </svg>
+        <div class="hd-dl-info_title">
+          Người dùng sử dụng chuột(máy tính) hoặc chạm vào màn hình(điện thoại) để điều hướng xoay góc nhìn trong không
+          gian 3D
+        </div>
+      </div>
+      <div class="bd-dl-info mt-2">
+        <div class="d-flex flex-column w-100 justify-content-center pl-3 ">
+          <div class="bd-dl-info_item">
+
+            <div class="bd-dl-info_item-icon">
+              <button pButton pRipple icon="pi pi-play" class='btn-round p-button-secondary'></button>
+            </div>
+            <div class="bd-dl-info_item-title">
+              Chạm để xem video 3D
+            </div>
+
+          </div>
+
+
+          <div class="bd-dl-info_item">
+            <div class="bd-dl-info_item-icon">
+              <img src="/assets/icon-png/pin.png" alt="">
+            </div>
+            <div class="bd-dl-info_item-title">
+              Chạm để hiển thị vị trí mới
+            </div>
+          </div>
+
+
+          <div class="bd-dl-info_item">
+            <div class="bd-dl-info_item-icon">
+              <button pButton pRipple icon="pi pi pi-volume-off" class="btn-round "></button>
+            </div>
+            <div class="bd-dl-info_item-title">
+              Chạm để bật thuyết minh
+            </div>
+          </div>
+
+          <div class="bd-dl-info_item">
+            <div class="bd-dl-info_item-icon">
+              <img src="/assets/icon-png/infomation.png" alt="">
+            </div>
+            <div class="bd-dl-info_item-title">
+              Chạm để hiển thị thông tin
+            </div>
+          </div>
+
+          <div class="bd-dl-info_item">
+            <div class="bd-dl-info_item-icon">
+              <button pButton pRipple icon="pi pi-refresh" class="btn-round p-button-warning"></button>
+            </div>
+            <div class="bd-dl-info_item-title">
+              chạm để bật tự động quay
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+
+    </div>
+  </p-dialog>
+
   <p-dialog header="Thông tin chi tiết" [(visible)]="visibleInfo" [modal]="true" [style]="{ width: '94%' }"
             [draggable]="false" [resizable]="false" class="m-0">
     <div class="row row-cols-1">

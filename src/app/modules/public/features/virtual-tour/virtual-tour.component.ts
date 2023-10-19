@@ -4,10 +4,11 @@ import {NotificationService} from "@core/services/notification.service";
 import {FileService} from "@core/services/file.service";
 import {Point} from '@modules/shared/models/point';
 import {Ngulieu} from "@shared/models/quan-ly-ngu-lieu";
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 import {forkJoin} from "rxjs"
 import {NguLieuDanhSachService} from "@shared/services/ngu-lieu-danh-sach.service";
 import {AuthService} from "@core/services/auth.service";
+
 @Component({
   selector: 'app-virtual-tour',
   templateUrl: './virtual-tour.component.html',
@@ -24,13 +25,15 @@ export class VirtualTourComponent implements OnInit, AfterViewInit, OnDestroy {
   @HostListener('window:resize', ['$event']) onResize1(event: Event): void {
     this.isSmallScreen = window.innerWidth < 500;
   }
-  isSmallScreen: boolean = window.innerWidth < 500;
 
+  isSmallScreen: boolean = window.innerWidth < 500;
+  device: string;
   mode: "BTNPLAY" | "MEDIAVR" = "BTNPLAY";
-  ngulieu_type: 0|1;
+  ngulieu_type: 0 | 1;
+
   constructor(
     private notificationService: NotificationService,
-    private auth:AuthService,
+    private auth: AuthService,
     private fileService: FileService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
@@ -39,6 +42,7 @@ export class VirtualTourComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {
 
   }
+
   private _ngulieu_id: number;
   ngulieuStart: Ngulieu;
   dataPoints: Point[];
@@ -48,12 +52,18 @@ export class VirtualTourComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    if (this.activatedRoute.snapshot.queryParamMap.has('code')) {
-      const raw = this.activatedRoute.snapshot.queryParamMap.get('code');
+    const params: ParamMap = this.activatedRoute.snapshot.queryParamMap;
+
+    if (params.has('code')) {
+      const raw = params.get('code');
       const s1 = this.auth.decryptData(raw);
       const info = s1 ? JSON.parse(s1) : null;
       this._ngulieu_id = info.ngulieu_id;
       this.LoadNgulieu(this._ngulieu_id);
+    }
+    const tag: string = params.has('tag') ? params.get('tag') : '';
+    if (tag) {
+      this.device = tag;
     }
   }
 
@@ -80,8 +90,7 @@ export class VirtualTourComponent implements OnInit, AfterViewInit, OnDestroy {
         this.ngulieuStart['_points_child'] = this.dataPoints.filter(f => f.ngulieu_id === this.ngulieuStart.id && f.parent_id === 0);
         this.dataPointsChild = this.dataPoints.filter(f => f.ngulieu_id === this.ngulieuStart.id);
         this.ngulieu_type = this.ngulieuStart.file_type;
-        console.log(this.ngulieu_type);
-        console.log(this.ngulieuStart);
+
 
         this.notificationService.isProcessing(false);
       }, error: () => {

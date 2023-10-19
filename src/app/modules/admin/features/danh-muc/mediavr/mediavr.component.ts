@@ -207,7 +207,6 @@ export class MediavrComponent implements OnInit, AfterViewInit, OnDestroy {
 
   loadInit(image: string, audio?: string, datapoint?: Pinable[]) {
 
-    console.log('loadInit');
 
     //camera
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);

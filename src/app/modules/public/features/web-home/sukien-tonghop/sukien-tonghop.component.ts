@@ -103,7 +103,7 @@ export class SukienTonghopComponent implements OnInit, AfterViewInit, OnChanges,
           }) : [];
           return m;
         })
-        console.log(this.listData);
+
         this.notificationService.isProcessing(false);
       },
 
@@ -128,8 +128,6 @@ export class SukienTonghopComponent implements OnInit, AfterViewInit, OnChanges,
       // this.stream.appendChild(this.sourceAudio);
       // this.stream.setAttribute('autoplay', 'true');
 
-
-      console.log(this.sukienActive.file_audio[0]);
       this.fileService.getFileAsObjectUrl(this.sukienActive.file_audio[0].id.toString(10)).subscribe({
         next: url => {
           const audio = new Audio();

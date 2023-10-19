@@ -105,3 +105,22 @@
 .btn-bd-rd-50{
   border-radius:50%;
 }
+
+.ngulieuso_item_title{
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+.ngulieuso_item_title_div{
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 18px;
+  height: 36px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-left: 4px;
+  padding-right: 4px;
+}

@@ -33,15 +33,15 @@ export class ContentTimKiemComponent implements OnInit, AfterViewInit {
     this.textSearch = event;
     if(this.textSearch == ''){
       if(this.loaiSelect ===1){
-        console.log(1)
+
         this.nhanvatComponent.btnLoadByTextseach('');
       }
       if(this.loaiSelect ===2){
-        console.log(2)
+
         this.sukienTonghopComponent.btnLoadByTextseach('');
       }
       if(this.loaiSelect ===3){
-        console.log(3)
+
         this.danhmucNgulieusoComponent.btnLoadByTextseach('');
       }
     }
@@ -54,15 +54,15 @@ export class ContentTimKiemComponent implements OnInit, AfterViewInit {
   selectSearch(){
 
     if(this.loaiSelect ===1){
-      console.log(1)
+
       this.nhanvatComponent.btnLoadByTextseach(this.textSearch);
     }
     if(this.loaiSelect ===2){
-      console.log(2)
+
       this.sukienTonghopComponent.btnLoadByTextseach(this.textSearch);
     }
     if(this.loaiSelect ===3){
-      console.log(3)
+
       this.danhmucNgulieusoComponent.btnLoadByTextseach(this.textSearch);
     }
   }

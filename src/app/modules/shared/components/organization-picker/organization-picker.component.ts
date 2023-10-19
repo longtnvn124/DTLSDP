@@ -67,7 +67,7 @@ export class OrganizationPickerComponent implements OnInit {
     // }))
     this.donViService.getChildren(this.auth.userDonViId,'',true).subscribe({
       next: (data) => {
-        console.log(data);
+
         this.isLoading = false;
         this.loadFail = false;
         // const _childrents = childrents;

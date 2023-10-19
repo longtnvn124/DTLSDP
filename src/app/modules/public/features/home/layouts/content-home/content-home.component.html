@@ -28,7 +28,7 @@
       <!--  thay tế-->
       <div class="w-100 mt-3">
         <div class="row row-cols-2 h-100">
-          <div class=" flex-wrap justify-content-between align-items-center col-sm-6 col-md-3 p-0"
+          <div class="intro-x flex-wrap justify-content-between align-items-center col-sm-6 col-md-3 p-0"
                *ngFor="let item of dataVr" (click)="btnSelectNgulieu(item)">
             <div class="d-inline-block" style=" max-width:300px; width:100%; overflow: hidden;cursor: pointer">
               <img class="w-100 h-100 ovic-img-zoom" [src]="item.file_thumbnail ? item['_img_thumbnail']: 'assets/images/placeholder-3x2.jpg'" alt="">
@@ -48,13 +48,11 @@
 
   <div class="shift-test-container mt-5" style="background: #75837ad4;max-width: 100%;overflow: hidden; ">
     <div class=" container d-flex justify-content-center align-items-center flex-column py-5">
-      <!--        <div class="row container">-->
       <div class="row ">
         <div class="col text-right shif-test-left shif-test__img">
           <img class="w-100" style="max-width:100%"t src="assets/icon-png/shift-test.png" alt="">
         </div>
         <div class="col shif-test-right resize-test-right">
-          <!--            <div class="w-100 h-100 d-flex justify-content-center align-items-center flex-column">-->
           <div class="w-100 text-center p-2">
             <h3 class="shift-test__title">Tìm hiểu về Lịch sử - Văn hoá</h3>
             <h3 class="shift-test__title">thông qua các cuộc thi</h3>
@@ -82,7 +80,7 @@
         <!--  thay tế-->
         <div class="w-100 mt-3">
           <div class="row row-cols-2 h-100">
-            <div class=" flex-wrap justify-content-between align-items-center col-sm-6 col-md-3 p-0"
+            <div class="intro-x flex-wrap justify-content-between align-items-center col-sm-6 col-md-3 p-0"
                  *ngFor="let item of dataSukien" (click)="btnSelectSukien(item)">
               <div class="d-inline-block" style=" max-width:300px; width:100%; overflow: hidden;cursor: pointer">
                 <img class="w-100 h-100 ovic-img-zoom"

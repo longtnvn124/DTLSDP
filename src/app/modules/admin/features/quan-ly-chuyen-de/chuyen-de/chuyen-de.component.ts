@@ -130,8 +130,6 @@ export class ChuyenDeComponent implements OnInit, OnChanges, AfterViewInit {
     this.chuyenDeService.loadDataUnlimit().subscribe({
       next: (data) => {
         this.listData = this.setNewData(data);
-        console.log(this.listData);
-
       }, error: () => {
       }
     })
@@ -198,10 +196,8 @@ export class ChuyenDeComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   onCreateMenuItem(value, item) {
-    console.log(value)
     item.title = value;
     if (value && item && value.trim().length > 0) {
-      console.log(item);
       if (!item.id) {
         this.isUpdated = false;
         delete item.id;
@@ -258,7 +254,6 @@ export class ChuyenDeComponent implements OnInit, OnChanges, AfterViewInit {
           }
         });
       } else {
-        console.log(this.object);
         this.chuyenDeService.create(this.object).subscribe({
           next: () => {
             this.notificationService.toastSuccess('Thêm chuyên đề thành công');

@@ -57,6 +57,7 @@ export class OvicMediaVrComponent implements OnInit, OnDestroy {
   @Input() _pointStart: Point;
   @Input() viewRotate: boolean = true;  // view rotate
   @Input() rotate: boolean = false;
+  @Input() device:string ;
 
   @HostListener('window:resize', ['$event']) onResize1(event: Event): void {
     this.isSmallScreen = window.innerWidth < 500;
@@ -140,6 +141,8 @@ export class OvicMediaVrComponent implements OnInit, OnDestroy {
 
   }
 
+  isStartvr:boolean = false;
+
   ngOnDestroy(): void {
     this.scene.clear();
     this.scene.remove();
@@ -170,13 +173,19 @@ export class OvicMediaVrComponent implements OnInit, OnDestroy {
         {name: 'Chuyển cảnh', path: './assets/icon-png/chuyencanh.png'},
       ];
     this.startSceneByNgulieu();
-
   }
 
   dataPointsChild: convertPoint[];
   ngulieuStart: Ngulieu;
   nguLieu_type: 0 | 1;//
   startSceneByNgulieu() {
+    this.pointSelect = null;
+    if (this.pointSelect){
+      this.isStartvr = true;
+    }
+
+
+
     const ngulieu_id = this._ngulieu.id;
     this.backToScene = false;
     this.notificationService.isProcessing(true);
@@ -196,7 +205,7 @@ export class OvicMediaVrComponent implements OnInit, OnDestroy {
           return m;
         }).filter(f => f.ngulieu_id === ngulieu_id && f.parent_id === 0) : [];
         this.ngulieuStart['_points_child'] = this.dataPointsChild ? this.dataPointsChild : [];
-        console.log(this.ngulieuStart);
+
         this.loadInit(this.ngulieuStart);
         this.notificationService.isProcessing(false);
       },
@@ -439,6 +448,9 @@ export class OvicMediaVrComponent implements OnInit, OnDestroy {
   loadPoint(point: Point) {
     this.notificationService.isProcessing(true);
     this.pointSelect = point;
+    if (this.pointSelect){
+      this.isStartvr = true;
+    }
 
     if (point.file_audio && point.file_audio[0] && this.audio) {
       this.audio.pause()
@@ -451,11 +463,9 @@ export class OvicMediaVrComponent implements OnInit, OnDestroy {
       void audiopoint.play();
       if(this.audio){
         this.audio.remove();
-        console.log(this.audio);
+
       }
       this.audio= audiopoint;
-
-      console.log(this.audio);
     }
 
     this.modalService.open(this.templateWaiting, WAITING_POPUP_SPIN);
@@ -588,7 +598,7 @@ export class OvicMediaVrComponent implements OnInit, OnDestroy {
 
   btnFormAdd(pointData: OvicVrPointUserData) {
     this.parentId = pointData.ovicPointId;
-    console.log(this.parentId);
+
     this.changeInputMode("add", null, pointData.ovicPointId)
     this.onOpenFormEdit();
   }
@@ -722,7 +732,7 @@ export class OvicMediaVrComponent implements OnInit, OnDestroy {
           return m;
         }) : [];
         this.pointSelect = dataPointsChild.find(f => f.id === idPoint) ? dataPointsChild.find(f => f.id === idPoint) : null;
-        console.log(this.pointSelect);
+
         if (this.pointSelect) {
 
           this.loadPoint(this.pointSelect);
@@ -736,12 +746,20 @@ export class OvicMediaVrComponent implements OnInit, OnDestroy {
 
   loadStart() {
     this.loadInit(this.ngulieuStart);
+    this.pointSelect = null;
+    this.isStartvr=false;
   }
 
   async gobackhome() {
     const button = await this.notificationService.confirmRounded('Xác nhận', 'Trở lại trang chủ', [BUTTON_YES, BUTTON_NO]);
     if (button.name === BUTTON_YES.name) {
-      void this.router.navigate(['home/']);
+      if (this.device ==='mobile'){
+        void this.router.navigate(['mobile/']);
+
+      }else{
+        void this.router.navigate(['home/']);
+
+      }
     }
   }
 }

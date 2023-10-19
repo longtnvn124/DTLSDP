@@ -9,6 +9,24 @@ import {
 import {
   MobileNgulieuVrComponent
 } from "@modules/public/features/mobile-app/mobi-layouts/mobile-ngulieu-vr/mobile-ngulieu-vr.component";
+import {
+  MobileNhanVatComponent
+} from "@modules/public/features/mobile-app/mobi-layouts/mobile-nhan-vat/mobile-nhan-vat.component";
+import {
+  MobileChuyenDeComponent
+} from "@modules/public/features/mobile-app/mobi-layouts/mobile-chuyen-de/mobile-chuyen-de.component";
+import {
+  MobileSuKienComponent
+} from "@modules/public/features/mobile-app/mobi-layouts/mobile-su-kien/mobile-su-kien.component";
+import {
+  MobileGioiThieuComponent
+} from "@modules/public/features/mobile-app/mobi-layouts/mobile-gioi-thieu/mobile-gioi-thieu.component";
+import {
+  MobileTinTucComponent
+} from "@modules/public/features/mobile-app/mobi-layouts/mobile-tin-tuc/mobile-tin-tuc.component";
+import {
+  MobileThongBaoComponent
+} from "@modules/public/features/mobile-app/mobi-layouts/mobile-thong-bao/mobile-thong-bao.component";
 
 const routes: Routes = [
   // {
@@ -23,20 +41,44 @@ const routes: Routes = [
     component:MainLayoutComponent,
     children:[
       {
+        path:'mobile-chuyen-de',
+        component:MobileChuyenDeComponent,
+      },
+      {
         path:'mobile-chuyen-muc',
         component:MobileChuyenMucComponent,
+      },
+      {
+        path:'mobile-nhan-vat',
+        component:MobileNhanVatComponent,
       },
       {
         path:'mobile-tim-kiem',
         component:MobileChuyenMucComponent,
       },
       {
-        path:'mobile-ngu-lieu-vr',
+        path:'mobile-vr-360',
         component:MobileNgulieuVrComponent,
       },
       {
         path:'mobile-chuyen-muc',
         component:MobileChuyenMucComponent,
+      },
+      {
+        path:'mobile-su-kien',
+        component:MobileSuKienComponent,
+      },
+      {
+        path:'mobile-gioi-thieu',
+        component:MobileGioiThieuComponent,
+      },
+      {
+        path:'mobile-tin-tuc',
+        component:MobileTinTucComponent,
+      },
+      {
+        path:'mobile-thong-bao',
+        component:MobileThongBaoComponent,
       },
       {
         path:'',

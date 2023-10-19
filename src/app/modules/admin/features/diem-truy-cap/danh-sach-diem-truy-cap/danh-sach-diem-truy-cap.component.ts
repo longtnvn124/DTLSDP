@@ -397,7 +397,7 @@ export class DanhSachDiemTruyCapComponent implements OnInit {
       case 'EDIT_DECISION':
         this.btn_checkAdd= "Xác nhận";
         const object1 = this.data.find(u => u.id === decision.id);
-        console.log(object1);
+
         this.formSave.reset({
           icon: object1.icon,
           title: object1.title,

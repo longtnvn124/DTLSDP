@@ -9,6 +9,17 @@ import { MobileSuKienComponent } from './mobi-layouts/mobile-su-kien/mobile-su-k
 import { MobileNgulieuVrComponent } from './mobi-layouts/mobile-ngulieu-vr/mobile-ngulieu-vr.component';
 import { MobileChuyenMucComponent } from './mobi-layouts/mobile-chuyen-muc/mobile-chuyen-muc.component';
 import { MainLayoutComponent } from './main-layout/main-layout.component';
+import {SharedModule} from "@shared/shared.module";
+import { MobileChuyenDeComponent } from './mobi-layouts/mobile-chuyen-de/mobile-chuyen-de.component';
+import { MobileChuyeDeContentComponent } from './mobi-layouts/mobile-chuyen-de/mobile-chuye-de-content/mobile-chuye-de-content.component';
+import { MobileChuyeDeMenuComponent } from './mobi-layouts/mobile-chuyen-de/mobile-chuye-de-menu/mobile-chuye-de-menu.component';
+import {TooltipModule} from "primeng/tooltip";
+import {PdfViewerModule} from "ng2-pdf-viewer";
+import {ButtonModule} from "primeng/button";
+import {RippleModule} from "primeng/ripple";
+import { MobileGioiThieuComponent } from './mobi-layouts/mobile-gioi-thieu/mobile-gioi-thieu.component';
+import { MobileTinTucComponent } from './mobi-layouts/mobile-tin-tuc/mobile-tin-tuc.component';
+import { MobileThongBaoComponent } from './mobi-layouts/mobile-thong-bao/mobile-thong-bao.component';
 
 
 @NgModule({
@@ -18,12 +29,23 @@ import { MainLayoutComponent } from './main-layout/main-layout.component';
     MobileSuKienComponent,
     MobileNgulieuVrComponent,
     MobileChuyenMucComponent,
-    MainLayoutComponent
+    MainLayoutComponent,
+    MobileChuyenDeComponent,
+    MobileChuyeDeContentComponent,
+    MobileChuyeDeMenuComponent,
+    MobileGioiThieuComponent,
+    MobileTinTucComponent,
+    MobileThongBaoComponent
   ],
   imports: [
     CommonModule,
     MobileAppRoutingModule,
-    GalleriaModule
+    GalleriaModule,
+    SharedModule,
+    TooltipModule,
+    PdfViewerModule,
+    ButtonModule,
+    RippleModule
   ]
 })
 export class MobileAppModule { }

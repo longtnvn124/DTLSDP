@@ -108,3 +108,23 @@
   display: block;
   height: calc(100% - 64px - 60px);
 }
+
+
+.ngulieuso_item_title{
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+.ngulieuso_item_title_div{
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 18px;
+  height: 36px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-left: 4px;
+  padding-right: 4px;
+}
