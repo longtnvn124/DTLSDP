@@ -6,9 +6,9 @@ import { ContentNoneComponent } from './features/content-none/content-none.compo
 import { UnauthorizedComponent } from './features/unauthorized/unauthorized.component';
 import { ClearComponent } from './features/clear/clear.component';
 import { LoginVideoComponent } from '@modules/public/features/login-video/login-video.component';
-import {VirtualTourComponent} from "@modules/public/features/virtual-tour/virtual-tour.component";
-import {ResetPasswordComponent} from "@modules/public/features/reset-password/reset-password.component";
-import {WebHomeComponent} from "@modules/public/features/web-home/web-home.component";
+import { VirtualTourComponent } from '@modules/public/features/virtual-tour/virtual-tour.component';
+import { ResetPasswordComponent } from '@modules/public/features/reset-password/reset-password.component';
+import { WebHomeComponent } from '@modules/public/features/web-home/web-home.component';
 
 const routes : Routes = [
 	{
@@ -19,10 +19,10 @@ const routes : Routes = [
 		path      : 'clear' ,
 		component : ClearComponent
 	} ,
-  {
-    path      : 'home' ,
-    component : WebHomeComponent
-  } ,
+	{
+		path      : 'home' ,
+		component : WebHomeComponent
+	} ,
 	{
 		path      : 'login' ,
 		component : LoginVideoComponent
@@ -36,19 +36,19 @@ const routes : Routes = [
 	// 	path      : 'login-2' ,
 	//  component : LoginV2Component
 	// } ,
-  {
-    path      : 'virtual-tour' ,
-    component : VirtualTourComponent
-  } ,
+	{
+		path      : 'virtual-tour' ,
+		component : VirtualTourComponent
+	} ,
 	{
 		path      : 'content-none' ,
 		component : ContentNoneComponent
 	} ,
 
-  {
-    path      : 'reset-password' ,
-    component : ResetPasswordComponent
-  } ,
+	{
+		path      : 'reset-password' ,
+		component : ResetPasswordComponent
+	} ,
 	{
 		path       : '' ,
 		redirectTo : 'home' ,

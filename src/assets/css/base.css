@@ -144,6 +144,8 @@ body .ui-widget {
 	position: relative;
 }
 
+.ictu-is-loading--circle-black::before,
+.ictu-is-loading--circle::before,
 .ovic-is-loading::before {
 	position: absolute;
 	top: 0;
@@ -172,6 +174,45 @@ body .ui-widget {
 	margin: -12px 0 0 -12px;
 	top: 50%;
 	left: 50%;
+}
+
+.ictu-is-loading--circle-black,
+.ictu-is-loading--circle {
+	position: relative;
+}
+
+.ictu-is-loading--circle-black::after,
+.ictu-is-loading--circle::after {
+	font-family: primeicons, serif;
+	speak: none;
+	font-style: normal;
+	font-weight: 400;
+	font-feature-settings: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	font-size: 14px;
+	color: #ffffff;
+	width: 32px;
+	height: 32px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	content: "\e926";
+	top: 50%;
+	left: 50%;
+	position: absolute;
+	margin: -16px 0 0 -16px;
+	z-index: 200;
+	background: #2c2c2c73;
+	border-radius: 999px;
+	animation: fa-spin 2s infinite linear;
+}
+
+.ictu-is-loading--circle-black::after {
+	background-color: #666666;
 }
 
 .loading--size-medium::after {
@@ -258,7 +299,7 @@ body .ui-widget {
 	.p-toast {
 		max-width: calc(100% - 30px);
 	}
-
+	
 	.p-toast-bottom-right {
 		right: 15px !important;
 	}
@@ -369,12 +410,12 @@ body .p-tooltip-top .p-tooltip-arrow {
 }
 
 .ovic-modal-class--size-auto .modal-dialog {
-  justify-content: center
+	justify-content: center
 }
 
 .ovic-modal-class--size-auto .modal-dialog .modal-content {
-  width: auto;
-  background: transparent
+	width: auto;
+	background: transparent
 }
 
 .btn-cancel {
@@ -3005,6 +3046,10 @@ body .--modal-show-full--true ovic-preview-single-google-drive-file {
 .p-button.p-button-lg {
 	font-size: 18px;
 	padding: 15px 25px;
+}
+
+.p-button-center .p-button-label {
+	flex: inherit;
 }
 
 .p-inputgroup-addon button.p-button {

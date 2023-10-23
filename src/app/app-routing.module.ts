@@ -3,16 +3,15 @@ import { RouterModule , Routes } from '@angular/router';
 import { ModuleGuard } from '@core/guards/module.guard';
 
 const routes : Routes = [
-
 	{
 		path         : 'admin' ,
 		canActivate  : [ ModuleGuard ] ,
 		loadChildren : () => import('@modules/admin/admin.module').then( m => m.AdminModule )
 	} ,
-  {
-    path         : 'test' ,
-    loadChildren : () => import('@modules/test/test.module').then( m => m.TestModule )
-  } ,
+	{
+		path         : 'test' ,
+		loadChildren : () => import('@modules/test/test.module').then( m => m.TestModule )
+	} ,
 	{
 		path         : '' ,
 		loadChildren : () => import('@modules/public/public.module').then( m => m.PublicModule )
@@ -22,7 +21,6 @@ const routes : Routes = [
 		redirectTo : 'home' ,
 		pathMatch  : 'full'
 	}
-
 ];
 
 @NgModule( {

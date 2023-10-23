@@ -85,7 +85,7 @@ export const APP_CONFIGS = {
   showHttpInterceptorError : false ,
   limitFileType            : false ,
   info_console             : true ,
-  project_name             : `Core 14 V${ appVersion }` ,
+  project_name             : `DTLSDP V${ appVersion }` ,
   author                   : 'OvicSoft' ,
   bg_color_01              : '#008060' ,
   bg_color_02              : '#4959bd' ,

@@ -1,79 +1,58 @@
 <div class="w-100 h-100" style="background-color: #fbf6f2;">
-
-  <ng-container [ngSwitch]="mode">
-    <ng-container *ngSwitchDefault>
-      <div class="container h-100" style="padding: 90px 0;z-index: 5;position: relative;">
+    <div class="shift-container container h-100 position-relative" [class.ovic-is-loading]="isLoading">
         <div class="dotthi-container w-100 border">
-          <div class="dotthi-container__title p-2">
-            <div>
-              Danh sách đợt thi
-            </div>
-            <div>
-              <button style="padding: 10px;" pButton pRipple label="Trang chủ" class="btn-logout " icon="pi pi-home" iconPos="right"
-                      (click)="backHome()"></button>
-              <button style="padding: 10px;" pButton pRipple label="Đăng xuất" class="ml-1 btn-logout p-button-warning" icon="pi pi-sign-out" iconPos="right"
-                      (click)="confirmSignOut()"></button>
-            </div>
-          </div>
-
-          <div *ngIf="dsDotthi" class="dotthi-container__body h-100 border-top-1">
-            <div *ngFor="let item of dsDotthi" class="dotthi-item p-3">
-
-              <div class="dotthi-item__logo box">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                     class="lucide w-12 h-12 text-pending">
-                  <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
-                  <polyline points="14 2 14 8 20 8"></polyline>
-                  <path d="m9 15 2 2 4-4"></path>
-                </svg>
-              </div>
-              <div class="dotthi-item__body ml-4 w-100">
-                <div><p class="font-size-13px dotthi-item__body-title text-left mb-0">{{item.title}}</p></div>
-                <div><p class="font-size-13px dotthi-item__body-time text-left mb-0">Thời gian thi: <span>{{item.duration}}</span></p>
+            <div class="dotthi-container__title p-2">
+                <div class="dotthi-container__title__heading">Danh sách đợt thi</div>
+                <div class="dotthi-container__title__buttons">
+                    <button style="padding: 10px;" pButton pRipple label="Trang chủ" class="btn-logout " icon="pi pi-home" iconPos="right" (click)="backHome()"></button>
+                    <!--<button style="padding: 10px;" pButton pRipple label="Đăng xuất" class="ml-1 btn-logout p-button-warning" icon="pi pi-sign-out" iconPos="right" (click)="confirmSignOut()"></button>-->
                 </div>
-                <div><p class="font-size-13px dotthi-item__body-count-question text-left mb-0">Số câu hỏi:
-                  <span>{{item.totalQuestion}}</span> câu</p></div>
-                <div><p class="font-size-13px dotthi-item__body_time-doit text-left mb-0">Thời gian làm bài:
-                  <span>{{item.totalTime}}</span></div>
-              </div>
-              <div class="dotthi-item__button">
-                <button [disabled]="item.state === -1" pRipple pButton [label]="item.button.label"
-                        [icon]="item.button.icon" [ngClass]="item.button.class" class="border-radius-0"
-                        (click)="btnTest(item)"></button>
-              </div>
             </div>
-          </div>
+            <div *ngIf="dsDotthi" class="dotthi-container__body h-100 border-top-1">
+                <div *ngFor="let item of dsDotthi" class="dotthi-item p-3">
+                    <div class="dotthi-item__logo box">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide w-12 h-12 text-pending">
+                            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <path d="m9 15 2 2 4-4"></path>
+                        </svg>
+                    </div>
+                    <div class="dotthi-item__body ml-4 w-100">
+                        <div>
+                            <p class="dot-thi-item__row font-size-13px dotthi-item__body-title text-left">{{item.title}}</p>
+                        </div>
+                        <div>
+                            <p class="dot-thi-item__row font-size-13px dotthi-item__body-time text-left mb-0 text-primary">
+                                <span>Thời gian bắt đầu</span>{{item.startAt}}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="dot-thi-item__row font-size-13px dotthi-item__body-time text-left mb-0 text-danger">
+                                <span>Kết thúc</span>{{item.closeAt}}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="dot-thi-item__row font-size-13px dotthi-item__body-count-question text-left mb-0">
+                                <span>Số câu hỏi</span>{{item.totalQuestion}} câu
+                            </p>
+                        </div>
+                        <div>
+                            <p class="dot-thi-item__row font-size-13px dotthi-item__body_time-doit text-left mb-0">
+                                <span>Thời gian làm bài</span>{{item.totalTime}} phút
+                        </div>
+                    </div>
+                    <div class="dotthi-item__button">
+                        <button [disabled]="item.state === -1" pRipple pButton [label]="item.button.label" [icon]="item.button.icon" [ngClass]="item.button.class" class="border-radius-0" (click)="btnTest(item)"></button>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-
-    </ng-container>
-
-    <ng-container *ngSwitchCase="'EXAM'">
-      <div class="d-flex justify-content-center align-items-center h-100">
-        <div class="test-exam__container">
-          <div class="test-exam__container-title border-bottom" style="height: 160px">
-            <div class="p-1 m-1 border-right" style="width:50% ">
-              <div class="test-exam__container-title__name">Tên người dùng: <span>{{userData.display_name}}</span></div>
-              <div class="test-exam__container-title__email">Email:{{userData.email}}</div>
-            </div>
-            <div class="p-1 m-1" style="width:50% ">
-
-            </div>
-          </div>
-          <div class="test-exam__container-body"></div>
-        </div>
-      </div>
-    </ng-container>
-  </ng-container>
-
-  <div class="svg_content svg-left">
-    <img class="svg-img" src="/assets/icon-png/right-icon.png" alt="">
-
-  </div>
-  <div class="svg_content svg-right">
-    <img class="svg-img" src="/assets/icon-png/left-icon.png" alt="">
-
-  </div>
+    </div>
+    <div class="svg_content svg-left">
+        <img class="svg-img" src="/assets/icon-png/right-icon.png" alt="">
+    </div>
+    <div class="svg_content svg-right">
+        <img class="svg-img" src="/assets/icon-png/left-icon.png" alt="">
+    </div>
 </div>
 

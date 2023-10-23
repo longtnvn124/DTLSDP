@@ -206,7 +206,7 @@
 .bd-dl-info_item {
   /*border-bottom: 1px solid;*/
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
   align-items: center;
 
 }
