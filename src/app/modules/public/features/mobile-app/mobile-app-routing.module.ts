@@ -27,6 +27,12 @@ import {
 import {
   MobileThongBaoComponent
 } from "@modules/public/features/mobile-app/mobi-layouts/mobile-thong-bao/mobile-thong-bao.component";
+import {
+  MobileIfarmeComponent
+} from "@modules/public/features/mobile-app/mobi-layouts/mobile-ifarme/mobile-ifarme.component";
+import {
+  MobileTimKiemComponent
+} from "@modules/public/features/mobile-app/mobi-layouts/mobile-tim-kiem/mobile-tim-kiem.component";
 
 const routes: Routes = [
   // {
@@ -54,7 +60,7 @@ const routes: Routes = [
       },
       {
         path:'mobile-tim-kiem',
-        component:MobileChuyenMucComponent,
+        component:MobileTimKiemComponent,
       },
       {
         path:'mobile-vr-360',
@@ -79,6 +85,10 @@ const routes: Routes = [
       {
         path:'mobile-thong-bao',
         component:MobileThongBaoComponent,
+      },
+      {
+        path:'cong-thong-tin',
+        component:MobileIfarmeComponent,
       },
       {
         path:'',

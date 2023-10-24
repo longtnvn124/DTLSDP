@@ -132,4 +132,14 @@ export class MobileHomeComponent implements OnInit {
     this.router.navigate(['/mobile/mobile-chuyen-de/'], {queryParams:{param:item.id}});
   }
 
+  // congthongtin:[]=[
+  //   {id:1,url:'https://thainguyen.gov.vn'},
+  //   {id:2,url:'https://thainguyen.dcs.vn'},
+  // ]
+
+  // btnPramCongthongtin(id:number){
+  //   this.router.navigate(['/mobile/cong-thong-tin/'], {queryParams:{param:id}});
+  // }
+
+
 }

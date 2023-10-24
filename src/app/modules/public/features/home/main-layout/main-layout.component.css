@@ -16,8 +16,8 @@
 }
 
 .header-scrolled {
-  background-color: rgba(0, 0, 0, 0.8); /* Màu nền với độ mờ */
-  color: #fff; /* Màu chữ khi header được cuộn */
+  /*background-color: rgba(0, 0, 0, 0.8); !* Màu nền với độ mờ *!*/
+  /*color: #fff; !* Màu chữ khi header được cuộn *!*/
 }
 
 #header hr {

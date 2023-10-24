@@ -1,0 +1,28 @@
+
+.navbar-container{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 5px 12px;
+  height: 60px;
+}
+.navbar-icon-left,.navbar-icon-right{
+  color:#BD0D04;
+  font-size:16px;
+}
+
+.navbar-input{
+  width:100%;
+
+  padding:0 10px;
+}
+.navbar-input input{
+  width: 100%;
+  border-radius: 40px;
+  border: 1px solid red;
+  content: 'tìm kiếm';
+  padding: 0 14px;
+  font-size: 14px;
+  height:36px;
+}

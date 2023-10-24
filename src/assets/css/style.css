@@ -130,3 +130,16 @@ body .ovic-showcase {
 	align-items: center;
 	height: 30px;
 }
+
+.test-member__from__col input.p-inputmask{
+	border: none !important;
+	box-shadow: none !important;
+	outline: none !important;
+	background-color: #fff;
+	font-size: 15px;
+	color: #333333;
+	width: 100%;
+	padding: 0 5px;
+	height: 28px;
+	line-height: 28px;
+}

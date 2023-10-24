@@ -20,6 +20,8 @@ import {RippleModule} from "primeng/ripple";
 import { MobileGioiThieuComponent } from './mobi-layouts/mobile-gioi-thieu/mobile-gioi-thieu.component';
 import { MobileTinTucComponent } from './mobi-layouts/mobile-tin-tuc/mobile-tin-tuc.component';
 import { MobileThongBaoComponent } from './mobi-layouts/mobile-thong-bao/mobile-thong-bao.component';
+import { MobileIfarmeComponent } from './mobi-layouts/mobile-ifarme/mobile-ifarme.component';
+import { MobileTimKiemComponent } from './mobi-layouts/mobile-tim-kiem/mobile-tim-kiem.component';
 
 
 @NgModule({
@@ -35,7 +37,9 @@ import { MobileThongBaoComponent } from './mobi-layouts/mobile-thong-bao/mobile-
     MobileChuyeDeMenuComponent,
     MobileGioiThieuComponent,
     MobileTinTucComponent,
-    MobileThongBaoComponent
+    MobileThongBaoComponent,
+    MobileIfarmeComponent,
+    MobileTimKiemComponent
   ],
   imports: [
     CommonModule,

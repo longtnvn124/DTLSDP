@@ -3,6 +3,7 @@
 }
 
 :root {
+	--primary-font-family: 'Roboto', sans-serif;
 	--main-color: #007F49;
 	--main-dark-color: #06633b;
 	--hover-main-color: #06633B;
@@ -269,4 +270,8 @@ a:hover {
 .ck-body-wrapper {
 	position: relative;
 	z-index: 9999999;
+}
+
+.primary-font-family {
+	font-family: var(--primary-font-family);
 }

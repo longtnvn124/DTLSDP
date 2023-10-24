@@ -3222,3 +3222,7 @@ app-mediavr {
   height: calc(100% + var(--panel-padding) + var(--panel-padding)) !important;
   margin: var(--panel-padding--negative);
 }
+
+.exam-container__item-label p {
+	margin-bottom: 0;
+}

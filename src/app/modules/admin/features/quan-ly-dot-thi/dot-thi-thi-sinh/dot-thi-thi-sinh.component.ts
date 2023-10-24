@@ -288,13 +288,12 @@ export class DotThiThiSinhComponent implements OnInit {
         const quesition_ids = decision.question_ids;
         const details = decision.details;
         const bank_id = decision['_bank_id'];
-
         this.notificationService.isProcessing(true);
         this.nganHangCauHoiService.getDataByBankId(bank_id,null).subscribe({
           next:(data)=>{
             this.nganhangCauhoi= quesition_ids.map(m =>{
               const item =data.find(f=>f.id === m);
-              item['per_select_question'] = details[m].join(',').toString();
+              item['per_select_question'] =details[m] ? details[m].join(',').toString():'';
               item['correct_answer_coverted'] = item.correct_answer.map(t=> item.answer_options.find(f=>f.id === t));
 
               return item;
@@ -316,8 +315,6 @@ export class DotThiThiSinhComponent implements OnInit {
         break;
     }
   }
-    // {"2":[3],"4":[1],"6":[3],"7":[2],"8":[2,3]}
-  // shiftTest:ShiftTests[];
   dataUsers:NewContestant[];
   loadTestTaker(idShift:number, bank_id:number,shift:Shift){
     this.notificationService.isProcessing(true);
@@ -337,7 +334,6 @@ export class DotThiThiSinhComponent implements OnInit {
           m['_number_correct_converted']  = shiftTest.number_correct +'/'+shiftTest.question_ids.length;
           return m;
         });
-
         this.dataShiftTest =dataShifTest.map(m=>{
           const index = i++;
           const _shift_name = this.listData.find(f=>f.id ===m.shift_id).title;

@@ -190,4 +190,5 @@ export class ContestantComponent implements OnInit , OnDestroy {
 		this.destroy$.complete();
 	}
 
+
 }

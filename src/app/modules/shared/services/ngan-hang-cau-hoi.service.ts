@@ -133,4 +133,19 @@ export class NganHangCauHoiService {
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
     return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
   }
+
+
+  getTestQuestions( ids? : string[] , select : string = null ) : Observable<NganHangCauHoi[]> {
+    const fromObject = {
+      paged      : 1 ,
+      limit      : -1 ,
+      include    : ids.join( ',' ) ,
+      include_by : 'id'
+    };
+    if ( select ) {
+      fromObject[ 'select' ] = select;
+    }
+    const params : HttpParams = new HttpParams( { fromObject } );
+    return this.http.get<Dto>( this.api , { params } ).pipe( map( res => res.data ) );
+  }
 }

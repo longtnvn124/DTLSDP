@@ -1,17 +1,25 @@
 import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from "@angular/router";
-import {NotificationService} from "@core/services/notification.service";
-import {NganHangCauHoiService} from "@shared/services/ngan-hang-cau-hoi.service";
-import {detail, Shift, ShiftTests} from "@shared/models/quan-ly-doi-thi";
-import {AuthService} from "@core/services/auth.service";
-import {forkJoin, interval, Observable, of, Subject, switchMap, takeUntil} from "rxjs";
-import {NganHangCauHoi, NganHangDe} from "@shared/models/quan-ly-ngan-hang";
-import {NganHangDeService} from "@shared/services/ngan-hang-de.service";
-import {DotThiDanhSachService} from "@shared/services/dot-thi-danh-sach.service";
-import {DotThiKetQuaService} from "@shared/services/dot-thi-ket-qua.service";
-import {environment} from "@env";
-import {DateTimeServer, ServerTimeService} from "@shared/services/server-time.service";
-import {HelperService} from "@core/services/helper.service";
+import {Router} from '@angular/router';
+import {NotificationService} from '@core/services/notification.service';
+import {NganHangCauHoiService} from '@shared/services/ngan-hang-cau-hoi.service';
+import {detail, Shift, ShiftTests} from '@shared/models/quan-ly-doi-thi';
+import {forkJoin, Observable, of, Subject, switchMap} from 'rxjs';
+import {NganHangCauHoi, NganHangDe} from '@shared/models/quan-ly-ngan-hang';
+import {NganHangDeService} from '@shared/services/ngan-hang-de.service';
+import {DotThiDanhSachService} from '@shared/services/dot-thi-danh-sach.service';
+import {DotThiKetQuaService, ShiftTestScore} from '@shared/services/dot-thi-ket-qua.service';
+import {DateTimeServer, ServerTimeService} from '@shared/services/server-time.service';
+import {HelperService} from '@core/services/helper.service';
+import {AuthService} from '@core/services/auth.service';
+import {KEY_NAME_CONTESTANT_ID, KEY_NAME_CONTESTANT_PHONE, KEY_NAME_SHIFT_ID} from '@shared/utils/syscat';
+import {OvicButton} from '@core/models/buttons';
+
+interface ContestantInfo {
+  phone: string,
+  testName: string,
+  score: string,
+  number_correct: number
+}
 
 @Component({
   selector: 'app-panel',
@@ -19,99 +27,90 @@ import {HelperService} from "@core/services/helper.service";
   styleUrls: ['./panel.component.css']
 })
 export class PanelComponent implements OnInit, OnDestroy {
-  @HostListener('window:resize', ['$event']) onResize(event: Event): void {
-    console.log(this.isSmallScreen);
 
+  @HostListener('window:resize', ['$event']) onResize(): void {
     this.isSmallScreen = window.innerWidth <= 500;
-    // this.updateNhanvatContent();
   }
 
   isSmallScreen: boolean = window.innerWidth <= 500;
-  mode: 'PANEL' | 'TEXTRESULTS';
-  candiate = {
-    name: 'Unknown',
-    avatar: '',
+
+  mode: 'PANEL' | 'TEST_RESULT' | 'LOADING' = 'LOADING';
+
+  contestantInfo: ContestantInfo = {
+    phone: '',
     testName: '',
-    date: '',
-    number_correct: '',
-    result: 0,
+    score: '',
+    number_correct: 0
   };
 
   shift: Shift;
-  shiftTest: ShiftTests;
-  anwserQuestions: detail = {};
-  enableDialog: boolean = false;
-  private _validateInfo = {
-    shift_id: 0,
-    bank_id: 0,
-    safeGard: 0,
-  }
 
-  b: number = 1;
-  destroy$ = new Subject<string>();
+  shiftTest: ShiftTests;
+
+  answerQuestions: detail = {};
+
+  enableDialog: boolean = false;
+
+  destroy$: Subject<string> = new Subject<string>();
+
+  questions: NganHangCauHoi[];
+
+  remainingTimeClone: number = 0; // 30 minutes in seconds
+
+  intervalId: any;
+
+  isTimeOver: boolean = false;
+
+  private _validInfo: { shift_id: number, contestant: number } = {shift_id: 0, contestant: 0};
 
   constructor(
     private router: Router,
-    private activatedRoute: ActivatedRoute,
     private notificationService: NotificationService,
     private nganHangCauHoiService: NganHangCauHoiService,
     private nganHangDeService: NganHangDeService,
-    private auth: AuthService,
-    private dotThiDanhSachService: DotThiDanhSachService,
-    private dotThiKetQuaService: DotThiKetQuaService,
+    private shiftService: DotThiDanhSachService,
+    private shiftTestsService: DotThiKetQuaService,
     private serverTimeService: ServerTimeService,
-    private helperService: HelperService,
+    private authService: AuthService,
+    private helperService: HelperService
   ) {
-
   }
 
-
-  ngOnDestroy(): void {
-    this.stopTimer();
-    const time = this.remainingTimeClone;
-    const questionIds = this.anwserQuestions;
-    if (time && questionIds && this.router.navigate(['/test/shift'])) {
-      this.dotThiKetQuaService.update(this.shiftTest.id, {time: time, details: questionIds}).subscribe();
-    } else {
-      this.dotThiKetQuaService.update(this.shiftTest.id, {time: time, details: questionIds, state: -1}).subscribe();
-    }
-    this.destroy$.next('closed');
-    this.destroy$.complete()
-
-
-  }
 
   ngOnInit(): void {
-    if (!this.auth.isLoggedIn()) {
-      void this.router.navigate(['/login'], {queryParams: {redirect: 'test/panel'}});
-    } else {
-      if (this.activatedRoute.snapshot.queryParamMap.has('code')) {
-        const raw = this.activatedRoute.snapshot.queryParamMap.get('code');
-        const s1 = this.auth.decryptData(raw);
-        const info = s1 ? JSON.parse(s1) : null;
-        this.validateInfo(info);
-      } else {
-        void this.router.navigate(['/test/shift']);
-      }
-    }
+    // if ( !this.auth.isLoggedIn() ) {
+    // 	void this.router.navigate( [ '/login' ] , { queryParams : { redirect : 'test/panel' } } );
+    // } else {
+    //
+    // }
+    //
+    // interval( 15000 ).pipe( takeUntil( this.destroy$ ) ).subscribe( () => this.updateTimeLeftToServer() );
 
-    interval(15000).pipe(takeUntil(this.destroy$)).subscribe(() => this.updateTimeLeftToServer());
+    // if ( this.activatedRoute.snapshot.queryParamMap.has( 'code' ) ) {
+    // 	const raw  = this.activatedRoute.snapshot.queryParamMap.get( 'code' );
+    // 	const s1   = this.auth.decryptData( raw );
+    // 	const info = s1 ? JSON.parse( s1 ) : null;
+    // 	if ( info ) {
+    // 		this.validateInfoFirst( info );
+    // 	}
+    // } else {
+    // 	void this.router.navigate( [ '/test/shift' ] );
+    // }
+    this.checkInit();
   }
-
 
   private updateTimeLeftToServer() {
     if (this.shiftTest && Math.max(this.remainingTimeClone, 0) && this.shiftTest.state === 1) {
-      this.dotThiKetQuaService.update(this.shiftTest.id, {state:1,time: this.remainingTimeClone}).subscribe();
+      this.shiftTestsService.update(this.shiftTest.id, {state: 1, time: this.remainingTimeClone}).subscribe();
     }
   }
 
-  validateInfo(info: { shift_id: string, bank_id: string, safeGard: string }) {
-    const shift_id: number = info.shift_id ? parseInt(info.shift_id, 10) : NaN;
-    const bank_id: number = info.bank_id ? parseInt(info.bank_id, 10) : NaN;
-    const safeGard: number = info.safeGard ? parseInt(info.safeGard, 10) : NaN;
-    const checkSafeGard = environment.production ? !Number.isNaN(safeGard) && (Date.now() - safeGard ! < 300) : true;
-    if (!Number.isNaN(shift_id) && !Number.isNaN(bank_id) && checkSafeGard) {
-      this._validateInfo = {shift_id, bank_id, safeGard}
+  checkInit() {
+    const shift_id: number = this.authService.getOption(KEY_NAME_SHIFT_ID);
+    const contestant: number = this.authService.getOption(KEY_NAME_CONTESTANT_ID);
+    if (!Number.isNaN(shift_id) && !Number.isNaN(contestant)) {
+      this._validInfo.shift_id = shift_id;
+      this._validInfo.contestant = contestant;
       this._initTest();
     } else {
       void this.router.navigate(['/test/shift']);
@@ -119,104 +118,88 @@ export class PanelComponent implements OnInit, OnDestroy {
   }
 
   private _initTest() {
-    const user_id: number = this.auth.user.id;
     this.notificationService.isProcessing(true);
-    this.getData(this._validateInfo.shift_id, user_id, this._validateInfo.bank_id).subscribe({
-      next: ([shift_test, shift]) => {
-        this.shift = shift;
-        this.shiftTest = shift_test;
-        this.anwserQuestions = this.shiftTest.details || {};
-        this.remainingTimeClone = this.shiftTest.time;
-        const d = new Date();
-        if (this.shiftTest && this.shiftTest.state === 2) {
-          if (this.shiftTest) {
-            this.candiate = {
-              name: this.auth.user.display_name,
-              avatar: this.auth.user.avatar,
-              testName: this.shift.title,
-              date: [d.getDate().toString().padStart(2, '0'), (d.getMonth() + 1).toString().padStart(2, '0'), d.getFullYear().toString()].join('/'),
-              number_correct: this.shiftTest.number_correct + '/' + this.shiftTest.question_ids.length,
-              result: this.take_decimal_number(this.shiftTest.score,2),
-            }
+    this.contestantInfo.phone = this.authService.getOption(KEY_NAME_CONTESTANT_PHONE);
+    this._recheckData(this._validInfo.shift_id, this._validInfo.contestant).subscribe({
+      next: ([shiftTest, shift]) => {
+        if (shiftTest && shift) {
+          this.contestantInfo.testName = shift.title;
+          this.shift = shift;
+          this.shiftTest = shiftTest;
+          this.answerQuestions = this.shiftTest.details || {};
+          this.remainingTimeClone = this.shiftTest.time;
+          if (this.shiftTest && this.shiftTest.state === 2) {
+            this.mode = 'TEST_RESULT';
+          } else {
+            this.enableDialog = true;
+            this.mode = 'PANEL';
           }
-          this.mode = "TEXTRESULTS";
-        } else {
-          this.candiate = {
-            name: this.auth.user.display_name,
-            avatar: this.auth.user.avatar,
-            testName: this.shift.title,
-            date: [d.getDate().toString().padStart(2, '0'), (d.getMonth() + 1).toString().padStart(2, '0'), d.getFullYear().toString()].join('/'),
-            number_correct: '',
-            result: 0,
-          }
-          this.enableDialog = true;
-          this.mode = "PANEL";
-
         }
         this.notificationService.isProcessing(false);
-
       },
       error: (e) => {
-
+        console.log(e);
         this.notificationService.isProcessing(false);
         this.notificationService.toastError('Mất kết nối với máy chủ');
       }
-    })
-  }
-
-  take_decimal_number(num,n){
-    //num : số cần xử lý
-    //n: số chữ số sau dấu phẩy cần lấy
-    let base = 10**n;
-    let result = Math.round(num * base) / base ;
-    return result;
+    });
   }
 
   reInitTest() {
     this._initTest();
   }
 
-  // private convertDateFormat(dateString: string): string {
-  //   const date = new Date(dateString);
-  //   return date ? this.helperService.formatSQLDateTime(date) : null;
-  // }
-
-  private getData(shift_id: number, user_id: number, bank_id: number): Observable<[ShiftTests, Shift]> {
-    return this.dotThiKetQuaService.getShiftTest(shift_id, this.auth.user.id).pipe(switchMap(shiftTest => shiftTest ? forkJoin<[ShiftTests, Shift]>([
-      of(shiftTest),
-      this.dotThiDanhSachService.getDataById(shift_id)
-    ]) : this.createNewShiftTest(shift_id, user_id, bank_id)))
+  take_decimal_number(num, n) {
+    //num : số cần xử lý
+    //n: số chữ số sau dấu phẩy cần lấy
+    let base = 10 ** n;
+    return Math.round(num * base) / base;
   }
 
-  private createNewShiftTest(shift_id: number, user_id: number, bank_id: number): Observable<[ShiftTests, Shift]> {
-    return forkJoin<[NganHangDe, NganHangCauHoi[], Shift, DateTimeServer]>([
-      this.nganHangDeService.getDataById(bank_id),
-      this.nganHangCauHoiService.getDataByBankId(bank_id, null, 'id'),
-      this.dotThiDanhSachService.getDataById(shift_id),
+  private validateShift() {
+
+  }
+
+  private _recheckData(shift_id: number, contestant: number): Observable<[ShiftTests, Shift]> {
+    return forkJoin<[Shift, DateTimeServer]>([
+      this.shiftService.getDataById(shift_id),
       this.serverTimeService.getTime()
-    ]).pipe(switchMap(([nganHangDe, questions, shift, dateTime]) => {
-      return this.dotThiKetQuaService.createShiftTest({
-        shift_id: shift_id,
-        user_id: user_id,
-        question_ids: this.randomQuestions(questions.map(u => u.id), nganHangDe.number_questions_per_test),
-        time_start: this.helperService.formatSQLDateTime(this.helperService.dateFormatWithTimeZone(dateTime.date)),
-        time: Math.max(nganHangDe.time_per_test, 1) * 60
-      }).pipe(switchMap(id => forkJoin<[ShiftTests, Shift]>([
-        this.dotThiKetQuaService.getShiftTestById(id),
+    ]).pipe(switchMap(([shift, dateTime]): Observable<[ShiftTests, Shift]> => {
+      const currentTime: Date = this.helperService.dateFormatWithTimeZone(dateTime.date);
+      const startTime: Date = this.helperService.dateFormatWithTimeZone(shift.time_start);
+      const expiredTime: Date = this.helperService.dateFormatWithTimeZone(shift.time_end);
+      return this.helperService.isBeforeDate(currentTime, expiredTime) && this.helperService.isAfterDate(currentTime, startTime) ? forkJoin<[ShiftTests, Shift]>([
+        this._getContestantShiftTest(shift, contestant),
         of(shift)
-      ])))
+      ]) : of([null, null]);
     }));
   }
 
-  remainingTimeClone: number = 0; // 30 minutes in seconds
-  intervalId: any;
+  private _getContestantShiftTest(shift: Shift, contestant: number): Observable<ShiftTests> {
+    return this.shiftTestsService.getShiftTest(shift.id, contestant).pipe(switchMap(shiftTest => shiftTest ? of(shiftTest) : this.createNewShiftTest(shift, contestant)));
+  }
+
+  private createNewShiftTest(shift: Shift, contestant: number): Observable<ShiftTests> {
+    return forkJoin<[NganHangDe, NganHangCauHoi[], DateTimeServer]>([
+      this.nganHangDeService.getDataById(shift.bank_id),
+      this.nganHangCauHoiService.getDataByBankId(shift.bank_id, null, 'id'),
+      this.serverTimeService.getTime()
+    ]).pipe(switchMap(([nganHangDe, questions, dateTime]) => {
+      return this.shiftTestsService.createShiftTest({
+        shift_id: shift.id,
+        thisinh_id: contestant,
+        question_ids: this.randomQuestions(questions.map(u => u.id), nganHangDe.number_questions_per_test),
+        time_start: this.helperService.formatSQLDateTime(this.helperService.dateFormatWithTimeZone(dateTime.date)),
+        time: Math.max(nganHangDe.time_per_test, 1) * 60
+      }).pipe(switchMap(id => this.shiftTestsService.getShiftTestById(id)));
+    }));
+  }
 
   startTimer(remainingTime: number): void {
     this.intervalId = setInterval(() => {
       if (remainingTime > 0) {
         remainingTime--;
         this.remainingTimeClone = remainingTime;
-
       } else {
         this.stopTimer();
         this.viewSubmitTimeisOver();
@@ -225,8 +208,8 @@ export class PanelComponent implements OnInit, OnDestroy {
   }
 
   getFormattedTime(): string {
-    const minutes = Math.floor(this.remainingTimeClone / 60);
-    const seconds = this.remainingTimeClone % 60;
+    const minutes: number = Math.floor(this.remainingTimeClone / 60);
+    const seconds: number = this.remainingTimeClone % 60;
     return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
   }
 
@@ -243,141 +226,132 @@ export class PanelComponent implements OnInit, OnDestroy {
   startTheTest() {
     this.enableDialog = false;
     this.loadQuestion();
-    this.startTimer(this.shiftTest.time)
-
+    this.startTimer(this.shiftTest.time);
   }
-
-  dataQuestion: NganHangCauHoi[];
 
   loadQuestion() {
     this.notificationService.isProcessing(true);
-    this.nganHangCauHoiService.getDataByBankId(this._validateInfo.bank_id, null, 'id,bank_id,title,answer_options').subscribe({
-      next: (dataQuestion) => {
+    this.nganHangCauHoiService.getTestQuestions(this.shiftTest.question_ids, 'id,bank_id,title,answer_options').subscribe({
+      next: (questions) => {
         this.shiftTest.state = 1;
-        // const question_ids = this.shiftTest.question_ids;
-        this.dataQuestion = this.shiftTest.question_ids.map(id => {
-          const item = dataQuestion.find(f => f.id === id);
-          if (this.anwserQuestions !== {}) {
-            const detail: number[] = this.anwserQuestions[id];
-            item['answer_per_select'] = detail ? detail.join(',') : null;
-
-          } else {
-            item['answer_per_select'] = null;
-          }
-
+        this.questions = questions.map(item => {
+          const answered = this.answerQuestions[item.id];
+          item['__answered'] = answered && Array.isArray(answered) ? answered.filter(Boolean).join() : '';
           return item;
-        })
-
-        console.log(this.dataQuestion);
-        this.notificationService.isProcessing(false)
-      }, error: (e) => {
-        this.notificationService.isProcessing(false)
-        this.notificationService.toastError("Mất kết nối với máy chủ");
+        });
+        this.notificationService.isProcessing(false);
+      },
+      error: (e) => {
+        this.notificationService.isProcessing(false);
+        this.notificationService.toastError('Mất kết nối với máy chủ');
       }
-    })
+    });
   }
 
-  a: number = 1;
-
   async btSubmit() {
-    if (Object.keys(this.anwserQuestions).length < this.shiftTest.question_ids.length) {
+    if (Object.keys(this.answerQuestions).length < this.shiftTest.question_ids.length) {
       this.notificationService.toastWarning('Bạn chưa điềm đủ đáp án');
-
     } else {
-      const headText = 'Thông báo';
+      const headText: string = 'Thông báo';
       this.stopTimer();
-      const confirm = await this.notificationService.confirmRounded(`<p class="text-danger">Xác nhận nộp bài</p>`, headText);
+      const confirm: OvicButton = await this.notificationService.confirmRounded(`<p class="text-danger">Xác nhận nộp bài</p>`, headText);
       if (confirm.name === 'yes') {
         this.serverTimeService.getTime().pipe(switchMap((time) => {
-          const timeconverted = this.helperService.formatSQLDateTime(this.helperService.dateFormatWithTimeZone(time.date));
-          return this.dotThiKetQuaService.update(this.shiftTest.id, {
+          return this.shiftTestsService.update(this.shiftTest.id, {
             state: 2,
-            time_end: timeconverted,
-            details: this.anwserQuestions
-          }).pipe(switchMap(() => this.dotThiKetQuaService.scoreTest(this.shiftTest.id)));
+            time_end: this.helperService.formatSQLDateTime(this.helperService.dateFormatWithTimeZone(time.date)),
+            details: this.answerQuestions
+          }).pipe(switchMap(() => this.shiftTestsService.scoreTest(this.shiftTest.id)));
         })).subscribe({
-          next: () => {
+          next: (result: ShiftTestScore) => {
             this.shiftTest.state = 2;
-            this.shiftTest.details = this.anwserQuestions;
+            this.shiftTest.details = this.answerQuestions;
             this.notificationService.isProcessing(false);
-            this.reInitTest();
+            this.contestantInfo.number_correct = result.number_correct;
+            this.contestantInfo.score = result.score.toFixed(2);
+            this.mode = 'TEST_RESULT';
           }, error: () => {
             this.notificationService.isProcessing(false);
             this.notificationService.toastWarning('Nộp bài thất bại');
           }
-        })
+        });
       } else {
         this.startTimer(this.remainingTimeClone);
       }
-
-
     }
   };
 
   selectQuestion(id: number, value: string) {
     if (id && value) {
-      this.anwserQuestions[id] = value.split(',').map(m => parseInt(m));
-
-      this.dotThiKetQuaService.update(this.shiftTest.id, {
-        details: this.anwserQuestions,
+      this.answerQuestions[id] = value.split(',').map(m => parseInt(m));
+      this.shiftTestsService.update(this.shiftTest.id, {
+        details: this.answerQuestions,
         time: this.remainingTimeClone
       }).subscribe();
     } else {
-      delete this.anwserQuestions[id];
-      this.dotThiKetQuaService.update(this.shiftTest.id, {
-        details: this.anwserQuestions,
+      delete this.answerQuestions[id];
+      this.shiftTestsService.update(this.shiftTest.id, {
+        details: this.answerQuestions,
         time: this.remainingTimeClone
       }).subscribe();
     }
   }
 
-  isTimeOver: boolean = false;
-
   viewSubmitTimeisOver() {
     this.isTimeOver = true;
   }
 
-  async submitTimeisOver() {
+  submitTheTest(): void {
     this.notificationService.isProcessing(true);
-    this.serverTimeService.getTime().pipe(switchMap((time) => {
-      const timeconverted = this.helperService.formatSQLDateTime(this.helperService.dateFormatWithTimeZone(time.date));
-      return this.dotThiKetQuaService.update(this.shiftTest.id, {
-        state: 2,
-        time_end: timeconverted,
-        details: this.anwserQuestions,
-        time: 0,
-      });
-    })).subscribe({
-      next: () => {
+    this.shiftTestsService.update(this.shiftTest.id, {
+      state: 2,
+      details: this.answerQuestions,
+      time: 0
+    }).pipe(switchMap((time) => this.shiftTestsService.scoreTest(this.shiftTest.id))).subscribe({
+      next: (result: ShiftTestScore) => {
         this.notificationService.isProcessing(false);
-        this.mode = "TEXTRESULTS";
-        this.dotThiKetQuaService.scoreTest(this.shiftTest.id).subscribe();
-        this.notificationService.toastSuccess("Nộp bài thành công");
-        this.reInitTest()
-        this.isTimeOver=false;
+        this.shiftTestsService.scoreTest(this.shiftTest.id).subscribe();
+        this.notificationService.toastSuccess('Nộp bài thành công');
+        // this.reInitTest();
+        this.contestantInfo.number_correct = result.number_correct;
+        this.contestantInfo.score = result.score.toFixed(2);
+        this.isTimeOver = false;
+        this.mode = 'TEST_RESULT';
       },
       error: () => {
         this.notificationService.isProcessing(false);
         this.notificationService.toastError('Nộp bài thất bại');
       }
-    })
+    });
   }
 
   btnOutTest() {
+    this.authService.setOption(KEY_NAME_CONTESTANT_ID, 0);
+    this.authService.setOption(KEY_NAME_SHIFT_ID, 0);
+    this.authService.setOption(KEY_NAME_CONTESTANT_PHONE, '');
     void this.router.navigate(['/test/shift']);
   }
 
   saveTheTest() {
-    this.dotThiKetQuaService.update(this.shiftTest.id, {
-      details: this.anwserQuestions,
-      time: this.remainingTimeClone,
-      state:1
-    }).subscribe(
-      {
-        next: () =>
-          this.notificationService.toastSuccess('Hệ thống đã lưu bài làm ở thời điểm hiện tại')
-      }
-    );
+    this.shiftTestsService.update(this.shiftTest.id, {
+      details: this.answerQuestions,
+      time: this.remainingTimeClone
+    }).subscribe(() => this.notificationService.toastSuccess('Hệ thống đã lưu bài làm ở thời điểm hiện tại'));
   }
+
+
+  ngOnDestroy(): void {
+    this.stopTimer();
+    const time = this.remainingTimeClone;
+    const questionIds = this.answerQuestions;
+    if (time && questionIds && this.router.navigate(['/test/shift'])) {
+      this.shiftTestsService.update(this.shiftTest.id, {time: time, details: questionIds}).subscribe();
+    } else {
+      this.shiftTestsService.update(this.shiftTest.id, {time: time, details: questionIds, state: -1}).subscribe();
+    }
+    this.destroy$.next('closed');
+    this.destroy$.complete();
+  }
+
 
 }

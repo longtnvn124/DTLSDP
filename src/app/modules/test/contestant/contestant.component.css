@@ -10,7 +10,7 @@
 	padding: 10px;
 	display: flex;
 	position: relative;
-	background: url(../../../../assets/images/home-test/bg-museum.jpg) center 0 repeat;
+	/*background: url(../../../../assets/images/home-test/bg-museum.jpg) center 0 repeat;*/
 }
 
 .test-member__form {
@@ -178,7 +178,7 @@ textarea.test-member__form__input {
 	.test-member-size--max {
 		width: 100%;
 	}
-	
+
 	.test-member-size--sex,
 	.test-member-size--dob {
 		width: 100%;

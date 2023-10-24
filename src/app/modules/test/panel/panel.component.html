@@ -1,147 +1,112 @@
-<div class="w-100 h-100" style="background-color: #5a725c52;">
-  <ng-container [ngSwitch]="mode">
-    <ng-container *ngSwitchCase="'PANEL'">
-      <div class="d-flex justify-content-center align-items-center h-100 flex-column">
-        <div class="container sceen-contailer border">
-          <div class="header_container">
-<!--            <div class="info_container">-->
-<!--              <div class="info_container-left">-->
-<!--                <div class="info_container-head d-flex">-->
-<!--                  <div class="d-flex justify-content-center align-items-center mr-1">Tài khoản :</div>-->
-<!--                  <div class="info-avata"><img src="{{candiate.avatar}}" alt=""><span>{{candiate.name}}</span></div>-->
-<!--                </div>-->
-<!--                <div class="info_container-head">Bài thi : <span>{{candiate.testName}}</span></div>-->
-<!--                <div class="info_container-head">Ngày thi: <span>{{ candiate.date}}</span></div>-->
-<!--              </div>-->
-<!--              <div *ngIf="!isSmallScreen" class="info_container-right border-left border-right">-->
-<!--                <div class="countdown-timer">-->
-<!--                  <h1>Thời gian:</h1>-->
-<!--                  <div class="timer">{{ getFormattedTime() }}</div>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--              <div *ngIf="!isSmallScreen" class="d-flex justify-content-center align-items-center flex-column"-->
-<!--                   style="width:15%;">-->
-<!--                <button pButton pRipple class="border-radius-0 w-100 h-100 ml-3 mb-2 p-button-warning" label="Lưu bài"-->
-<!--                        (click)="saveTheTest()"></button>-->
+<div class="w-100 h-100 position-relative" style="background-color: #5a725c52;">
+    <ng-container [ngSwitch]="mode">
+        <ng-container *ngSwitchCase="'PANEL'">
+            <div class="d-flex justify-content-center align-items-center h-100 flex-column">
+                <div class="container screen-container">
+                    <div class="header_container">
+                        <!-- <div *ngIf="!isSmallScreen; else mobileHeadingTemplate" class="info_container-new">-->
+                        <div class="info_container-new">
+                            <div class="info_container-head-new d-flex justify-content-center align-items-center">
+                                <div class="info-avatar d-flex justify-content-center align-items-center">
+                                    <i class="fa fa-user-circle-o mr-1" aria-hidden="true"></i><span class="info_container-head-new__phone-number">{{contestantInfo.phone}}</span>
+                                </div>
+                            </div>
+                            <div class="counter-clock-wrap d-flex justify-content-center align-items-center">
+                                <div class="d-inline timer">{{ getFormattedTime() }}</div>
+                            </div>
+                            <div class="header-btn-controls">
+                                <button pButton pRipple class="p-button-success" label="Lưu bài" (click)="saveTheTest()"></button>
+                                <button pButton pRipple label="Nộp bài" class="ml-2" (click)="btSubmit()"></button>
+                            </div>
+                        </div>
+                        <!--                        <ng-template #mobileHeadingTemplate>-->
+                        <!--                            <div class="d-flex justify-content-between align-items-center w-100 mt-2 px-2 border-left border-right">-->
+                        <!--                                <div class="d-flex justify-content-start align-items-center">-->
+                        <!--                                    <div style="font-size: 16px;">Thời gian:</div>-->
+                        <!--                                    <div class="timeOut">{{ getFormattedTime() }}</div>-->
+                        <!--                                </div>-->
+                        <!--                                <div>-->
+                        <!--                                    <button pButton pRipple class="p-button-warning" label="Lưu bài" (click)="saveTheTest()"></button>-->
+                        <!--                                    <button pButton pRipple label="Nộp bài" class="ml-1 p-button-success" (click)="btSubmit()"></button>-->
+                        <!--                                </div>-->
+                        <!--                            </div>-->
+                        <!--                        </ng-template>-->
+                        <div class=" space-item"></div>
+                    </div>
+                    <div class="exam-container">
+                        <div class="exam-container__item" *ngFor="let question of questions, index as i">
+                            <div class="exam-container__item-label">Câu {{i + 1}}:
+                                <div class="font-weight-bold d-inline-block" [innerHTML]="question.title | htmlDecode"></div>
+                            </div>
+                            <groups-radio [options]="question.answer_options" inputType="checkbox" [default]="question['__answered']" (onChange)="selectQuestion(question.id, $event)"></groups-radio>
+                        </div>
+                    </div>
 
-<!--                <button pButton pRipple label="Nộp bài"-->
-<!--                        class="border-radius-0 w-100 h-100 ml-3 p-button-success" (click)="btSubmit()"></button>-->
+                </div>
 
-<!--              </div>-->
-
-<!--            </div>-->
-
-            <div *ngIf="!isSmallScreen" class="info_container-new">
-              <div class="info_container-head-new d-flex">
-                <div class="d-flex justify-content-center align-items-center mr-1">Tài khoản :</div>
-                <div class="info-avata"><img src="{{candiate.avatar}}" alt=""><span>{{candiate.name}}</span></div>
-              </div>
-              <div class="d-flex justify-content-center"><div  class="d-inline timer">{{ getFormattedTime() }}</div> </div>
-              <div>
-                <button pButton pRipple class=" p-button-warning" label="Lưu bài"
-                        (click)="saveTheTest()"></button>
-
-                <button pButton pRipple label="Nộp bài"
-                        class=" ml-2 p-button-success" (click)="btSubmit()"></button>
-              </div>
             </div>
-            <!--           @mobile-->
-            <div *ngIf="isSmallScreen" class="d-flex justify-content-between align-items-center w-100 mt-2 px-2 border-left border-right">
+        </ng-container>
 
-              <div class="d-flex justify-content-start align-items-center">
-                <div style="font-size: 16px;">Thời gian:</div>
-                <div class="timeOut">{{ getFormattedTime() }}</div>
-              </div>
-              <div>
-                <button pButton pRipple class="p-button-warning" label="Lưu bài"
-                        (click)="saveTheTest()"></button>
-                <button pButton pRipple label="Nộp bài" class="ml-1 p-button-success"
-                        (click)="btSubmit()"></button>
-              </div>
+        <ng-container *ngSwitchCase="'TEST_RESULT'">
+            <div class="results-container border">
+                <h4 class="text-center font-weight-bold my-2 text-uppercase font-weight-bold primary-font-family">Kết quả</h4>
+                <table *ngIf="shiftTest" class="tbl-in-dialog w-100">
+                    <tr>
+                        <td class="font-weight-bold">Số điện thoại:</td>
+                        <td>{{contestantInfo.phone}}</td>
+                    </tr>
+                    <tr>
+                        <td class="font-weight-bold">Bài thi:</td>
+                        <td>{{contestantInfo.testName}}</td>
+                    </tr>
+                    <tr>
+                        <td class="font-weight-bold">Điểm:</td>
+                        <td style="color: var(--primary)">{{contestantInfo.score}}</td>
+                    </tr>
+                    <tr>
+                        <td class="font-weight-bold">Số câu trả lời đúng:</td>
+                        <td style="color: var(--success)">{{contestantInfo.number_correct}}</td>
+                    </tr>
+                </table>
+                <div class="d-flex justify-content-center align-items-center my-2">
+                    <button pRipple pButton icon="pi pi-sign-out" label="Thoát" iconPos="right" class="p-button-danger p-button-text" (click)="btnOutTest()"></button>
+                </div>
             </div>
-
-            <div class=" space-item"></div>
-          </div>
-          <div class="exam-container">
-            <div class="exam-container__item " *ngFor="let question of dataQuestion, index as i">
-              <div class="exam-container__item-label mb-2">Câu {{i + 1}}: <span [innerHTML]="question.title |htmlDecode"></span></div>
-              <groups-radio [options]="question.answer_options" inputType="checkbox" [default]="question['answer_per_select']" (onChange)="selectQuestion(question.id, $event)"></groups-radio>
+        </ng-container>
+        <ng-container *ngSwitchDefault>
+            <div class="results-container--center border text-center d-flex justify-content-center align-items-center">
+                <span class="text-primary --fs-15 mr-2">Tải thông tin</span><i class="pi pi-spin pi-spinner --before-fs-22"></i>
             </div>
-          </div>
-
-        </div>
-
-      </div>
-
+        </ng-container>
     </ng-container>
-    <ng-container *ngSwitchCase="'TEXTRESULTS'" class="position-absolute">
-      <div class="results-contaier border">
-        <h4 class="text-center font-weight-bold my-2 text-uppercase">Kết quả</h4>
-        <table *ngIf="shiftTest" class="tbl-in-dialog w-100">
-          <tr>
-            <td class="font-weight-bold">Họ và Tên:</td>
-            <td>{{candiate.name}}</td>
-          </tr>
-          <tr>
-            <td class="font-weight-bold">Bài thi:</td>
-            <td>{{candiate.testName}}</td>
-          </tr>
-          <tr>
-            <td class="font-weight-bold">Điểm:</td>
-            <td style="font-weight: 600;color:red;">{{candiate.result}}</td>
-          </tr>
-          <tr>
-            <td class="font-weight-bold">Số câu trả lời đúng:</td>
-            <td style="font-weight: 600;color:red;">{{candiate.number_correct}}</td>
-          </tr>
-
-        </table>
-        <div class="d-flex justify-content-center align-items-center my-2">
-          <button pRipple pButton icon="pi pi-sign-out" label="Thoát" iconPos="right"
-                  class="p-button-danger p-button-text" (click)="btnOutTest()"></button>
-        </div>
-      </div>
-    </ng-container>
-  </ng-container>
 </div>
 
-
 <p-dialog [(visible)]="enableDialog" styleClass="test-notify test-notify--no-header" appendTo="body" [modal]="true">
-  <h4 class="text-center text-primary" style="text-transform: uppercase;
-    font-weight: 600;
-    font-family: roboto;">Thông báo</h4>
-  <table *ngIf="shiftTest" class="tbl-in-dialog">
-    <tr>
-      <td>Họ và Tên:</td>
-      <td>{{candiate.name}}</td>
-    </tr>
-    <tr>
-      <td>Bài thi:</td>
-      <td>{{candiate.testName}}</td>
-    </tr>
-    <tr>
-      <td>Thời gian làm bài:</td>
-      <td>{{getFormattedTime()}} </td>
-    </tr>
-    <tr>
-      <td>Ngày thi:</td>
-      <td>{{candiate.date}}</td>
-    </tr>
-  </table>
-  <div class="d-flex justify-content-center align-items-center mt-2">
-    <button pButton pRipple icon="pi pi-check-square" label="Bắt đầu thi" (click)="startTheTest()"></button>
-  </div>
+    <h4 class="text-center text-primary font-weight-bold primary-font-family text-uppercase">Thông báo</h4>
+    <table *ngIf="shiftTest" class="tbl-in-dialog">
+        <tr>
+            <td>Số điện thoại:</td>
+            <td>{{ contestantInfo.phone }}</td>
+        </tr>
+        <tr>
+            <td>Bài thi:</td>
+            <td>{{contestantInfo.testName}}</td>
+        </tr>
+        <tr>
+            <td>Thời gian làm bài:</td>
+            <td>{{getFormattedTime()}} </td>
+        </tr>
+    </table>
+    <div class="d-flex justify-content-center align-items-center mt-3">
+        <button pRipple pButton icon="pi pi-sign-out" label="Thoát" class="p-button-secondary" (click)="btnOutTest()"></button>
+        <button pButton pRipple icon="pi pi-check-square" label="Bắt đầu thi" class="ml-3" (click)="startTheTest()"></button>
+    </div>
 </p-dialog>
 
 <p-dialog [(visible)]="isTimeOver" styleClass="test-notify test-notify--no-header" appendTo="body" [modal]="true">
-  <h4 class="text-center text-danger" style="text-transform: uppercase;
-    font-weight: 600;
-    font-family: roboto;">Thông báo hết giờ làm bài</h4>
-  <p class="text-center mt-1">Xác nhận nộp bài</p>
-  <div class="d-flex justify-content-center align-items-center mt-2">
-    <button pButton pRipple class="p-button-success" label="Xác nhận" (click)="submitTimeisOver()"></button>
-  </div>
+    <h4 class="text-center text-danger font-weight-bold primary-font-family text-uppercase">Thông báo hết giờ làm bài</h4>
+    <p class="text-center mt-1">Xác nhận nộp bài</p>
+    <div class="d-flex justify-content-center align-items-center mt-2">
+        <button pButton pRipple class="p-button-success" label="Xác nhận" (click)="submitTheTest()"></button>
+    </div>
 </p-dialog>
-
-
-
