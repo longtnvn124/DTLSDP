@@ -55,12 +55,11 @@ export class OvicEditorComponent implements OnInit, OnChanges {
 
 
   onTextChange(event) {
-    console.log(event.htmlValue);
+
     if (this.formField) {
       // this.formField.setValue(this.helperService.encodeHTML(event.htmlValue));
-      // console.log(this.formField.value);
       this.textContents = event ? this.helperService.decodeHTML(event.htmlValue):'';
-      console.log(this.textContents)
+
     }
 
   }

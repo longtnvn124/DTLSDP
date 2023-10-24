@@ -144,7 +144,6 @@ export class NguLieuVideoVrComponent implements OnInit {
           if(m.file_product && m.file_product[0]){
             this.nguLieuDanhSachService.loadUrlNgulieuById(m.id).subscribe({
               next:(link)=>{
-                console.log(link);
                 m['__url_product'] = link['data'];
               }
             })
@@ -165,7 +164,6 @@ export class NguLieuVideoVrComponent implements OnInit {
   }
 
   private __processFrom({data, object, type}: FormNgulieu) {
-    console.log(data);
     const observer$: Observable<any> = type === FormType.ADDITION ? this.nguLieuDanhSachService.create(data) : this.nguLieuDanhSachService.update(object.id, data);
     observer$.subscribe({
       next: () => {
@@ -258,7 +256,7 @@ export class NguLieuVideoVrComponent implements OnInit {
   mode: 'TABLE' | 'MEDIAVR' | 'INFO' = "TABLE";
 
   saveForm() {
-    console.log(this.formSave.value);
+
     if (this.formSave.valid) {
       this.formActive.data = this.formSave.value;
       this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);

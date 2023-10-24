@@ -14,15 +14,17 @@ import {OvicButton} from "@core/models/buttons";
 import {DotThiKetQuaService} from "@shared/services/dot-thi-ket-qua.service";
 import {NganHangCauHoiService} from "@shared/services/ngan-hang-cau-hoi.service";
 import {ExportExcelService} from "@shared/services/export-excel.service";
+import {NewContestant, ThiSinhService} from "@shared/services/thi-sinh.service";
+import {AuthService} from "@core/services/auth.service";
 
 interface DataShiftTest extends ShiftTests{
-  index:number,
-  _shift_name:string,
-  _number_correct_converted:string,
-  _bank_id:number,
-  _user_name:string,
-  _total_exam_time:string,
-  _time_loadExam:string
+  index:number;
+  _shift_name:string;
+  _number_correct_converted:string;
+  _bank_id:number;
+  _user_name:string;
+  _total_exam_time:string;
+  _time_loadExam:string;
 }
 @Component({
   selector: 'app-dot-thi-thi-sinh',
@@ -58,7 +60,7 @@ export class DotThiThiSinhComponent implements OnInit {
   tblStructureShiftTest:OvicTableStructure[] = [
     {
       fieldType: 'normal',
-      field: ['_user_name'],
+      field: ['_full_name'],
       innerData: true,
       header: 'Tên thí sinh',
       sortable: false,
@@ -181,11 +183,14 @@ export class DotThiThiSinhComponent implements OnInit {
     private nganHangCauHoiService:NganHangCauHoiService,
     private dotThiKetQuaService:DotThiKetQuaService,
     private exportExcelService:ExportExcelService,
+    private thiSinhService:ThiSinhService,
+
   ) {
     const observeProcessCloseForm = this.notificationService.onSideNavigationMenuClosed().pipe(filter(menuName => menuName === this.menuName && this.needUpdate)).subscribe(() => this.loadData(this.page));
     this.subscription.add(observeProcessCloseForm);
     const observerOnResize = this.notificationService.observeScreenSize.subscribe(size => this.sizeFullWidth = size.width)
     this.subscription.add(observerOnResize);
+
   }
   nganHangDe:NganHangDe[];
   ngOnInit(): void {
@@ -277,7 +282,7 @@ export class DotThiThiSinhComponent implements OnInit {
     if (!button) {
       return;
     }
-    const decision = button.data && this.dataShiftTest ? this.dataShiftTest.find(u => u.id === button.data) : null;
+    const decision = button.data && this.dataShiftTest ? this.dataShiftTest.find(u => u.thisinh_id === button.data) : null;
     switch (button.name) {
       case 'DETAIL-EXAM':
         const quesition_ids = decision.question_ids;
@@ -312,29 +317,45 @@ export class DotThiThiSinhComponent implements OnInit {
     }
   }
     // {"2":[3],"4":[1],"6":[3],"7":[2],"8":[2,3]}
-  shiftTest:ShiftTests[];
-
+  // shiftTest:ShiftTests[];
+  dataUsers:NewContestant[];
   loadTestTaker(idShift:number, bank_id:number,shift:Shift){
     this.notificationService.isProcessing(true);
-    this.dotThiKetQuaService.getDataByShiftId(idShift).subscribe({
-      next:(data)=>{
-        let i :number=1;
-        this.dataShiftTest = data.map(m=>{
+
+    this.dotThiKetQuaService.getDataByShiftIdAndWidth(idShift).pipe(switchMap(project=>{
+      const ids = project ? project.map(m=>m.thisinh_id):[];
+      return forkJoin<[ShiftTests[],NewContestant[]]>([of(project),this.thiSinhService.getDataByShiftest(ids)]);
+    })).subscribe({
+      next:([dataShifTest,dataThisinh])=>{
+            let i :number=1;
+        const dataUser = dataThisinh.map(m=>{
+          const shiftTest= dataShifTest.find(f=>f.thisinh_id === m.id);
+          m['_index'] = i++;
+          m['_full_name']=shiftTest['thisinh']? shiftTest['thisinh']['full_name'] :'';
+          m['_score'] =shiftTest.score ? this.take_decimal_number(shiftTest.score,2): 0;
+          m['_time_start_shifttest']=shiftTest.time_start ?  this.getdate(shiftTest.time_start) :'';
+          m['_number_correct_converted']  = shiftTest.number_correct +'/'+shiftTest.question_ids.length;
+          return m;
+        });
+
+        this.dataShiftTest =dataShifTest.map(m=>{
           const index = i++;
           const _shift_name = this.listData.find(f=>f.id ===m.shift_id).title;
           const _number_correct_converted = m.number_correct +'/'+m.question_ids.length;
           const _score =m.score ? this.take_decimal_number(m.score,2): 0;
           const  _bank_id= bank_id;
-          const _user_name = m['users']['display_name'];
+          const _user_name = m['thisinh'] ? m['thisinh']['full_name'] :'';
           const _total_exam_time = (shift['total_time']*60 - m.time)%60 +' phút ' +(shift['total_time']-(shift['total_time'] - m.time)%60) +' giây';
           const _time_start_shifttest =m.time_start ?  this.getdate(m.time_start) :'';
           const _time_loadExam = this.listData.find(f=>f.id === m.shift_id)['__time_converted'];
-          return {... m,index,_shift_name,_number_correct_converted,_bank_id,_user_name,_total_exam_time,_time_loadExam,_score, _time_start_shifttest};
+          return {... m,index,_user_name,_shift_name,_number_correct_converted,_bank_id,_total_exam_time,_time_loadExam,_score, _time_start_shifttest};
         });
+        this.dataUsers= dataUser;
         this.notificationService.isProcessing(false);
-      },error:()=>{
-        this.notificationService.isProcessing(false);
-        this.notificationService.toastError('Mất kết nối với máy chủ');
+      },
+      error:()=>{
+            this.notificationService.isProcessing(false);
+            this.notificationService.toastError('Mất kết nối với máy chủ');
       }
     })
 
@@ -344,6 +365,8 @@ export class DotThiThiSinhComponent implements OnInit {
 
   closeForm(){
     this.notificationService.closeSideNavigationMenu();
+
+    this.nganhangCauhoi = null;
   }
   // export excel
   columns = [
@@ -358,7 +381,7 @@ export class DotThiThiSinhComponent implements OnInit {
     return result;
   }
 
-  getdate(time:string){
+  getdate(time:string, getime?:boolean){
     const date = new Date(time);
 
     // Lấy ngày, tháng và năm từ đối tượng Date
@@ -371,6 +394,11 @@ export class DotThiThiSinhComponent implements OnInit {
     const minutes = String(date.getMinutes()).padStart(2, '0');
 
     // Kết quả
-    return `${day}/${month}/${year} ${hours}:${minutes}`;
+    if (!getime){
+      return `${day}/${month}/${year} ${hours}:${minutes}`;
+
+    }else{
+      return `${day}/${month}/${year}`;
+    }
   }
 }

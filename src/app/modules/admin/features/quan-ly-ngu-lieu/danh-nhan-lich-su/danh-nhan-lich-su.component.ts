@@ -122,8 +122,6 @@ export class DanhNhanLichSuComponent implements OnInit {
 
   onkeyDowm(event:KeyboardEvent){
     if(event.key === 'Enter'){
-      // this.filter.search = text;
-      console.log(this.filter.search);
       this.loadData(1);
     }
   }

@@ -14,6 +14,7 @@ import {CheckboxModule} from "primeng/checkbox";
 import {RadioButtonModule} from "primeng/radiobutton";
 import {InputTextModule} from "primeng/inputtext";
 import {EditorModule} from "primeng/editor";
+import {SplitterModule} from "primeng/splitter";
 
 
 @NgModule({
@@ -33,7 +34,8 @@ import {EditorModule} from "primeng/editor";
         CheckboxModule,
         RadioButtonModule,
         InputTextModule,
-        EditorModule
+        EditorModule,
+        SplitterModule
     ]
 })
 export class NganHangCauHoiModule {

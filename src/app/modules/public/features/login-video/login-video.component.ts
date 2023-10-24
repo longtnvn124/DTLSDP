@@ -191,10 +191,9 @@ export class LoginVideoComponent implements OnInit , AfterViewInit , OnDestroy {
 		// 	this.loading = false;
 		// }
     if(this.auth.isLoggedIn()){
-      console.log(this.auth.roles);
+
       const roles= this.auth.roles;
       const  checkThisinh = roles.length ===1 && roles.find(f=>f.id === 87);
-      console.log(checkThisinh);
       if ( this.auth.isLoggedIn() ) {
         if(checkThisinh){
           this.router.navigate(['test']);

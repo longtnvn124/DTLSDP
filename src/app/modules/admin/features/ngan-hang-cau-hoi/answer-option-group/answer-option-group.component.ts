@@ -31,8 +31,8 @@ export class AnswerOptionGroupComponent implements OnInit {
   ngOnInit(): void {
     if (this._formControl) {
       this._formControl.valueChanges.subscribe(options => this.options = options && Array.isArray(options) ? options : []);
-      this.options = this._formControl.value && Array.isArray(this._formControl.value) ? this._formControl.value.map(m=>{
-        m['_url_file'] =m.type_input === 1? this.fileService.getPreviewLinkLocalFile(m.file) :'';
+      this.options = this._formControl.value && Array.isArray(this._formControl.value) ? this._formControl.value.map(m => {
+        m['_url_file'] = m.type_input === 1 ? this.fileService.getPreviewLinkLocalFile(m.file) : '';
         return m;
       }) : [];
     }
@@ -44,16 +44,22 @@ export class AnswerOptionGroupComponent implements OnInit {
   }
 
   addMoreAnswer() {
-    if (this._formControl) {
+
+    if (this._formControl){
       const oldValue = Array.isArray(this._formControl.value) ? this._formControl.value : [];
       const _id = oldValue.reduce((max, item) => max < item.id ? item.id : max, 0)
       const value = '';
       const type_input = 0;
       const file = null;
-      for (let i = 1; i <= 3; i++) {
-        oldValue.push({id: _id + i, value, type_input, file});
+      if (this.options.length > 0){
+        oldValue.push({id: _id + 1, value, type_input, file});
+        this._formControl.setValue(oldValue);
+      }else{
+        for (let i = 1; i <= 3; i++) {
+          oldValue.push({id: _id + i, value, type_input, file});
+        }
+        this._formControl.setValue(oldValue);
       }
-      this._formControl.setValue(oldValue);
     }
 
   }
@@ -84,14 +90,15 @@ export class AnswerOptionGroupComponent implements OnInit {
 
   characterAvatar: string = '';
 
-  optionId:number;
-  btnUploadFile(id:number){
+  optionId: number;
+
+  btnUploadFile(id: number) {
     const inputElement = this.fileInput.nativeElement as HTMLInputElement;
     inputElement.click();
-    this.optionId =id;
+    this.optionId = id;
   }
 
-  uploadFile(event:Event) {
+  uploadFile(event: Event) {
     const inputElement = this.fileInput.nativeElement as HTMLInputElement;
     const file = inputElement.files[0];
 
@@ -99,15 +106,13 @@ export class AnswerOptionGroupComponent implements OnInit {
     this.fileService.uploadFile(file, 1).subscribe({
       next: fileUl => {
 
-        this.options.find(f=>f.id === this.optionId).file = fileUl;
-        this.options.find(f=>f.id === this.optionId)['_url_file'] = this.fileService.getPreviewLinkLocalFileNotToken(fileUl);
+        this.options.find(f => f.id === this.optionId).file = fileUl;
+        this.options.find(f => f.id === this.optionId)['_url_file'] = this.fileService.getPreviewLinkLocalFileNotToken(fileUl);
       }, error: () => {
         this.notificationService.toastError('Upload file không thành công');
       }
     })
   }
-
-
 
 
 }

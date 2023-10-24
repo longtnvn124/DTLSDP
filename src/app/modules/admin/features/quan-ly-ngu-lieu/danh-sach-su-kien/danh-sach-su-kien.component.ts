@@ -186,7 +186,7 @@ export class DanhSachSuKienComponent implements OnInit {
           m['__file_audio'] = m.file_audio && m.file_audio[0] ? this.fileService.getPreviewLinkLocalFileNotToken(m.file_audio[0]): '';
           return m;
         })
-        console.log(this.listData);
+
         this.recordsTotal = this.listData.length;
         this.isLoading = false;
         this.notificationService.isProcessing(false);
@@ -286,9 +286,6 @@ export class DanhSachSuKienComponent implements OnInit {
 
   btnInformation(id:number){
     this.dataInfo = this.listData.find(f => f.id === id);
-    console.log(this.dataInfo);
-    // const files =  this.dataInfo.files.filter(f>f.type.split('/')[0])
-
     setTimeout(() => this.notificationService.openSideNavigationMenu({
       name: this.menuName,
       template: this.formInformation,
@@ -356,7 +353,6 @@ export class DanhSachSuKienComponent implements OnInit {
 
   saveForm() {
     if (this.formSave.valid) {
-      console.log(this.formSave.value);
       this.formActive.data = this.formSave.value;
       this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
     } else {

@@ -1,0 +1,72 @@
+<div class="test-member ovic-scroll-style">
+    <div class="test-member__body">
+        <div class="test-member__form intro-y">
+            <h2 class="test-member__form__heading">{{ !phoneValidator.openFormDetail ? 'Số điện thoại của bạn' : 'Thông tin thí sinh' }}</h2>
+            <div class="test-member__form__controls" [class.ictu-is-loading--circle-black]="phoneValidator.onChecking || isLoading">
+                <form [formGroup]="formGroup" class="test-member__from-wrap">
+                    <div class="test-member__from__row intro-y" *ngIf="phoneValidator.openFormDetail">
+                        <div class="test-member__from__col test-member-size--max">
+                            <fieldset [class.fieldset--error]="f['full_name'].touched && f['full_name'].invalid" [class.fieldset--invalid]="f['full_name'].touched && f['full_name'].valid">
+                                <legend><label>Họ và tên</label></legend>
+                                <input type="text" class="test-member__form__input" placeholder="Họ và tên thí sinh" formControlName="full_name" autocomplete="off">
+                            </fieldset>
+                        </div>
+                        <div class="test-member__from__col test-member-size--sex">
+                            <fieldset>
+                                <legend><label>Giới tính</label></legend>
+                                <button [class.--active]="f[ 'sex' ].value === 'nu'" (click)="changeUserSex('nu')" type="button" pButton pRipple class="test-member__from__input-btn p-button-center" label="Nữ" icon="fa fa-female"></button>
+                                <button [class.--active]="f[ 'sex' ].value === 'nam'" (click)="changeUserSex('nam')" type="button" pButton pRipple class="test-member__from__input-btn p-button-center" label="Nam" icon="fa fa-male"></button>
+                            </fieldset>
+                        </div>
+                    </div>
+                    <div class="test-member__from__row intro-y">
+                        <div *ngIf="phoneValidator.openFormDetail" class="test-member__from__col test-member-size--dob">
+                            <fieldset [class.fieldset--error]="f['dob'].touched && f['dob'].invalid" [class.fieldset--invalid]="f['dob'].touched && f['dob'].valid">
+                                <legend><label>Ngày tháng năm sinh</label></legend>
+                                <p-inputMask formControlName="dob" mask="99/99/9999" placeholder="__/__/____" slotChar="dd/mm/yyyy"></p-inputMask>
+                                <span class="test-member__from__col__span" *ngIf="f['dob'].touched && f['dob'].invalid">{{ f[ 'dob' ].getError( 'theDateDoesNotExist' ) ? 'Ngày không tồn tại' : 'Định dạng ngày chưa đúng' }}</span>
+                            </fieldset>
+                        </div>
+                        <div class="test-member__from__col test-member-size--max position-relative">
+                            <fieldset [ngClass]="{ 'fieldset--error' : f['phone'].touched && f['phone'].invalid , 'fieldset--invalid' : f['phone'].touched && f['phone'].valid }">
+                                <legend><label>Số điện thoại</label></legend>
+                                <input type="text" class="test-member__form__input" placeholder="Số điện thoại" formControlName="phone" autocomplete="off">
+                            </fieldset>
+                            <button *ngIf="phoneValidator.error; else showCheckValue" class="test-member__form__recheck" pButton pRipple icon="pi pi-refresh"></button>
+                            <ng-template #showCheckValue>
+                                <i *ngIf="phoneValidator.checked" class="test-member__form__recheck-result pi-check-circle pi text-success"></i>
+                            </ng-template>
+                        </div>
+                    </div>
+                    <ng-container *ngIf="phoneValidator.openFormDetail">
+                        <div class="test-member__from__row intro-y">
+                            <div class="test-member__from__col test-member-size--max">
+                                <fieldset [class.fieldset--error]="f['address'].touched && f['address'].invalid" [class.fieldset--invalid]="f['address'].touched && f['address'].valid">
+                                    <legend><label>Địa chỉ</label></legend>
+                                    <textarea cols="30" rows="4" class="test-member__form__input" placeholder="Địa chỉ liên hệ" formControlName="address" autocomplete="off"></textarea>
+                                </fieldset>
+                            </div>
+                        </div>
+                        <div class="test-member__from__row intro-y">
+                            <div class="test-member__from__col test-member-size--max pb-0 justify-content-center">
+                                <button (click)="assignContestantInfo()" *ngIf="formGroup.valid && phoneValidator.checked; else disableButton" class="p-button-success test-member__from__btn-submit" pButton pRipple icon="pi pi-file-edit" label="Ghi danh"></button>
+                                <ng-template #disableButton>
+                                    <button disabled class="p-button-success test-member__from__btn-submit ovic-button--disabled" pButton pRipple icon="pi pi-file-edit" label="Ghi danh"></button>
+                                </ng-template>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <div class="test-member__from__row intro-y" *ngIf="!phoneValidator.openFormDetail">
+                        <div class="test-member__from__col test-member-size--max pb-0 justify-content-center">
+                            <button (click)="goToTest(true)" *ngIf="!phoneValidator.isContestantIdEmpty && phoneValidator.checked; else disableGoToTestButton" class="p-button-success test-member__from__btn-submit" pButton pRipple icon="pi pi-file-edit" label="Bắt đầu bài thi"></button>
+                            <ng-template #disableGoToTestButton>
+                                <button disabled class="p-button-success test-member__from__btn-submit ovic-button--disabled" pButton pRipple icon="pi pi-file-edit" label="Bắt đầu bài thi"></button>
+                            </ng-template>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

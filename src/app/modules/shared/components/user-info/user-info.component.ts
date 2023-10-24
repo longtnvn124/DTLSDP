@@ -36,7 +36,6 @@ export class UserInfoComponent implements OnInit , OnChanges {
 			this.loading = true;
 			this.userService.getUser( id , 'id,display_name,avatar,phone' ).subscribe( {
 				next  : user => {
-					console.log( user );
 					this.object = user;
 				} ,
 				error : () => {}

@@ -24,14 +24,9 @@ export class OvicMediaVrProductComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.device);
     this.loadProduct();
   }
 
-  // ngOnChanges(changes: SimpleChanges): void {
-  //   console.log(this._ngulieu);
-  //
-  // }
 
   loadProduct() {
     const ngulieuId = this._ngulieu.id;

@@ -222,7 +222,6 @@ export class NguLieuImageVrComponent implements OnInit {
 
   objectEdit:Ngulieu;
   btnEdit(object: Ngulieu) {
-    console.log(object);
     this.objectEdit =object;
     this.isUpdate= true;
     this.formSave.reset({

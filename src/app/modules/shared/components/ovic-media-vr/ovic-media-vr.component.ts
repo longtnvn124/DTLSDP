@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import {Ngulieu} from "@shared/models/quan-ly-ngu-lieu";
 import {Pinable, Point} from "@shared/models/point";
-import {TypeOptions, WAITING_POPUP, WAITING_POPUP_SPIN} from "@shared/utils/syscat";
+import {TypeOptions, WAITING_POPUP_SPIN} from "@shared/utils/syscat";
 import {PerspectiveCamera, Raycaster, Scene, Vector2, Vector3, WebGLRenderer} from "three";
 import {OrbitControls} from "@three-ts/orbit-controls";
 import {MenuItem} from "primeng/api/menuitem";
@@ -216,6 +216,27 @@ export class OvicMediaVrComponent implements OnInit, OnDestroy {
     })
   }
 
+
+  getDataPoint(ngulieu_id:number){
+
+    this.pointsService.getAllData().subscribe({
+      next: (data) => {
+        this.dataPointsChild = data.find(f => f.ngulieu_id === ngulieu_id) ? data.map(m => {
+          m['_child'] = data.filter(f => f.parent_id === m.id);
+          m['_file_media'] = m.file_media && m.file_media[0] ? this.fileService.getPreviewLinkLocalFileNotToken(m.file_media[0]) : '';
+          m['_file_audio'] = m.file_audio && m.file_audio[0] ? this.fileService.getPreviewLinkLocalFileNotToken(m.file_audio[0]) : '';
+          return m;
+        }).filter(f => f.ngulieu_id === ngulieu_id && f.parent_id === 0) : [];
+        this.ngulieuStart['_points_child'] = this.dataPointsChild ? this.dataPointsChild : [];
+        this.notificationService.isProcessing(false);
+      },
+      error: () => {
+        this.notificationService.isProcessing(false);
+        this.notificationService.toastError('Mất Kết nối với máy chủ');
+      }
+    })
+
+  }
   file_param: FilePointView;
   scenePrev: PointView;
 
@@ -557,10 +578,12 @@ export class OvicMediaVrComponent implements OnInit, OnDestroy {
     this.controls.saveState();
   }
 
+  titleBtn:'Lưu lại'|'Xác nhận';
   changeInputMode(formType: 'add' | 'edit', object: convertPoint | null = null, pointIdParent?: number) {
     this.formState.formTitle = formType === 'add' ? 'Thêm điểm truy cập mới ' : 'Cập nhật điểm truy cập';
     this.formState.formType = formType;
     if (formType === 'add') {
+      this.titleBtn = 'Lưu lại';
       this.formSave.reset(
         {
           title: '',
@@ -578,6 +601,8 @@ export class OvicMediaVrComponent implements OnInit, OnDestroy {
       );
     } else {
       this.formState.object = object;
+      this.titleBtn = 'Xác nhận';
+
       this.formSave.reset(
         {
           title: object.title,
@@ -668,6 +693,7 @@ export class OvicMediaVrComponent implements OnInit, OnDestroy {
             if (newPin.parent_id == 0) {
               this.dataPointsChild.push(newPin);
               this.pinInScene(newPin, true);
+              // this.startSceneByNgulieu();
             }
             if (newPin.parent_id !== 0) {
               this.dataPointsChild.find(f => f.id === newPin.parent_id)['_child'].push(newPin);

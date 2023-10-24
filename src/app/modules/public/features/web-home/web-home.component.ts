@@ -104,7 +104,6 @@ export class WebHomeComponent implements OnInit, AfterViewInit {
     })
     // const viewMode = this.activatedRoute.snapshot.queryParamMap.has('view-mode') ? this.activatedRoute.snapshot.queryParamMap.get('view-mode') : 'desktop';
     // if (viewMode === 'mobile') {
-    //   console.log(viewMode);
     //   this.unLesson = true ;
     // }
   }

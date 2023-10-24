@@ -76,4 +76,15 @@ export class DotThiKetQuaService {
     return this.http.get<Dto>(''.concat(this.api), {params}).pipe(map(res => res.data));
   }
 
+  getDataByShiftIdAndWidth(shift_id: number): Observable<ShiftTests[]> {
+    const conditions: OvicConditionParam[] = [{
+      conditionName: 'shift_id',
+      condition: OvicQueryCondition.equal,
+      value: shift_id.toString(10),
+    }];
+    const params: HttpParams = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams().set('with', 'thisinh'));
+    return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
+  }
+
+
 }

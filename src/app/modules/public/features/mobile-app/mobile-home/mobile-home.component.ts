@@ -122,9 +122,7 @@ export class MobileHomeComponent implements OnInit {
   }
 
   btnSelectNhanvat(item:DmNhanVatLichSu){
-    console.log(item);
     this.router.navigate(['/mobile/mobile-nhan-vat/'], {queryParams:{param:item.id}});
-    // this.router.navigate(['/destination-route', { id: yourId }]);
   }
   btnSelectNgulieu(item: Ngulieu) {
     const code = this.authService.encryptData(JSON.stringify({ngulieu_id: item.id}));

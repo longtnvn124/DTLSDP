@@ -80,7 +80,6 @@ export class OvicMapComponent implements OnInit, AfterViewInit {
     }
 
     if (this.points && this.dataPointsInMap !==[]) {
-      console.log(this.dataPointsInMap);
       const longitude = this.dataPointsInMap[0]['longitude'];//điểm bắt đầu
       const latitude = this.dataPointsInMap[0]['latitude'];//điểm bắt đầu
       const map = new mapboxgl.Map({
@@ -214,14 +213,13 @@ export class OvicMapComponent implements OnInit, AfterViewInit {
   }
 
   loadDataPointsinMap(){
-    console.log(this.points);
+
       this.dataPointsInMap = this.points.filter(f => f.toado_map !== null).map(f => {
         f['longitude'] = parseFloat(f.toado_map.split(',')[1]);
         f['latitude'] = parseFloat(f.toado_map.split(',')[0]);
         return f;
       });
 
-    console.log(this.dataPointsInMap);
   }
 
 }

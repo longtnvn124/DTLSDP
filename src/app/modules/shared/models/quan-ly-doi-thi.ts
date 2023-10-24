@@ -19,7 +19,7 @@ export interface Shift extends ThongTinChung {
 }
 
 export interface ShiftTests extends ThongTinChung {
-  user_id: number;
+  thisinh_id: number;
   shift_id: number;
   details: detail;
   time_start: string;
