@@ -6,8 +6,6 @@ import { Observable } from 'rxjs';
 import { Dto , OrWhereCondition , OvicQueryCondition } from '@core/models/dto';
 import { map } from 'rxjs/operators';
 import { IctuQueryParams } from '@core/models/ictu-query-params';
-import { Validators } from '@angular/forms';
-import { DDMMYYYYDateFormatValidator , PhoneNumberValidator } from '@core/utils/validators';
 
 export interface NewContestant {
 	full_name : string,
@@ -44,5 +42,4 @@ export class ThiSinhService {
 		} ] , new HttpParams( { fromObject } ) );
 		return this.http.get<Dto>( this.api , { params } ).pipe( map( res => res.data[ 0 ] ? res.data[ 0 ].id : 0 ) );
 	}
-
 }
