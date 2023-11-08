@@ -1,22 +1,13 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {LoginComponent} from './features/login/login.component';
-import {LoginV2Component} from './features/login-v2/login-v2.component';
 import {ContentNoneComponent} from './features/content-none/content-none.component';
 import {UnauthorizedComponent} from './features/unauthorized/unauthorized.component';
 import {ClearComponent} from './features/clear/clear.component';
 import {LoginVideoComponent} from '@modules/public/features/login-video/login-video.component';
 import {VirtualTourComponent} from "@modules/public/features/virtual-tour/virtual-tour.component";
 import {ResetPasswordComponent} from "@modules/public/features/reset-password/reset-password.component";
-import {WebHomeComponent} from "@modules/public/features/web-home/web-home.component";
-import {ChuyenDeComponent} from "@modules/public/features/web-home/chuyen-de/chuyen-de.component";
-import {
-  DanhmucNgulieusoComponent
-} from "@modules/public/features/web-home/danhmuc-ngulieuso/danhmuc-ngulieuso.component";
-import {SukienTonghopComponent} from "@modules/public/features/web-home/sukien-tonghop/sukien-tonghop.component";
-import {NhanvatComponent} from "@modules/public/features/web-home/nhanvat/nhanvat.component";
-import {SearchComponent} from "@modules/public/features/web-home/search/search.component";
-import {ChuyenMucComponent} from "@modules/admin/features/danh-muc/chuyen-muc/chuyen-muc.component";
+import {DesktopGuard} from "@modules/public/desktop.guard";
+import {MobileGuard} from "@modules/public/mobile.guard";
 
 const routes: Routes = [
   {
@@ -29,6 +20,7 @@ const routes: Routes = [
   },
   {
     path: 'home',
+    canActivate: [DesktopGuard],
     loadChildren: () => import('@modules/public/features/home/home.module').then(m => m.HomeModule)
   },
   {
@@ -59,6 +51,7 @@ const routes: Routes = [
   },
   {
     path: 'mobile',
+    canActivate: [MobileGuard],
     loadChildren: () => import('@modules/public/features/mobile-app/mobile-app.module').then(m => m.MobileAppModule)
   },
   {

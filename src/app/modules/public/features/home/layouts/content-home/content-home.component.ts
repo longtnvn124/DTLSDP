@@ -87,7 +87,7 @@ export class ContentHomeComponent implements OnInit, AfterViewInit {
     })
     const viewMode = this.activatedRoute.snapshot.queryParamMap.has('view-mode') ? this.activatedRoute.snapshot.queryParamMap.get('view-mode') : 'desktop';
     if (viewMode === 'mobile') {
-      console.log(viewMode);
+
       this.unLesson = true;
     }
   }
@@ -175,8 +175,6 @@ export class ContentHomeComponent implements OnInit, AfterViewInit {
   }
 
   btnSelectSukien(item:SuKien){
-    console.log(item);
-    this.router.navigate(['/home/su-kien/'], {queryParams:{id:item.id}});
-    // this.router.navigate(['/destination-route', { id: yourId }]);
+    this.router.navigate(['/home/su-kien/'], {queryParams:{parram:item.id}});
   }
 }

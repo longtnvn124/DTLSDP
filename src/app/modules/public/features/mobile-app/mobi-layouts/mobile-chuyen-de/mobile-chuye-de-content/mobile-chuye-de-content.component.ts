@@ -11,16 +11,15 @@ import {DownloadProcess} from "@shared/components/ovic-download-progress/ovic-do
   templateUrl: './mobile-chuye-de-content.component.html',
   styleUrls: ['./mobile-chuye-de-content.component.css']
 })
-export class MobileChuyeDeContentComponent implements OnInit, OnChanges {
-  // @ViewChild('formMedia') formMedia: TemplateRef<any>;
-
+export class MobileChuyeDeContentComponent implements OnInit {
 
   mode: Loai = "default";
   video_link: string;
   documents: string[];
   scorm: string;
   chuyendeSelect: ChuyenDe;
-
+  selectpdf: boolean = false;
+  documentSelect: string;
   @ViewChild('scormIframe') scormIframe: HTMLIFrameElement;
   private _data: paramChuyenDe;
 
@@ -52,7 +51,6 @@ export class MobileChuyeDeContentComponent implements OnInit, OnChanges {
     return this._data;
   }
 
-  // @Input() params:{chuyende,string};
   constructor(
     private fileService: FileService,
     private mediaService: MediaService,
@@ -63,31 +61,7 @@ export class MobileChuyeDeContentComponent implements OnInit, OnChanges {
   ngOnInit(): void {
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    // if(changes['params'].currentValue){
-    //   this.video_link=null;
-    //   this.documents=null;
-    //   this.scorm=null;
-    //   this.chuyendeSelect=null;
-    //   this.selectpdf= false;
-    //   this.documentSelect=null;
-    //
-    //   this.mode = this._data.type? this._data.type: 'default';
-    //   this.chuyendeSelect = this._data.chuyende;
-    //   if (this._data.type === "video") {
-    //     this.video_link = this._data.chuyende['_video_link'] ? this._data.chuyende['_video_link'] : null;
-    //   }
-    //   if (this._data.type === "documents") {
-    //     this.documents =this._data.chuyende['_documents_link'] && this._data.chuyende['_documents_link'][0]? this._data.chuyende['_documents_link']: null;
-    //   }
-    //   if (this._data.type === "scorm") {
-    //     this.scorm = this._data.chuyende['_scorm_link'] ? this._data.chuyende['_scorm_link']: null ;
-    //   }
-    // }
-  }
 
-  selectpdf: boolean = false;
-  documentSelect: string;
 
   btnviewpdf(select: OvicFile) {
     this.documentSelect = this._data.chuyende.documents.find(f => f.id === select.id) ? this.fileService.getPreviewLinkLocalFile(select) : null;
@@ -111,5 +85,4 @@ export class MobileChuyeDeContentComponent implements OnInit, OnChanges {
     }
 
   }
-
 }

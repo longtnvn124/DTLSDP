@@ -1,6 +1,6 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import {ClearComponent} from "@modules/public/features/clear/clear.component";
+import {NgModule} from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
+
 import {MobileHomeComponent} from "@modules/public/features/mobile-app/mobile-home/mobile-home.component";
 import {MainLayoutComponent} from "@modules/public/features/mobile-app/main-layout/main-layout.component";
 import {
@@ -35,64 +35,84 @@ import {
 } from "@modules/public/features/mobile-app/mobi-layouts/mobile-tim-kiem/mobile-tim-kiem.component";
 
 const routes: Routes = [
-  // {
-  //   path      : '' ,
-  //   component : MobileHomeComponent,
-  //   // pathMatch  : 'prefix',
-  //
-  // } ,
 
   {
-    path:'',
-    component:MainLayoutComponent,
-    children:[
+    path: '',
+    component: MainLayoutComponent,
+    children: [
       {
-        path:'mobile-chuyen-de',
-        component:MobileChuyenDeComponent,
+        path: 'mobile-chuyen-de',
+        component: MobileChuyenDeComponent,
+        data: {
+          title: 'Bài Giảng Chuyên đề'
+        }
       },
       {
-        path:'mobile-chuyen-muc',
-        component:MobileChuyenMucComponent,
+        path: 'mobile-chuyen-muc',
+        component: MobileChuyenMucComponent,
+        data: {
+          title: 'Chuyên mục'
+        }
       },
       {
-        path:'mobile-nhan-vat',
-        component:MobileNhanVatComponent,
+        path: 'mobile-nhan-vat',
+        component: MobileNhanVatComponent,
+        data: {
+          title: 'Nhân vật lịch sử'
+        }
       },
       {
-        path:'mobile-tim-kiem',
-        component:MobileTimKiemComponent,
+        path: 'mobile-tim-kiem',
+        component: MobileTimKiemComponent,
+        data:{
+          title:'Tìm kiếm'
+        }
       },
       {
-        path:'mobile-vr-360',
-        component:MobileNgulieuVrComponent,
+        path: 'mobile-vr-360',
+        component: MobileNgulieuVrComponent,
+        data:{
+          title:'Di tích lịch sử VR360'
+        }
       },
       {
-        path:'mobile-chuyen-muc',
-        component:MobileChuyenMucComponent,
+        path: 'mobile-su-kien',
+        component: MobileSuKienComponent,
+        data:{
+          title:'Sự kiện lịch sử'
+        }
       },
       {
-        path:'mobile-su-kien',
-        component:MobileSuKienComponent,
+        path: 'mobile-gioi-thieu',
+        component: MobileGioiThieuComponent,
+        data:{
+          title:'Giới thiệu'
+        }
       },
       {
-        path:'mobile-gioi-thieu',
-        component:MobileGioiThieuComponent,
+        path: 'mobile-tin-tuc',
+        component: MobileTinTucComponent,
+        data:{
+          title:'Tin Tức'
+        }
       },
       {
-        path:'mobile-tin-tuc',
-        component:MobileTinTucComponent,
+        path: 'mobile-thong-bao',
+        component: MobileThongBaoComponent,
+        data:{
+          title:'Thông báo'
+        }
       },
       {
-        path:'mobile-thong-bao',
-        component:MobileThongBaoComponent,
+        path: 'cong-thong-tin',
+        component: MobileIfarmeComponent,
+        data:{
+          title:'Cổng thông tin'
+        }
       },
       {
-        path:'cong-thong-tin',
-        component:MobileIfarmeComponent,
-      },
-      {
-        path:'',
-        component:MobileHomeComponent
+        path: '',
+        component: MobileHomeComponent
       }
     ]
   }
@@ -104,4 +124,5 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class MobileAppRoutingModule { }
+export class MobileAppRoutingModule {
+}

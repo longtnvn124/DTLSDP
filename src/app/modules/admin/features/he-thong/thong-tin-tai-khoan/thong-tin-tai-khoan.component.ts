@@ -289,7 +289,7 @@ export class ThongTinTaiKhoanComponent implements OnInit {
 				this.avatarUploading = false;
 			} ,
 			error : error => {
-				console.log( error );
+
 				this.avatarUploading = false;
 			}
 		} );

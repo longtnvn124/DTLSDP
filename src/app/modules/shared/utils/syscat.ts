@@ -222,3 +222,9 @@ export const  CONG_THONG_TIN=[
   {id:1,url:'https://thainguyen.gov.vn'},
   {id:2,url:'https://thainguyen.dcs.vn'},
 ]
+export const MODULES_QUILL:any={
+  imageResize : {
+    displaySize : true ,
+    modules     : [ 'Resize' , 'DisplaySize' , 'Toolbar' ]
+  }
+}

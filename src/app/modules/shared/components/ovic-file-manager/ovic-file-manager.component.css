@@ -4,7 +4,7 @@
 
 .ovic-file-managers {
     padding: 0 15px 0 0;
-    height: calc(100vh - 66px - 169px - 166px);
+    height: calc(var(--max-screen-height , 100vh) - 66px - 169px - 166px);
     overflow: auto;
 }
 
@@ -429,7 +429,7 @@
 .ovic-date-body {
     display: block;
     padding: 15px;
-    height: calc(100vh - 225px);
+    height: calc(var(--max-screen-height , 100vh) - 225px);
     overflow-y: auto;
 }
 

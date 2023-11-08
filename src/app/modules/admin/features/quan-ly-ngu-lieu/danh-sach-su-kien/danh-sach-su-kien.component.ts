@@ -2,7 +2,7 @@ import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {FormType, NgPaginateEvent, OvicForm} from "@shared/models/ovic-models";
 import { SuKien} from "@shared/models/quan-ly-ngu-lieu";
 import {Paginator} from "primeng/paginator";
-import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from "@angular/forms";
 import {debounceTime, filter, forkJoin, Observable, Subject, Subscription} from "rxjs";
 import {DanhMucChuyenMucService} from "@shared/services/danh-muc-chuyen-muc.service";
 import {DanhMucDiemDiTichService} from "@shared/services/danh-muc-diem-di-tich.service";
@@ -14,19 +14,24 @@ import {AuthService} from "@core/services/auth.service";
 import {HelperService} from "@core/services/helper.service";
 import {NguLieuDanhSachService} from "@shared/services/ngu-lieu-danh-sach.service";
 import {DmDiemDiTich, DmLinhVuc, DmNhanVatLichSu} from "@shared/models/danh-muc";
-import {OvicButton} from "@core/models/buttons";
 import {NguLieuSuKienService} from "@shared/services/ngu-lieu-su-kien.service";
 import {DanhMucNhanVatLichSuService} from "@shared/services/danh-muc-nhan-vat-lich-su.service";
 import { EmployeesPickerService } from '@modules/shared/services/employees-picker.service';
 import { FileService } from '@core/services/file.service';
-import {Cache} from "three";
 import {AvatarMakerSetting, MediaService} from "@shared/services/media.service";
 import {getLinkDownload} from "@env";
+import {MODULES_QUILL} from "@shared/utils/syscat";
 
 interface FormSuKien extends OvicForm {
   object: SuKien;
 }
-
+const PinableValidator = (control: AbstractControl): ValidationErrors | null => {
+  if (control.get('title').valid && control.get('title').value) {
+    return control.get('title').value.trim().length >0 ? null :{invalid:true };
+  } else {
+    return {invalid: true};
+  }
+}
 @Component({
   selector: 'app-danh-sach-su-kien',
   templateUrl: './danh-sach-su-kien.component.html',
@@ -40,7 +45,7 @@ export class DanhSachSuKienComponent implements OnInit {
   stream: HTMLAudioElement;
 
   listData: SuKien[];
-
+  module_quill:any = MODULES_QUILL;
   filePermission = {
     canDelete: true,
     canDownload: true,
@@ -107,6 +112,7 @@ export class DanhSachSuKienComponent implements OnInit {
       donvi_id: [null, Validators.required],
       file_audio:[[]],
       linhvuc:[null,Validators.required]
+    }, {  validators: PinableValidator
     });
 
     const observeProcessFormData = this.OBSERVE_PROCESS_FORM_DATA.asObservable().pipe(debounceTime(100)).subscribe(form => this.__processFrom(form));
@@ -352,12 +358,18 @@ export class DanhSachSuKienComponent implements OnInit {
   dataInfo: SuKien;
 
   saveForm() {
+    const titleInput = this.f['title'].value.trim();
+    this.f['title'].setValue(titleInput);
     if (this.formSave.valid) {
-      this.formActive.data = this.formSave.value;
-      this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
+      if (titleInput !== '') {
+        this.formActive.data = this.formSave.value;
+        this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
+      } else {
+        this.notificationService.toastWarning('Vui lòng không nhập khoảng trống');
+      }
     } else {
       this.formSave.markAllAsTouched();
-      this.notificationService.toastError('Vui lòng điền đầy đủ thông tin');
+      this.notificationService.toastWarning('Vui lòng nhập đủ thông tin');
     }
   }
 

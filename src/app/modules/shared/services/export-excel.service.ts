@@ -102,9 +102,16 @@ export class ExportExcelService {
       //set with column to fit
       worksheet.columns.forEach(column => {
         const lengths = column.values.map(v => v.toString().length);
-        const maxLength = Math.max(...lengths.filter(v => typeof v === 'number'));
+        const maxLength = worksheet.columns[0] === column ? 10 : Math.max(...lengths.filter(v => typeof v === 'number'));
         column.width = maxLength;
       });
+
+      worksheet.getColumn('C').width = 24;
+      worksheet.getColumn('C').alignment = {horizontal: 'right'};
+      worksheet.getColumn('E').alignment = {horizontal: 'center'};
+      worksheet.getColumn('F').width = 24;
+      worksheet.getColumn('F').alignment = {horizontal: 'center'};
+      worksheet.getColumn('G').width = 15;
     });
 
     // save Excel File

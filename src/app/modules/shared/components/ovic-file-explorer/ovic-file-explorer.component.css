@@ -218,7 +218,7 @@
     width: 300px;
     border-right: 1px solid #e0e0e0;
     padding: 0;
-    height: calc(100vh - 43px - 54px);
+    height: calc(var(--max-screen-height , 100vh) - 43px - 54px);
     display: flex;
     flex-direction: column;
 }
@@ -241,7 +241,7 @@
     padding: 0;
     flex-direction: column;
     max-width: 100%;
-    max-height: calc(100vh - 43px - 54px);
+    max-height: calc(var(--max-screen-height , 100vh) - 43px - 54px);
     overflow-y: auto;
     position: relative;
 }
@@ -508,7 +508,7 @@
 }
 
 .ovic-file-explorer__dir-tree-panel {
-    height: calc(100vh - 43px - 54px - 160px);
+    height: calc(var(--max-screen-height , 100vh) - 43px - 54px - 160px);
     overflow-y: auto;
     padding-bottom: 5px;
 }

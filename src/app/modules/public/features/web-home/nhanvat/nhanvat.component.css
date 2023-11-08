@@ -49,16 +49,21 @@
 
 
 /*=============================================*/
-.width-min-500px{
+.width-min-500px {
   display: none;
 }
-@media(width <= 500px){
-  .width-max-500px{
+
+@media (width <= 500px) {
+  .width-max-500px {
     display: none;
   }
-  .width-min-500px{
+
+  .width-min-500px {
     display: block;
     padding-top: 18px;
   }
 }
 
+.data-mobile-item-right_tag-name{
+  background: #75cb60c9;
+}

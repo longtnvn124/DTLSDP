@@ -5,15 +5,19 @@ import {FileService} from "@core/services/file.service";
 import {AuthService} from "@core/services/auth.service";
 import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 import {Ngulieu} from "@shared/models/quan-ly-ngu-lieu";
+import {UnsubscribeOnDestroy} from "@core/utils/decorator";
+import {Subscription} from "rxjs";
+import {MobileNavbarService} from "@modules/public/features/mobile-app/services/mobile-navbar.service";
 
+@UnsubscribeOnDestroy()
 @Component({
   selector: 'app-mobile-ngulieu-vr',
   templateUrl: './mobile-ngulieu-vr.component.html',
   styleUrls: ['./mobile-ngulieu-vr.component.css']
 })
 export class MobileNgulieuVrComponent implements OnInit {
-
   @Input() search: string;
+  subscription: Subscription = new Subscription();
 
   constructor(
     private nguLieuDanhSachService: NguLieuDanhSachService,
@@ -21,7 +25,8 @@ export class MobileNgulieuVrComponent implements OnInit {
     private fileService: FileService,
     private authService: AuthService,
     private router: Router,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private mobileNavbarService: MobileNavbarService,
   ) {
   }
 
@@ -33,12 +38,15 @@ export class MobileNgulieuVrComponent implements OnInit {
     if (!Number.isNaN(id)) {
       this.id_param = id;
       this.loadInit('');
-      console.log(this.id_param);
     } else {
       this.loadInit('');
     }
-    this.loadInit('');
-
+    this.subscription.add(
+      this.mobileNavbarService.onBackClick.subscribe(
+        () => {
+          void this.router.navigate(['mobile']);
+        })
+    )
   }
 
 
@@ -68,16 +76,8 @@ export class MobileNgulieuVrComponent implements OnInit {
   btnSelectNgulieu(item: Ngulieu) {
 
     const code = this.authService.encryptData(JSON.stringify({ngulieu_id: item.id}));
-    void this.router.navigate(['virtual-tour'], {queryParams: {code, tag:'mobile'}});
+    void this.router.navigate(['virtual-tour'], {queryParams: {code, tag: 'mobile'}});
   }
 
-  btn_back_mobile() {
-    void this.router.navigate(['mobile']);
-  }
 
-  btn_backInfo() {
-  }
-
-  btn_nextInfo() {
-  }
 }

@@ -11,60 +11,71 @@ import {Router} from "@angular/router";
   templateUrl: './danhmuc-ngulieuso.component.html',
   styleUrls: ['./danhmuc-ngulieuso.component.css']
 })
-export class DanhmucNgulieusoComponent implements OnInit,AfterViewInit, OnChanges {
+export class DanhmucNgulieusoComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() selectItem: boolean;
-  @Input() search:string;
+  @Input() search: string;
+  @Input() device: string = "DESKTOP";
 
   constructor(
     private nguLieuDanhSachService: NguLieuDanhSachService,
-    private notificationService:NotificationService,
-    private fileService:FileService,
-    private authService:AuthService,
-    private router:Router
-  ) { }
+    private notificationService: NotificationService,
+    private fileService: FileService,
+    private authService: AuthService,
+    private router: Router
+  ) {
+  }
 
-  ngOnInit(){
-    this.loadInit('');
+  ngOnInit() {
+    if (this.search) {
+      this.loadInit(this.search);
+    }
 
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if(this.search){
+    if (this.search) {
       this.loadInit(this.search);
     }
   }
-  ngAfterViewInit(){
+
+  ngAfterViewInit() {
   }
 
-  ngulieuImage360:Ngulieu[]= [];
-  ngulieuVideo360:Ngulieu[]= [];
-  loadInit(search?:string){
+  listData: Ngulieu[];
+  ngulieuImage360: Ngulieu[] = [];
+  ngulieuVideo360: Ngulieu[] = [];
+
+  loadInit(search?: string) {
     this.notificationService.isProcessing(true);
-      this.nguLieuDanhSachService.getDataUnlimit(search).subscribe({
-        next:(data)=>{
-         const dataNguLieu = data.map(m=>{
-           m['__file_thumbnail'] = m.file_thumbnail ? this.fileService.getPreviewLinkLocalFile(m.file_thumbnail): '';
-           return m;
-         })
-          this.ngulieuImage360=dataNguLieu.filter(f=>f.loaingulieu === "image360")? dataNguLieu.filter(f=>f.loaingulieu === "image360"):[];
-          this.ngulieuVideo360=dataNguLieu.filter(f=>f.loaingulieu === "video360")? dataNguLieu.filter(f=>f.loaingulieu === "video360"):[];
-          this.notificationService.isProcessing(false);
-          this.notificationService.isProcessing(false);
-        },
-        error:()=>{
-          this.notificationService.isProcessing(false);
-        }
+    this.nguLieuDanhSachService.getDataUnlimit(search).subscribe({
+      next: (data) => {
+        const dataNguLieu = data.map(m => {
+          m['__file_thumbnail'] = m.file_thumbnail ? this.fileService.getPreviewLinkLocalFile(m.file_thumbnail) : '';
+          m['tags'] = ['VR360', m.loaingulieu === "image360" ? 'Hình ảnh 3D 360' : 'Video 3D 360'];
+          return m;
+        })
+        this.ngulieuImage360 = dataNguLieu.filter(f => f.loaingulieu === "image360") ? dataNguLieu.filter(f => f.loaingulieu === "image360") : [];
+        this.ngulieuVideo360 = dataNguLieu.filter(f => f.loaingulieu === "video360") ? dataNguLieu.filter(f => f.loaingulieu === "video360") : [];
+        this.listData = [].concat(this.ngulieuImage360, this.ngulieuVideo360);
 
-      })
+        this.notificationService.isProcessing(false);
+      },
+      error: () => {
+        this.notificationService.isProcessing(false);
+      }
+
+    })
   }
-  btnSelectNgulieu(item:Ngulieu){
-    if (this.selectItem){
-    const code = this.authService.encryptData(JSON.stringify({ngulieu_id :item.id}));
-    void this.router.navigate(['virtual-tour'], {queryParams: {code}});
+
+  btnSelectNgulieu(item: Ngulieu) {
+    if (this.selectItem) {
+      const code = this.authService.encryptData(JSON.stringify({ngulieu_id: item.id}));
+      void this.router.navigate(['virtual-tour'], {queryParams: {code}});
 
     }
   }
-  btnLoadByTextseach(text:string){
+
+  btnLoadByTextseach(text: string) {
     this.loadInit(text);
   }
 

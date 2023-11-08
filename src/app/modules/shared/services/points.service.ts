@@ -75,6 +75,30 @@ export class PointsService {
     return this.update(id, {is_deleted, deleted_by});
   }
 
+  getPointsByNgulieuId(ngulieu_id:number):Observable<Point[]>{
+    const conditions:OvicConditionParam[]=[
+      {
+        conditionName: 'ngulieu_id',
+        condition: OvicQueryCondition.equal,
+        value: ngulieu_id.toString(10),
+
+      },
+      {
+        conditionName: 'parent_id',
+        condition: OvicQueryCondition.equal,
+        value: '0',
+        orWhere:'and'
+      }
+    ];
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+    }
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
+    return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
+  }
+
+
   getDataByparentId(parentId: number): Observable<Point[]> {
     const conditions: OvicConditionParam[] = [
 

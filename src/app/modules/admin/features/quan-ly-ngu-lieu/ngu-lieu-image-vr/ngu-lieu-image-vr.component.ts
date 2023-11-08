@@ -1,9 +1,9 @@
 import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {debounceTime, filter, forkJoin, Observable, Subject, Subscription} from "rxjs";
 import {DmChuyenMuc, DmDiemDiTich, DmLinhVuc, DmLoaiNguLieu} from "@shared/models/danh-muc";
-import {FileType} from "@shared/utils/syscat";
+import {FileType, MODULES_QUILL} from "@shared/utils/syscat";
 import {FormType, NgPaginateEvent, OvicForm} from "@shared/models/ovic-models";
-import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from "@angular/forms";
 import {Ngulieu} from "@shared/models/quan-ly-ngu-lieu";
 import {Paginator} from "primeng/paginator";
 import {ThemeSettingsService} from "@core/services/theme-settings.service";
@@ -18,8 +18,23 @@ import {AuthService} from "@core/services/auth.service";
 import {AvatarMakerSetting, MediaService} from "@shared/services/media.service";
 import {HelperService} from "@core/services/helper.service";
 import {getLinkDownload} from "@env";
+
 interface FormNgulieu extends OvicForm {
   object: Ngulieu;
+}
+
+const PinableValidator = (control: AbstractControl): ValidationErrors | null => {
+  const fileTypeControl = control.get('file_type');
+  if (fileTypeControl.valid) {
+    if (fileTypeControl.value === 0) {
+      const isInvalid = control.get('file_media').value.length > 0 || control.get('file_audio').value.length > 0;
+      return isInvalid ? null : {pinableError: 'File media required'};
+    } else {
+      const isInvalid = control.get('file_product').value.length > 0;
+      return isInvalid ? null : {pinableError: 'File product required'};
+    }
+  }
+  return null;
 }
 
 @Component({
@@ -32,7 +47,7 @@ export class NguLieuImageVrComponent implements OnInit {
   @ViewChild('formMembers', {static: true}) formMembers: TemplateRef<any>;
   @ViewChild(Paginator, {static: true}) paginator: Paginator;
   @ViewChild('fileChooser', {static: true}) fileChooser: TemplateRef<any>;
-
+  module_quill: any = MODULES_QUILL;
   private OBSERVE_SEARCH_DATA = new Subject<string>();
   formActive: FormNgulieu;
   private OBSERVE_PROCESS_FORM_DATA = new Subject<FormNgulieu>();
@@ -51,7 +66,7 @@ export class NguLieuImageVrComponent implements OnInit {
     canDownload: true,
     canUpload: true
   };
-  isUpdate:boolean;//true : update ,false: create
+  isUpdate: boolean;//true : update ,false: create
   listForm = {
     [FormType.ADDITION]: {type: FormType.ADDITION, title: 'Thêm mới ngữ liệu hình ảnh 360', object: null, data: null},
     [FormType.UPDATE]: {type: FormType.UPDATE, title: 'Cập nhật ngữ liệu hình ảnh 360', object: null, data: null}
@@ -62,18 +77,20 @@ export class NguLieuImageVrComponent implements OnInit {
     chuyenmuc: ['', Validators.required],
     loaingulieu: ['', Validators.required],
     linhvuc: ['', Validators.required],
-    diemditich_ids:[[]],
+    diemditich_ids: [[]],
     file_media: [[]],
-    file_audio:[[]],
-    donvi_id:[null, Validators.required],
-    file_thumbnail:{},
-    file_product:[[]],
-    file_type:[0]
-  });
+    file_audio: [[]],
+    donvi_id: [null, Validators.required],
+    file_thumbnail: {},
+    file_product: [[]],
+    file_type: [0]
+  }, {validators: PinableValidator});
+
   dataChuyemuc: DmChuyenMuc[];
   dataLoaingulieu: DmLoaiNguLieu[];
   dataLinhvuc: DmLinhVuc[];
-  dataDiemDiTich:DmDiemDiTich[];
+  dataDiemDiTich: DmDiemDiTich[];
+
   constructor(
     private themeSettingsService: ThemeSettingsService,
     private nguLieuDanhSachService: NguLieuDanhSachService,
@@ -83,10 +100,10 @@ export class NguLieuImageVrComponent implements OnInit {
     private danhMucLoaiNguLieuService: DanhMucLoaiNguLieuService,
     private danhMucLinhVucService: DanhMucLinhVucService,
     private danhMucDiemDiTichService: DanhMucDiemDiTichService,
-    private fileService:FileService,
-    private auth:AuthService,
-    private mediaService:MediaService,
-    private helperService:HelperService
+    private fileService: FileService,
+    private auth: AuthService,
+    private mediaService: MediaService,
+    private helperService: HelperService
   ) {
     const observeProcessFormData = this.OBSERVE_PROCESS_FORM_DATA.asObservable().pipe(debounceTime(100)).subscribe(form => this.__processFrom(form));
     this.subscription.add(observeProcessFormData);
@@ -107,17 +124,17 @@ export class NguLieuImageVrComponent implements OnInit {
   }
 
   loadInit() {
-    forkJoin<[DmChuyenMuc[], DmLoaiNguLieu[], DmLinhVuc[],DmDiemDiTich[]]>(
+    forkJoin<[DmChuyenMuc[], DmLoaiNguLieu[], DmLinhVuc[], DmDiemDiTich[]]>(
       this.danhMucChuyenMucService.getDataUnlimit(),
       this.danhMucLoaiNguLieuService.getDataUnlimit(),
       this.danhMucLinhVucService.getDataUnlimit(),
       this.danhMucDiemDiTichService.getDataUnlimit()
     ).subscribe({
-      next: ([dataChuyemuc, dataLoaingulieu, dataLinhvuc,dataDiemDitich]) => {
+      next: ([dataChuyemuc, dataLoaingulieu, dataLinhvuc, dataDiemDitich]) => {
         this.dataChuyemuc = dataChuyemuc;
         this.dataLoaingulieu = dataLoaingulieu;
         this.dataLinhvuc = dataLinhvuc;
-        this.dataDiemDiTich=dataDiemDitich;
+        this.dataDiemDiTich = dataDiemDitich;
         this.loadData(1);
       },
       error: () => {
@@ -137,22 +154,22 @@ export class NguLieuImageVrComponent implements OnInit {
           const linhvuc = this.dataLinhvuc && m.linhvuc ? this.dataLinhvuc.find(f => f.id === m.linhvuc) : null;
           const loaingulieu = this.dataLoaingulieu && m.loaingulieu ? this.dataLoaingulieu.find(f => f.kyhieu === m.loaingulieu) : null;
 
-          m['indexTable'] = (page -1)*10 + i++;
+          m['indexTable'] = (page - 1) * 10 + i++;
           m['__ten_converted'] = `<b>${m.title}</b><br>`;
           m['linhvuc_converted'] = linhvuc ? linhvuc.ten : '';
           m['loaingulieu_converted'] = loaingulieu ? loaingulieu.ten : '';
-          m['fileType'] = m.file_media && m.file_media[0] && FileType.has(m.file_media[0].type) && (FileType.get(m.file_media[0].type)==='img'|| FileType.get(m.file_media[0].type)==='mp4') ? 'mediaVr' : 'info';
-          m['__media_link']=m.file_media&& m.file_media[0] ? this.fileService.getPreviewLinkLocalFile(m.file_media[0]) :null;
-          m['__media_link']=m.file_media&& m.file_media[0] ? this.fileService.getPreviewLinkLocalFile(m.file_media[0]) :null;
-          m['__file_thumbnail'] = m.file_thumbnail ? this.fileService.getPreviewLinkLocalFile(m.file_thumbnail): '';
-          if(m.file_product && m.file_product[0]){
+          m['fileType'] = m.file_media && m.file_media[0] && FileType.has(m.file_media[0].type) && (FileType.get(m.file_media[0].type) === 'img' || FileType.get(m.file_media[0].type) === 'mp4') ? 'mediaVr' : 'info';
+          m['__media_link'] = m.file_media && m.file_media[0] ? this.fileService.getPreviewLinkLocalFile(m.file_media[0]) : null;
+          m['__media_link'] = m.file_media && m.file_media[0] ? this.fileService.getPreviewLinkLocalFile(m.file_media[0]) : null;
+          m['__file_thumbnail'] = m.file_thumbnail ? this.fileService.getPreviewLinkLocalFile(m.file_thumbnail) : '';
+          if (m.file_product && m.file_product[0]) {
             this.nguLieuDanhSachService.loadUrlNgulieuById(m.id).subscribe({
-              next:(link)=>{
+              next: (link) => {
                 m['__url_product'] = link['data'];
               }
             })
-          }else{
-            m['__url_product'] ='';
+          } else {
+            m['__url_product'] = '';
           }
           return m;
         });
@@ -182,26 +199,28 @@ export class NguLieuImageVrComponent implements OnInit {
   get f(): { [key: string]: AbstractControl<any> } {
     return this.formSave.controls;
   }
+
   paginate({page}: NgPaginateEvent) {
     this.page = page + 1;
     this.loadData(this.page);
   }
 
   btnAddNew() {
+    this.objectEdit = null;
     this.isUpdate = false;
     this.formSave.reset({
       title: '',
       mota: '',
       chuyenmuc: 0,
-      loaingulieu:'image360',
+      loaingulieu: 'image360',
       diemditich_ids: [],
       linhvuc: '',
       file_media: [],
       file_audio: [],
-      donvi_id:this.auth.userDonViId,
-      file_thumbnail:{},
-      file_product:[],
-      file_type:0
+      donvi_id: this.auth.userDonViId,
+      file_thumbnail: {},
+      file_product: [],
+      file_type: 0
     });
     this.characterAvatar = '';
     this.formActive = this.listForm[FormType.ADDITION];
@@ -220,10 +239,11 @@ export class NguLieuImageVrComponent implements OnInit {
     this.loaidoituong === 0;
   }
 
-  objectEdit:Ngulieu;
+  objectEdit: Ngulieu;
+
   btnEdit(object: Ngulieu) {
-    this.objectEdit =object;
-    this.isUpdate= true;
+    this.objectEdit = object;
+    this.isUpdate = true;
     this.formSave.reset({
       title: object.title,
       mota: object.mota,
@@ -233,10 +253,10 @@ export class NguLieuImageVrComponent implements OnInit {
       linhvuc: object.linhvuc,
       file_media: object.file_media,
       file_audio: object.file_audio,
-      donvi_id:object.donvi_id,
-      file_thumbnail:object.file_thumbnail,
-      file_product:object.file_product,
-      file_type:object.file_type
+      donvi_id: object.donvi_id,
+      file_thumbnail: object.file_thumbnail,
+      file_product: object.file_product,
+      file_type: object.file_type
     });
     this.loaidoituong = object.file_type;
     this.formActive = this.listForm[FormType.UPDATE];
@@ -253,7 +273,7 @@ export class NguLieuImageVrComponent implements OnInit {
           this.page = Math.max(1, this.page - (this.listData.length > 1 ? 0 : 1));
           this.notificationService.isProcessing(false);
           this.notificationService.toastSuccess('Thao tác thành công');
-          this.listData.filter(f => f.id != object.id);
+          this.loadData(this.page);
         }, error: () => {
           this.notificationService.isProcessing(false);
           this.notificationService.toastError('Thao tác không thành công');
@@ -265,13 +285,20 @@ export class NguLieuImageVrComponent implements OnInit {
   mode: 'TABLE' | 'MEDIAVR' | 'INFO' = "TABLE";
 
   saveForm() {
-
+    const titleInput = this.f['title'].value.trim();
+    this.f['title'].setValue(titleInput);
     if (this.formSave.valid) {
-      this.formActive.data = this.formSave.value;
-      this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
+      if (titleInput !== '') {
+        this.formActive.data = this.formSave.value;
+        this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
+      } else {
+        this.notificationService.toastWarning('Vui lòng không nhập khoảng trống');
+      }
     } else {
       this.formSave.markAllAsTouched();
-      this.notificationService.toastError('Vui lòng điền đầy đủ thông tin');
+
+      console.log(this.formSave.errors);
+      this.notificationService.toastWarning('Vui lòng nhập đủ thông tin');
     }
   }
 
@@ -282,24 +309,23 @@ export class NguLieuImageVrComponent implements OnInit {
   }
 
   objectVR: Ngulieu;
-  visible:boolean= false;
-  ngulieuInfo:Ngulieu;
-  ngulieu_type:1|0;
+  visible: boolean = false;
+  ngulieuInfo: Ngulieu;
+  ngulieu_type: 1 | 0;
 
   btnInformation(object: Ngulieu) {
-    this.ngulieu_type=object.file_type;
-    if (object.loaingulieu=== "video360" || object.loaingulieu === "image360") {
+    this.ngulieu_type = object.file_type;
+    if (object.loaingulieu === "video360" || object.loaingulieu === "image360") {
       this.mode = "MEDIAVR";
       this.objectVR = object;
-    }
-    else if(object.loaingulieu === 'image' ||object.loaingulieu === 'video'){
-      this.visible=true;
-      this.ngulieuInfo =object;
-    }else{
+    } else if (object.loaingulieu === 'image' || object.loaingulieu === 'video') {
+      this.visible = true;
+      this.ngulieuInfo = object;
+    } else {
       // tai lieu || audio || ...
       // this.mode = "INFO";
-      this.visible=true;
-      this.ngulieuInfo =object;
+      this.visible = true;
+      this.ngulieuInfo = object;
     }
   };
 
@@ -310,24 +336,30 @@ export class NguLieuImageVrComponent implements OnInit {
   }
 
   changeInput(event: string) {
-    setTimeout(()=>{
+    setTimeout(() => {
       this.loadData(1);
-    },1000);
+    }, 1000);
   }
-  filterData: { linhvucid: number, search: string,loaingulieu:string } = {linhvucid: null, search: '',loaingulieu:'image360'};
+
+  filterData: { linhvucid: number, search: string, loaingulieu: string } = {
+    linhvucid: null,
+    search: '',
+    loaingulieu: 'image360'
+  };
+
   btnExit() {
     this.mode = "TABLE";
   }
 
-  loaidoituong:0|1 = 0;//0:bientap// 1 sp dongs goi
+  loaidoituong: 0 | 1 = 0;//0:bientap// 1 sp dongs goi
 
-  changeObjectType(type:0|1){
+  changeObjectType(type: 0 | 1) {
     if (this.loaidoituong !== type) {
       this.loaidoituong = type;
     }
-    if(type ===1){
+    if (type === 1) {
       this.f['file_type'].setValue(1);
-    }else{
+    } else {
       this.f['file_type'].setValue(0);
     }
   }
@@ -335,7 +367,8 @@ export class NguLieuImageVrComponent implements OnInit {
 //  ========ảnh thumbnail=========
 
   //su ly ảnh nền
-  characterAvatar:string = '';
+  characterAvatar: string = '';
+
   async makeCharacterAvatar(file: File, characterName: string): Promise<File> {
     try {
       const options: AvatarMakerSetting = {
@@ -378,27 +411,28 @@ export class NguLieuImageVrComponent implements OnInit {
       this.characterAvatar = URL.createObjectURL(file);
     }
   }
-  btnCheck(ngulieu:Ngulieu){
-    if(ngulieu.root ===1){
-      this.nguLieuDanhSachService.update(ngulieu.id, {root:0}).subscribe({
-        next:()=>{
-          this.listData.find(f=>f.id === ngulieu.id).root =0;
+
+  btnCheck(ngulieu: Ngulieu) {
+    if (ngulieu.root === 1) {
+      this.nguLieuDanhSachService.update(ngulieu.id, {root: 0}).subscribe({
+        next: () => {
+          this.listData.find(f => f.id === ngulieu.id).root = 0;
           this.notificationService.isProcessing(false);
           this.notificationService.toastSuccess("Tắt ngữ liệu nổi bật");
         },
-        error:()=>{
+        error: () => {
           this.notificationService.isProcessing(false);
           this.notificationService.toastError("Cập nhật không thành công");
         }
       })
-    }else if(ngulieu.root === 0){
-      this.nguLieuDanhSachService.update(ngulieu.id, {root:1}).subscribe({
-        next:()=>{
-          this.listData.find(f=>f.id === ngulieu.id).root =1;
+    } else if (ngulieu.root === 0) {
+      this.nguLieuDanhSachService.update(ngulieu.id, {root: 1}).subscribe({
+        next: () => {
+          this.listData.find(f => f.id === ngulieu.id).root = 1;
           this.notificationService.isProcessing(false);
           this.notificationService.toastSuccess("Bật ngữ liệu nổi bật");
         },
-        error:()=>{
+        error: () => {
           this.notificationService.isProcessing(false);
           this.notificationService.toastError("Cập nhật không thành công");
         }
@@ -406,9 +440,9 @@ export class NguLieuImageVrComponent implements OnInit {
     }
   }
 
-  changeTb:0|1 = 0;//0:list// 1 card
+  changeTb: 0 | 1 = 0;//0:list// 1 card
 
-  selectChangeTb(select:1|0){
+  selectChangeTb(select: 1 | 0) {
     if (this.changeTb !== select) {
       this.changeTb = select;
     }

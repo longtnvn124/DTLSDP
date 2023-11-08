@@ -50,7 +50,7 @@ export class ThiSinhService {
       limit:-1,
       orderby: 'name',
       order: 'ASC',
-      include : id.join( ',' ) ,
+      include : id && id.length === 0?'0': id.join( ',' ) ,
       include_by : 'id'
     };
     const params: HttpParams = new HttpParams({fromObject});

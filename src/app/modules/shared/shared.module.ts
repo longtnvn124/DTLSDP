@@ -126,9 +126,6 @@ import { TreeCustomComponent } from '@shared/components/tree-custom/tree-custom.
 import {AutoFocusDirective} from "@shared/directives/auto-focus.directive";
 import { OvicMediaVrProductComponent } from './components/ovic-media-vr-product/ovic-media-vr-product.component';
 import { OvicResizeDropdowDirective } from './directives/ovic-resize-dropdow.directive';
-
-
-
 @NgModule({
   declarations: [
     OvicFlexibleTableComponent,
@@ -241,7 +238,14 @@ import { OvicResizeDropdowDirective } from './directives/ovic-resize-dropdow.dir
     ButtonModule,
     ContextMenuModule,
     DialogModule,
-    NgxMapboxGLModule
+    NgxMapboxGLModule,
+    // Quill.forRoot({
+    //   modules:{
+    //     imageResize: {
+    //       displaySize: true,
+    //     },
+    //   },theme:'snow'
+    // })
   ],
   // entryComponents : [
   // 	OvicTableComponent ,

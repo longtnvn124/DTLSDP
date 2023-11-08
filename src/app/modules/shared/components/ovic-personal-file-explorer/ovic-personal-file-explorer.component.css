@@ -240,7 +240,7 @@
     width: var(--ovic-personal-file-explorer-sidebar-size, 320px);
     border-right: 1px solid #e0e0e0;
     padding: 0;
-    height: calc(100vh - 43px - 54px);
+    height: calc(var(--max-screen-height , 100vh) - 43px - 54px);
     display: flex;
     flex-direction: column;
 }
@@ -263,7 +263,7 @@
     padding: 0;
     flex-direction: column;
     max-width: 100%;
-    max-height: calc(100vh - 43px - 54px);
+    max-height: calc(var(--max-screen-height , 100vh) - 43px - 54px);
     overflow-y: auto;
     position: relative;
 }
@@ -536,7 +536,7 @@
 }
 
 .ovic-file-explorer__dir-tree-panel {
-    height: calc(100vh - 43px - 54px - 160px);
+    height: calc(var(--max-screen-height , 100vh) - 43px - 54px - 160px);
     overflow-y: auto;
     padding-bottom: 5px;
 }
@@ -919,8 +919,8 @@
     justify-content: center;
     align-items: center;
     background-color: #ffffff;
-    /*max-height: calc(100vh - 60px);*/
-    max-height: calc(100vh - 3.5rem - 60px);
+    /*max-height: calc(var(--max-screen-height , 100vh) - 60px);*/
+    max-height: calc(var(--max-screen-height , 100vh) - 3.5rem - 60px);
     overflow: hidden;
 }
 
@@ -1028,7 +1028,7 @@
 @media (max-width: 1023px) {
 
     .ovic-file-explorer__dir-tree-panel {
-        height: calc(100vh - 43px - 54px - 50px);
+        height: calc(var(--max-screen-height , 100vh) - 43px - 54px - 50px);
     }
 
     .ovic-file-manager-container {
@@ -1074,7 +1074,7 @@
     }
 
     .ovic-file-explorer__right-content {
-        min-height: calc(100vh - 43px - 54px);
+        min-height: calc(var(--max-screen-height , 100vh) - 43px - 54px);
         width: 100%;
     }
 

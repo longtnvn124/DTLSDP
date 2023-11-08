@@ -21,3 +21,16 @@
   text-align: center;
   font-family: 'Open Sans', sans-serif;
 }
+.btn-reload{
+  background: #fff;
+  color: #000000;
+  z-index: 9999;
+  border: none;
+  position: absolute;
+  right: 43px;
+  top: 8px;
+  box-shadow: none;
+  padding: 10px 0px;
+  width: 34px;
+  font-weight: bold;
+}

@@ -81,20 +81,20 @@ export class NganHangDeComponent implements OnInit {
       headClass: 'ovic-w-160px text-center',
       rowClass: 'ovic-w-160px text-center'
     },
-    // {
-    //   fieldType: 'normal',
-    //   field: ['count'],
-    //   innerData: true,
-    //   header: 'Số đề đã tạo',
-    //   sortable: false,
-    //   headClass: 'ovic-w-150px text-center',
-    //   rowClass: 'ovic-w-150px text-center'
-    // },
     {
       fieldType: 'normal',
       field: ['__time_exam'],
       innerData: true,
       header: 'Thời gian thi',
+      sortable: false,
+      headClass: 'ovic-w-110px text-center',
+      rowClass: 'ovic-w-110px text-center'
+    },
+    {
+      fieldType: 'normal',
+      field: ['__status_exam'],
+      innerData: true,
+      header: 'Trạng thái',
       sortable: false,
       headClass: 'ovic-w-110px text-center',
       rowClass: 'ovic-w-110px text-center'
@@ -140,7 +140,18 @@ export class NganHangDeComponent implements OnInit {
     [FormType.UPDATE]: {type: FormType.UPDATE, title: 'Cập nhật ngân hành đề', object: null, data: null}
   };
 
-
+  statusList = [
+    {
+      value: 1,
+      label: 'Hợp lệ',
+      color: '<span class="badge badge--size-normal badge-success w-100">Hợp lệ</span>'
+    },
+    {
+      value: 0,
+      label: 'Không hợp lệ',
+      color: '<span class="badge badge--size-normal badge-danger w-100">Không hợp lệ</span>'
+    }
+  ];
   constructor(
     private nganHangDeService: NganHangDeService,
     private notificationService: NotificationService,
@@ -179,6 +190,7 @@ export class NganHangDeComponent implements OnInit {
           m['__ten_converted'] = `<b>${m.title}</b><br>` + m.desc;
           // m['__time_exam'] = (m.time_per_test/60) + ' phút';
           m['__time_exam'] = m.time_per_test + ' phút';
+          m['__status_exam'] = m.total >= m.number_questions_per_test ?  this.statusList[0].color: this.statusList[1].color;
           return m;
         });
         this.recordsTotal = recordsTotal;
@@ -292,13 +304,18 @@ export class NganHangDeComponent implements OnInit {
   }
 
   saveForm() {
+    const titleInput = this.f['title'].value.trim();
+    this.f['title'].setValue(titleInput);
     if (this.formSave.valid) {
-      this.formActive.data = this.formSave.value;
-      this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
-
+      if (titleInput !== '') {
+        this.formActive.data = this.formSave.value;
+        this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
+      } else {
+        this.notificationService.toastWarning('Vui lòng không nhập khoảng trống');
+      }
     } else {
       this.formSave.markAllAsTouched();
-      this.notificationService.toastError('Vui lòng điền đầy đủ thông tin');
+      this.notificationService.toastWarning('Vui lòng nhập đủ thông tin');
     }
   }
 

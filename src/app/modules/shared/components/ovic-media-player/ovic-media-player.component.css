@@ -11,7 +11,7 @@
 .ovic-media-player-wrap {
     position: relative;
     z-index: 10;
-    height: 100vh;
+    height: var(--max-screen-height , 100vh);
     width: 100%;
     display: flex;
     font-size: 0;

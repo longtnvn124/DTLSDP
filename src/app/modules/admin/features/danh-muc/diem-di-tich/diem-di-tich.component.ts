@@ -2,21 +2,25 @@ import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {FormType, NgPaginateEvent, OvicForm, OvicTableStructure} from "@shared/models/ovic-models";
 import {DmDiemDiTich} from "@shared/models/danh-muc";
 import {Paginator} from "primeng/paginator";
-import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {debounceTime, filter, Observable, Subject, Subscription, timer} from "rxjs";
+import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from "@angular/forms";
+import {debounceTime, filter, Observable, Subject, Subscription} from "rxjs";
 import {ThemeSettingsService} from "@core/services/theme-settings.service";
 import {DanhMucDiemDiTichService} from "@shared/services/danh-muc-diem-di-tich.service";
 import {NotificationService} from "@core/services/notification.service";
 import {OvicButton} from "@core/models/buttons";
-import {AuthService} from "@core/services/auth.service";
-import {Router} from '@angular/router';
-import {MediaService} from "@shared/services/media.service";
-import {FileService} from "@core/services/file.service";
-import {HelperService} from "@core/services/helper.service";
+import {OvicMapComponent} from "@shared/components/ovic-map/ovic-map.component";
+import {MODULES_QUILL} from "@shared/utils/syscat";
 
 
 interface FormDmDiemDiTich extends OvicForm {
   object: DmDiemDiTich;
+}
+const PinableValidator = (control: AbstractControl): ValidationErrors | null => {
+  if (control.get('ten').valid && control.get('ten').value) {
+    return control.get('ten').value.trim().length >0 ? null :{invalid:true };
+  } else {
+    return {invalid: true};
+  }
 }
 
 @Component({
@@ -28,6 +32,7 @@ export class DiemDiTichComponent implements OnInit {
   @ViewChild('fromUpdate', {static: true}) template: TemplateRef<any>;
   @ViewChild('formMedia') formMedia: TemplateRef<any>;
   @ViewChild(Paginator) paginator: Paginator;
+  @ViewChild(OvicMapComponent) ovicMapComp: OvicMapComponent;
   statusList = [
     {
       value: 1,
@@ -99,7 +104,7 @@ export class DiemDiTichComponent implements OnInit {
       ]
     }
   ];
-
+  module_quill:any = MODULES_QUILL;
   headButtons = [
     {
       label: 'Thêm di tích',
@@ -144,7 +149,8 @@ export class DiemDiTichComponent implements OnInit {
     canDownload: true,
     canUpload: true
   };
-  filePermistionOnlyShow = {canDelete: false, canDownload: true, canUpload: false};
+
+  onResizeMap: Subject<string> = new Subject<string>();
   visible: boolean = false;
 
   constructor(
@@ -152,17 +158,15 @@ export class DiemDiTichComponent implements OnInit {
     private fb: FormBuilder,
     private notificationService: NotificationService,
     private danhMucDiemDiTichService: DanhMucDiemDiTichService,
-    private auth: AuthService,
-    private router: Router,
-    private mediaService: MediaService,
-    private fileService: FileService,
-    private helperService: HelperService,
   ) {
     this.formSave = this.fb.group({
       ten: ['', Validators.required],
       mota: [''],
       status: ['', Validators.required],
       toado: ['']
+    },{
+      validators: PinableValidator
+
     });
 
     const observeProcessFormData = this.OBSERVE_PROCESS_FORM_DATA.asObservable().pipe(debounceTime(100)).subscribe(form => this.__processFrom(form));
@@ -182,6 +186,7 @@ export class DiemDiTichComponent implements OnInit {
     this.loadData(1);
   }
 
+  dataNameDiTich:string[];
   loadData(page) {
     const limit = this.themeSettingsService.settings.rows;
     this.index = (page * limit) - limit + 1;
@@ -191,12 +196,9 @@ export class DiemDiTichComponent implements OnInit {
         this.listData = data.map(m => {
           const sIndex = this.statusList.findIndex(i => i.value === m.status);
           m['__status'] = sIndex !== -1 ? this.statusList[sIndex].color : '';
-          // m['__fileMedia_converted'] = m.ds_ngulieu ==[] ||m.ds_ngulieu == null?null :this.fileService.getPreviewLinkLocalFile(m.ds_ngulieu[0]);
-
-          // m['__ten_converted'] = `<b>${m.ten}</b> <br>` + m.mota;
-          // m['__duongdan']=m.toado_map + ' ' + `<a href="${m.toado_map}" target="_blank"><i class="pi pi-map"></i></a>`;
           return m;
         })
+        this.dataNameDiTich = this.listData.map(m=>m.ten);
         this.isLoading = false;
       }, error: () => {
         this.isLoading = false;
@@ -225,10 +227,6 @@ export class DiemDiTichComponent implements OnInit {
     });
   }
 
-  get f(): { [key: string]: AbstractControl<any> } {
-    return this.formSave.controls;
-  }
-
   paginate({page}: NgPaginateEvent) {
     this.page = page + 1;
     this.loadData(this.page);
@@ -243,9 +241,9 @@ export class DiemDiTichComponent implements OnInit {
   private preSetupForm(name: string) {
     this.notificationService.isProcessing(false);
     this.notificationService.openSideNavigationMenu({
-      name: this.menuName,
+      name: name,
       template: this.template,
-      size: 600,
+      size: 1024,
       offsetTop: '0px'
     });
   }
@@ -282,7 +280,6 @@ export class DiemDiTichComponent implements OnInit {
           status: object1.status,
           toado: object1.toado
         });
-        // this.characterAvatar = object1.ds_ngulieu ? getLinkDownload(object1.ds_ngulieu['id']) : '';
         this.formActive = this.listForm[FormType.UPDATE];
         this.formActive.object = object1;
         this.preSetupForm(this.menuName);
@@ -309,14 +306,13 @@ export class DiemDiTichComponent implements OnInit {
         this.visible = true;
         break;
       case 'MAP_DECTISION':
-        timer(1000).subscribe(() => {
-          const data = this.listData.find(u => u.id === decision.id);
-          if(data.toado){
-            this.dataBinding = data;
-          }else{
-            this.dataBinding = null;
-          }
-        });
+
+        const data = this.listData.find(u => u.id === decision.id);
+        if (data.toado) {
+          this.dataBinding = data;
+        } else {
+          this.dataBinding = null;
+        }
         this.visibleMap = true;
 
 
@@ -325,19 +321,33 @@ export class DiemDiTichComponent implements OnInit {
         break;
     }
   }
-  onShow:boolean=false;
+
+  onShow: boolean = false;
   visibleMap: boolean = false;
   dataInformation: DmDiemDiTich;
 
+  get f(): { [key: string]: AbstractControl<any> } {
+    return this.formSave.controls;
+  }
+
   saveForm() {
+    const titleInput = this.f['ten'].value.trim();
+    this.f['ten'].setValue(titleInput);
     if (this.formSave.valid) {
-      this.formActive.data = this.formSave.value;
-      this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
+      if (titleInput !== '') {
+          this.formActive.data = this.formSave.value;
+          this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
+      } else {
+        this.notificationService.toastWarning('Vui lòng không nhập khoảng trống');
+      }
     } else {
       this.formSave.markAllAsTouched();
-      this.notificationService.toastError('Vui lòng điền đầy đủ thông tin');
+      this.notificationService.toastWarning('Vui lòng nhập đủ thông tin');
     }
   }
 
+  btnReload() {
+    this.ovicMapComp.btnReload();
+  }
 
 }

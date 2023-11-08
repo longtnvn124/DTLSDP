@@ -4,7 +4,7 @@
     <div class="row d-flex justify-content-between align-items-center" style="padding: 6px 22px;">
       <div style="padding-left:15px;cursor: pointer" class="header-logo" (click)="btn_GoHome()">
         <a><img src="assets/images/quochuy.png"></a>
-        <h3 class="header-logo_title ml-2">Ban tuyên giáo</h3>
+        <h3 class="header-logo_title ml-2">Ban tuyên giáo Tỉnh uỷ</h3>
       </div>
       <div class="nav-menu-container">
         <ul class="nav-menu">
@@ -96,13 +96,11 @@
 
     <div class="shift-test-container mt-5" style="background: #75837ad4;max-width: 100%;overflow: hidden; ">
       <div class=" container d-flex justify-content-center align-items-center flex-column py-5">
-        <!--        <div class="row container">-->
         <div class="row ">
           <div class="col text-right shif-test-left shif-test__img">
             <img class="w-100" style="max-width:100%"t src="assets/icon-png/shift-test.png" alt="">
           </div>
           <div class="col shif-test-right resize-test-right">
-            <!--            <div class="w-100 h-100 d-flex justify-content-center align-items-center flex-column">-->
             <div class="w-100 text-center p-2">
               <h3 class="shift-test__title">Tìm hiểu về Lịch sử - Văn hoá</h3>
               <h3 class="shift-test__title">thông qua các cuộc thi</h3>
@@ -160,61 +158,23 @@
   <ng-container *ngSwitchCase="'VR360'">
     <div class="container" style="padding-top: 80px">
       <div class="header-custom">
-        <!--        <button pRipple pButton class="p-button-warning" label="Trở lại" icon iconPos="left" icon="pi pi-angle-left"-->
-        <!--                (click)="btn_exit()"></button>-->
         <p class="nhanvat-title"> Vr360 </p>
         <div>
           <button pButton pRipple class="p-button-secondary mr-2" icon="pi pi-angle-left"></button>
           <button pButton pRipple class="p-button-secondary " icon="pi pi-angle-right"></button>
         </div>
       </div>
-      <danhmuc-ngulieuso [selectItem]="true"
-                         style="min-height: calc(100vh - 58px - 84px - 134px);display: block;"></danhmuc-ngulieuso>
     </div>
   </ng-container>
   <ng-container *ngSwitchCase="'NHANVAT'">
-    <div class="container" style="padding-top: 80px">
-      <div class="header-custom">
-        <!--        <button pRipple pButton class="p-button-warning" label="Trở lại" icon iconPos="left" icon="pi pi-angle-left"-->
-        <!--                (click)="btn_exit()"></button>-->
-        <p class="nhanvat-title"> {{titleNhanvat}} </p>
-        <div>
-          <button pButton pRipple class="p-button-secondary mr-2" icon="pi pi-angle-left"
-                  (click)="btnBackNhanvat()"></button>
-          <button pButton pRipple class="p-button-secondary " icon="pi pi-angle-right"></button>
-        </div>
-      </div>
-      <app-nhanvat [selectItem]="true"
-                   style="min-height: calc(100vh - 86px - 84px - 134px);display: block;"></app-nhanvat>
-    </div>
-
   </ng-container>
   <ng-container *ngSwitchCase="'SUKIEN_TONGHOP'">
-    <div class="container" style="padding-top: 80px">
-      <div class="header-custom">
-        <!--        <button pRipple pButton class="p-button-warning" label="Trở lại" icon iconPos="left" icon="pi pi-angle-left"-->
-        <!--                (click)="btn_exit()"></button>-->
-        <p class="nhanvat-title"> Sự kiện lịch sử VH-ĐP </p>
-        <div>
-          <button pButton pRipple class="p-button-secondary mr-2" icon="pi pi-angle-left"
-                  (click)="btnBackInfoSukien()"></button>
-          <button pButton pRipple class="p-button-secondary " icon="pi pi-angle-right"></button>
-        </div>
-      </div>
-
-      <app-sukien-tonghop [selectItem]="true"
-                          style="min-height: calc(100vh - 44px - 84px - 134px);display: block;"></app-sukien-tonghop>
-    </div>
   </ng-container>
   <ng-container *ngSwitchCase="'SEARCH'">
-    <app-search style="min-height: calc(100vh - 84px - 134px);display: block;margin-top: 84px;"></app-search>
   </ng-container>
   <ng-container *ngSwitchCase="'CHUYENDE'">
-    <app-chuyen-de (eventEmitter)="handleEvent()" class="w-100 d-block"
-                   style="height:100vh;display: block;"></app-chuyen-de>
   </ng-container>
   <ng-container *ngSwitchCase="'GIOITHIEU'">
-    <app-gioi-thieu style="min-height: calc(100vh - 84px - 134px);display: block;margin-top: 84px;"></app-gioi-thieu>
   </ng-container>
 
 </ng-container>

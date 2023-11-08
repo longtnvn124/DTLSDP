@@ -107,7 +107,7 @@
 .lesson-board__lesson__title--chapter {
   width: calc(100% - 18px);
   font-weight: 700;
-  font-size: 15px;
+  font-size: 13px;
   line-height: 1.2;
   padding: 5px 0 5px 10px;
   text-transform: uppercase;

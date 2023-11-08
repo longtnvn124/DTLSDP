@@ -13,8 +13,7 @@ import {ChuyenDeService} from "@shared/services/chuyen-de.service";
 import {OvicFile} from "@core/models/file";
 import {forkJoin, Observable} from "rxjs";
 import {BUTTON_NO, BUTTON_YES} from "@core/models/buttons";
-import {WAITING_POPUP} from '@shared/utils/syscat';
-import {MenuItem} from "primeng/api/menuitem";
+import {MODULES_QUILL, WAITING_POPUP} from '@shared/utils/syscat';
 
 export interface ConvertChuyenDe extends ChuyenDe {
   id: number;
@@ -55,7 +54,7 @@ export class ChuyenDeComponent implements OnInit, OnChanges, AfterViewInit {
   checkOrderingFocus: number;
   checkParentFocus: number;
 
-
+  module_quill:any = MODULES_QUILL;
   public data: any = {};
   startProgress: boolean;
   settingTotalParam = {};
@@ -75,13 +74,11 @@ export class ChuyenDeComponent implements OnInit, OnChanges, AfterViewInit {
     public formBuilder: FormBuilder,
     private auth: AuthService,
     private fileService: FileService,
-    protected sanitizer: DomSanitizer,
     private notificationService: NotificationService,
     private httpHepler: HttpParamsHeplerService,
     private chuyenDeService: ChuyenDeService
   ) {
 
-    // this.typeTestValue = this.optionsTypeTest[0];
     this.settingTotalParam = {
       numberTest: 0,
     }
@@ -104,7 +101,7 @@ export class ChuyenDeComponent implements OnInit, OnChanges, AfterViewInit {
     this.userId = this.auth.user.id;
     this.isManager = this.auth.userHasRole('uni_leader');
     this.isLanhDaoKhoa = this.auth.userHasRole('fact_leader');
-    const actions = [];
+
   }
 
   get f() {
@@ -274,9 +271,6 @@ export class ChuyenDeComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
 
-  changeInputImport(event) {
-  }
-
   onDragStartParent(event: CdkDragDrop<ChuyenDe[]>, children) {
     if (event.previousContainer === event.container) {
       let currentIndex = event.currentIndex === event.container.data.length - 1 ? event.currentIndex - 1 : event.currentIndex;
@@ -327,7 +321,6 @@ export class ChuyenDeComponent implements OnInit, OnChanges, AfterViewInit {
 
     this.notificationService.confirm(string, 'Xác nhận hành động', [BUTTON_YES, BUTTON_NO]).then((a) => {
       if (a.name === 'yes') {
-        const ids = [];
         const request: Observable<any>[] = [];
         if (parent['children'] && parent['children'].length) {
           parent['children'].forEach(f => {

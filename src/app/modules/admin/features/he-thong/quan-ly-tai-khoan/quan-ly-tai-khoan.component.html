@@ -9,7 +9,7 @@
                 (onButtonClick)="userActions($event)" [enableSearch]="false" [enableSearchLocal]="false"
                 [searchDebounceTime]="800" [headerButtons]="headButtons"></ovic-table>
     <p-paginator class="p-paginator--custom" [showCurrentPageReport]="true" [rows]="15"
-                     [totalRecords]="data.length" [pageLinkSize]="5"></p-paginator>
+                 [totalRecords]="data.length" [pageLinkSize]="5"></p-paginator>
 
 
   </div>
@@ -41,15 +41,18 @@
           <label for="phone">Số điện thoại <span class="ovic-mark">*</span></label>
           <input type="text" id="phone" formControlName="phone" autocomplete="off">
         </p>
-        <p class="form-row form-group" [class.err-input]="changPassState && f['password'].invalid">
+        <div class="form-row form-group position-relative" [class.err-input]="changPassState && f['password'].invalid">
           <label for="new_password">Mật khẩu <span class="ovic-mark">*</span></label>
-                    <input type="password" id="new_password" formControlName="password"
-                           [attr.disabled]=" !changPassState == true ? true : null" autocomplete="off">
-<!--          <p-password type="password" id="new_password" autocomplete="off" formControlName="password" [feedback]="false"-->
-<!--                      [toggleMask]="true" [attr.disabled]=" !changPassState == true ? true : null"></p-password>-->
-          <button class="btn btn-checker" [class.checked]="changPassState" (click)="clickChangedPass()"
-                  *ngIf="isUpdateForm"></button>
-        </p>
+          <input type="{{type_password}}" id="new_password" formControlName="password"
+                 [attr.disabled]=" !changPassState == true ? true : null" autocomplete="off">
+          <!--          <p-password type="password" id="new_password" autocomplete="off" formControlName="password" [feedback]="false"-->
+          <!--                      [toggleMask]="true" [attr.disabled]=" !changPassState == true ? true : null"></p-password>-->
+<!--          <button class="btn btn-checker" [class.checked]="changPassState" (click)="clickChangedPass()"-->
+<!--                  *ngIf="isUpdateForm"></button>-->
+          <div style="position: absolute;right: 12px;top: 0;height: 100%;text-align: center;display: flex;align-items: center;">
+            <i [ngClass]="type_password==='password' ? 'pi pi-eye': 'pi pi-eye-slash'" (click)="btnShowPassWord()"></i>
+          </div>
+        </div>
         <div class="warning-pass">
           <div class="warning-pass_item font-weight-bold">Lưu ý:</div>
           <div class="warning-pass_item">* Mật khẩu phải có ít nhất 8 ký tự</div>

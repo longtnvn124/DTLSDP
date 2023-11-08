@@ -28,7 +28,6 @@
       <div class="container-content d-block">
         <p-splitter [style]="{'height': '100%'}" [panelSizes]="[35,65]">
           <ng-template pTemplate>
-
             <div class="left-content w-100">
               <div class="left-header">{{contentHeader}}</div>
               <div class="left-body">
@@ -40,10 +39,8 @@
                           <div class="col-12">
                             <div class="form-row">
                               <label>Nội dung câu hỏi <span class="ovic-mark">*</span></label>
-                              <!--                          <textarea type="text" placeholder="Nội dung..." formControlName="title"-->
-                              <!--                                    autocomplete="off"></textarea>-->
                               <p-editor #edtitor [editor]="edtitor" [curentFormControl]="f['title']" [Resize_img]="true"
-                                        class="w-100" formControlName="title" placeholder="Nội dung..."
+                                        class="w-100" formControlName="title" placeholder="Nội dung..."  [modules]="module_quill"
                                         [style]="{ 'min-height': '250px'}">
                                 <p-header>
                           <span class="ql-formats">
@@ -132,7 +129,7 @@
                               <button class="ql-indent q2-box last" value="-1" title="Giảm thụt đầu dòng"></button>
                           </span>
                                   <span class="ql-formats">
-                              <button class="ql-link" aria-label="link" title="Thẻ liên kết"></button>
+
                               <button class="ql-image" aria-label="image" title="Chèn ảnh"></button>
                               <button class="ql-blockquote" aria-label="blockquote" title="Trích dẫn"></button>
                               <button class="ql-code-block" aria-label="code-block" title="code-block"></button>
@@ -167,7 +164,7 @@
             </div>
           </ng-template>
           <ng-template pTemplate>
-            <div class="right-content ovic-scroll-style w-100">
+            <div class="right-content ovic-scroll-style w-100 p-1">
               <div class="container">
                 <div class="w-100">
                   <span class="p-input-icon-left w-100">

@@ -2,19 +2,32 @@ import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {FormType, NgPaginateEvent, OvicForm, OvicTableStructure} from "@shared/models/ovic-models";
 import {Shift, statusOptions} from "@shared/models/quan-ly-doi-thi";
 import {debounceTime, filter, Observable, Subject, Subscription} from "rxjs";
-import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from "@angular/forms";
 import {NotificationService} from "@core/services/notification.service";
 import {ThemeSettingsService} from "@core/services/theme-settings.service";
-import {DmNhanVatLichSu} from "@shared/models/danh-muc";
 import {DotThiDanhSachService} from "@shared/services/dot-thi-danh-sach.service";
 import {OvicButton} from "@core/models/buttons";
 import {NganHangDeService} from "@shared/services/ngan-hang-de.service";
 import {NganHangDe} from "@shared/models/quan-ly-ngan-hang";
 import {HelperService} from '@core/services/helper.service';
-
+import {MODULES_QUILL} from "@shared/utils/syscat";
 interface FormDotthi extends OvicForm {
   object: Shift;
 }
+
+// ten
+// time_start
+// time_end
+// const PinableValidator = (control: AbstractControl): ValidationErrors | null => {
+//   if (control.get('time_start').value && control.get('time_end').value) {
+//     const timeStart = new Date(control.get('time_start').value).getTime();
+//     const timeEnd = new Date(control.get('time_end').value).getTime();
+//     const time: boolean = timeStart<timeEnd;
+//     return time ? null : {invalid: true};
+//   } else {
+//     return {invalid: true};
+//   }
+// }
 
 @Component({
   selector: 'app-dot-thi-danh-sach',
@@ -36,18 +49,7 @@ export class DotThiDanhSachComponent implements OnInit {
   isLoading = true;
   needUpdate = false;
   search: string;
-  statusOptions= statusOptions;
-  formState: {
-    formType: 'add' | 'edit',
-    showForm: boolean,
-    formTitle: string,
-    object: Shift | null
-  } = {
-    formType: 'add',
-    showForm: false,
-    formTitle: '',
-    object: null
-  }
+  statusOptions = statusOptions;
   menuName = 'DsDotthi';
   listData: Shift[];
   nganHangDe: NganHangDe[];
@@ -131,6 +133,7 @@ export class DotThiDanhSachComponent implements OnInit {
     [FormType.ADDITION]: {type: FormType.ADDITION, title: 'Thêm mới đợt thi ', object: null, data: null},
     [FormType.UPDATE]: {type: FormType.UPDATE, title: 'Cập nhật đợt thi ', object: null, data: null}
   };
+  module_quill: any = MODULES_QUILL;
 
   constructor(
     private dotThiDanhSachService: DotThiDanhSachService,
@@ -146,8 +149,10 @@ export class DotThiDanhSachComponent implements OnInit {
       time_start: ['', Validators.required],
       time_end: ['', Validators.required],
       bank_id: ['', Validators.required],
-      status:[1],
-    })
+      status: [1],
+    },
+      // {validators:PinableValidator}
+    );
     const observeProcessFormData = this.OBSERVE_PROCESS_FORM_DATA.asObservable().pipe(debounceTime(100)).subscribe(form => this.__processFrom(form));
     this.subscription.add(observeProcessFormData);
     const observeProcessCloseForm = this.notificationService.onSideNavigationMenuClosed().pipe(filter(menuName => menuName === this.menuName && this.needUpdate)).subscribe(() => this.loadData(this.page));
@@ -159,7 +164,7 @@ export class DotThiDanhSachComponent implements OnInit {
   ngOnInit(): void {
     this.nganHangDeService.getDataUnlimit().subscribe({
       next: (data) => {
-        this.nganHangDe = data;
+        this.nganHangDe = data.filter(f => f.number_questions_per_test <= f.total);
         this.loadInit();
       }, error: () => {
         this.notificationService.toastError('Mất kết nối với máy chủ');
@@ -194,10 +199,10 @@ export class DotThiDanhSachComponent implements OnInit {
     this.dotThiDanhSachService.load(page, this.search).subscribe({
       next: ({data, recordsTotal}) => {
         this.listData = data.map(m => {
-          m['__title_converted'] = `<b>${m.title}</b><br>` + m.desc;
+          m['__title_converted'] = `<b>${m.title}</b><br>`;
           m['__time_converted'] = this.strToTime(m.time_start) + ' - ' + this.strToTime(m.time_end);
-          m['__bank_coverted'] = this.nganHangDe && m.bank_id && this.nganHangDe.find(f=>f.id=== m.bank_id) ? this.nganHangDe.find(f=>f.id=== m.bank_id).title : '';
-          m['__status_converted'] = m.status ===1 ? this.statusOptions[1].color : this.statusOptions[0].color;
+          m['__bank_coverted'] = this.nganHangDe && m.bank_id && this.nganHangDe.find(f => f.id === m.bank_id) ? this.nganHangDe.find(f => f.id === m.bank_id).title : '';
+          m['__status_converted'] = m.status === 1 ? this.statusOptions[1].color : this.statusOptions[0].color;
           return m;
         })
         this.recordsTotal = recordsTotal;
@@ -263,7 +268,7 @@ export class DotThiDanhSachComponent implements OnInit {
           time_start: '',
           time_end: '',
           bank_id: 0,
-          status:1
+          status: 1
 
         });
         this.formActive = this.listForm[FormType.ADDITION];
@@ -279,7 +284,7 @@ export class DotThiDanhSachComponent implements OnInit {
           time_start: object1.time_start ? new Date(object1.time_start) : null,
           time_end: object1.time_end ? new Date(object1.time_end) : null,
           bank_id: object1.bank_id,
-          status:object1.status
+          status: object1.status
 
         })
         this.formActive = this.listForm[FormType.UPDATE];
@@ -310,15 +315,28 @@ export class DotThiDanhSachComponent implements OnInit {
 
 
   saveForm() {
+    const titleInput = this.f['title'].value.trim();
+    this.f['title'].setValue(titleInput);
+    const timeszone = new Date(this.f['time_start'].value).getTime() < new Date(this.f['time_end'].value).getTime();
+    console.log(timeszone);
     if (this.formSave.valid) {
-      this.formSave.value['time_start'] = this.convertDateFormat(this.formSave.value['time_start']);
-      this.formSave.value['time_end'] = this.convertDateFormat(this.formSave.value['time_end']);
-      this.formActive.data = this.formSave.value;
-      this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
+      if (titleInput !== '') {
+        if (timeszone){
+          this.formSave.value['time_start'] = this.convertDateFormat(this.formSave.value['time_start']);
+          this.formSave.value['time_end'] = this.convertDateFormat(this.formSave.value['time_end']);
+          this.formActive.data = this.formSave.value;
+          this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
+        }else{
+          this.notificationService.toastWarning('Thời gian nhập không hợp lệ');
+        }
 
+      } else {
+        this.notificationService.toastError('Vui lòng không nhập khoảng trống');
+      }
     } else {
       this.formSave.markAllAsTouched();
-      this.notificationService.toastError('Vui lòng điền đầy đủ thông tin');
+      this.notificationService.toastError('Vui lòng nhập đủ thông tin');
     }
   }
+
 }

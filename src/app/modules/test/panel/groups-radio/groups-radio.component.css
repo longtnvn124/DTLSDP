@@ -231,3 +231,20 @@ p.ovic-radios__text {
 .ovic-radios__tick {
 	padding-left: 10px;
 }
+.icon-correct-ansser{
+  position: absolute;
+  height:100%;
+  display:flex;
+  justify-content: center;
+  align-items:center;
+  right:12px;
+  color:rgb(52 199 65);
+  font-size: 17px;
+
+}
+.icon-correct-ansser_i{
+  background: #ffff;
+  padding: 7px;
+  border-radius: 50%;
+  border: 1px solid;
+}

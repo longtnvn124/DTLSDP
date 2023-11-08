@@ -27,9 +27,11 @@
   font-size: 14px;
   font-weight: 500;
   color: #fff;
+  z-index:-1;
 }
 
 .tooltip.is-active {
+  z-index:1;
   opacity: 1;
   transform: translate3d(-50%, calc(-100% - 20px), 0);
 }
@@ -72,7 +74,7 @@
 }
 .datainfo-body__dec {
   display: block;
-  font-weight: bold;
+  /*font-weight: bold;*/
 }
 .datainfo-body__dec span{
   font-weight: normal;

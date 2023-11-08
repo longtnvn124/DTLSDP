@@ -24,6 +24,9 @@ import {TabViewModule} from "primeng/tabview";
 import {MatMenuModule} from "@angular/material/menu";
 import {MatIconModule} from "@angular/material/icon";
 
+import Quill from 'quill';
+import ImageResize from 'quill-image-resize-module';
+Quill.register('modules/imageResize', ImageResize);
 
 @NgModule({
   declarations: [

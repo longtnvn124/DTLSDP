@@ -1,5 +1,5 @@
 import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {AuthService} from '@core/services/auth.service';
 import {HelperService} from '@core/services/helper.service';
 import {NotificationService} from '@core/services/notification.service';
@@ -13,6 +13,14 @@ import {OvicButton} from '@core/models/buttons';
 
 interface FormDmChuyenMuc extends OvicForm {
   object: DmChuyenMuc;
+}
+
+const PinableValidator = (control: AbstractControl): ValidationErrors | null => {
+  if (control.get('ten').valid && control.get('ten').value) {
+    return control.get('ten').value.trim().length >0 ? null :{invalid:true };
+  } else {
+    return {invalid: true};
+  }
 }
 
 @Component({
@@ -110,7 +118,7 @@ export class ChuyenMucComponent implements OnInit {
   menuName: 'dm_chuyenmuc';
 
   page = 1;
-  btn_checkAdd:'Lưu lại' |'Cập nhật';
+  btn_checkAdd: 'Lưu lại' | 'Cập nhật';
   recordsTotal = 0;
 
   index = 1;
@@ -130,6 +138,8 @@ export class ChuyenMucComponent implements OnInit {
       ten: ['', Validators.required],
       mota: [''],
       status: [null, Validators.required],
+    }, {
+      validators: PinableValidator
     });
 
     const observeProcessFormData = this.OBSERVE_PROCESS_FORM_DATA.asObservable().pipe(debounceTime(100)).subscribe(form => this.__processFrom(form));
@@ -152,7 +162,7 @@ export class ChuyenMucComponent implements OnInit {
   loadData(page) {
     const limit = this.themeSettingsService.settings.rows;
     this.index = (page * limit) - limit + 1;
-    this.danhMucChuyenMucService.search(page, null,this.filter.search).subscribe({
+    this.danhMucChuyenMucService.search(page, null, this.filter.search).subscribe({
       next: ({data, recordsTotal}) => {
         this.recordsTotal = recordsTotal;
         this.listData = data.map(m => {
@@ -213,7 +223,7 @@ export class ChuyenMucComponent implements OnInit {
     const decision = button.data && this.listData ? this.listData.find(u => u.id === button.data) : null;
     switch (button.name) {
       case 'BUTTON_ADD_NEW':
-        this.btn_checkAdd="Lưu lại";
+        this.btn_checkAdd = "Lưu lại";
         this.formSave.reset({
           ten: '',
           mota: '',
@@ -224,7 +234,7 @@ export class ChuyenMucComponent implements OnInit {
         this.preSetupForm(this.menuName);
         break;
       case 'EDIT_DECISION':
-        this.btn_checkAdd="Cập nhật";
+        this.btn_checkAdd = "Cập nhật";
 
         const object1 = this.listData.find(u => u.id === decision.id);
         this.formSave.reset({
@@ -259,13 +269,23 @@ export class ChuyenMucComponent implements OnInit {
     }
   }
 
+  get f(): { [key: string]: AbstractControl<any> } {
+    return this.formSave.controls;
+  }
+
   saveForm() {
+    const titleInput = this.f['ten'].value.trim();
+    this.f['ten'].setValue(titleInput);
     if (this.formSave.valid) {
-      this.formActive.data = this.formSave.value;
-      this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
+      if (titleInput !== '') {
+        this.formActive.data = this.formSave.value;
+        this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
+      } else {
+        this.notificationService.toastError('Vui lòng không nhập khoảng trống');
+      }
     } else {
       this.formSave.markAllAsTouched();
-      this.notificationService.toastError('Vui lòng điền đầy đủ thông tin');
+      this.notificationService.toastError('Vui lòng nhập đủ thông tin');
     }
   }
 

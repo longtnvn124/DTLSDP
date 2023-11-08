@@ -7,7 +7,11 @@ import {AuthService} from "@core/services/auth.service";
 import {Router} from "@angular/router";
 import {DmChuyenMuc} from "@shared/models/danh-muc";
 import {Ngulieu} from "@shared/models/quan-ly-ngu-lieu";
+import {UnsubscribeOnDestroy} from "@core/utils/decorator";
+import {Subscription} from "rxjs";
+import {MobileNavbarService} from "@modules/public/features/mobile-app/services/mobile-navbar.service";
 
+@UnsubscribeOnDestroy()
 @Component({
   selector: 'app-mobile-chuyen-muc',
   templateUrl: './mobile-chuyen-muc.component.html',
@@ -15,19 +19,29 @@ import {Ngulieu} from "@shared/models/quan-ly-ngu-lieu";
 })
 export class MobileChuyenMucComponent  implements OnInit {
 
+  subcription: Subscription = new Subscription();
   constructor(
     private chuyenmuc: DanhMucChuyenMucService,
     private ngulieu: NguLieuDanhSachService,
     private notification: NotificationService,
     private fileService:FileService,
     private authService:AuthService,
-    private router:Router
+    private router:Router,
+    private mobileNavbarService:MobileNavbarService,
 
   ) {
   }
 
   ngOnInit(): void {
-    this.loadDanhmuc()
+    this.loadDanhmuc();
+
+    this.subcription.add(
+      this.mobileNavbarService.onBackClick.subscribe(
+        ()=>{
+          this.router.navigate(['home/']);
+        }
+      )
+    )
   }
 
   dataChuyenmuc: DmChuyenMuc[];
@@ -54,8 +68,6 @@ export class MobileChuyenMucComponent  implements OnInit {
         })
         this.ngulieuImage360=dataNguLieu.filter(f=>f.loaingulieu === "image360")? dataNguLieu.filter(f=>f.loaingulieu === "image360"):[];
         this.ngulieuVideo360=dataNguLieu.filter(f=>f.loaingulieu === "video360")? dataNguLieu.filter(f=>f.loaingulieu === "video360"):[];
-        console.log(this.ngulieuImage360);
-        console.log(this.ngulieuVideo360);
         this.notification.isProcessing(false);
 
       }, error: () => {
@@ -76,8 +88,4 @@ export class MobileChuyenMucComponent  implements OnInit {
     void this.router.navigate(['virtual-tour'], {queryParams: {code, tag:'mobile'}});
   }
 
-
-  btn_back_mobile(){}
-  btn_backInfo(){}
-  btn_nextInfo(){}
 }

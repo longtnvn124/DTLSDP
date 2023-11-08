@@ -31,13 +31,13 @@ export class HomeSampleComponent implements OnInit {
 	) {
 		// const result = this.text.match( this.regex );
 		// const url    = this.text3.match( this.link );
-		// console.log( result );
+
 
 
 		// const url = this.text2.replace( this.link , text => {
 		// 	return ( text.startsWith( 'www.' ) || text.startsWith( 'http' ) ) ? `<a href="${ text }">${ text }</a>` : text;
 		// } );
-		// console.log( url );
+
 	}
 
 	ngOnInit() : void {

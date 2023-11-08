@@ -2,7 +2,7 @@ import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {Paginator} from "primeng/paginator";
 import { DmLinhVuc} from "@shared/models/danh-muc";
 import {FormType, NgPaginateEvent, OvicForm, OvicTableStructure} from "@shared/models/ovic-models";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from "@angular/forms";
 import {debounceTime, filter, Observable, Subject, Subscription} from "rxjs";
 import {ThemeSettingsService} from "@core/services/theme-settings.service";
 import {NotificationService} from "@core/services/notification.service";
@@ -12,6 +12,14 @@ import {OvicButton} from "@core/models/buttons";
 interface FormDmLinhVuc extends OvicForm {
   object: DmLinhVuc;
 }
+const PinableValidator = (control: AbstractControl): ValidationErrors | null => {
+  if (control.get('ten').valid && control.get('ten').value) {
+    return control.get('ten').value.trim().length >0 ? null :{invalid:true };
+  } else {
+    return {invalid: true};
+  }
+}
+
 @Component({
   selector: 'app-linh-vuc',
   templateUrl: './linh-vuc.component.html',
@@ -46,7 +54,9 @@ export class LinhVucComponent implements OnInit {
       field: ['kyhieu'],
       innerData: true,
       header: 'Ký hiệu',
-      sortable: false
+      sortable: false,
+      headClass: 'ovic-w-110px text-center',
+      rowClass: 'ovic-w-110px text-center'
     },
     {
       fieldType: 'normal',
@@ -121,6 +131,7 @@ export class LinhVucComponent implements OnInit {
     search: ''
   }
 
+  dataKyhieu:string[];
   constructor(
     private themeSettingsService: ThemeSettingsService,
     private notificationService: NotificationService,
@@ -132,7 +143,7 @@ export class LinhVucComponent implements OnInit {
       mota: [''],
       kyhieu:['',Validators.required],
       status: ['', Validators.required],
-    });
+    }, {      validators: PinableValidator});
 
     const observeProcessFormData = this.OBSERVE_PROCESS_FORM_DATA.asObservable().pipe(debounceTime(100)).subscribe(form => this.__processFrom(form));
     this.subscription.add(observeProcessFormData);
@@ -161,7 +172,8 @@ export class LinhVucComponent implements OnInit {
           m['__status'] = sIndex !== -1 ? this.statusList[sIndex].color : '';
           m['__ten_converted'] = `<b>${m.ten}</b><br>` + m.mota;
           return m;
-        })
+        });
+        this.dataKyhieu= this.listData.map(m=>m.kyhieu);
         this.isLoading = false;
       }, error: () => {
         this.isLoading = false;
@@ -171,6 +183,29 @@ export class LinhVucComponent implements OnInit {
   }
 
   private __processFrom({data, object, type}: FormDmLinhVuc) {
+    if(type === FormType.ADDITION){
+      if (!this.dataKyhieu.includes(this.f['kyhieu'].value)){
+        this.danhMucLinhVucService.create(data).subscribe({
+          next: () => {
+            this.needUpdate = true;
+            this.notificationService.toastSuccess('Thao tác thành công', 'Thông báo');
+          },
+          error: () => this.notificationService.toastError('Thao tác thất bại', 'Thông báo')
+        });
+
+      }else{
+        this.notificationService.toastError('Ký hiệu đã tồn tại');
+      }
+    }else{
+      this.danhMucLinhVucService.update(object.id, data).subscribe({
+        next: () => {
+          this.needUpdate = true;
+          this.notificationService.toastSuccess('Thao tác thành công', 'Thông báo');
+        },
+        error: () => this.notificationService.toastError('Thao tác thất bại', 'Thông báo')
+      })
+    }
+
     const observer$: Observable<any> = type === FormType.ADDITION ? this.danhMucLinhVucService.create(data) : this.danhMucLinhVucService.update(object.id, data);
     observer$.subscribe({
       next: () => {
@@ -259,13 +294,25 @@ export class LinhVucComponent implements OnInit {
         break;
     }
   }
+
+  get f(): { [key: string]: AbstractControl<any> } {
+    return this.formSave.controls;
+  }
+
   saveForm() {
-    if (this.formSave.valid) {
-      this.formActive.data = this.formSave.value;
-      this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
+    const titleInput = this.f['ten'].value.trim();
+    this.f['ten'].setValue(titleInput);
+
+    if (this.formSave.valid ) {
+      if (titleInput !== '') {
+          this.formActive.data = this.formSave.value;
+          this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
+      } else {
+        this.notificationService.toastError('Vui lòng không nhập khoảng trống');
+      }
     } else {
       this.formSave.markAllAsTouched();
-      this.notificationService.toastError('Vui lòng điền đầy đủ thông tin');
+      this.notificationService.toastError('Vui lòng nhập đủ và đúng thông tin');
     }
   }
 }

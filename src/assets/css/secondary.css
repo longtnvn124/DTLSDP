@@ -272,6 +272,11 @@ app-virtual-tour, app-shift, app-panel {
   display: none;
 }
 
+.map .mapboxgl-canvas{
+  width:100%;
+  height:100%;
+}
+
 /*=================web view==================*/
 app-web-home {
   /*background: url("assets/icon-png/bg-web.jpg") repeat-y;*/
@@ -405,7 +410,7 @@ ovic-map {
 }
 
 .sukien_desc p img {
-  width: 100%;
+  /*width: 100%;*/
 }
 
 
@@ -521,9 +526,9 @@ app-chuyen-de{
   max-width:100% !important;
 }
 /*-------------------------css p-editor-----------------------------*/
-.ql-editor p img{
-  height:200px;
-}
+/*.ql-editor p img{*/
+/*  height:200px;*/
+/*}*/
 
 span p img{
   height:200px;
@@ -555,3 +560,111 @@ span p img{
   font-size:18px !important;
 }
 
+.mobile-body::-webkit-scrollbar{
+  display: none;
+}
+
+
+
+/*--------------------mobile-app css-search-------------------------*/
+
+.data-mobile-container {
+  width: 100%;
+  /*height: 100%;*/
+  display: flex;
+  flex-direction: column;
+  /*padding-top: 10px;*/
+  overflow: hidden;
+}
+
+.data-mobile-item {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 2px 0 0;
+  background: #fff;
+}
+
+.data-mobile-item-left {
+  width: 20%;
+  height: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #efefef;
+  /*overflow: hidden;*/
+}
+
+.data-mobile-item-left img {
+  height: 100%;
+  padding: 4px;
+  overflow: hidden;
+
+}
+
+.data-mobile-item-right {
+  padding-left: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: flex-start;
+  font-size: 16px;
+  font-weight: 500;
+  height:100%;
+}
+
+.data-mobile-item-right_name {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  padding-right: 10px;
+  font-family: "Roboto", sans-serif;
+}
+
+.data-mobile-item-right_tag {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.data-mobile-item-right_tag-name {
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 400;
+  border-radius: 40px;
+}
+
+.data-mobile-container .data-mobile-item:nth-child(odd){
+  background:#fbfbfb;
+}
+.data-mobile-container .data-mobile-item:nth-child(even){
+  background:#fff
+}
+
+.mobile-filter-bottom{
+  /*height:400px;*/
+}
+.mobile-filter-bottom .p-sidebar-header{
+  padding: 8px;
+}
+.mobile-filter-bottom .p-sidebar-content{
+  padding:0;
+}
+.mobile-filter-bottom .p-sidebar-footer {
+  display:none;
+}
+
+
+/*=================================================================*/
+p .ql-align-center{
+  text-align:center;
+}
+.datainfo-body__dec p >img{
+  width:45%;
+}
+
+.mobile-select-sukien_desc p img{
+  width:100%;
+}

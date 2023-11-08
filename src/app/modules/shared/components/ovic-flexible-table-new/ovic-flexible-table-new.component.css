@@ -1,7 +1,7 @@
 .ovic-flexible-table__body {
 	white-space: nowrap;
 	max-width: calc(100% + 10px);
-	/*height: calc(100vh - 200px);*/
+	/*height: calc(var(--max-screen-height , 100vh) - 200px);*/
 	height: calc(var(--max-screen-height, 100vh) - 60px - 40px - var(--panel-padding) - var(--panel-padding));
 	min-height: calc(var(--max-screen-height, 100vh) - 60px - 40px - var(--panel-padding) - var(--panel-padding));
 	max-height: calc(var(--max-screen-height, 100vh) - 60px - 40px - var(--panel-padding) - var(--panel-padding));

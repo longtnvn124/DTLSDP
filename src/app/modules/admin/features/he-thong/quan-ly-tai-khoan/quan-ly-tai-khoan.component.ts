@@ -450,7 +450,10 @@ export class QuanLyTaiKhoanComponent implements OnInit {
     return createUserForm.result;
   }
 
-  paginate
+  type_password:'password'|'text' = "password";
+  btnShowPassWord(){
+    this.type_password = this.type_password ==="password" ? "text": "password";
+  }
 
 }
 

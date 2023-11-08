@@ -43,6 +43,7 @@
               "src/assets/css/animation-loading.css",
               "src/assets/css/style.css",
               "src/assets/css/secondary.css",
+              "src/assets/css/quill-convent.css",
               "node_modules/solid-slider/dist/slider.css"
 
             ],
@@ -51,6 +52,10 @@
               "node_modules/jquery/dist/jquery.min.js"
             ],
             "allowedCommonJsDependencies": [
+              "mapbox-gl",
+              "moment/moment",
+              "moment-timezone",
+              "exceljs",
               "quill",
               "crypto-js",
               "pdfjs-dist/web/pdf_viewer",
@@ -75,6 +80,7 @@
               "core-js/modules/es.string.starts-with.js",
               "core-js/modules/es.string.trim.js",
               "core-js/modules/web.dom-collections.iterator.js",
+              "quill-image-resize-module",
               "raf",
               "rgbcolor"
             ]

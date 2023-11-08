@@ -48,7 +48,7 @@
 .news-container_content{
   width:100%;
   height:100%;
-  font-size: 70%;
+  font-size: 68%;
 }
 .news-container_content img {
   max-width: 100%;
@@ -112,6 +112,7 @@
   align-items: flex-start;
 }
 .ngulieuso_item_title_div{
+  font-family: "Roboto", sans-serif;
   font-size: 14px;
   font-weight: 500;
   line-height: 18px;

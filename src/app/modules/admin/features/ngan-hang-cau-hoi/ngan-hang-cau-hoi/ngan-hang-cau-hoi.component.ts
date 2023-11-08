@@ -9,6 +9,7 @@ import {forkJoin, Subscription} from "rxjs";
 import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {FileService} from "@core/services/file.service";
 import {NganHangCauHoiService} from "@shared/services/ngan-hang-cau-hoi.service";
+import {MODULES_QUILL} from "@shared/utils/syscat";
 
 @Component({
   selector: 'app-ngan-hang-cau-hoi',
@@ -24,7 +25,7 @@ export class NganHangCauHoiComponent implements OnInit {
   @Input() columns: 1 | 2 | 3 | 4 = 1;
   @Input() verticalMode:boolean =false;
   @Input() rawHtml = false;
-
+  module_quill:any = MODULES_QUILL;
   btn_checkAdd: 'Lưu lại' | 'Cập nhật';
   isLoading: boolean = false;
   recordsTotal = 1;
@@ -309,8 +310,7 @@ export class NganHangCauHoiComponent implements OnInit {
     this.notificationService.isProcessing(true);
     this.nganHangCauHoiService.update(this.objectEdit.id, this.formSave.value).subscribe({
       next: () => {
-        // Object.keys(item['_formSave'].value).forEach(key => item[key] = newValues[key]);
-        // Object.assign(item, newValues);
+
         this.loadQuestion(this._bank_id);
         this.notificationService.isProcessing(false);
         this.notificationService.toastSuccess('Thao tác thành công');

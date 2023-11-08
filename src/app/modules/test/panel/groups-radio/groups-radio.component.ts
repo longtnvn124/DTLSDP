@@ -28,7 +28,7 @@ export class GroupsRadioComponent implements OnInit {
 	get options() : GroupsRadioQuestion[] {
 		return this._options;
 	}
-
+  @Input() objectcro
 	@Input() default : string; //'1,3';
 
 	@Input() correctAnswer : string; // only work with inputType = 'radio' , avoid 0 value pls
@@ -39,7 +39,7 @@ export class GroupsRadioComponent implements OnInit {
 
 	@Input() inputType : 'radio' | 'checkbox' = 'radio'; // radio | checkbox
 
-	@Output() onChange : EventEmitter<any> = new EventEmitter<any>();
+	@Output() onChange : EventEmitter<number[]> = new EventEmitter<number[]>();
 
 	selectedSet : Set<number> = new Set<number>();
 
@@ -80,7 +80,7 @@ export class GroupsRadioComponent implements OnInit {
 		if ( this.formField ) {
 			this.formField.setValue( [ ... this.selectedSet ].join( ',' ) );
 		}
-		this.onChange.emit( [ ... this.selectedSet ].join( ',' ) );
+		this.onChange.emit( [ ... this.selectedSet ].filter( Boolean ) );
 	}
 
 }

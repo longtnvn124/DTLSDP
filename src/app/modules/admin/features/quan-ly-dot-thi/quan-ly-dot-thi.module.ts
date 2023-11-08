@@ -13,7 +13,11 @@ import {RippleModule} from "primeng/ripple";
 import {TableModule} from "primeng/table";
 import {TestModule} from "@modules/test/test.module";
 import {EditorModule} from "primeng/editor";
+import {SplitterModule} from "primeng/splitter";
 
+import Quill from 'quill';
+import ImageResize from 'quill-image-resize-module';
+Quill.register('modules/imageResize', ImageResize);
 
 @NgModule({
   declarations: [
@@ -31,7 +35,8 @@ import {EditorModule} from "primeng/editor";
         RippleModule,
         TableModule,
         TestModule,
-        EditorModule
+        EditorModule,
+        SplitterModule
     ]
 })
 export class QuanLyDotThiModule { }

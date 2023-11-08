@@ -14,7 +14,7 @@
         </ng-template>
         <ng-template pTemplate="header">
             <tr>
-                <th class="text-center ovic-w-40px">#</th>
+                <th class="text-center ovic-w-40px">TT</th>
                 <ng-container *ngFor="let col of tblStructure">
                     <th class="{{col.headClass}}" *ngIf="!col.sortable">{{col.header}}</th>
                     <th class="{{col.headClass}}" *ngIf="col.sortable" pSortableColumn="{{col.field[0]}}">

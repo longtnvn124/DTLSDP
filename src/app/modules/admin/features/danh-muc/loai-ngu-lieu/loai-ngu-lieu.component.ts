@@ -2,7 +2,7 @@ import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {FormType, NgPaginateEvent, OvicForm, OvicTableStructure} from "@shared/models/ovic-models";
 import {DmLoaiNguLieu, KieuDuLieuNguLieu} from "@shared/models/danh-muc";
 import {Paginator} from "primeng/paginator";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from "@angular/forms";
 import {debounceTime, filter, Observable, Subject, Subscription} from "rxjs";
 import {ThemeSettingsService} from "@core/services/theme-settings.service";
 import {NotificationService} from "@core/services/notification.service";
@@ -12,6 +12,13 @@ import {OvicButton} from "@core/models/buttons";
 
 interface FormDmLoaiNguLieu extends OvicForm {
   object: DmLoaiNguLieu;
+}
+const PinableValidator = (control: AbstractControl): ValidationErrors | null => {
+  if (control.get('ten').valid && control.get('ten').value) {
+    return control.get('ten').value.trim().length >0 ? null :{invalid:true };
+  } else {
+    return {invalid: true};
+  }
 }
 
 @Component({
@@ -42,16 +49,16 @@ export class LoaiNguLieuComponent implements OnInit {
       fieldType: 'normal',
       field: ['__ten_converted'],
       innerData: true,
-      header: 'Tên',
+      header: 'Tên loại ngữ liệu',
       sortable: false
     },
     {
       fieldType: 'normal',
-      field: ['kyhieu'],
+      field: ['__kyhieu_convented'],
       innerData: true,
-      header: 'ký hiệu',
+      header: 'Kiểu dữ liệu',
       sortable: false,
-      headClass: 'ovic-w-150px text-left',
+      headClass: 'ovic-w-150px text-center',
       rowClass: 'ovic-w-150px text-left'
     },
     {
@@ -142,6 +149,8 @@ export class LoaiNguLieuComponent implements OnInit {
       mota: [''],
       kyhieu:['',Validators.required],
       status: [1, Validators.required],
+    },{
+      validators: PinableValidator
     });
 
     const observeProcessFormData = this.OBSERVE_PROCESS_FORM_DATA.asObservable().pipe(debounceTime(100)).subscribe(form => this.__processFrom(form));
@@ -170,6 +179,7 @@ export class LoaiNguLieuComponent implements OnInit {
           const sIndex = this.statusList.findIndex(i => i.value === m.status);
           m['__status'] = sIndex !== -1 ? this.statusList[sIndex].color : '';
           m['__ten_converted'] = `<b>${m.ten}</b><br>` + m.mota;
+          m['__kyhieu_convented'] = this.kieuNguLieuOption.find(f=>f.value === m.kyhieu).label;
           return m;
         })
         this.isLoading = false;
@@ -184,6 +194,7 @@ export class LoaiNguLieuComponent implements OnInit {
     const observer$: Observable<any> = type === FormType.ADDITION ? this.danhMucLoaiNguLieuService.create(data) : this.danhMucLoaiNguLieuService.update(object.id, data);
     observer$.subscribe({
       next: () => {
+        this.loadData(1);
         this.needUpdate = true;
         this.notificationService.toastSuccess('Thao tác thành công', 'Thông báo');
       },
@@ -241,6 +252,7 @@ export class LoaiNguLieuComponent implements OnInit {
         this.formSave.reset({
           ten: object1.ten,
           mota: object1.mota,
+          kyhieu:object1.kyhieu,
           status: object1.status,
 
         })
@@ -270,13 +282,23 @@ export class LoaiNguLieuComponent implements OnInit {
     }
   }
 
+  get f(): { [key: string]: AbstractControl<any> } {
+    return this.formSave.controls;
+  }
+
   saveForm() {
+    const titleInput = this.f['ten'].value.trim();
+    this.f['ten'].setValue(titleInput);
     if (this.formSave.valid) {
-      this.formActive.data = this.formSave.value;
-      this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
+      if (titleInput !== '') {
+        this.formActive.data = this.formSave.value;
+        this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
+      } else {
+        this.notificationService.toastError('Vui lòng không nhập khoảng trống');
+      }
     } else {
       this.formSave.markAllAsTouched();
-      this.notificationService.toastError('Vui lòng điền đầy đủ thông tin');
+      this.notificationService.toastError('Vui lòng nhập đủ thông tin');
     }
   }
 }

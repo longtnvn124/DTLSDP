@@ -28,7 +28,7 @@
 	--vertical-nav-width: 260px;
 	--vertical-nav-width--negative: -260px;
 	--topbar-height: 60px;
-	--element-content-height: calc(100vh - var(--topbar-height));
+	--element-content-height: calc(var(--max-screen-height , 100vh) - var(--topbar-height));
 	--panel-padding: 15px;
 	--panel-padding--negative: -15px;
 	--panel-background: rgb(247, 248, 250);

@@ -28,11 +28,17 @@
 /*  background:rgb(245 244 244);;*/
 /*}*/
 .chuyen-muc-item{
-  background: #e1e1e1;
-  font-size:15px;
-  font-weight:500;
-  padding: 6px;
-  margin-bottom:4px;
+  font-family: "Roboto", sans-serif;
+  margin-bottom: 0;
+  width: 100%;
+  border: 1px solid #3A4E42;
+  font-size: 13px;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 3px;
 }
 .chuyen-muc-item:hover{
   background: #3A4E42;
@@ -87,6 +93,12 @@
     width:100%;
     border:1px solid #3A4E42;
     font-size: 13px;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 3px;
   }
 
   .chuyen-muc-left_content{

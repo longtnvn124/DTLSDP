@@ -12,8 +12,6 @@ import {NotificationService} from "@core/services/notification.service";
   styleUrls: ['./chuyen-de-content.component.css']
 })
 export class ChuyenDeContentComponent implements OnInit, OnChanges {
-  // @ViewChild('formMedia') formMedia: TemplateRef<any>;
-
 
   mode: Loai = "default";
   video_link: string;

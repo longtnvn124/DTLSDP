@@ -114,11 +114,6 @@ export class DotThiDanhSachService {
     if ( configs ) {
       Object.assign( fromObject , configs );
     }
-
-
-    console.log( configs );
-    console.log( fromObject );
-
     const params : HttpParams = this.httpParamsHelper.paramsConditionBuilder( conditions , new HttpParams( { fromObject } ) );
     return this.http.get<Dto>( this.api , { params } ).pipe( map( res => res.data ) );
   }

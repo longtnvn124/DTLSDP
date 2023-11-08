@@ -41,15 +41,10 @@ export class OvicMediaVrProductComponent implements OnInit {
 
 
   async gobackhome() {
-    const button = await this.notificationService.confirmRounded('Xác nhận', 'Trở lại trang chủ', [BUTTON_YES, BUTTON_NO]);
-    if (button.name === BUTTON_YES.name) {
       if (this.device ==='mobile'){
         void this.router.navigate(['mobile/']);
-
       }else{
         void this.router.navigate(['home/']);
-
       }
-    }
   }
 }

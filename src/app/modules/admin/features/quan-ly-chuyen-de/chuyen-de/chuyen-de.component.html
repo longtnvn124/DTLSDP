@@ -81,7 +81,7 @@
       <div class="btn-bottom-container">
         <button pButton pRipple [disabled]="!isChangeOrdering" (click)="saveOrdering()"
                 class="btn ovic-over-right-section__foot-btn btn-primary" icon="pi pi-save" iconPos="left"
-                label="Lưu lại thứ tự chuyền đề"></button>
+                label="Lưu lại thứ tự chuyên đề"></button>
       </div>
     </div>
     <div *ngIf="!isSettings" class="form-setting-lesson h-100 w-100"
@@ -97,7 +97,9 @@
           <form style="height: 100%;" [formGroup]="formChuyenDe">
             <p-tabView [activeIndex]="activeIndex" class="tabview-custom">
               <p-tabPanel header="Text">
-                <p-editor #edtitor [editor]="edtitor" [curentFormControl]="f['desc']"  [Resize_img]="true" class="w-100" formControlName="desc" placeholder="Nội dung..." [style]="{ 'min-height': '250px'}">
+                <p-editor #edtitor [editor]="edtitor" [curentFormControl]="f['desc']" [Resize_img]="true" class="w-100"
+                          formControlName="desc" placeholder="Nội dung..." [style]="{ 'min-height': '250px'}" [modules]="module_quill"
+                >
                   <p-header>
                           <span class="ql-formats">
                               <select class="ql-header" title="Thẻ tiêu đề">
@@ -185,7 +187,7 @@
                               <button class="ql-indent q2-box last" value="-1" title="Giảm thụt đầu dòng"></button>
                           </span>
                     <span class="ql-formats">
-                              <button class="ql-link" aria-label="link" title="Thẻ liên kết"></button>
+
                               <button class="ql-image" aria-label="image" title="Chèn ảnh"></button>
                               <button class="ql-blockquote" aria-label="blockquote" title="Trích dẫn"></button>
                               <button class="ql-code-block" aria-label="code-block" title="code-block"></button>
@@ -218,7 +220,7 @@
               <p-tabPanel header="Tài liệu khác">
                 <div class="row form-row form-row-flex-row">
                   <div class="col-12">
-                    <div style="margin-top: 20px;margin-bottom:10px; font-weight: 600;">File tài liệu:(chỉ cho phép tệp
+                    <div style="margin-top: 20px;margin-bottom:10px; font-weight: 600;">File tài liệu (Chỉ cho phép tệp
                       pdf):
                     </div>
                     <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"
@@ -232,11 +234,9 @@
               <p-tabPanel header="Scorm">
                 <div class="row form-row form-row-flex-row">
                   <div class="col-12">
-                    <div style="margin-top: 20px;margin-bottom:10px; font-weight: 600;">File Scorm nén :(chỉ cho phép
-                      tệp rar):
-                    </div>
+                    <div style="margin-top: 20px;margin-bottom:10px; font-weight: 600;">File Scorm nén (Chỉ cho phép tệp zip):</div>
                     <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"
-                                         [formField]="f['file_scorm']" [multiple]="false"
+                                         [formField]="f['file_scorm']" [multiple]="false" [accept]="['.zip']"
                                          [chuyendeId]="selectedChuyenMuc.id"
                                          [state]="1"></app-file-list-local>
                   </div>

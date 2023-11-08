@@ -8,7 +8,9 @@ import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 import {forkJoin} from "rxjs"
 import {NguLieuDanhSachService} from "@shared/services/ngu-lieu-danh-sach.service";
 import {AuthService} from "@core/services/auth.service";
-
+import {UnsubscribeOnDestroy} from "@core/utils/decorator";
+import {MobileNavbarService} from "@modules/public/features/mobile-app/services/mobile-navbar.service";
+@UnsubscribeOnDestroy()
 @Component({
   selector: 'app-virtual-tour',
   templateUrl: './virtual-tour.component.html',
@@ -31,6 +33,7 @@ export class VirtualTourComponent implements OnInit, AfterViewInit, OnDestroy {
   mode: "BTNPLAY" | "MEDIAVR" = "BTNPLAY";
   ngulieu_type: 0 | 1;
 
+
   constructor(
     private notificationService: NotificationService,
     private auth: AuthService,
@@ -38,7 +41,8 @@ export class VirtualTourComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private pointsService: PointsService,
-    private ngulieuService: NguLieuDanhSachService
+    private ngulieuService: NguLieuDanhSachService,
+    private navbarService:MobileNavbarService,
   ) {
 
   }
@@ -49,6 +53,7 @@ export class VirtualTourComponent implements OnInit, AfterViewInit, OnDestroy {
   dataPointsChild: Point[];
 
   ngOnDestroy(): void {
+
   }
 
   ngAfterViewInit(): void {

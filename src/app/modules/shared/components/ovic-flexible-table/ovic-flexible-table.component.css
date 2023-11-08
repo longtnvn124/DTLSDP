@@ -1,7 +1,7 @@
 .ovic-flexible-table__body {
     white-space: nowrap;
     max-width: calc(100% + 10px);
-    height: calc(100vh - 200px);
+    height: calc(var(--max-screen-height , 100vh) - 200px);
     overflow: auto;
     display: block;
     margin: 0 -15px -25px 0;

@@ -83,7 +83,14 @@ export class DotThiKetQuaService {
       conditionName: 'shift_id',
       condition: OvicQueryCondition.equal,
       value: shift_id.toString(10)
-    }];
+    },
+    //   {
+    //     conditionName: 'state',
+    //     condition: OvicQueryCondition.equal,
+    //     value: '2',
+    //     orWhere:'and'
+    // }
+    ];
     const params: HttpParams = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams().set('with', 'thisinh'));
     return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
   }

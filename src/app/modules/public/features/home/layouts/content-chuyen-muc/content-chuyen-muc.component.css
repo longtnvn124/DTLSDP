@@ -63,7 +63,7 @@
 
 .chuyen-muc-data-rps{
   display:none;
-  background: rgb(224, 223, 223);
+  background: rgb(241 241 241);
 
 }
 @media(width<=1024px){
@@ -87,6 +87,12 @@
     width:100%;
     border:1px solid #3A4E42;
     font-size: 13px;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 3px;
   }
 
   .chuyen-muc-left_content{

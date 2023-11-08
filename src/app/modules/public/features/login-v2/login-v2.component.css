@@ -3,7 +3,7 @@ npm.c-layout-on-boarding {
 	flex-direction: column;
 	align-items: center;
 	width: 100vw;
-	height: 100vh;
+	height: var(--max-screen-height , 100vh);
 	overflow-y: auto;
 	background-color: rgb(247, 248, 249);
 	background-image: url(../../../../../assets/images/onboarding/onboarding-background-right.svg), url(../../../../../assets/images/onboarding/onboarding-background-left.svg);

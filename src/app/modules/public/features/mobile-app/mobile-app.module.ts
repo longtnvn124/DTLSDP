@@ -22,6 +22,11 @@ import { MobileTinTucComponent } from './mobi-layouts/mobile-tin-tuc/mobile-tin-
 import { MobileThongBaoComponent } from './mobi-layouts/mobile-thong-bao/mobile-thong-bao.component';
 import { MobileIfarmeComponent } from './mobi-layouts/mobile-ifarme/mobile-ifarme.component';
 import { MobileTimKiemComponent } from './mobi-layouts/mobile-tim-kiem/mobile-tim-kiem.component';
+import {InputTextModule} from "primeng/inputtext";
+import {PublicModule} from "@modules/public/public.module";
+import {FormsModule} from "@angular/forms";
+import {SidebarModule} from "primeng/sidebar";
+import {HomeModule} from "@modules/public/features/home/home.module";
 
 
 @NgModule({
@@ -41,15 +46,20 @@ import { MobileTimKiemComponent } from './mobi-layouts/mobile-tim-kiem/mobile-ti
     MobileIfarmeComponent,
     MobileTimKiemComponent
   ],
-  imports: [
-    CommonModule,
-    MobileAppRoutingModule,
-    GalleriaModule,
-    SharedModule,
-    TooltipModule,
-    PdfViewerModule,
-    ButtonModule,
-    RippleModule
-  ]
+    imports: [
+        CommonModule,
+        MobileAppRoutingModule,
+        GalleriaModule,
+        SharedModule,
+        TooltipModule,
+        PdfViewerModule,
+        ButtonModule,
+        RippleModule,
+        InputTextModule,
+        PublicModule,
+        FormsModule,
+        SidebarModule,
+        HomeModule
+    ]
 })
 export class MobileAppModule { }

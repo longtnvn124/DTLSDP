@@ -66,7 +66,7 @@ export class sceneControl {
       const material = new MeshBasicMaterial({map: texture, side: DoubleSide});
       this.sphere = new Mesh(geometry, material);
     // material.transparent = true;
-    console.log(this.sphere);
+
 
     this.scene.add(this.sphere);
     if (userData) {this.scene.userData = userData;}
@@ -116,8 +116,6 @@ export class sceneControl {
   }
 
   async addTooltip(point) {
-    console.log(point);
-    console.log(this.scene);
     let spriteMap = new TextureLoader().load(point.userData.iconPoint);
     let spriteMaterial = new SpriteMaterial({map: spriteMap});
     let sprite = new Sprite(spriteMaterial)

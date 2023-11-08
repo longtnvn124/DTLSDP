@@ -31,7 +31,7 @@
                       <p-button icon="pi pi-plus" label="Thêm mới" (click)="btnAddNew()"
                                 [style]="{'height':'42px'}"></p-button>
                     </div>
-                    <div class="ml-2 select-height-42px" style="width:74px">
+                    <div class="ml-2 select-height-42px d-flex" >
                       <button pRipple pButton class=" select-height-42px"
                               [class]="changeTb ===0 ? 'p-button-primary' : 'ovic-button-none-selected'"
                               icon="pi pi-list" (click)="selectChangeTb(0)"></button>
@@ -48,7 +48,7 @@
                    [tableStyle]="{ 'min-width': '100px' }">
             <ng-template pTemplate="header">
               <tr *ngIf="changeTb===0">
-                <th class="ovic-w-50px text-center">#</th>
+                <th class="ovic-w-50px text-center">TT</th>
                 <th class="text-left">Tiêu đề ngữ liệu</th>
                 <th class="ovic-w-180px text-left p-1">Lĩnh vực</th>
                 <th class="ovic-w-250px text-left">Loại ngữ liệu</th>
@@ -309,8 +309,8 @@
                   <p class="form-row">
                     <label>Nội dung </label>
                     <p-editor [curentFormControl]="f['mota']" #edtitor [editor]="edtitor" [Resize_img]="true"
-                              class="w-100" formControlName="mota" placeholder="Nội dung..."
-                              [style]="{ 'min-height': '500px'}">
+                              class="w-100" formControlName="mota" placeholder="Nội dung..." [modules]="module_quill"
+                              [style]="{ 'min-height': '350px'}">
                       <p-header>
                           <span class="ql-formats">
                               <select class="ql-header" title="Thẻ tiêu đề">
@@ -398,7 +398,7 @@
                               <button class="ql-indent q2-box last" value="-1" title="Giảm thụt đầu dòng"></button>
                           </span>
                         <span class="ql-formats">
-                              <button class="ql-link" aria-label="link" title="Thẻ liên kết"></button>
+
                               <button class="ql-image" aria-label="image" title="Chèn ảnh"></button>
                               <button class="ql-blockquote" aria-label="blockquote" title="Trích dẫn"></button>
                               <button class="ql-code-block" aria-label="code-block" title="code-block"></button>

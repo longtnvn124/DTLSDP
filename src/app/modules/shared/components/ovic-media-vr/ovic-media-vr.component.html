@@ -1,5 +1,5 @@
 <div #tooltip class="tooltip d-flex justify-content-center align-items-center flex-column ">
-  <img src="" alt="" style="width:250px" #imgtooltip>
+  <img src="" alt="" style="width:250px" loading="lazy" #imgtooltip>
   <div class="p-1" #titletooltip></div>
 </div>
 
@@ -12,7 +12,7 @@
             (click)="btnHelp()"></button>
     <!--    <button pButton pRipple icon="pi pi-map" class="btn-round p-button-secondary m-2 " (click)="btnviewMap()"></button>-->
     <button [pTooltip]="'Play/Pause'" *ngIf="isVideo" pButton pRipple [icon]="isVideoPlay ?'pi pi-pause' :'pi pi-play' "
-            class="btn-round p-button-secondary m-2 "
+            class="btn-round p-button-success m-2 "
             (click)="btnPlayVideo()"></button>
     <button [pTooltip]="'Bật, tắt tiếng'" *ngIf="audio" pButton pRipple
             [icon]="audio.paused ? 'pi pi-volume-off':'pi pi-volume-down'"
@@ -35,7 +35,7 @@
   </div>
 
 
-  <ng-template #templateWaiting class="ctm-waitting-popup" let-c="close" let-d="dismiss">
+  <ng-template #templateWaiting class="ctm-waitting-popup"  let-d="dismiss">
     <div class="popup-waiting-loading">
 
       <div class="d-flex justify-content-center align-items-center  tn-import-student-progressbar">
@@ -77,7 +77,6 @@
                            autocomplete="off">
                   </p>
                 </div>
-
               </div>
               <div class="row">
                 <div class="col-6">
@@ -217,7 +216,7 @@
                               <button class="ql-indent q2-box last" value="-1" title="Giảm thụt đầu dòng"></button>
                           </span>
                         <span class="ql-formats">
-                              <button class="ql-link" aria-label="link" title="Thẻ liên kết"></button>
+
                               <button class="ql-image" aria-label="image" title="Chèn ảnh"></button>
                               <button class="ql-blockquote" aria-label="blockquote" title="Trích dẫn"></button>
                               <button class="ql-code-block" aria-label="code-block" title="code-block"></button>
@@ -358,7 +357,11 @@
                    class="datainfo-body__img">
             </div>
           </ng-template>
-
+          <div class="d-flex justify-content-center align-items-center" *ngIf="datainfo.file_audio[0] ">
+            <audio controls>
+              <source [src]="datainfo['_file_audio']?datainfo['_file_audio']:''" [type]="datainfo['_type_file_audio']? datainfo['_type_file_audio']: 'audio/mpeg'">
+            </audio>
+          </div>
         </ng-container>
       </div>
       <div class="col-lg-6 ctn-right">
@@ -367,14 +370,17 @@
             <p class="datainfo-title__p m-auto">{{datainfo.title}}</p>
           </div>
           <div class="datainfo-body mt-1">
-            <div class="datainfo-body__dec">Mô tả: <span [innerHTML]="datainfo.mota |htmlDecode"></span></div>
+            <div class="datainfo-body__dec">Mô tả:
+              <div  [innerHTML]="datainfo.mota |htmlDecode"></div>
+            </div>
           </div>
-
         </ng-container>
       </div>
     </div>
   </p-dialog>
 </ng-container>
+
+
 <ng-template #isSmall>
   <p-dialog header="Hướng dẫn sử dụng" [(visible)]="visibleHelp" [modal]="true" [style]="{ width: '94%' }"
             [draggable]="false" [resizable]="false" class="m-0">
@@ -473,11 +479,15 @@
           </div>
           <ng-template #viewImg>
             <div id="media" class="w-100 text-center">
-              <img [src]="datainfo['_file_media'] ? datainfo['_file_media'] : 'assets/images/placeholder-3x2.jpg'"
+              <img [src]="datainfo['_file_media'] ? datainfo['_file_media'] : 'assets/images/placeholder-3x2.jpg'" alt=""
                    class="datainfo-body__img">
             </div>
           </ng-template>
-
+          <div class="d-flex justify-content-center align-items-center" *ngIf="datainfo.file_audio[0] ">
+            <audio controls>
+              <source [src]="datainfo['_file_audio']?datainfo['_file_audio']:''" [type]="datainfo['_type_file_audio']? datainfo['_type_file_audio']: 'audio/mpeg'">
+            </audio>
+          </div>
         </ng-container>
       </div>
       <div class="col-lg-7 ctn-right">
@@ -486,7 +496,9 @@
             <p class="datainfo-title__p m-auto">{{datainfo.title}}</p>
           </div>
           <div class="datainfo-body mt-1">
-            <div class="datainfo-body__dec">Mô tả: <span>{{datainfo.mota}}</span></div>
+            <div class="datainfo-body__dec">Mô tả:
+              <div  [innerHTML]="datainfo.mota |htmlDecode"></div>
+            </div>
           </div>
 
         </ng-container>

@@ -28,12 +28,13 @@
     <div class="ovic-side-navigation-content__body ovic-scroll-style h-100 p-0">
       <div class="per-container  h-100">
         <div class="per-contaier-left ovic-scroll-style border-right">
-            <ovic-table emptyMessage="Danh sách trống" [index]="index" [data]="dataUsers"
-                        styleClass="tbl-danh-sach-tap-the head-input-size--normal head-input-size--250px" dataKey="id"
-                        rowHover="true"
-                        [rows]="15" tableName="Danh sách thí sinh dự thi" [tblStructure]="tblStructureShiftTest"
-                        (onButtonClick)="handleClickOnTableShiftTest($event)" [enableSearch]="false" [enableSearchLocal]="false" [headerButtons]="headButtons"
-                        [searchDebounceTime]="800"></ovic-table>
+          <ovic-table emptyMessage="Danh sách trống" [index]="index" [data]="dataUsers"
+                      styleClass="tbl-danh-sach-tap-the head-input-size--normal head-input-size--250px" dataKey="id"
+                      rowHover="true"
+                      [rows]="15" tableName="Danh sách thí sinh dự thi" [tblStructure]="tblStructureShiftTest"
+                      (onButtonClick)="handleClickOnTableShiftTest($event)" [enableSearch]="false"
+                      [enableSearchLocal]="false" [headerButtons]="headButtons"
+                      [searchDebounceTime]="800"></ovic-table>
         </div>
         <div class="per-contaier-right ovic-scroll-style">
           <ng-container *ngIf="!nganhangCauhoi,else question">
@@ -46,19 +47,11 @@
               <div class="h-100" style="width:100%;max-width:900px;">
                 <div class="exam-container">
                   <div class="exam-container__item " *ngFor="let question of nganhangCauhoi, index as i">
-                    <div class="exam-container__item-label mb-2">Câu {{i + 1}}: <span [innerHTML]="question.title |htmlDecode"></span></div>
-                    <groups-radio [options]="question.answer_options" inputType="checkbox" [default]="question['per_select_question']" [freeze]="true"></groups-radio>
-                    <div class='exam-container__correct-answer'>
-                      <div class="exam-container__correct-answer_title">
-                        Đáp án:
-                      </div>
-                      <div class='exam-container__correct-answer_for' *ngFor="let answer of question['correct_answer_coverted']">
-                        <div *ngIf="answer.type_input === 0" class="exam-container__correct-answer_for_item">{{answer['value']}}</div>
-                        <div *ngIf="answer.type_input === 1" class="exam-container__correct-answer_for_item">
-                          <img class="img-h-200px" [src]="answer['_url_file'] ? answer['_url_file'] : 'src/assets/images/placeholder-3x2.jpg'  " alt="">
-                        </div>
-                      </div>
-                    </div>
+                    <div class="exam-container__item-label mb-2">Câu {{i + 1}}: <span
+                      [innerHTML]="question.title |htmlDecode"></span></div>
+                    <groups-radio [options]="question.answer_options" [correctAnswer]="question['__correct_answer']"
+                                  inputType="checkbox" [default]="question['__per_select_question']"
+                                  [freeze]="true"></groups-radio>
                   </div>
                 </div>
               </div>

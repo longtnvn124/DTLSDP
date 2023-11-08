@@ -535,7 +535,8 @@
 }
 
 .footer__title {
-
+  font-size: 20px;
+  text-transform: uppercase;
 }
 
 .footer__social {
@@ -751,6 +752,6 @@
 }
 .btn-li-a-select:hover::before{
   transform:scaleX(1);
-  
+
 }
 

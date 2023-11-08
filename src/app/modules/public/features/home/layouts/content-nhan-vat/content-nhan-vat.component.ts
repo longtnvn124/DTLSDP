@@ -3,37 +3,57 @@ import {NguLieuSuKienService} from "@shared/services/ngu-lieu-su-kien.service";
 import {NotificationService} from "@core/services/notification.service";
 import {FileService} from "@core/services/file.service";
 import {DmNhanVatLichSu} from "@shared/models/danh-muc";
-import {forkJoin} from "rxjs";
+import {forkJoin, Subscription} from "rxjs";
 import {SuKien} from "@shared/models/quan-ly-ngu-lieu";
 import {DanhMucNhanVatLichSuService} from "@shared/services/danh-muc-nhan-vat-lich-su.service";
-
+import {ActivatedRoute, ParamMap} from "@angular/router";
+import {UnsubscribeOnDestroy} from "@core/utils/decorator";
+import {MobileNavbarService} from "@modules/public/features/mobile-app/services/mobile-navbar.service";
+@UnsubscribeOnDestroy()
 @Component({
   selector: 'app-content-nhan-vat',
   templateUrl: './content-nhan-vat.component.html',
   styleUrls: ['./content-nhan-vat.component.css']
 })
-export class ContentNhanVatComponent implements OnInit, AfterViewInit, OnChanges {
+export class ContentNhanVatComponent implements OnInit, OnChanges {
   @Input() selectItem: boolean = true;
   @Input() search: string;
+  dataSelect: DmNhanVatLichSu;
+
+  textSearch: string = '';
+  subcription: Subscription = new Subscription();
+
   gioitinh = [{value: 1, label: 'Nam'}, {value: 0, label: 'Nữ'}];
   mode: 'DATA' | 'INFO' = "DATA";
-
+  id_param:number;
   constructor(
     private danhMucNhanVatLichSuService:DanhMucNhanVatLichSuService,
     private sukienService: NguLieuSuKienService,
     private notificationService: NotificationService,
-    private fileSerivce: FileService
+    private fileSerivce: FileService,
+    private activeRouter:ActivatedRoute,
+    private navbar:MobileNavbarService
   ) {
   }
 
-  textSearch: string = '';
-
-  ngAfterViewInit(): void {
-    this.loadInit()
-  }
-
   ngOnInit(): void {
-    // this.loadInit()
+
+    this.loadInit();
+    const params: ParamMap = this.activeRouter.snapshot.queryParamMap;
+    const id: number = params.has('param') ? Number(params.get('param')) : NaN;
+    if (!Number.isNaN(id)) {
+      this.id_param = id;
+    }
+
+    this.subcription.add(
+      this.navbar.onBackClick.subscribe(
+        ()=>{
+          this.dataSelect = null;
+          this.mode = "DATA";
+          this.loadInit();
+        }
+      )
+    );
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -60,6 +80,9 @@ export class ContentNhanVatComponent implements OnInit, AfterViewInit, OnChanges
           m['image_convenrted'] = m.files ? this.fileSerivce.getPreviewLinkLocalFile(m.files) : '';
           return m;
         })
+        if(this.id_param){
+          this.btnSelectItem(this.listData.find(f=>f.id=== this.id_param));
+        }
         // this.notificationService.isProcessing(false);
       }, error: () => {
         // this.notificationService.isProcessing(false);
@@ -67,7 +90,6 @@ export class ContentNhanVatComponent implements OnInit, AfterViewInit, OnChanges
     })
   }
 
-  dataSelect: DmNhanVatLichSu;
 
   btnSelectItem(Dm: DmNhanVatLichSu) {
     if (this.selectItem) {
@@ -92,7 +114,7 @@ export class ContentNhanVatComponent implements OnInit, AfterViewInit, OnChanges
     }
   }
   btn_nextInfo(){
-    if (this.mode == 'DATA') {
+    if (this.mode == 'DATA' && this.dataSelect) {
       this.mode = "INFO";
     }
   }

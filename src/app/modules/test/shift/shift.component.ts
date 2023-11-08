@@ -9,7 +9,7 @@ import { forkJoin , interval , of } from 'rxjs';
 import { NotificationService } from '@core/services/notification.service';
 import { logMessages } from '@angular-devkit/build-angular/src/builders/browser-esbuild/esbuild';
 import { AuthService } from '@core/services/auth.service';
-import { Router } from '@angular/router';
+import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import { DateTimeServer , ServerTimeService } from '@shared/services/server-time.service';
 import { OverlayPanel } from 'primeng/overlaypanel/overlaypanel';
 import { BUTTON_NO , BUTTON_YES } from '@core/models/buttons';
@@ -43,6 +43,7 @@ export class ShiftComponent implements OnInit {
 		'1'  : { state : 1 , label : 'Vào thi' , icon : 'pi pi-check-square' , class : 'p-button-success' }
 	};
 
+
 	userData = this.auth.user;
 
 	dsDotthi : DotThiKhaDung[];
@@ -59,23 +60,15 @@ export class ShiftComponent implements OnInit {
 		private notificationService : NotificationService ,
 		private auth : AuthService ,
 		private serverTimeService : ServerTimeService ,
-		private router : Router
+		private router : Router,
+    private activatedRoute:ActivatedRoute
 	) {
 	}
 
 	ngOnInit() : void {
-		// if (this.auth.isLoggedIn()) {
-		//   // this.loadData();
-		//   // this._checkCaThi();
-		// } else {
-		//   void this.router.navigate(['/login'], {queryParams: {redirect: 'test/shift'}});
-		// }
 		this.loadData();
-		// this._checkCaThi();
 	}
-
-	// forkJoin<[QuyetDinhKhenCaNhan[], QuyetDinhKhenCaNhan[]]>([of(res), this.quyetDinhKhenCaNhanService.getQuyetDinhKhenCaNhanByCaNhanIds(ids, this.filter.dhtd_ids)]);
-	loadData() {
+  loadData() {
 		this.isLoading = true;
 		forkJoin<[ Shift[] , DateTimeServer ]>( [
 			this.dotThiDanhSachService.listActivatedShifts( { with : 'bank' } ) ,
@@ -85,7 +78,7 @@ export class ShiftComponent implements OnInit {
 				this.dsDotthi = shifts.map( ( shift : Shift ) => {
 					const startAt : string          = this.strToTime( shift.time_start );
 					const closeAt : string          = this.strToTime( shift.time_end );
-					const totalQuestion : number    = shift[ 'bank' ] ? shift[ 'bank' ].number_questions_per_test : 0;
+					const totalQuestion : number    = shift[ 'bank' ]  ? shift[ 'bank' ].number_questions_per_test : 0;
 					const totalTime : number        = shift[ 'bank' ] ? shift[ 'bank' ].time_per_test : 0;
 					const state : ShiftState        = 0;
 					const button : ButtonShiftState = this._listButton[ state ];
@@ -141,7 +134,7 @@ export class ShiftComponent implements OnInit {
 				// void this.router.navigate( [ 'test/panel' ] , { queryParams : { code } } );
 
 				this.auth.setOption( KEY_NAME_SHIFT_ID , dotthi.id );
-				void this.router.navigate( [ 'test/panel' ] );
+        void this.router.navigate( [ 'test/panel' ] );
 				break;
 			default:
 				this.notificationService.toastError( 'Ca thi đã quá hạn' );

@@ -5,27 +5,30 @@ import {NotificationService} from "@core/services/notification.service";
 import {FileService} from "@core/services/file.service";
 import {DanhMucDiemDiTichService} from "@shared/services/danh-muc-diem-di-tich.service";
 import {DanhMucNhanVatLichSuService} from "@shared/services/danh-muc-nhan-vat-lich-su.service";
-import {forkJoin} from "rxjs";
+import {forkJoin, Subscription} from "rxjs";
 import {SuKien} from "@shared/models/quan-ly-ngu-lieu";
 import {ActivatedRoute, ParamMap, Params} from "@angular/router";
-
+import {UnsubscribeOnDestroy} from "@core/utils/decorator";
+import {MobileNavbarService} from "@modules/public/features/mobile-app/services/mobile-navbar.service";
+@UnsubscribeOnDestroy()
 @Component({
   selector: 'app-content-su-kien',
   templateUrl: './content-su-kien.component.html',
   styleUrls: ['./content-su-kien.component.css']
 })
-export class ContentSuKienComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
-  // @ViewChild('stream', {static: true}) stream: HTMLAudioElement;
+export class ContentSuKienComponent implements OnInit, OnChanges {
   @Input() selectItem: boolean = true;
-
   @Input() search: string;
-
   dataDiemditich: DmDiemDiTich[];
   dataNhanvatlichsu: DmNhanVatLichSu[];
-
-  audio_link: string;
-
   stream: HTMLAudioElement;
+  listData: SuKien[] = [];
+
+  sukienActive: SuKien;
+  mode: "DATA" | 'INFO' = "DATA";
+  id_param: number;
+
+  subcription: Subscription = new Subscription();
 
   constructor(
     private nguLieuSuKienService: NguLieuSuKienService,
@@ -33,27 +36,29 @@ export class ContentSuKienComponent implements OnInit, AfterViewInit, OnChanges,
     private fileService: FileService,
     private danhMucDiemDiTichService: DanhMucDiemDiTichService,
     private danhMucNhanVatLichSuService: DanhMucNhanVatLichSuService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private navbar:MobileNavbarService
   ) {
     this.stream = document.createElement('audio');
-    this.stream.setAttribute('playsinline', 'true');
-    // this.sourceAudio = document.createElement('source');
-    // this.sourceAudio.type = 'audio/mp3';
-  }
-
-  mode: "DATA" | 'INFO' = "DATA";
-  id_param: number;
-
-  ngAfterViewInit(): void {
-
-  }
-
-  ngOnDestroy(): void {
-    this.stream.pause();
-    this.stream.remove();
   }
 
   ngOnInit(): void {
+    this.subcription.add(
+      this.navbar.onBackClick.subscribe(
+        ()=>{
+          this.stream.pause();
+          this.sukienActive = null;
+          this.mode = "DATA";
+          this.loadStart();
+
+        }
+      )
+    )
+    this.loadStart();
+
+  }
+
+  loadStart(){
     forkJoin<[DmDiemDiTich[], DmNhanVatLichSu[],]>(
       this.danhMucDiemDiTichService.getDataUnlimit(),
       this.danhMucNhanVatLichSuService.getDataUnlimit(null),
@@ -72,18 +77,14 @@ export class ContentSuKienComponent implements OnInit, AfterViewInit, OnChanges,
         this.notificationService.toastError('Mất kết nối với máy chủ');
       }
     })
-
-
   }
-
 
   loadfirst() {
     const params: ParamMap = this.activatedRoute.snapshot.queryParamMap;
-    const id: number = params.has('id') ? Number(params.get('id')) : NaN;
+    const id: number = params.has('parram') ? Number(params.get('parram')) : NaN;
     if (!Number.isNaN(id)) {
       this.id_param = id;
       this.loadInit('');
-      console.log(this.id_param);
     }else{
       this.loadInit('');
     }
@@ -93,7 +94,6 @@ export class ContentSuKienComponent implements OnInit, AfterViewInit, OnChanges,
 
   }
 
-  listData: SuKien[] = [];
 
   loadInit(search?: string) {
     this.notificationService.isProcessing(true);
@@ -121,24 +121,15 @@ export class ContentSuKienComponent implements OnInit, AfterViewInit, OnChanges,
     })
   }
 
-  sukienActive: SuKien;
 
 
   selectSukien(id: number) {
-
-    console.log(this.mode);
     this.notificationService.isProcessing(true);
     if (this.listData.find(f => f.id === id)) {
-
       this.sukienActive = this.listData.find(f => f.id === id);
       this.mode = "INFO";
     }
-
     this.notificationService.isProcessing(false);
-    // this.sourceAudio.src = this.sukienActive['_audio_link'];
-    // this.stream.appendChild(this.sourceAudio);
-    // this.stream.setAttribute('autoplay', 'true');
-
     this.fileService.getFileAsObjectUrl(this.sukienActive.file_audio[0].id.toString(10)).subscribe({
       next: url => {
         const audio = new Audio();
@@ -164,7 +155,7 @@ export class ContentSuKienComponent implements OnInit, AfterViewInit, OnChanges,
   }
 
   btn_nextInfo(){
-    if (this.mode == 'DATA') {
+    if (this.mode == 'DATA' && this.sukienActive) {
       this.mode = "INFO";
     }
   }

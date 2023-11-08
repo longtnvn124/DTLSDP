@@ -1,9 +1,9 @@
 import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {debounceTime, filter, forkJoin, Observable, Subject, Subscription} from "rxjs";
 import {DmChuyenMuc, DmDiemDiTich, DmLinhVuc, DmLoaiNguLieu} from "@shared/models/danh-muc";
-import {FileType} from "@shared/utils/syscat";
+import {FileType, MODULES_QUILL} from "@shared/utils/syscat";
 import {FormType, NgPaginateEvent, OvicForm} from "@shared/models/ovic-models";
-import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from "@angular/forms";
 import {Ngulieu} from "@shared/models/quan-ly-ngu-lieu";
 import {Paginator} from "primeng/paginator";
 import {ThemeSettingsService} from "@core/services/theme-settings.service";
@@ -21,6 +21,19 @@ import { HelperService } from '@core/services/helper.service';
 interface FormNgulieu extends OvicForm {
   object: Ngulieu;
 }
+const PinableValidator = (control: AbstractControl): ValidationErrors | null => {
+  const fileTypeControl = control.get('file_type');
+  if (fileTypeControl.valid) {
+    if (fileTypeControl.value === 0) {
+      const isInvalid = control.get('file_media').value.length > 0 || control.get('file_audio').value.length > 0;
+      return isInvalid ? null : {pinableError: 'File media required'};
+    } else {
+      const isInvalid = control.get('file_product').value.length > 0;
+      return isInvalid ? null : {pinableError: 'File product required'};
+    }
+  }
+  return null;
+}
 
 @Component({
   selector: 'app-ngu-lieu-video-vr',
@@ -34,6 +47,7 @@ export class NguLieuVideoVrComponent implements OnInit {
   private OBSERVE_SEARCH_DATA = new Subject<string>();
   formActive: FormNgulieu;
   private OBSERVE_PROCESS_FORM_DATA = new Subject<FormNgulieu>();
+  module_quill:any = MODULES_QUILL;
   subscription = new Subscription();
   listData: Ngulieu[];
   recordsTotal: number;
@@ -66,7 +80,7 @@ export class NguLieuVideoVrComponent implements OnInit {
     file_thumbnail:{},
     file_product:[[]],
     file_type:[0]
-  });
+  },{validators:PinableValidator});
   dataChuyemuc: DmChuyenMuc[];
   dataLoaingulieu: DmLoaiNguLieu[];
   dataLinhvuc: DmLinhVuc[];
@@ -244,7 +258,7 @@ export class NguLieuVideoVrComponent implements OnInit {
           this.page = Math.max(1, this.page - (this.listData.length > 1 ? 0 : 1));
           this.notificationService.isProcessing(false);
           this.notificationService.toastSuccess('Thao tác thành công');
-          this.listData.filter(f => f.id != object.id);
+          this.loadData( this.page);
         }, error: () => {
           this.notificationService.isProcessing(false);
           this.notificationService.toastError('Thao tác không thành công');
@@ -255,14 +269,20 @@ export class NguLieuVideoVrComponent implements OnInit {
 
   mode: 'TABLE' | 'MEDIAVR' | 'INFO' = "TABLE";
 
-  saveForm() {
 
+  saveForm() {
+    const titleInput = this.f['title'].value.trim();
+    this.f['title'].setValue(titleInput);
     if (this.formSave.valid) {
-      this.formActive.data = this.formSave.value;
-      this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
+      if (titleInput !== '') {
+        this.formActive.data = this.formSave.value;
+        this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
+      } else {
+        this.notificationService.toastWarning('Vui lòng không nhập khoảng trống');
+      }
     } else {
       this.formSave.markAllAsTouched();
-      this.notificationService.toastError('Vui lòng điền đầy đủ thông tin');
+      this.notificationService.toastWarning('Vui lòng nhập đủ thông tin');
     }
   }
 

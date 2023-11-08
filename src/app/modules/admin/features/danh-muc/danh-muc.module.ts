@@ -12,14 +12,17 @@ import {InputMaskModule} from 'primeng/inputmask';
 import {DialogModule} from 'primeng/dialog';
 import { EditorModule } from 'primeng/editor'
 import { ContextMenuModule } from 'primeng/contextmenu';
-import { MediavrComponent } from './mediavr/mediavr.component';
 import { MultiSelectModule } from 'primeng/multiselect';
 
 import { ChuyenMucComponent } from './chuyen-muc/chuyen-muc.component';
 import { LinhVucComponent } from './linh-vuc/linh-vuc.component';
 import { LoaiNguLieuComponent } from './loai-ngu-lieu/loai-ngu-lieu.component';
 import { DiemDiTichComponent } from './diem-di-tich/diem-di-tich.component';
-import { NhanVatLichSuComponent } from './nhan-vat-lich-su/nhan-vat-lich-su.component';
+
+import {SplitterModule} from "primeng/splitter";
+import Quill from 'quill';
+import ImageResize from 'quill-image-resize-module';
+Quill.register('modules/imageResize', ImageResize);
 
 @NgModule({
   declarations: [
@@ -27,8 +30,6 @@ import { NhanVatLichSuComponent } from './nhan-vat-lich-su/nhan-vat-lich-su.comp
     LinhVucComponent,
     LoaiNguLieuComponent,
     DiemDiTichComponent,
-    NhanVatLichSuComponent,
-    MediavrComponent,
 
   ],
   imports: [
@@ -44,7 +45,8 @@ import { NhanVatLichSuComponent } from './nhan-vat-lich-su/nhan-vat-lich-su.comp
     DialogModule,
     EditorModule,
     ContextMenuModule,
-    MultiSelectModule
+    MultiSelectModule,
+    SplitterModule
   ]
 })
 export class DanhMucModule {

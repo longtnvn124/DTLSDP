@@ -1,4 +1,7 @@
-
+.sk-container{
+  background: #fbfbfb;
+  height:var(--max-screen-height);
+}
 .nv-header {
   display: flex;
   justify-content: space-between;
@@ -68,4 +71,8 @@
   font-size: 15px;
   padding: 15px;
   text-align: justify;
+  width:100%;
+}
+.mobile_sukien_desc p img {
+  width:100%;
 }

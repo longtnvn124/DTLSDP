@@ -3,8 +3,7 @@ import {Editor} from "primeng/editor";
 import {FileService} from "@core/services/file.service";
 import {NotificationService} from "@core/services/notification.service";
 import Quill from 'Quill';
-import {timer} from "rxjs";
-import {AbstractControl, FormControl} from "@angular/forms";
+import {AbstractControl} from "@angular/forms";
 
 @Directive({selector: '[Resize_img]'})
 export class OvicResizeDropdowDirective implements OnInit {

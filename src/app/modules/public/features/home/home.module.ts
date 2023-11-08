@@ -24,32 +24,35 @@ import {RippleModule} from "primeng/ripple";
 
 
 @NgModule({
-  declarations: [
-    MainLayoutComponent,
-    ContentHomeComponent,
-    ContentChuyenDeComponent,
-    ContentSuKienComponent,
-    ContentGioiThieuComponent,
-    ContentChuyenMucComponent,
-    ContentNguLieuSoComponent,
-    ContentNhanVatComponent,
-    ContentTimKiemComponent
-  ],
-  imports: [
-    CommonModule,
-    HomeRoutingModule,
-    GalleriaModule,
-    ImageModule,
-    ButtonModule,
-    SharedModule,
-    PublicModule,
-    TooltipModule,
-    DropdownModule,
-    FormsModule,
-    InputTextModule,
-    RippleModule
-  ],
-  bootstrap: [MainLayoutComponent]
+    declarations: [
+        MainLayoutComponent,
+        ContentHomeComponent,
+        ContentChuyenDeComponent,
+        ContentSuKienComponent,
+        ContentGioiThieuComponent,
+        ContentChuyenMucComponent,
+        ContentNguLieuSoComponent,
+        ContentNhanVatComponent,
+        ContentTimKiemComponent
+    ],
+    imports: [
+        CommonModule,
+        HomeRoutingModule,
+        GalleriaModule,
+        ImageModule,
+        ButtonModule,
+        SharedModule,
+        PublicModule,
+        TooltipModule,
+        DropdownModule,
+        FormsModule,
+        InputTextModule,
+        RippleModule
+    ],
+    exports: [
+        ContentGioiThieuComponent
+    ],
+    bootstrap: [MainLayoutComponent]
 })
 export class HomeModule {
 }

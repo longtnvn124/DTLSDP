@@ -1,19 +1,28 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {OvicForm} from "@shared/models/ovic-models";
 import {DmNhanVatLichSu} from "@shared/models/danh-muc";
-import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {filter, Subscription, timer} from 'rxjs';
-import {ThemeSettingsService } from '@core/services/theme-settings.service';
-import { DanhMucNhanVatLichSuService } from '@modules/shared/services/danh-muc-nhan-vat-lich-su.service';
-import { NotificationService } from '@core/services/notification.service';
+import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from "@angular/forms";
+import {filter, Subscription} from 'rxjs';
+import {ThemeSettingsService} from '@core/services/theme-settings.service';
+import {DanhMucNhanVatLichSuService} from '@modules/shared/services/danh-muc-nhan-vat-lich-su.service';
+import {NotificationService} from '@core/services/notification.service';
 import {FileService} from "@core/services/file.service";
 import {HelperService} from "@core/services/helper.service";
-import {AuthService} from "@core/services/auth.service";
 import {AvatarMakerSetting, MediaService} from "@shared/services/media.service";
 import {getLinkDownload} from "@env";
+
 interface FormDmNhanVatLichSu extends OvicForm {
   object: DmNhanVatLichSu;
 }
+
+const PinableValidator = (control: AbstractControl): ValidationErrors | null => {
+  if (control.get('bietdanh').valid && control.get('bietdanh').value) {
+    return control.get('ten').value.trim().length > 0 ? null : {invalid: true};
+  } else {
+    return {invalid: true};
+  }
+}
+
 @Component({
   selector: 'app-danh-nhan-lich-su',
   templateUrl: './danh-nhan-lich-su.component.html',
@@ -53,9 +62,16 @@ export class DanhNhanLichSuComponent implements OnInit {
     canDownload: true,
     canUpload: true
   };
-  btn_checkAdd:'Lưu lại'|'Cập nhật';
+  btn_checkAdd: 'Lưu lại' | 'Cập nhật';
   characterAvatar: string;
   @ViewChild('fileChooser', {static: true}) fileChooser: TemplateRef<any>;
+
+  modules : any = {
+    imageResize : {
+      displaySize : true ,
+      modules     : [ 'Resize' , 'DisplaySize' , 'Toolbar' ]
+    }
+  };
 
   constructor(
     private themeSettingsService: ThemeSettingsService,
@@ -65,7 +81,7 @@ export class DanhNhanLichSuComponent implements OnInit {
     private danhMucNhanVatLichSuService: DanhMucNhanVatLichSuService,
     private mediaService: MediaService,
     private helperService: HelperService,
-    private  fileSerivce:FileService
+    private fileSerivce: FileService
   ) {
     this.formSave = this.fb.group({
       ten: ['', Validators.required],
@@ -74,7 +90,7 @@ export class DanhNhanLichSuComponent implements OnInit {
       nam: ['', Validators.required],
       gioitinh: [null, Validators.required],
       files: [],
-    });
+    }, {validators: PinableValidator});
     const observeProcessCloseForm = this.notificationService.onSideNavigationMenuClosed().pipe(filter(menuName => menuName === this.menuName && this.needUpdate)).subscribe(() => this.loadData(this.page));
     this.subscription.add(observeProcessCloseForm);
     const observerOnResize = this.notificationService.observeScreenSize.subscribe(size => this.sizeFullWidth = size.width)
@@ -96,7 +112,7 @@ export class DanhNhanLichSuComponent implements OnInit {
         this.listData = data.map(m => {
           const sIndex = this.gioitinh.findIndex(i => i.value === m.gioitinh);
           m['__gioitinh_converted'] = sIndex !== -1 ? this.gioitinh[sIndex].label : '';
-          m['image_convenrted'] =   m.files ? this.fileSerivce.getPreviewLinkLocalFile(m.files) : '';
+          m['image_convenrted'] = m.files ? this.fileSerivce.getPreviewLinkLocalFile(m.files) : '';
 
           return m;
         })
@@ -114,14 +130,14 @@ export class DanhNhanLichSuComponent implements OnInit {
   }
 
   onSearch(text: string) {
-    if(text == ''){
-      this.filter.search= '';
+    if (text == '') {
+      this.filter.search = '';
       this.loadData(1);
     }
   }
 
-  onkeyDowm(event:KeyboardEvent){
-    if(event.key === 'Enter'){
+  onkeyDowm(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
       this.loadData(1);
     }
   }
@@ -152,7 +168,7 @@ export class DanhNhanLichSuComponent implements OnInit {
     this.formState.formTitle = formType === 'add' ? 'Thêm nhân vật lịch sử' : 'Cập nhật nhân vật lịch sử ';
     this.formState.formType = formType;
     if (formType === 'add') {
-      this.btn_checkAdd="Lưu lại";
+      this.btn_checkAdd = "Lưu lại";
       this.formSave.reset(
         {
           ten: '',
@@ -167,7 +183,7 @@ export class DanhNhanLichSuComponent implements OnInit {
       this.characterAvatar = '';
     } else {
       this.formState.object = object;
-      this.btn_checkAdd="Cập nhật"
+      this.btn_checkAdd = "Cập nhật"
       this.formSave.reset(
         {
           ten: object.ten,
@@ -193,42 +209,49 @@ export class DanhNhanLichSuComponent implements OnInit {
   }
 
   saveForm() {
+    const titleInput = this.f['bietdanh'].value.trim();
+    this.f['bietdanh'].setValue(titleInput);
     if (this.formSave.valid) {
-      if (this.formState.formType === "add") {
-        this.notificationService.isProcessing(true);
-        this.danhMucNhanVatLichSuService.create(this.formSave.value).subscribe({
-          next: () => {
-            this.notificationService.isProcessing(false);
-            this.notificationService.toastSuccess('Thêm mới thành công');
-            this.formSave.reset({
-              ten: '',
-              bietdanh: '',
-              mota: '',
-              gioitinh: null,
-              nam: '',
-              files: null,
-            });
-          }, error: () => {
-            this.notificationService.toastError("Thêm mới thất bại");
-            this.notificationService.isProcessing(false);
-          }
-        })
-      } else {
-        this.notificationService.isProcessing(false);
-        const index = this.listData.findIndex(r => r.id === this.formState.object.id);
-        this.danhMucNhanVatLichSuService.update(this.listData[index].id, this.formSave.value).subscribe({
-          next: () => {
-            this.notificationService.isProcessing(false);
-            this.notificationService.toastSuccess('Cập nhật thành công');
-          }, error: () => {
-            this.notificationService.isProcessing(false);
-            this.notificationService.toastError("Cập nhật thất bại");
-          }
+      if (titleInput !== '') {
+        if (this.formState.formType === "add") {
+          this.notificationService.isProcessing(true);
+          this.danhMucNhanVatLichSuService.create(this.formSave.value).subscribe({
+            next: () => {
+              this.notificationService.isProcessing(false);
+              this.notificationService.toastSuccess('Thêm mới thành công');
+              this.formSave.reset({
+                ten: '',
+                bietdanh: '',
+                mota: '',
+                gioitinh: null,
+                nam: '',
+                files: null,
+              });
+            }, error: () => {
+              this.notificationService.toastError("Thêm mới thất bại");
+              this.notificationService.isProcessing(false);
+            }
+          })
+        } else {
+          this.notificationService.isProcessing(false);
+          const index = this.listData.findIndex(r => r.id === this.formState.object.id);
+          this.danhMucNhanVatLichSuService.update(this.listData[index].id, this.formSave.value).subscribe({
+            next: () => {
+              this.notificationService.isProcessing(false);
+              this.notificationService.toastSuccess('Cập nhật thành công');
+            }, error: () => {
+              this.notificationService.isProcessing(false);
+              this.notificationService.toastError("Cập nhật thất bại");
+            }
 
-        })
+          })
+        }
+      } else {
+        this.notificationService.toastWarning('Vui lòng không nhập khoảng trống');
       }
     } else {
-      this.notificationService.toastError("Lỗi nhập liệu");
+      this.formSave.markAllAsTouched();
+      this.notificationService.toastWarning('Vui lòng nhập đủ thông tin');
     }
   }
 
@@ -278,7 +301,7 @@ export class DanhNhanLichSuComponent implements OnInit {
   infoNhanvalichsu: DmNhanVatLichSu;
 
   btnShowInfo(object: DmNhanVatLichSu) {
-    this.infoNhanvalichsu= null;
+    this.infoNhanvalichsu = null;
     setTimeout(() => this.notificationService.openSideNavigationMenu({
       name: this.menuName,
       template: this.formInfo,
@@ -287,9 +310,10 @@ export class DanhNhanLichSuComponent implements OnInit {
       offCanvas: false
     }), 100);
     this.infoNhanvalichsu = this.listData.find(f => f.id === object.id)
-    this.infoNhanvalichsu['image_convenrted'] =  this.infoNhanvalichsu.files ? this.fileService.getPreviewLinkLocalFile( this.infoNhanvalichsu.files) : null;
+    this.infoNhanvalichsu['image_convenrted'] = this.infoNhanvalichsu.files ? this.fileService.getPreviewLinkLocalFile(this.infoNhanvalichsu.files) : null;
   }
-  closeForm(){
+
+  closeForm() {
     this.notificationService.closeSideNavigationMenu();
     this.loadData(1);
   }

@@ -4,8 +4,6 @@ import {ChuyenMucComponent} from "@modules/admin/features/danh-muc/chuyen-muc/ch
 import {DiemDiTichComponent} from "@modules/admin/features/danh-muc/diem-di-tich/diem-di-tich.component";
 import {LinhVucComponent} from "@modules/admin/features/danh-muc/linh-vuc/linh-vuc.component";
 import {LoaiNguLieuComponent} from "@modules/admin/features/danh-muc/loai-ngu-lieu/loai-ngu-lieu.component";
-import {NhanVatLichSuComponent} from "@modules/admin/features/danh-muc/nhan-vat-lich-su/nhan-vat-lich-su.component";
-import {MediavrComponent} from "@modules/admin/features/danh-muc/mediavr/mediavr.component";
 
 
 const routes: Routes = [
@@ -28,16 +26,6 @@ const routes: Routes = [
     path: 'loai-ngu-lieu',
     component: LoaiNguLieuComponent,
     data: {state: 'danh-muc--loai-ngu-lieu'}
-  },
-  {
-    path: 'nhan-vat-lich-su',
-    component: NhanVatLichSuComponent,
-    data: {state: 'danh-muc--nhan-vat-lich-su'}
-  },
-  {
-    path: 'media-vr-manager',
-    component: MediavrComponent,
-    data: {state: 'danh-muc--media-vr'}
   },
   {
     path: '',

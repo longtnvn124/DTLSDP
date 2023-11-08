@@ -23,18 +23,14 @@ import { SearchComponent } from './features/web-home/search/search.component';
 import { NhanvatComponent } from './features/web-home/nhanvat/nhanvat.component';
 import { DanhmucNgulieusoComponent } from './features/web-home/danhmuc-ngulieuso/danhmuc-ngulieuso.component';
 import { SukienTonghopComponent } from './features/web-home/sukien-tonghop/sukien-tonghop.component';
-import { ThongtinKythuatComponent } from './features/web-home/thongtin-kythuat/thongtin-kythuat.component';
 import {GalleriaModule} from "primeng/galleria";
 import {CarouselModule} from "primeng/carousel";
 import {ImageModule} from "primeng/image";
 import {InputTextModule} from "primeng/inputtext";
 import {DropdownModule} from "primeng/dropdown";
-import { ChuyenDeComponent } from './features/web-home/chuyen-de/chuyen-de.component';
 import { ChuyenDeMenuComponent } from './features/home/layouts/content-chuyen-de/chuyen-de-menu/chuyen-de-menu.component';
 import { ChuyenDeContentComponent } from './features/home/layouts/content-chuyen-de/chuyen-de-content/chuyen-de-content.component';
 import {PdfViewerModule} from "ng2-pdf-viewer";
-import { GioiThieuComponent } from './features/web-home/gioi-thieu/gioi-thieu.component';
-import { DanhMucChuyenMucComponent } from './features/web-home/danh-muc-chuyen-muc/danh-muc-chuyen-muc.component';
 
 @NgModule({
   declarations: [
@@ -51,12 +47,10 @@ import { DanhMucChuyenMucComponent } from './features/web-home/danh-muc-chuyen-m
     NhanvatComponent,
     DanhmucNgulieusoComponent,
     SukienTonghopComponent,
-    ThongtinKythuatComponent,
-    ChuyenDeComponent,
     ChuyenDeMenuComponent,
     ChuyenDeContentComponent,
-    GioiThieuComponent,
-    DanhMucChuyenMucComponent,
+
+
   ],
   exports: [
     ChuyenDeMenuComponent,

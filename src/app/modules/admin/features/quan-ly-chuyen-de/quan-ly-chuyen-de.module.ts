@@ -16,6 +16,10 @@ import {ButtonModule} from "primeng/button";
 import {RippleModule} from "primeng/ripple";
 import {TabMenuModule} from "primeng/tabmenu";
 import {EditorModule} from "primeng/editor";
+
+import Quill from 'quill';
+import ImageResize from 'quill-image-resize-module';
+Quill.register('modules/imageResize', ImageResize);
 @NgModule({
     declarations: [
         ChuyenDeComponent

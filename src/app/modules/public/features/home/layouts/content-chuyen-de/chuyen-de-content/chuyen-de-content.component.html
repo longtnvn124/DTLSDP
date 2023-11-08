@@ -844,7 +844,7 @@
       </ng-container>
       <ng-container *ngSwitchCase="'documents'">
         <div class="w-100 h-100">
-          <div class="learning-board__section--lecture__container h-100">
+          <div class="learning-board__section--lecture__container h-100 pt-3">
             <div *ngIf="!selectpdf,else selectpdftrue">
               <h2 class="learning-board__section--lecture__heading">Tài liệu khác</h2>
               <div class="files-board ictu-document-list__wrap files-board--layout-list e-learning-document">
@@ -863,7 +863,7 @@
                 </div>
 
               </div>
-              <div style="margin-top: 16px;font-size: 14px;" [innerHTML]="chuyendeSelect.desc |htmlDecode"></div>
+              <div style="margin-top: 16px;font-size: 14px; overflow: hidden;" [innerHTML]="chuyendeSelect.desc |htmlDecode"></div>
             </div>
           </div>
 
@@ -878,7 +878,7 @@
         </div>
       </ng-template>
       <ng-container *ngSwitchCase="'scorm'">
-        <div class="w-100 h-100">
+        <div class="w-100 h-100" style="overflow: hidden">
 
           <iframe [src]="scorm |ovicSafeResourceUrl" class="h-100 w-100 border-0"></iframe>
         </div>

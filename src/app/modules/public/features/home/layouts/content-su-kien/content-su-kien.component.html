@@ -3,13 +3,12 @@
 
   <div class="container" style="padding-top: 80px">
     <div class="header-custom">
-      <!--        <button pRipple pButton class="p-button-warning" label="Trở lại" icon iconPos="left" icon="pi pi-angle-left"-->
-      <!--                (click)="btn_exit()"></button>-->
+
       <p class="nhanvat-title"> Sự kiện Lịch sử VH-ĐP </p>
       <div>
         <button pButton pRipple class="p-button-secondary mr-2" icon="pi pi-angle-left" (click)="btn_backInfo()"
         ></button>
-        <button pButton pRipple class="p-button-secondary " icon="pi pi-angle-right"></button>
+        <button pButton pRipple class="p-button-secondary " icon="pi pi-angle-right" (click)="btn_nextInfo()"></button>
       </div>
     </div>
 
@@ -29,7 +28,7 @@
                   </div>
                   <div class="m-2">
                     <div
-                      class="headding-card text-xl font-weight-bold text-capitalize text-center align-items-center text_hover ngulieuso_item_title">
+                      class="headding-card font-weight-bold text_hover ngulieuso_item_title">
                       {{item.title}}
                     </div>
                   </div>
@@ -49,9 +48,9 @@
                       (click)="playAudio(0)"></button>
             </div>
 
-            <div class="sukien_desc" [innerHTML]="sukienActive.mota | htmlDecode">
+            <div class="sukien_desc pb-3" [innerHTML]="sukienActive.mota | htmlDecode">
             </div>
-            <div class="sukien_desc mx-1">
+            <div class="sukien_desc m-1">
               <div class="mx-1" *ngIf="sukienActive['_diemditich_convented'] ?? 0>0">Diễn ra tại: <span
                 *ngFor="let item of sukienActive['_diemditich_convented']">{{item}}, </span></div>
               <div class="mx-1" *ngIf="sukienActive['_nhanvat_convented'] ?? 0>0">Nhân vật lịch sử: <span

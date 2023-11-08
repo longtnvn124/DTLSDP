@@ -54,8 +54,7 @@ export class ContentChuyenMucComponent implements OnInit {
         })
         this.ngulieuImage360=dataNguLieu.filter(f=>f.loaingulieu === "image360")? dataNguLieu.filter(f=>f.loaingulieu === "image360"):[];
         this.ngulieuVideo360=dataNguLieu.filter(f=>f.loaingulieu === "video360")? dataNguLieu.filter(f=>f.loaingulieu === "video360"):[];
-        console.log(this.ngulieuImage360);
-        console.log(this.ngulieuVideo360);
+
         this.notification.isProcessing(false);
 
       }, error: () => {

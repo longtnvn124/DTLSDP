@@ -15,7 +15,9 @@ import {RadioButtonModule} from "primeng/radiobutton";
 import {InputTextModule} from "primeng/inputtext";
 import {EditorModule} from "primeng/editor";
 import {SplitterModule} from "primeng/splitter";
-
+import Quill from 'quill';
+import ImageResize from 'quill-image-resize-module';
+Quill.register('modules/imageResize', ImageResize);
 
 @NgModule({
   declarations: [

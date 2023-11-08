@@ -1,0 +1,12 @@
+p.ql-align-center{
+  text-align: center;
+}
+p.ql-align-left{
+  text-align: start;
+}
+p.ql-align-right  {
+  text-align: end;
+}
+p.ql-align-justify {
+  text-align: justify;
+}
