@@ -1,11 +1,10 @@
-<div class="w-100 h-100" style="background-color: #fbf6f2;">
-    <div class="shift-container container h-100 position-relative" [class.ovic-is-loading]="isLoading">
+<div class="shift-component-wrap position-relative" [class.ovic-is-loading]="isLoading">
+    <div class="shift-container container h-100 position-relative">
         <div class="dotthi-container w-100 border">
             <div class="dotthi-container__title p-2">
                 <div class="dotthi-container__title__heading">Danh sách đợt thi</div>
                 <div class="dotthi-container__title__buttons">
                     <button style="padding: 10px;" pButton pRipple label="Trang chủ" class="btn-logout " icon="pi pi-home" iconPos="right" (click)="backHome()"></button>
-                    <!--<button style="padding: 10px;" pButton pRipple label="Đăng xuất" class="ml-1 btn-logout p-button-warning" icon="pi pi-sign-out" iconPos="right" (click)="confirmSignOut()"></button>-->
                 </div>
             </div>
             <div *ngIf="dsDotthi" class="dotthi-container__body h-100 border-top-1">
@@ -33,8 +32,7 @@
                         </div>
                         <div>
                             <p class="dot-thi-item__row font-size-13px dotthi-item__body-count-question text-left mb-0">
-                                <span>Số câu hỏi</span>{{item.totalQuestion}} câu
-                            </p>
+                                <span>Số câu hỏi</span>{{item.totalQuestion}} câu </p>
                         </div>
                         <div>
                             <p class="dot-thi-item__row font-size-13px dotthi-item__body_time-doit text-left mb-0">
@@ -42,7 +40,7 @@
                         </div>
                     </div>
                     <div class="dotthi-item__button">
-                        <button [disabled]="item.state === -1" pRipple pButton [label]="item.button.label" [icon]="item.button.icon" [ngClass]="item.button.class" class="border-radius-0" (click)="btnTest(item)"></button>
+                        <button [disabled]="item.state === -1" pRipple pButton [label]="item.button.label" [icon]="item.button.icon" [ngClass]="item.button.class" class="border-radius-0 p-button-center justify-content-center" (click)="btnTest(item)"></button>
                     </div>
                 </div>
             </div>

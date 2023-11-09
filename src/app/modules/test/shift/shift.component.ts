@@ -40,7 +40,7 @@ export class ShiftComponent implements OnInit {
 	private _listButton : ListButtonShiftState = {
 		'-1' : { state : -1 , label : 'Bài thi đã kết thúc' , icon : 'pi pi-ban' , class : 'p-button-secondary' } ,
 		'0'  : { state : 0 , label : 'Chưa đến giờ thi' , icon : 'pi pi-times' , class : 'p-button-warning' } ,
-		'1'  : { state : 1 , label : 'Vào thi' , icon : 'pi pi-check-square' , class : 'p-button-success' }
+		'1'  : { state : 1 , label : 'Vào thi' , icon : 'pi pi-check-square' , class : 'p-button-primary' }
 	};
 
 	userData = this.auth.user;

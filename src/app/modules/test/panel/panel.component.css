@@ -202,6 +202,9 @@
 	font-size: 15px;
 	font-weight: 500;
 	line-height: 1.5;
+	max-width: 150px;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .info_container-head-new i {
@@ -210,6 +213,78 @@
 	margin: 0 5px 0 0;
 }
 
+.--invisible-button {
+	background-color: #ccc !important;
+	border-color: #ccc !important;
+	color: #aaa !important;
+	cursor: default !important;
+	opacity: 1 !important;
+	outline: none !important;
+	box-shadow: none !important;
+}
+
+.e-learning-panel__test-progress-step {
+	position: relative;
+	margin: 0 5px 0 0;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.e-learning-panel__test-progress-step::before {
+	content: '';
+	display: block;
+	height: 40px;
+	width: 40px;
+	border: 4px solid #f5f5f5;
+	border-radius: 50%;
+	background-color: transparent;
+	margin: 1px;
+}
+
+.e-learning-panel__test-progress-step__step-number {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	color: #1e85ff;
+	font-size: 13px;
+	font-family: "Roboto", sans-serif;
+	font-weight: 700;
+	z-index: 5;
+	line-height: 1;
+}
+
+.e-learning-panel__test-progress-step__svg {
+	height: 42px;
+	width: 42px;
+	transform: rotate(-90deg);
+	transform-origin: center;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 2;
+}
+
+.e-learning-panel__test-progress-step__svg__circle {
+	stroke: #1e85ff;
+}
+
+@media ( min-width: 992px) {
+	.e-learning-panel__test-progress-step {
+		margin: 0;
+	}
+	
+	.header-btn-controls button {
+		margin-left: 10px;
+	}
+}
+
+@media (max-width: 767px) {
+	.e-learning-panel__test-progress-step {
+		display: none;
+	}
+}
 
 @media ( max-width: 599px) {
 	.info_container-left {
@@ -242,3 +317,4 @@
 		display: none !important;
 	}
 }
+

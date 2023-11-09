@@ -14,9 +14,21 @@
                             <div class="counter-clock-wrap d-flex justify-content-center align-items-center">
                                 <div class="d-inline timer">{{ getFormattedTime() }}</div>
                             </div>
-                            <div class="header-btn-controls">
-                                <button pButton pRipple class="p-button-success" label="Lưu bài" (click)="saveTheTest()"></button>
-                                <button pButton pRipple label="Nộp bài" class="ml-2" (click)="btSubmit()"></button>
+                            <div class="header-btn-controls d-flex align-items-center">
+                                <div class="e-learning-panel__test-progress-step">
+                                    <span class="e-learning-panel__test-progress-step__step-number">{{contestantInfo.answered}}/{{contestantInfo.totalQuestion}}</span>
+                                    <svg class="e-learning-panel__test-progress-step__svg">
+                                        <circle class="e-learning-panel__test-progress-step__svg__circle" [attr.stroke-dasharray]="contestantInfo.strokeDasharray" cx="21" cy="21" r="18" stroke-width="4" fill="none" role="slider" aria-orientation="vertical" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"></circle>
+                                    </svg>
+                                </div>
+                                <button *ngIf="btnSaveMyAnswers.enable; else disableSaveMyAnswers" pButton pRipple class="p-button-success" label="Lưu bài" (click)="saveMyAnswers(btnSaveMyAnswers.session)"></button>
+                                <ng-template #disableSaveMyAnswers>
+                                    <button disabled pButton pRipple class="p-button-success --invisible-button" label="Lưu bài"></button>
+                                </ng-template>
+                                <button *ngIf="enableSubmitButton; else disableSubmitButton" pButton pRipple label="Nộp bài" class="ml-2" (click)="submitTheTest(true)"></button>
+                                <ng-template #disableSubmitButton>
+                                    <button disabled pButton pRipple label="Nộp bài" class="ml-2 --invisible-button"></button>
+                                </ng-template>
                             </div>
                         </div>
                         <!--                        <ng-template #mobileHeadingTemplate>-->
@@ -36,14 +48,12 @@
                     <div class="exam-container">
                         <div class="exam-container__item" *ngFor="let question of questions, index as i">
                             <div class="exam-container__item-label">Câu {{i + 1}}:
-                                <div class="font-weight-bold d-inline-block" [innerHTML]="question.title | htmlDecode"></div>
+                                <div class="font-weight-bold d-inline" [innerHTML]="question.title | htmlDecode"></div>
                             </div>
-                            <groups-radio [options]="question.answer_options" inputType="checkbox" [default]="question['__answered']" (onChange)="selectQuestion(question.id, $event)"></groups-radio>
+                            <groups-radio [options]="question.answer_options" inputType="checkbox" [default]="question['__answered']" (onChange)="onAnswerQuestion(question.id, $event)"></groups-radio>
                         </div>
                     </div>
-
                 </div>
-
             </div>
         </ng-container>
 
@@ -73,15 +83,16 @@
                 </div>
             </div>
         </ng-container>
+
         <ng-container *ngSwitchDefault>
-            <div class="results-container--center border text-center d-flex justify-content-center align-items-center">
-                <span class="text-primary --fs-15 mr-2">Tải thông tin</span><i class="pi pi-spin pi-spinner --before-fs-22"></i>
-            </div>
+<!--            <div class="results-container&#45;&#45;center border text-center d-flex justify-content-center align-items-center">-->
+<!--                <span class="text-primary &#45;&#45;fs-15 mr-2">Tải thông tin</span><i class="pi pi-spin pi-spinner &#45;&#45;before-fs-22"></i>-->
+<!--            </div>-->
         </ng-container>
     </ng-container>
 </div>
 
-<p-dialog [(visible)]="enableDialog" styleClass="test-notify test-notify--no-header" appendTo="body" [modal]="true">
+<p-dialog [(visible)]="openStartTheTestDialog" styleClass="test-notify test-notify--no-header" appendTo="body" [modal]="true">
     <h4 class="text-center text-primary font-weight-bold primary-font-family text-uppercase">Thông báo</h4>
     <table *ngIf="shiftTest" class="tbl-in-dialog">
         <tr>
@@ -107,7 +118,6 @@
     <h4 class="text-center text-danger font-weight-bold primary-font-family text-uppercase">Thông báo hết giờ làm bài</h4>
     <p class="text-center mt-1">Xác nhận nộp bài</p>
     <div class="d-flex justify-content-center align-items-center mt-2">
-        <!--<button pButton pRipple class="p-button-success" label="Xác nhận" (click)="submitTimeisOver()"></button>-->
         <button pButton pRipple class="p-button-success" label="Xác nhận" (click)="submitTheTest()"></button>
     </div>
 </p-dialog>

@@ -2,24 +2,30 @@ import { Component , HostListener , OnDestroy , OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NotificationService } from '@core/services/notification.service';
 import { NganHangCauHoiService } from '@shared/services/ngan-hang-cau-hoi.service';
-import { detail , Shift , ShiftTests } from '@shared/models/quan-ly-doi-thi';
-import { forkJoin , Observable , of , Subject , switchMap } from 'rxjs';
+import { Shift , ShiftTests } from '@shared/models/quan-ly-doi-thi';
+import { forkJoin , interval , merge , Observable , of , Subject , switchMap , takeUntil } from 'rxjs';
 import { NganHangCauHoi , NganHangDe } from '@shared/models/quan-ly-ngan-hang';
 import { NganHangDeService } from '@shared/services/ngan-hang-de.service';
 import { DotThiDanhSachService } from '@shared/services/dot-thi-danh-sach.service';
-import { DotThiKetQuaService } from '@shared/services/dot-thi-ket-qua.service';
+import { DotThiKetQuaService , ShiftTestScore } from '@shared/services/dot-thi-ket-qua.service';
 import { DateTimeServer , ServerTimeService } from '@shared/services/server-time.service';
 import { HelperService } from '@core/services/helper.service';
 import { AuthService } from '@core/services/auth.service';
 import { KEY_NAME_CONTESTANT_ID , KEY_NAME_CONTESTANT_PHONE , KEY_NAME_SHIFT_ID } from '@shared/utils/syscat';
 import { OvicButton } from '@core/models/buttons';
+import { catchError } from 'rxjs/operators';
 
 interface ContestantInfo {
-	phone : string,
-	testName : string,
-	score : string,
-	number_correct : number
+	phone : string;
+	testName : string;
+	score : string;
+	number_correct : number;
+	strokeDasharray : string;
+	totalQuestion : number;
+	answered : number;
 }
+
+type ClientAnswer = { [ T : number ] : number[] };
 
 @Component( {
 	selector    : 'app-panel' ,
@@ -37,19 +43,22 @@ export class PanelComponent implements OnInit , OnDestroy {
 	mode : 'PANEL' | 'TEST_RESULT' | 'LOADING' = 'LOADING';
 
 	contestantInfo : ContestantInfo = {
-		phone          : '' ,
-		testName       : '' ,
-		score          : '' ,
-		number_correct : 0
+		phone           : '' ,
+		testName        : '' ,
+		score           : '' ,
+		number_correct  : 0 ,
+		strokeDasharray : '0 200' ,
+		totalQuestion   : 0 ,
+		answered        : 0
 	};
 
 	shift : Shift;
 
 	shiftTest : ShiftTests;
 
-	answerQuestions : detail = {};
+	answerQuestions : ClientAnswer = {};
 
-	enableDialog : boolean = false;
+	openStartTheTestDialog : boolean = false;
 
 	destroy$ : Subject<string> = new Subject<string>();
 
@@ -57,11 +66,17 @@ export class PanelComponent implements OnInit , OnDestroy {
 
 	remainingTimeClone : number = 0; // 30 minutes in seconds
 
-	intervalId : any;
-
 	isTimeOver : boolean = false;
 
+	timeCloser$ : Subject<string> = new Subject<string>();
+
 	private _validInfo : { shift_id : number, contestant : number } = { shift_id : 0 , contestant : 0 };
+
+	protected btnSaveMyAnswers : { session : number, enable : boolean } = { session : 1 , enable : false };
+
+	protected enableSubmitButton : boolean = false;
+
+	protected strokeDasharray : string = '0 200';
 
 	constructor(
 		private router : Router ,
@@ -75,33 +90,8 @@ export class PanelComponent implements OnInit , OnDestroy {
 		private helperService : HelperService
 	) {}
 
-
 	ngOnInit() : void {
-		// if ( !this.auth.isLoggedIn() ) {
-		// 	void this.router.navigate( [ '/login' ] , { queryParams : { redirect : 'test/panel' } } );
-		// } else {
-		//
-		// }
-		//
-		// interval( 15000 ).pipe( takeUntil( this.destroy$ ) ).subscribe( () => this.updateTimeLeftToServer() );
-
-		// if ( this.activatedRoute.snapshot.queryParamMap.has( 'code' ) ) {
-		// 	const raw  = this.activatedRoute.snapshot.queryParamMap.get( 'code' );
-		// 	const s1   = this.auth.decryptData( raw );
-		// 	const info = s1 ? JSON.parse( s1 ) : null;
-		// 	if ( info ) {
-		// 		this.validateInfoFirst( info );
-		// 	}
-		// } else {
-		// 	void this.router.navigate( [ '/test/shift' ] );
-		// }
 		this.checkInit();
-	}
-
-	private updateTimeLeftToServer() {
-		if ( this.shiftTest && Math.max( this.remainingTimeClone , 0 ) && this.shiftTest.state === 1 ) {
-			this.shiftTestsService.update( this.shiftTest.id , { state : 1 , time : this.remainingTimeClone } ).subscribe();
-		}
 	}
 
 	checkInit() {
@@ -122,41 +112,29 @@ export class PanelComponent implements OnInit , OnDestroy {
 		this._recheckData( this._validInfo.shift_id , this._validInfo.contestant ).subscribe( {
 			next  : ( [ shiftTest , shift ] ) => {
 				if ( shiftTest && shift ) {
-					this.contestantInfo.testName = shift.title;
-					this.shift                   = shift;
-					this.shiftTest               = shiftTest;
-					this.answerQuestions         = this.shiftTest.details || {};
-					this.remainingTimeClone      = this.shiftTest.time;
-					if ( this.shiftTest && this.shiftTest.state === 2 ) {
-						this.mode = 'TEST_RESULT';
+					this.shift                          = shift;
+					this.shiftTest                      = shiftTest;
+					this.contestantInfo.testName        = shift.title;
+					this.answerQuestions                = shiftTest.details || {};
+					this.remainingTimeClone             = shiftTest.time;
+					this.contestantInfo.totalQuestion   = shiftTest.question_ids.length;
+					this.contestantInfo.answered        = Object.keys( this.answerQuestions ).length;
+					this.contestantInfo.strokeDasharray = [ Math.floor( ( ( this.contestantInfo.answered * 113 ) / this.contestantInfo.totalQuestion ) ) , 200 ].join( ' ' );
+					if ( shiftTest.state === 2 ) {
+						this.contestantInfo.score          = shiftTest.score.toFixed( 2 );
+						this.contestantInfo.number_correct = shiftTest.number_correct;
+						this.mode                          = 'TEST_RESULT';
 					} else {
-						this.enableDialog = true;
-						this.mode         = 'PANEL';
+						this.openStartTheTestDialog = true;
 					}
 				}
 				this.notificationService.isProcessing( false );
 			} ,
-			error : ( e ) => {
-				console.log( e );
+			error : () => {
 				this.notificationService.isProcessing( false );
 				this.notificationService.toastError( 'Mất kết nối với máy chủ' );
 			}
 		} );
-	}
-
-	reInitTest() {
-		this._initTest();
-	}
-
-	take_decimal_number( num , n ) {
-		//num : số cần xử lý
-		//n: số chữ số sau dấu phẩy cần lấy
-		let base = 10 ** n;
-		return Math.round( num * base ) / base;
-	}
-
-	private validateShift() {
-
 	}
 
 	private _recheckData( shift_id : number , contestant : number ) : Observable<[ ShiftTests , Shift ]> {
@@ -195,15 +173,21 @@ export class PanelComponent implements OnInit , OnDestroy {
 	}
 
 	startTimer( remainingTime : number ) : void {
-		this.intervalId = setInterval( () => {
+		const closer$ : Observable<string> = merge(
+			this.destroy$ ,
+			this.timeCloser$
+		);
+
+		this.mode = 'PANEL';
+		interval( 1000 ).pipe( takeUntil( closer$ ) ).subscribe( () => {
 			if ( remainingTime > 0 ) {
 				remainingTime--;
 				this.remainingTimeClone = remainingTime;
 			} else {
 				this.stopTimer();
-				this.viewSubmitTimeisOver();
+				this.isTimeOver = true;
 			}
-		} , 1000 );
+		} );
 	}
 
 	getFormattedTime() : string {
@@ -213,7 +197,7 @@ export class PanelComponent implements OnInit , OnDestroy {
 	}
 
 	stopTimer() : void {
-		clearInterval( this.intervalId );
+		this.timeCloser$.next( 'close' );
 	}
 
 	randomQuestions( questions : number[] , length : number ) : number[] {
@@ -223,103 +207,87 @@ export class PanelComponent implements OnInit , OnDestroy {
 	}
 
 	startTheTest() {
-		this.enableDialog = false;
+		this.openStartTheTestDialog = false;
 		this.loadQuestion();
-		this.startTimer( this.shiftTest.time );
 	}
 
 	loadQuestion() {
 		this.notificationService.isProcessing( true );
 		this.nganHangCauHoiService.getTestQuestions( this.shiftTest.question_ids , 'id,bank_id,title,answer_options' ).subscribe( {
 			next  : ( questions ) => {
-				this.shiftTest.state = 1;
-				this.questions       = questions.map( item => {
-					const answered       = this.answerQuestions[ item.id ];
-					item[ '__answered' ] = answered && Array.isArray( answered ) ? answered.join() : null;
+				this.questions = questions.map( item => {
+					const answered : number[] = this.answerQuestions[ item.id ];
+					item[ '__answered' ]      = answered && Array.isArray( answered ) ? answered.join() : null;
 					return item;
 				} );
+				this.startTimer( this.shiftTest.time );
 				this.notificationService.isProcessing( false );
 			} ,
-			error : ( e ) => {
+			error : () => {
 				this.notificationService.isProcessing( false );
 				this.notificationService.toastError( 'Mất kết nối với máy chủ' );
 			}
 		} );
 	}
 
-	async btSubmit() {
-		if ( Object.keys( this.answerQuestions ).length < this.shiftTest.question_ids.length ) {
-			this.notificationService.toastWarning( 'Bạn chưa điềm đủ đáp án' );
-		} else {
-			const headText : string = 'Thông báo';
-			this.stopTimer();
+	onAnswerQuestion( questionId : number , answers : number[] ) {
+		if ( Array.isArray( answers ) ) {
+			if ( answers.length ) {
+				this.answerQuestions[ questionId ] = answers;
+				this.triggerSaveMyAnswers();
+			} else {
+				delete this.answerQuestions[ questionId ];
+				this.triggerSaveMyAnswers();
+			}
+		}
+		this.contestantInfo.answered        = Object.keys( this.answerQuestions ).length;
+		this.enableSubmitButton             = this.contestantInfo.answered === this.contestantInfo.totalQuestion;
+		this.contestantInfo.strokeDasharray = [ Math.floor( ( ( this.contestantInfo.answered * 113 ) / this.contestantInfo.totalQuestion ) ) , 200 ].join( ' ' );
+	}
+
+	triggerSaveMyAnswers() {
+		this.btnSaveMyAnswers.session += 1;
+		this.btnSaveMyAnswers.enable = true;
+	}
+
+	async submitTheTest( needConfirm : boolean = false ) : Promise<void> {
+		let running : boolean = false;
+		if ( needConfirm ) {
+			const headText : string    = 'Thông báo';
 			const confirm : OvicButton = await this.notificationService.confirmRounded( `<p class="text-danger">Xác nhận nộp bài</p>` , headText );
 			if ( confirm.name === 'yes' ) {
-				this.serverTimeService.getTime().pipe( switchMap( ( time ) => {
-					return this.shiftTestsService.update( this.shiftTest.id , {
-						state    : 2 ,
-						time_end : this.helperService.formatSQLDateTime( this.helperService.dateFormatWithTimeZone( time.date ) ) ,
-						details  : this.answerQuestions
-					} ).pipe( switchMap( () => this.shiftTestsService.scoreTest( this.shiftTest.id ) ) );
-				} ) ).subscribe( {
-					next      : () => {
-						this.shiftTest.state   = 2;
-						this.shiftTest.details = this.answerQuestions;
-						this.notificationService.isProcessing( false );
-						this.reInitTest();
-					} , error : () => {
-						this.notificationService.isProcessing( false );
-						this.notificationService.toastWarning( 'Nộp bài thất bại' );
-					}
-				} );
-			} else {
-				this.startTimer( this.remainingTimeClone );
+				running = true;
 			}
-		}
-	};
-
-	selectQuestion( id : number , value : string ) {
-		if ( id && value ) {
-			this.answerQuestions[ id ] = value.split( ',' ).map( m => parseInt( m ) );
-			this.shiftTestsService.update( this.shiftTest.id , {
-				details : this.answerQuestions ,
-				time    : this.remainingTimeClone
-			} ).subscribe();
 		} else {
-			delete this.answerQuestions[ id ];
-			this.shiftTestsService.update( this.shiftTest.id , {
-				details : this.answerQuestions ,
-				time    : this.remainingTimeClone
-			} ).subscribe();
+			running = true;
+		}
+		if ( running ) {
+			this.notificationService.isProcessing( true );
+			this.completeTheTest().subscribe( {
+				next  : ( result : ShiftTestScore ) => {
+					this.notificationService.isProcessing( false );
+					this.mode                          = 'TEST_RESULT';
+					this.contestantInfo.score          = result.score.toFixed( 2 );
+					this.contestantInfo.number_correct = result.number_correct;
+					this.notificationService.toastSuccess( 'Nộp bài thành công' );
+					this.stopTimer();
+				} ,
+				error : () => {
+					this.notificationService.isProcessing( false );
+					this.notificationService.toastError( 'Nộp bài thất bại' );
+				}
+			} );
 		}
 	}
 
-	viewSubmitTimeisOver() {
-		this.isTimeOver = true;
+	private completeTheTest() : Observable<ShiftTestScore> {
+		return this.shiftTestsService.update( this.shiftTest.id , {
+			state   : 2 ,
+			details : this.answerQuestions ,
+			time    : this.remainingTimeClone
+		} ).pipe( switchMap( () => this.shiftTestsService.scoreTest( this.shiftTest.id ) ) );
 	}
 
-	submitTheTest() : void {
-		this.notificationService.isProcessing( true );
-		this.serverTimeService.getTime().pipe( switchMap( ( time ) => this.shiftTestsService.update( this.shiftTest.id , {
-			state    : 2 ,
-			time_end : this.helperService.formatSQLDateTime( this.helperService.dateFormatWithTimeZone( time.date ) ) ,
-			details  : this.answerQuestions ,
-			time     : 0
-		} ) ) ).subscribe( {
-			next  : () => {
-				this.notificationService.isProcessing( false );
-				this.mode = 'TEST_RESULT';
-				this.shiftTestsService.scoreTest( this.shiftTest.id ).subscribe();
-				this.notificationService.toastSuccess( 'Nộp bài thành công' );
-				this.reInitTest();
-				this.isTimeOver = false;
-			} ,
-			error : () => {
-				this.notificationService.isProcessing( false );
-				this.notificationService.toastError( 'Nộp bài thất bại' );
-			}
-		} );
-	}
 
 	btnOutTest() {
 		this.authService.setOption( KEY_NAME_CONTESTANT_ID , 0 );
@@ -328,25 +296,30 @@ export class PanelComponent implements OnInit , OnDestroy {
 		void this.router.navigate( [ '/test/shift' ] );
 	}
 
-	saveTheTest() {
-		this.shiftTestsService.update( this.shiftTest.id , {
-			details : this.answerQuestions ,
-			time    : this.remainingTimeClone
-		} ).subscribe( () => this.notificationService.toastSuccess( 'Hệ thống đã lưu bài làm ở thời điểm hiện tại' ) );
+	saveMyAnswers( session : number ) {
+		this.shiftTestsService.update( this.shiftTest.id , { details : this.answerQuestions , time : this.remainingTimeClone } ).pipe(
+			switchMap( () => of( session ) ) ,
+			catchError( () => of( 0 ) )
+		).subscribe( ( _session : number ) => {
+			if ( _session === this.btnSaveMyAnswers.session ) {
+				this.btnSaveMyAnswers.enable = false;
+				this.notificationService.toastSuccess( 'Hệ thống đã lưu bài làm ở thời điểm hiện tại' );
+			} else {
+				this.btnSaveMyAnswers.enable = true;
+			}
+		} );
 	}
 
-
 	ngOnDestroy() : void {
-		this.stopTimer();
-		const time        = this.remainingTimeClone;
-		const questionIds = this.answerQuestions;
-		if ( time && questionIds && this.router.navigate( [ '/test/shift' ] ) ) {
-			this.shiftTestsService.update( this.shiftTest.id , { time : time , details : questionIds } ).subscribe();
-		} else {
-			this.shiftTestsService.update( this.shiftTest.id , { time : time , details : questionIds , state : -1 } ).subscribe();
+		if ( this.mode === 'PANEL' ) {
+			const time : number          = this.remainingTimeClone;
+			const details : ClientAnswer = this.answerQuestions;
+			if ( time && details ) {
+				this.shiftTestsService.update( this.shiftTest.id , { time , details } ).subscribe();
+			}
 		}
 		this.destroy$.next( 'closed' );
 		this.destroy$.complete();
+		this.timeCloser$.complete();
 	}
-
 }

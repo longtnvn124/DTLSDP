@@ -7,6 +7,11 @@ import { Shift , ShiftTests } from '@shared/models/quan-ly-doi-thi';
 import { map , Observable } from 'rxjs';
 import { Dto , OrWhereCondition , OvicConditionParam , OvicQueryCondition } from '@core/models/dto';
 
+export interface ShiftTestScore {
+	number_correct : number;
+	score : number;
+}
+
 @Injectable( {
 	providedIn : 'root'
 } )
@@ -51,8 +56,8 @@ export class DotThiKetQuaService {
 	}
 
 	// Tính điểm server
-	scoreTest( id : number ) : Observable<any> {
-		return this.http.post<Dto>( ''.concat( this.api , id.toString( 10 ) , '/point' ) , null );
+	scoreTest( id : number ) : Observable<ShiftTestScore> {
+		return this.http.post<Dto>( ''.concat( this.api , id.toString( 10 ) , '/point' ) , null ).pipe( map( res => res.data ) );
 	}
 
 	getDataByShiftId( shift_id : number ) : Observable<ShiftTests[]> {

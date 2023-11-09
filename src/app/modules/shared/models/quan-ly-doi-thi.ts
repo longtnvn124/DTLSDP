@@ -44,4 +44,3 @@ export const statusOptions = [
 	}
 ];
 export type detail = { [ T : number ] : number[] };
-

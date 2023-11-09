@@ -1,6 +1,9 @@
+.shift-component-wrap {
+	background-color: #fbf6f2;
+	width: 100%;
+}
+
 .dotthi-container {
-	
-	/*border-radius: 4px;*/
 	background-color: #fff;
 	z-index: 102;
 }
@@ -14,7 +17,6 @@
 	text-transform: uppercase;
 	height: 60px;
 	border-bottom: 1px solid #ffa500;
-	
 }
 
 .dotthi-item {
@@ -23,7 +25,6 @@
 	margin: 10px;
 	border-radius: 3px;
 	background-color: #f1f1f1;
-	
 }
 
 .dotthi-item__logo {
@@ -50,10 +51,6 @@
 	margin-bottom: 5px !important;
 	line-height: 1.3;
 }
-
-/*.dotthi-item__body-time {*/
-/*	color: #f73e48;*/
-/*}*/
 
 .dotthi-item__body-time span {
 	color: #333333;
@@ -94,22 +91,10 @@
 	height: 160px;
 }
 
-.test-exam__container-title__name {
-
-}
-
-.test-exam__container-title__email {
-
-}
-
-.test-exam__container-body {
-
-}
-
 /*-----------------image left righ ----------------*/
 .svg_content {
 	width: 300px;
-	position: absolute;
+	position: fixed;
 	bottom: 15px;
 	z-index: 0;
 }
@@ -127,25 +112,18 @@
 	height: 100%;
 }
 
-/*@media(width <1024px){*/
-/*  .dotthi-container{*/
-/*    width:100%;*/
-/*  }*/
-
-/*}*/
-
 .shift-container {
-	padding: 90px 0;
-	z-index: 5
+	padding: 10px 0;
+	z-index: 5;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: var(--max-screen-height, 100vh);
 }
 
 @media (max-width: 650px) {
 	.dotthi-item__logo {
 		display: none;
-	}
-	
-	.dotthi-item__button button {
-		width: 100px
 	}
 	
 	.dotthi-item__body {
@@ -163,17 +141,8 @@
 		display: none;
 	}
 	
-	.font-size-13px {
-		font-size: 13px;
-		
-	}
-	
 	.dotthi-container__title {
 		font-size: 14px;
-	}
-	
-	.dotthi-item__body-title {
-		font-size: 13px;
 	}
 }
 
@@ -190,9 +159,14 @@
 	
 	.dotthi-container__title__heading {
 		order: 2;
-		font-size: 14px;
+		font-size: 16px;
 		line-height: 1.5;
 		padding: 10px 0;
+	}
+	
+	.dotthi-item__body-title {
+		font-size: 15px;
+		font-weight: 500;
 	}
 	
 	.dotthi-container__title__buttons {
@@ -207,5 +181,16 @@
 	.dotthi-container {
 		border: none !important;
 		background: transparent;
+	}
+}
+
+@media (max-width: 650px) {
+	.dotthi-item {
+		flex-direction: column;
+	}
+	
+	.dotthi-item__button button {
+		width: 100%;
+		margin: 10px 0 0;
 	}
 }

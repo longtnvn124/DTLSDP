@@ -1,4 +1,4 @@
-import { Component , OnDestroy , OnInit , ViewChild } from '@angular/core';
+import { Component , OnDestroy , OnInit } from '@angular/core';
 import { AbstractControl , FormBuilder , FormGroup , Validators } from '@angular/forms';
 import { DDMMYYYYDateFormatValidator , PhoneNumberValidator } from '@core/utils/validators';
 import { debounceTime , distinctUntilChanged , mergeMap , Observable , Subject , Subscription , takeUntil } from 'rxjs';
@@ -37,7 +37,7 @@ class PhoneValidator {
 			takeUntil( destroy$ ) ,
 			filter( () => formControl.valid ) ,
 			debounceTime( 500 ) ,
-			map( value => value ? value.replace( /\s/g , '' ).replace( /-{2,}/g , '-' ) : '' )
+			map( value => value ? value.replace( /\s/g , '' ).replace( /-/g , '' ).replace( /\./g , '' ).replace( /_/g , '' ) : '' )
 		).subscribe( value => {
 			this._checked = false;
 			if ( value ) {
@@ -49,7 +49,8 @@ class PhoneValidator {
 			takeUntil( destroy$ ) ,
 			filter( () => formControl.valid ) ,
 			debounceTime( 1000 ) ,
-			distinctUntilChanged()
+			distinctUntilChanged() ,
+			map( value => value ? value.replace( /\s/g , '' ).replace( /-/g , '' ).replace( /\./g , '' ).replace( /_/g , '' ) : '' )
 		).subscribe( ( phoneNumber : string ) => this._isPhoneNumberExistFn( phoneNumber ) );
 
 		destroy$.subscribe( () => {
@@ -91,7 +92,7 @@ class PhoneValidator {
 			this.subscription.unsubscribe();
 		}
 		this.subscription = this._checker.validatePhoneContestant( newValue ).subscribe( {
-			next  : ( contestantId ) => {
+			next  : ( contestantId : number ) => {
 				this._contestantId   = contestantId;
 				this._checking       = false;
 				this._checked        = true;
@@ -116,7 +117,7 @@ export class ContestantComponent implements OnInit , OnDestroy {
 	formGroup : FormGroup = this.fb.group( {
 		full_name : [ '' , [ Validators.required , Validators.maxLength( 50 ) , Validators.minLength( 1 ) ] ] ,
 		name      : [ '' ] ,
-		phone     : [ '' , [ Validators.required , PhoneNumberValidator , Validators.maxLength( 20 ) , Validators.minLength( 6 ) ] ] ,
+		phone     : [ '' , [ Validators.required , PhoneNumberValidator , Validators.maxLength( 12 ) , Validators.minLength( 6 ) ] ] ,
 		dob       : [ '' , [ Validators.required , DDMMYYYYDateFormatValidator ] ] ,
 		sex       : [ '' , [ Validators.required ] ] ,
 		address   : [ '' , [ Validators.required ] ]
@@ -158,7 +159,7 @@ export class ContestantComponent implements OnInit , OnDestroy {
 		const newContestant : NewContestant = JSON.parse( JSON.stringify( this.formGroup.value ) );
 		newContestant.dob                   = newContestant.dob.split( '/' ).reverse().join( '/' ); /*convert dd/mm/yyyy to yyyy/mm/dd format*/
 		this.thiSinhService.assignNewContestant( newContestant ).pipe( mergeMap( () => this.thiSinhService.validatePhoneContestant( this.f[ 'phone' ].value ) ) ).subscribe( {
-			next  : ( id ) => {
+			next  : ( id : number ) => {
 				if ( id ) {
 					this.saveContestantInfo( { id , phone : this.formGroup.get( 'phone' ).value } );
 					this.goToTest( false );

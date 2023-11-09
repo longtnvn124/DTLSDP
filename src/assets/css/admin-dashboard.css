@@ -3227,6 +3227,20 @@ app-mediavr {
 	margin: var(--panel-padding--negative);
 }
 
-.exam-container__item-label p {
+.exam-container__item-label p:first-child {
+	display: inline;
+}
+
+.exam-container__item-label p:last-child {
 	margin-bottom: 0;
+}
+
+.exam-container__item-label p:empty {
+	display: none;
+	margin: 0;
+}
+
+.exam-container__item-label img {
+	max-width: 100%;
+	height: auto;
 }
