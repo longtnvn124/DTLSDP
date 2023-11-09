@@ -218,9 +218,19 @@ export const KEY_NAME_CONTESTANT_PHONE : string = 'contestantPhone';
 
 export const KEY_NAME_SHIFT_ID : string = 'shift_id';
 
-export const  CONG_THONG_TIN=[
-  {id:1,url:'https://thainguyen.gov.vn'},
-  {id:2,url:'https://thainguyen.dcs.vn'},
+export const  CONG_THONG_TIN:{id:number,url:string, img:string}[]=[
+  {
+    id:1,url:'https://thainguyen.gov.vn',img:'assets/svg/cthainguyen.svg'
+  },
+  {
+    id:2,url:'https://thainguyen.dcs.vn',img:'assets/svg/Cobualiem.svg'
+  },
+  {
+    id:3,url:'',img:'assets/svg/UBNDtinh.svg'
+  },
+  {
+    id:4,url:'https://tuyengiaothainguyen.org.vn/',img:'assets/svg/bantuyengiao.svg'
+  },
 ]
 export const MODULES_QUILL:any={
   imageResize : {

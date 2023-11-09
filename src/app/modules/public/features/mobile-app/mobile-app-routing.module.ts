@@ -104,7 +104,7 @@ const routes: Routes = [
         }
       },
       {
-        path: 'cong-thong-tin',
+        path: 'mobile-cong-thong-tin',
         component: MobileIfarmeComponent,
         data:{
           title:'Cổng thông tin'

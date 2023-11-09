@@ -11,7 +11,6 @@ export class MobileSearchService {
 
   setSearchData(data:string){
     this.textsearch.next(data);
-
   }
   getSearchData():Observable<string>{
     return this.textsearch.asObservable();

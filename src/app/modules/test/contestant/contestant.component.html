@@ -30,7 +30,7 @@
                         <div class="test-member__from__col test-member-size--max position-relative">
                             <fieldset [ngClass]="{ 'fieldset--error' : f['phone'].touched && f['phone'].invalid , 'fieldset--invalid' : f['phone'].touched && f['phone'].valid }">
                                 <legend><label>Số điện thoại</label></legend>
-                                <input type="text" class="test-member__form__input" placeholder="Số điện thoại" formControlName="phone" autocomplete="off">
+                                <input type="text" class="test-member__form__input" placeholder="Số điện thoại" formControlName="phone" autocomplete="off" pattern="[0-9]">
                             </fieldset>
                             <button *ngIf="phoneValidator.error; else showCheckValue" class="test-member__form__recheck" pButton pRipple icon="pi pi-refresh"></button>
                             <ng-template #showCheckValue>

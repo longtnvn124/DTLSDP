@@ -34,7 +34,7 @@
   width: 100%;
   height: 100%;
   display: block;
-  --color-main-mobile: #d52c24;
+  --color-main-mobile: #f12828;
   --color-bg-mobile: #fffffa;
   background: var(--color-main-mobile);
 }
@@ -93,7 +93,7 @@
 }
 
 .menu-body_item:hover {
-  background: var(--color-main-mobile);
+  background: #d52c24;
   color: var(--color-bg-mobile);
 }
 

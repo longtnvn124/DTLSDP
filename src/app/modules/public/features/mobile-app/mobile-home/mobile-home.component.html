@@ -1,31 +1,13 @@
 
   <div class="mobile-body">
     <div class="header-container" style="width:100%">
-      <div class="header-icon" >
-        <!--      <a [routerLink]="['/mobile/cong-thong-tin']" [queryParams]="{param:1}">-->
-        <a href="https://thainguyen.gov.vn" >
-          <img src="assets/svg/cthainguyen.svg" alt="">
-        </a>
-      </div>
-      <div class="header-icon">
-        <a href="https://thainguyen.dcs.vn" >
-          <img src="assets/svg/Cobualiem.svg" alt="">
-
-        </a>
-      </div>
-      <div class="header-icon">
-        <a href="">
-          <img src="assets/svg/UBNDtinh.svg" alt="">
-        </a>
-      </div>
-      <div class="header-icon">
-        <a href="https://tuyengiaothainguyen.org.vn/">
-          <img src="assets/svg/bantuyengiao.svg" alt="">
-
+      <div class="header-icon" *ngFor="let item of iconHeader">
+        <a (click)="btnSelectIconHeader(item.id)" >
+          <img src="{{item.img}}" alt="">
         </a>
       </div>
     </div>
-
+    <!--      <a [routerLink]="['/mobile/cong-thong-tin']" [queryParams]="{param:1}">-->
     <div *ngIf="slides ?? 0 > 0" class="slide-mobile-app w-100 h-100 " style="margin-top: 20px;">
       <p-galleria class="slide-ctm" [autoPlay]="true" [value]="slides" [numVisible]="1" [circular]="true"
                   [showItemNavigators]="false" [showIndicators]="true"

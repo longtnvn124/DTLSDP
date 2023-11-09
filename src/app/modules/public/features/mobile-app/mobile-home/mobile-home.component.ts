@@ -10,6 +10,7 @@ import {ChuyenDe} from "@shared/models/quan-ly-chuyen-de";
 import {ActivatedRoute, Router} from "@angular/router";
 import {AuthService} from "@core/services/auth.service";
 import {MobileNavbarService} from "@modules/public/features/mobile-app/services/mobile-navbar.service";
+import {CONG_THONG_TIN} from "@shared/utils/syscat";
 
 @Component({
   selector: 'app-mobile-home',
@@ -19,6 +20,7 @@ import {MobileNavbarService} from "@modules/public/features/mobile-app/services/
 export class MobileHomeComponent implements OnInit {
   @ViewChild('fromUpdate', {static: true}) template: TemplateRef<any>;
 
+  iconHeader=CONG_THONG_TIN;
   slides: { index: number, path: string, url: string }[] = [
     {index: 1, path: '/assets/slide/slide1.jpg', url: ''},
     {index: 2, path: '/assets/slide/slide2.jpg', url: ''},
@@ -142,6 +144,9 @@ export class MobileHomeComponent implements OnInit {
   btnSelectChuyende(item: ChuyenDe) {
     this.router.navigate(['/mobile/mobile-chuyen-de/'], {queryParams: {param: item.id}});
   }
+  btnSelectIconHeader(id:number){
+    this.router.navigate(['/mobile/mobile-cong-thong-tin/'], {queryParams: {param:id}});
 
+  }
 
 }

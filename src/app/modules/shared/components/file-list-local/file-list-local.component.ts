@@ -43,8 +43,7 @@ export class FileListLocalComponent implements OnInit, OnChanges {
     private mediaService: MediaService,
     private auth: AuthService,
     private notificationService: NotificationService,
-    private cd: ChangeDetectorRef,
-    private chuyenDeService:ChuyenDeService
+
   ) {
   }
 
@@ -120,59 +119,110 @@ export class FileListLocalComponent implements OnInit, OnChanges {
   async addMoreFile() {
 
   }
-  check_chuyende_id:boolean = true;
   onSelectFiles(event: Event) {
+
     if (event.target['files'].length) {
       const length = event.target['files'].length;
       let dem = 0;
       const fileUploaded: SimpleFileLocal[] = [];
-      this.notificationService.isProcessing(true);
       for (let i = 0; i < length; i++) {
         const file = event.target['files'][i];
+        const tail = file['name'].slice(file['name'].lastIndexOf('.'));
+        if (this.accept.length >0){
+          if (this.accept.includes(tail)){
+            setTimeout(() => this.fileService.uploadFile(file, this.state).subscribe({
+              next: (f) => {
+                fileUploaded.push({
+                  id: f.id,
+                  name: f.name,
+                  title: f.title,
+                  ext: f.ext,
+                  type: f.type,
+                  size: f.size
+                });
 
-        setTimeout(() => this.fileService.uploadFile(file, this.state).subscribe({
-          next: (f) => {
-            fileUploaded.push({
-              id: f.id,
-              name: f.name,
-              title: f.title,
-              ext: f.ext,
-              type: f.type,
-              size: f.size
-            });
-
-            // if(this.chuyendeId){
-            //   console.log(this.chuyendeId);
-            //   this.chuyenDeService.loadUrlScormById(this.chuyendeId).subscribe({
-            //     next: (data) => {
-            //       console.log(data);
-            //     }
-            //   });
-            // }
-            if (++dem === length) {
-              this.notificationService.isProcessing(false);
-              if (this.formField.value && Array.isArray(this.formField.value)) {
-                const value = JSON.parse(JSON.stringify(this.formField.value));
-                this.formField.setValue([].concat(value, fileUploaded));
-              } else {
-                this.formField.setValue(fileUploaded);
+                // if(this.chuyendeId){
+                //   console.log(this.chuyendeId);
+                //   this.chuyenDeService.loadUrlScormById(this.chuyendeId).subscribe({
+                //     next: (data) => {
+                //       console.log(data);
+                //     }
+                //   });
+                // }
+                if (++dem === length) {
+                  this.notificationService.isProcessing(false);
+                  if (this.formField.value && Array.isArray(this.formField.value)) {
+                    const value = JSON.parse(JSON.stringify(this.formField.value));
+                    this.formField.setValue([].concat(value, fileUploaded));
+                  } else {
+                    this.formField.setValue(fileUploaded);
+                  }
+                  event.target['value'] = '';
+                }
+              },
+              error: () => {
+                if (++dem === length) {
+                  this.notificationService.isProcessing(false);
+                  if (this.formField.value && Array.isArray(this.formField.value)) {
+                    const value = JSON.parse(JSON.stringify(this.formField.value));
+                    this.formField.setValue([].concat(value, fileUploaded));
+                  } else {
+                    this.formField.setValue(fileUploaded);
+                  }
+                  event.target['value'] = '';
+                }
               }
-              event.target['value'] = '';
-            }
-          },
-          error: () => {
-            if (++dem === length) {
-              this.notificationService.isProcessing(false);
-              if (this.formField.value && Array.isArray(this.formField.value)) {
-                const value = JSON.parse(JSON.stringify(this.formField.value));
-                this.formField.setValue([].concat(value, fileUploaded));
-              } else {
-                this.formField.setValue(fileUploaded);
-              }
-              event.target['value'] = '';
-            }
+            }), i * 50);
+          }else{
+            this.notificationService.isProcessing(false);
+            this.notificationService.toastWarning('File tải lên không đúng định dạng');
           }
-        }), i * 50);
+        }else{
+          setTimeout(() => this.fileService.uploadFile(file, this.state).subscribe({
+            next: (f) => {
+              fileUploaded.push({
+                id: f.id,
+                name: f.name,
+                title: f.title,
+                ext: f.ext,
+                type: f.type,
+                size: f.size
+              });
+
+              // if(this.chuyendeId){
+              //   console.log(this.chuyendeId);
+              //   this.chuyenDeService.loadUrlScormById(this.chuyendeId).subscribe({
+              //     next: (data) => {
+              //       console.log(data);
+              //     }
+              //   });
+              // }
+              if (++dem === length) {
+                this.notificationService.isProcessing(false);
+                if (this.formField.value && Array.isArray(this.formField.value)) {
+                  const value = JSON.parse(JSON.stringify(this.formField.value));
+                  this.formField.setValue([].concat(value, fileUploaded));
+                } else {
+                  this.formField.setValue(fileUploaded);
+                }
+                event.target['value'] = '';
+              }
+            },
+            error: () => {
+              if (++dem === length) {
+                this.notificationService.isProcessing(false);
+                if (this.formField.value && Array.isArray(this.formField.value)) {
+                  const value = JSON.parse(JSON.stringify(this.formField.value));
+                  this.formField.setValue([].concat(value, fileUploaded));
+                } else {
+                  this.formField.setValue(fileUploaded);
+                }
+                event.target['value'] = '';
+              }
+            }
+          }), i * 50);
+        }
+
       }
     }
   }

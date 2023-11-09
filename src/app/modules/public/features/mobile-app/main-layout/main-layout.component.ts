@@ -201,6 +201,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   }
 
   btnSearch() {
+    this.btnclearSearch();
     this.router.navigate(['mobile/mobile-tim-kiem']);
     this.navbar_switch_mode = "SEARCH";
   }
