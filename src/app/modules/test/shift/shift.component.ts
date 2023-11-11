@@ -78,7 +78,7 @@ export class ShiftComponent implements OnInit {
 				this.dsDotthi = shifts.map( ( shift : Shift ) => {
 					const startAt : string          = this.strToTime( shift.time_start );
 					const closeAt : string          = this.strToTime( shift.time_end );
-					const totalQuestion : number    = shift[ 'bank' ]  ? shift[ 'bank' ].number_questions_per_test : 0;
+					const totalQuestion : number    = shift[ 'bank' ] ? shift[ 'bank' ].number_questions_per_test : 0;
 					const totalTime : number        = shift[ 'bank' ] ? shift[ 'bank' ].time_per_test : 0;
 					const state : ShiftState        = 0;
 					const button : ButtonShiftState = this._listButton[ state ];
@@ -134,7 +134,7 @@ export class ShiftComponent implements OnInit {
 				// void this.router.navigate( [ 'test/panel' ] , { queryParams : { code } } );
 
 				this.auth.setOption( KEY_NAME_SHIFT_ID , dotthi.id );
-        void this.router.navigate( [ 'test/panel' ] );
+				void this.router.navigate( [ 'test/panel' ] );
 				break;
 			default:
 				this.notificationService.toastError( 'Ca thi đã quá hạn' );

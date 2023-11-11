@@ -63,3 +63,8 @@
   border-radius: 6px;
 
 }
+.btn-custom-size-30x30{
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+}

@@ -272,7 +272,7 @@ export class OvicMediaVrComponent implements OnInit, OnDestroy {
       if (this.dataPointsChildNguLieu && this.dataPointsChildNguLieu.length) {
         this.addPointInScene(this.dataPointsChildNguLieu)
       } else {
-        console.log('data not point');
+        // console.log('data not point');
       }
       this.scenePrev.createScrene(this.scene, this.file_param, item.id);
       this.renderSecene();
@@ -433,7 +433,7 @@ export class OvicMediaVrComponent implements OnInit, OnDestroy {
       this.datainfo['_type_file_audio'] =dataInfo.file_audio && dataInfo.file_audio[0] ? dataInfo.file_audio[0].type:'audio/mpeg';
       this.audio.pause();
       this.visibleInfo = true;
-      console.log(this.datainfo);
+
     }
   }
 

@@ -540,6 +540,7 @@ span p img{
 }
 .ovic-radios__text img{
   height:200px;
+  width: 100%;
 }
 
 .popup-spin .modal-content{

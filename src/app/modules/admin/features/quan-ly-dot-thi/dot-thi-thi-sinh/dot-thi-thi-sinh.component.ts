@@ -1,7 +1,16 @@
 import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {FormBuilder} from "@angular/forms";
-import {filter, forkJoin, of, Subscription, switchMap} from "rxjs";
-
+import {
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  forkJoin,
+  of,
+  Subject,
+  Subscription,
+  switchMap,
+  takeUntil
+} from "rxjs";
 import {Shift, ShiftTests, statusOptions} from "@shared/models/quan-ly-doi-thi";
 import {NganHangCauHoi, NganHangDe} from "@shared/models/quan-ly-ngan-hang";
 import {NgPaginateEvent, OvicTableStructure} from "@shared/models/ovic-models";
@@ -37,6 +46,9 @@ interface DataShiftTest extends ShiftTests {
 export class DotThiThiSinhComponent implements OnInit {
 
   @ViewChild('testTaker', {static: true}) testTaker: TemplateRef<any>;
+  private _SEARCH_DEBOUNCE = new Subject<string>();
+  private closeObservers$ = new Subject<string>();
+
   rows = this.themeSettingsService.settings.rows;
   loadInitFail: false;
   page = 1;
@@ -59,7 +71,9 @@ export class DotThiThiSinhComponent implements OnInit {
       class: 'p-button-rounded p-button-success ml-3 mr-2'
     },
   ];
-
+  status= [{ value:1, label:'Đang diễn ra'},
+    { value:0, label:'Kết thúc'},
+  ]
   tblStructureShiftTest: OvicTableStructure[] = [
     {
       fieldType: 'normal',
@@ -116,65 +130,11 @@ export class DotThiThiSinhComponent implements OnInit {
       ]
     }
   ]
-
-  tblStructure: OvicTableStructure[] = [
-    {
-      fieldType: 'normal',
-      field: ['__title_converted'],
-      innerData: true,
-      header: 'Tên đợt thi',
-      sortable: false,
-    },
-    {
-      fieldType: 'normal',
-      field: ['__time_converted'],
-      innerData: true,
-      header: 'Thời gian thi',
-      sortable: false,
-      headClass: 'ovic-w-300px text-center',
-      rowClass: 'ovic-w-300px text-center'
-    },
-    {
-      fieldType: 'normal',
-      field: ['__bank_coverted'],
-      innerData: true,
-      header: 'Ngân hàng đề sử dụng',
-      sortable: false,
-      headClass: 'ovic-w-180px text-center',
-      rowClass: 'ovic-w-180px text-center'
-    },
-    {
-      fieldType: 'normal',
-      field: ['__status_converted'],
-      innerData: true,
-      header: 'Trạng thái',
-      sortable: false,
-      headClass: 'ovic-w-120px text-center',
-      rowClass: 'ovic-w-120px text-center'
-    },
-
-    {
-      tooltip: '',
-      fieldType: 'buttons',
-      field: [],
-      rowClass: 'ovic-w-110px text-center',
-      checker: 'fieldName',
-      header: 'Thao tác',
-      sortable: false,
-      headClass: 'ovic-w-120px text-center',
-      buttons: [
-        {
-          tooltip: 'Danh sách thí sinh',
-          label: '',
-          icon: 'pi pi-users',
-          name: 'TEST-TAKER',
-          cssClass: 'btn-warning rounded'
-        },
-
-      ]
-    }
-  ];
-
+  nganhangCauhoi: NganHangCauHoi[];
+  nganHangDe: NganHangDe[];
+  dataUsers: NewContestant[];
+  dataShiftTest: DataShiftTest[];
+  columns = ['Stt', 'Tên thí sinh', 'Số điện thoại', 'Địa chỉ','Thời gian làm bài', 'Số câu trả lời đúng', 'Điểm',];
 
   constructor(
     private dotThiDanhSachService: DotThiDanhSachService,
@@ -192,10 +152,10 @@ export class DotThiThiSinhComponent implements OnInit {
     this.subscription.add(observeProcessCloseForm);
     const observerOnResize = this.notificationService.observeScreenSize.subscribe(size => this.sizeFullWidth = size.width)
     this.subscription.add(observerOnResize);
-
+    this._SEARCH_DEBOUNCE.asObservable().pipe( takeUntil( this.closeObservers$ ) , debounceTime( 500 ) , distinctUntilChanged() ).subscribe( search => this.loadData(1, search));
   }
 
-  nganHangDe: NganHangDe[];
+
 
   ngOnInit(): void {
     this.nganHangDeService.getDataUnlimit().subscribe({
@@ -223,13 +183,16 @@ export class DotThiThiSinhComponent implements OnInit {
     return result;
   }
 
-  loadData(page) {
+  loadData(page, search?:string, status?:number) {
+    const dataSearch = search ?search: this.search;
     const limit = this.themeSettingsService.settings.rows;
     this.index = (page * limit) - limit + 1;
+    let indexTable= 1;
     this.isLoading = true;
-    this.dotThiDanhSachService.load(page, this.search).subscribe({
+    this.dotThiDanhSachService.getDataByStatusAndSearch(page, dataSearch,status).subscribe({
       next: ({data, recordsTotal}) => {
         this.listData = data.map(m => {
+          m['indexTable']= page ===1 ? indexTable++ : page*10 +indexTable++;
           m['__title_converted'] = `<b>${m.title}</b><br>` + m.desc;
           m['__time_converted'] = this.strToTime(m.time_start) + ' - ' + this.strToTime(m.updated_at);
           m['__bank_coverted'] = this.nganHangDe && m.bank_id && this.nganHangDe.find(f => f.id === m.bank_id) ? this.nganHangDe.find(f => f.id === m.bank_id).title : '';
@@ -246,39 +209,19 @@ export class DotThiThiSinhComponent implements OnInit {
     })
   }
 
-  onSearch(text: string) {
+  changeInput(text:string){
     this.search = text;
-    this.loadData(1);
+    this._SEARCH_DEBOUNCE.next( text );
+  }
+  changeFilter(event){
+    const value = event['value'];
+    this.loadData(1,this.search,value);
   }
 
   paginate({page}: NgPaginateEvent) {
     this.page = page + 1;
     this.loadData(this.page);
   }
-
-  async handleClickOnTable(button: OvicButton) {
-    if (!button) {
-      return;
-    }
-    const decision = button.data && this.listData ? this.listData.find(u => u.id === button.data) : null;
-    switch (button.name) {
-      case 'TEST-TAKER':
-
-        this.loadTestTaker(decision.id, decision.bank_id);
-        this.notificationService.openSideNavigationMenu({
-          name: this.menuName,
-          template: this.testTaker,
-          size: this.sizeFullWidth,
-          offsetTop: '0px'
-        });
-        break;
-
-      default:
-        break;
-    }
-  }
-
-  nganhangCauhoi: NganHangCauHoi[];
 
   async handleClickOnTableShiftTest(button: OvicButton) {
     if (!button) {
@@ -298,7 +241,7 @@ export class DotThiThiSinhComponent implements OnInit {
             this.nganhangCauhoi = quesition_ids.map(m => {
               const item = data.find(f => f.id === m)?  data.find(f => f.id === m):null;
               item['__per_select_question'] = details[m] ? details[m].join(',').toString() : '';
-              item['__correct_answer_coverted'] = item.correct_answer.map(t => item.answer_options.find(f => f.id === t));
+              item['__correct_answer_coverted'] =item ? item.correct_answer.map(t => item.answer_options.find(f => f.id === t)):null;
               item['__correct_answer'] = item.correct_answer.join(',');
               return item;
             });
@@ -340,7 +283,7 @@ export class DotThiThiSinhComponent implements OnInit {
     }
   }
 
-  dataUsers: NewContestant[];
+
 
   loadTestTaker(idShift: number, bank_id: number) {
     this.notificationService.isProcessing(true);
@@ -404,7 +347,7 @@ export class DotThiThiSinhComponent implements OnInit {
 
   }
 
-  dataShiftTest: DataShiftTest[];
+
 
   closeForm() {
     this.notificationService.closeSideNavigationMenu();
@@ -412,7 +355,7 @@ export class DotThiThiSinhComponent implements OnInit {
   }
 
   // export excel
-  columns = ['Stt', 'Tên thí sinh', 'Số điện thoại', 'Địa chỉ','Thời gian làm bài', 'Số câu trả lời đúng', 'Điểm',];
+
 
   take_decimal_number(num, n) {
     let base = 10 ** n;
@@ -442,5 +385,15 @@ export class DotThiThiSinhComponent implements OnInit {
     const minutes = String(date.getMinutes()).padStart(2, '0');
     const secon = String(date.getSeconds()).padStart(2, '0');
     return `${year}/${month}/${day} ${hours}:${minutes}:${secon}`;
+  }
+
+  btnDataThisinh(item: Shift){
+    this.loadTestTaker(item.id, item.bank_id);
+    this.notificationService.openSideNavigationMenu({
+      name: this.menuName,
+      template: this.testTaker,
+      size: this.sizeFullWidth,
+      offsetTop: '0px'
+    });
   }
 }

@@ -1,5 +1,5 @@
 import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
-import {debounceTime, filter, forkJoin, Observable, Subject, Subscription} from "rxjs";
+import {debounceTime, filter, forkJoin, Observable, Subject, Subscription, takeUntil, distinctUntilChanged} from "rxjs";
 import {DmChuyenMuc, DmDiemDiTich, DmLinhVuc, DmLoaiNguLieu} from "@shared/models/danh-muc";
 import {FileType, MODULES_QUILL} from "@shared/utils/syscat";
 import {FormType, NgPaginateEvent, OvicForm} from "@shared/models/ovic-models";
@@ -48,7 +48,8 @@ export class NguLieuImageVrComponent implements OnInit {
   @ViewChild(Paginator, {static: true}) paginator: Paginator;
   @ViewChild('fileChooser', {static: true}) fileChooser: TemplateRef<any>;
   module_quill: any = MODULES_QUILL;
-  private OBSERVE_SEARCH_DATA = new Subject<string>();
+  private _SEARCH_DEBOUNCE = new Subject<string>();
+  private closeObservers$ = new Subject<string>();
   formActive: FormNgulieu;
   private OBSERVE_PROCESS_FORM_DATA = new Subject<FormNgulieu>();
   subscription = new Subscription();
@@ -90,7 +91,15 @@ export class NguLieuImageVrComponent implements OnInit {
   dataLoaingulieu: DmLoaiNguLieu[];
   dataLinhvuc: DmLinhVuc[];
   dataDiemDiTich: DmDiemDiTich[];
-
+  objectVR: Ngulieu;
+  visible: boolean = false;
+  ngulieuInfo: Ngulieu;
+  ngulieu_type: 1 | 0;
+  filterData: { linhvucid: number, search: string, loaingulieu: string } = {
+    linhvucid: null,
+    search: '',
+    loaingulieu: 'image360'
+  };
   constructor(
     private themeSettingsService: ThemeSettingsService,
     private nguLieuDanhSachService: NguLieuDanhSachService,
@@ -111,13 +120,8 @@ export class NguLieuImageVrComponent implements OnInit {
     this.subscription.add(observeProcessCloseForm);
     const observerOnResize = this.notificationService.observeScreenSize.subscribe(size => this.sizeFullWidth = size.width)
     this.subscription.add(observerOnResize);
-    const observerSearchData = this.OBSERVE_SEARCH_DATA.asObservable().pipe(debounceTime(300)).subscribe(() => {
-      this.paginator.changePage(1);
-      this.loadData(1);
-    });
-    this.subscription.add(observerSearchData);
+    this._SEARCH_DEBOUNCE.asObservable().pipe( takeUntil( this.closeObservers$ ) , debounceTime( 500 ) , distinctUntilChanged() ).subscribe( search => this.loadData(1, search));
   }
-
 
   ngOnInit(): void {
     this.loadInit();
@@ -144,16 +148,15 @@ export class NguLieuImageVrComponent implements OnInit {
     })
   }
 
-  loadData(page: number) {
+  loadData(page: number, search?:string) {
+    const searchdata =search ? search: this.filterData.search;
     let i = 1;
     this.isLoading = true;
-    this.nguLieuDanhSachService.getDataByLinhvucIdAndSearch(page, this.filterData.linhvucid, this.filterData.search, this.filterData.loaingulieu).subscribe({
+    this.nguLieuDanhSachService.getDataByLinhvucIdAndSearch(page, this.filterData.linhvucid, searchdata, this.filterData.loaingulieu).subscribe({
       next: ({data, recordsTotal}) => {
-
         this.listData = data.map(m => {
           const linhvuc = this.dataLinhvuc && m.linhvuc ? this.dataLinhvuc.find(f => f.id === m.linhvuc) : null;
           const loaingulieu = this.dataLoaingulieu && m.loaingulieu ? this.dataLoaingulieu.find(f => f.kyhieu === m.loaingulieu) : null;
-
           m['indexTable'] = (page - 1) * 10 + i++;
           m['__ten_converted'] = `<b>${m.title}</b><br>`;
           m['linhvuc_converted'] = linhvuc ? linhvuc.ten : '';
@@ -297,7 +300,6 @@ export class NguLieuImageVrComponent implements OnInit {
     } else {
       this.formSave.markAllAsTouched();
 
-      console.log(this.formSave.errors);
       this.notificationService.toastWarning('Vui lòng nhập đủ thông tin');
     }
   }
@@ -308,10 +310,6 @@ export class NguLieuImageVrComponent implements OnInit {
     this.notificationService.closeSideNavigationMenu();
   }
 
-  objectVR: Ngulieu;
-  visible: boolean = false;
-  ngulieuInfo: Ngulieu;
-  ngulieu_type: 1 | 0;
 
   btnInformation(object: Ngulieu) {
     this.ngulieu_type = object.file_type;
@@ -335,17 +333,12 @@ export class NguLieuImageVrComponent implements OnInit {
     this.loadData(1);
   }
 
-  changeInput(event: string) {
-    setTimeout(() => {
-      this.loadData(1);
-    }, 1000);
+  changeInput(text: string) {
+    this.filterData.search = text;
+    this._SEARCH_DEBOUNCE.next( text );
   }
 
-  filterData: { linhvucid: number, search: string, loaingulieu: string } = {
-    linhvucid: null,
-    search: '',
-    loaingulieu: 'image360'
-  };
+
 
   btnExit() {
     this.mode = "TABLE";

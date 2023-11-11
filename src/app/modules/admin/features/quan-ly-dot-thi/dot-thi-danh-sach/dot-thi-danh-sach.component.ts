@@ -318,7 +318,7 @@ export class DotThiDanhSachComponent implements OnInit {
     const titleInput = this.f['title'].value.trim();
     this.f['title'].setValue(titleInput);
     const timeszone = new Date(this.f['time_start'].value).getTime() < new Date(this.f['time_end'].value).getTime();
-    console.log(timeszone);
+
     if (this.formSave.valid) {
       if (titleInput !== '') {
         if (timeszone){

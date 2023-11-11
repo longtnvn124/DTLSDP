@@ -17,6 +17,8 @@ import {SplitterModule} from "primeng/splitter";
 
 import Quill from 'quill';
 import ImageResize from 'quill-image-resize-module';
+import {InputTextModule} from "primeng/inputtext";
+import {TooltipModule} from "primeng/tooltip";
 Quill.register('modules/imageResize', ImageResize);
 
 @NgModule({
@@ -24,19 +26,21 @@ Quill.register('modules/imageResize', ImageResize);
     DotThiDanhSachComponent,
     DotThiThiSinhComponent
   ],
-    imports: [
-        CommonModule,
-        QuanLyDotThiRoutingModule,
-        ButtonModule,
-        SharedModule,
-        PaginatorModule,
-        ReactiveFormsModule,
-        CalendarModule,
-        RippleModule,
-        TableModule,
-        TestModule,
-        EditorModule,
-        SplitterModule
-    ]
+  imports: [
+    CommonModule,
+    QuanLyDotThiRoutingModule,
+    ButtonModule,
+    SharedModule,
+    PaginatorModule,
+    ReactiveFormsModule,
+    CalendarModule,
+    RippleModule,
+    TableModule,
+    TestModule,
+    EditorModule,
+    SplitterModule,
+    InputTextModule,
+    TooltipModule
+  ]
 })
 export class QuanLyDotThiModule { }

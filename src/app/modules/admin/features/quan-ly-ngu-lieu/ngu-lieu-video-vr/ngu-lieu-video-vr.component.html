@@ -8,8 +8,8 @@
         </div>
         <ng-template #tableData>
           <div class="p-datatable-header" style="border-bottom:1px solid #CCC;">
-            <h3 class="tbl-title ng-star-inserted">Danh sách video 3D 360</h3>
-            <div class="search-block ui-table-globalfilter-container ng-star-inserted">
+            <h3 class="tbl-title ">Danh sách video 3D 360</h3>
+            <div class="search-block ui-table-global filter-container ">
               <div class="d-flex align-items-center">
                 <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
                   <div class="d-flex">
@@ -24,7 +24,7 @@
                       <span class="p-input-icon-right">
                         <i class="pi pi-search"></i>
                         <input type="text" pInputText style="height:42px" placeholder="Tìm kiếm"
-                               [(ngModel)]="filterData.search" (ngModelChange)="changeInput($event)"/>
+                               (input)="changeInput($event.target['value'])"/>
                       </span>
                     </div>
                     <div class="ml-2">

@@ -138,7 +138,7 @@ export class OvicFlexibleTableNewComponent implements OnInit {
 
 
 	btnHeadSearch( text : string ) {
-		console.log( text );
+		// console.log( text );
 	}
 
 	btnHeadSearchClear( input : HTMLInputElement ) {

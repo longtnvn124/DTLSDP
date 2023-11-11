@@ -141,14 +141,6 @@ export class FileListLocalComponent implements OnInit, OnChanges {
                   size: f.size
                 });
 
-                // if(this.chuyendeId){
-                //   console.log(this.chuyendeId);
-                //   this.chuyenDeService.loadUrlScormById(this.chuyendeId).subscribe({
-                //     next: (data) => {
-                //       console.log(data);
-                //     }
-                //   });
-                // }
                 if (++dem === length) {
                   this.notificationService.isProcessing(false);
                   if (this.formField.value && Array.isArray(this.formField.value)) {
@@ -189,14 +181,6 @@ export class FileListLocalComponent implements OnInit, OnChanges {
                 size: f.size
               });
 
-              // if(this.chuyendeId){
-              //   console.log(this.chuyendeId);
-              //   this.chuyenDeService.loadUrlScormById(this.chuyendeId).subscribe({
-              //     next: (data) => {
-              //       console.log(data);
-              //     }
-              //   });
-              // }
               if (++dem === length) {
                 this.notificationService.isProcessing(false);
                 if (this.formField.value && Array.isArray(this.formField.value)) {

@@ -1,5 +1,5 @@
 import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
-import {debounceTime, filter, forkJoin, Observable, Subject, Subscription} from "rxjs";
+import {debounceTime, distinctUntilChanged, filter, forkJoin, Observable, Subject, Subscription, takeUntil} from "rxjs";
 import {DmChuyenMuc, DmDiemDiTich, DmLinhVuc, DmLoaiNguLieu} from "@shared/models/danh-muc";
 import {FileType, MODULES_QUILL} from "@shared/utils/syscat";
 import {FormType, NgPaginateEvent, OvicForm} from "@shared/models/ovic-models";
@@ -47,6 +47,8 @@ export class NguLieuVideoVrComponent implements OnInit {
   private OBSERVE_SEARCH_DATA = new Subject<string>();
   formActive: FormNgulieu;
   private OBSERVE_PROCESS_FORM_DATA = new Subject<FormNgulieu>();
+  private _SEARCH_DEBOUNCE = new Subject<string>();
+  private closeObservers$ = new Subject<string>();
   module_quill:any = MODULES_QUILL;
   subscription = new Subscription();
   listData: Ngulieu[];
@@ -85,6 +87,17 @@ export class NguLieuVideoVrComponent implements OnInit {
   dataLoaingulieu: DmLoaiNguLieu[];
   dataLinhvuc: DmLinhVuc[];
   dataDiemDiTich:DmDiemDiTich[];
+  objectEdit:Ngulieu;
+  mode: 'TABLE' | 'MEDIAVR' | 'INFO' = "TABLE";
+  objectVR: Ngulieu;
+  visible:boolean= false;
+  ngulieuInfo:Ngulieu;
+  ngulieu_type:0|1;
+  filterData: { linhvucid: number, search: string,loaingulieu:string } = {linhvucid: null, search: '',loaingulieu:'video360'};
+  loaidoituong:0|1 = 0;//0:bientap// 1 sp dongs goi
+  characterAvatar:string = '';
+  changeTb:0|1 = 0;//0:list// 1 card
+
   constructor(
     private themeSettingsService: ThemeSettingsService,
     private nguLieuDanhSachService: NguLieuDanhSachService,
@@ -105,13 +118,9 @@ export class NguLieuVideoVrComponent implements OnInit {
     this.subscription.add(observeProcessCloseForm);
     const observerOnResize = this.notificationService.observeScreenSize.subscribe(size => this.sizeFullWidth = size.width)
     this.subscription.add(observerOnResize);
-    const observerSearchData = this.OBSERVE_SEARCH_DATA.asObservable().pipe(debounceTime(300)).subscribe(() => {
-      this.paginator.changePage(1);
-      this.loadData(1);
-    });
-    this.subscription.add(observerSearchData);
-  }
+    this._SEARCH_DEBOUNCE.asObservable().pipe( takeUntil( this.closeObservers$ ) , debounceTime( 500 ) , distinctUntilChanged() ).subscribe( search => this.loadData(1, search));
 
+  }
 
   ngOnInit(): void {
     this.loadInit();
@@ -138,16 +147,15 @@ export class NguLieuVideoVrComponent implements OnInit {
     })
   }
 
-  loadData(page: number) {
+  loadData(page: number, search?:string) {
+    const searchData = search ? search: this.filterData.search;
     let i = 1;
     this.isLoading = true;
-    this.nguLieuDanhSachService.getDataByLinhvucIdAndSearch(page, this.filterData.linhvucid, this.filterData.search, this.filterData.loaingulieu).subscribe({
+    this.nguLieuDanhSachService.getDataByLinhvucIdAndSearch(page, this.filterData.linhvucid, searchData, this.filterData.loaingulieu).subscribe({
       next: ({data, recordsTotal}) => {
-
         this.listData = data.map(m => {
           const linhvuc = this.dataLinhvuc && m.linhvuc ? this.dataLinhvuc.find(f => f.id === m.linhvuc) : null;
           const loaingulieu = this.dataLoaingulieu && m.loaingulieu ? this.dataLoaingulieu.find(f => f.kyhieu === m.loaingulieu) : null;
-
           m['indexTable'] = (page -1)*10 + i++;
           m['__ten_converted'] = `<b>${m.title}</b><br>`;
           m['linhvuc_converted'] = linhvuc ? linhvuc.ten : '';
@@ -164,7 +172,6 @@ export class NguLieuVideoVrComponent implements OnInit {
           }else{
             m['__url_product'] ='';
           }
-
           return m;
         });
         this.recordsTotal = this.listData.length;
@@ -186,7 +193,6 @@ export class NguLieuVideoVrComponent implements OnInit {
       },
       error: () => this.notificationService.toastError('Thao tác thất bại', 'Thông báo')
     });
-
   }
 
   get f(): { [key: string]: AbstractControl<any> } {
@@ -226,7 +232,7 @@ export class NguLieuVideoVrComponent implements OnInit {
       offsetTop: '0px'
     });
   }
-  objectEdit:Ngulieu;
+
   btnEdit(object: Ngulieu) {
     this.objectEdit = object;
     this.formSave.reset({
@@ -267,9 +273,6 @@ export class NguLieuVideoVrComponent implements OnInit {
     }
   };
 
-  mode: 'TABLE' | 'MEDIAVR' | 'INFO' = "TABLE";
-
-
   saveForm() {
     const titleInput = this.f['title'].value.trim();
     this.f['title'].setValue(titleInput);
@@ -292,11 +295,6 @@ export class NguLieuVideoVrComponent implements OnInit {
     this.notificationService.closeSideNavigationMenu();
   }
 
-  objectVR: Ngulieu;
-  visible:boolean= false;
-  ngulieuInfo:Ngulieu;
-
-  ngulieu_type:0|1;
   btnInformation(object: Ngulieu) {
     this.ngulieu_type= object.file_type;
     if (object.loaingulieu=== "video360" || object.loaingulieu === "image360") {
@@ -307,8 +305,6 @@ export class NguLieuVideoVrComponent implements OnInit {
       this.visible=true;
       this.ngulieuInfo =object;
     }else{
-      // tai lieu || audio || ...
-      // this.mode = "INFO";
       this.visible=true;
       this.ngulieuInfo =object;
     }
@@ -320,20 +316,16 @@ export class NguLieuVideoVrComponent implements OnInit {
     this.loadData(1);
   }
 
-  changeInput(event: string) {
-    setTimeout(()=>{
-      this.loadData(1);
-    },1000);
+  changeInput(text: string) {
+    this.filterData.search = text;
+    this._SEARCH_DEBOUNCE.next( text );
   }
-  filterData: { linhvucid: number, search: string,loaingulieu:string } = {linhvucid: null, search: '',loaingulieu:'video360'};
+
   btnExit() {
     this.mode = "TABLE";
   }
 
-
   //  ========ảnh thumbnail=========
-  loaidoituong:0|1 = 0;//0:bientap// 1 sp dongs goi
-
   changeObjectType(type:0|1){
     if (this.loaidoituong !== type) {
       this.loaidoituong = type;
@@ -345,8 +337,6 @@ export class NguLieuVideoVrComponent implements OnInit {
     }
   }
 
-  //su ly ảnh nền
-  characterAvatar:string = '';
   async makeCharacterAvatar(file: File, characterName: string): Promise<File> {
     try {
       const options: AvatarMakerSetting = {
@@ -385,7 +375,6 @@ export class NguLieuVideoVrComponent implements OnInit {
           this.notificationService.toastError('Upload file không thành công');
         }
       })
-      // laasy thoong tin vaf update truongwf
       this.characterAvatar = URL.createObjectURL(file);
     }
   }
@@ -419,9 +408,6 @@ export class NguLieuVideoVrComponent implements OnInit {
       })
     }
   }
-
-  changeTb:0|1 = 0;//0:list// 1 card
-
   selectChangeTb(select:1|0){
     if (this.changeTb !== select) {
       this.changeTb = select;

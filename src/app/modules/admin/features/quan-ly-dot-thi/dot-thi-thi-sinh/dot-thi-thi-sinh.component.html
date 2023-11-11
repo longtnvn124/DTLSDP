@@ -1,16 +1,84 @@
 <div class="row">
-  <div class="col-12" [class.ovic-is-loading]="isLoading">
+  <div class="col-12 ovic-ui-table" [class.ovic-is-loading]="isLoading">
     <div class="ovic-load-init-fail alert alert-danger --fs-14" *ngIf="loadInitFail; else tableData">
       Đã có lỗi trong quá trình tải dữ liệu
       <button class="btn btn-primary border-circle --fs-13 ml-2" (click)="loadInit()">Reload</button>
     </div>
     <ng-template #tableData>
-      <ovic-table emptyMessage="Danh sách trống" [index]="index" [data]="listData"
-                  styleClass="tbl-danh-sach-tap-the head-input-size--normal head-input-size--250px" dataKey="id"
-                  rowHover="true"
-                  [rows]="15" tableName="Danh sách Đợt thi" [tblStructure]="tblStructure"
-                  (onButtonClick)="handleClickOnTable($event)" [enableSearch]="true" [enableSearchLocal]="false"
-                  (onSearch)="onSearch($event)" [searchDebounceTime]="800"></ovic-table>
+      <div class="p-datatable-header" style="border-bottom:1px solid #CCC;">
+        <h3 class="tbl-title ">Danh sách đợt thi</h3>
+        <div class="search-block ui-table-globalfilter-container ">
+          <div class="d-flex align-items-center">
+            <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
+              <div class="d-flex">
+                <div class="search-block__elm filter-by-group-control ml-3">
+                  <p-dropdown [options]="status" styleClass="ovic-dropdown-style w-100 dropdown--narrow-angle"
+                              placeholder="Trạng thái" optionLabel="label"
+                              optionValue="value" (onChange)="changeFilter($event)" [showClear]="true"
+                              [style]="{'min-width':'200px'}"
+                  ></p-dropdown>
+                </div>
+                <div class="search-block__elm ml-2">
+                      <span class="p-input-icon-right">
+                        <i class="pi pi-search"></i>
+                        <input type="text" pInputText style="height:42px" placeholder="Tìm kiếm" (input)="changeInput($event.target['value'])"/>
+                      </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p-table [value]="listData" [showCurrentPageReport]="false"
+               [tableStyle]="{ 'min-width': '100px' }">
+        <ng-template pTemplate="header">
+          <tr >
+            <th class="ovic-w-50px text-center">TT</th>
+            <th class="text-left">Tên đợt thi</th>
+            <th class=" text-left text-center">Thời gian thi</th>
+            <th class="ovic-w-180px text-center">Ngân hàng đề sử dụng</th>
+            <th class="ovic-w-110px text-center">Trạng thái</th>
+            <th class="ovic-w-100px text-center">Thao tác</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6">Không có dữ liệu</td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+          <tr>
+            <td class="ovic-w-50px text-center">{{item['indexTable']}}</td>
+            <td>
+              <div class="d-block --fs-14 font-weight-bold">{{item['title']}}</div>
+            </td>
+
+            <td class="ovic-w-260px">
+              <div class="d-block --fs-14" [innerHTML]="item['__time_converted']"></div>
+            </td>
+            <td class="ovic-w-100px">
+              <div class="d-block --fs-14" [innerHTML]="item['__bank_coverted']"></div>
+            </td>
+            <td class="ovic-w-100px">
+              <div class="d-block --fs-14" [innerHTML]="item['__status_converted']"></div>
+            </td>
+            <td class="ovic-w-100px text-center">
+              <div class="d-block --fs-14">
+                <button [pTooltip]="'Danh sách thí sinh'" [tooltipPosition]="'top'" pButton pRipple class="btn-custom-size-30x30 p-button-warning mr-2"
+                        icon="pi pi-users" (click)="btnDataThisinh(item)" ></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+      </p-table>
+<!--      <ovic-table emptyMessage="Danh sách trống" [index]="index" [data]="listData"-->
+<!--                  styleClass="tbl-danh-sach-tap-the head-input-size&#45;&#45;normal head-input-size&#45;&#45;250px" dataKey="id"-->
+<!--                  rowHover="true"-->
+<!--                  [rows]="15" tableName="Danh sách Đợt thi" [tblStructure]="tblStructure"-->
+<!--                  (onButtonClick)="handleClickOnTable($event)" [enableSearch]="true" [enableSearchLocal]="false"-->
+<!--                  (onSearch)="onSearch($event)" [searchDebounceTime]="800"></ovic-table>-->
       <p-paginator class="p-paginator--custom" [showCurrentPageReport]="true" [rows]="rows"
                    [totalRecords]="recordsTotal" [pageLinkSize]="5" (onPageChange)="paginate($event)"></p-paginator>
     </ng-template>
