@@ -5,7 +5,7 @@ import {NganHangDe} from "@shared/models/quan-ly-ngan-hang";
 import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {FormType, NgPaginateEvent, OvicForm, OvicTableStructure} from "@shared/models/ovic-models";
 import {DmNhanVatLichSu} from "@shared/models/danh-muc";
-import {debounceTime, filter, Observable, Subject, Subscription, switchMap} from "rxjs";
+import {debounceTime, filter, Observable, Subject, Subscription} from "rxjs";
 import {OvicButton} from "@core/models/buttons";
 import {ThemeSettingsService} from "@core/services/theme-settings.service";
 
@@ -35,17 +35,6 @@ export class NganHangDeComponent implements OnInit {
   search: string;
   listData: NganHangDe[];
   recordsTotal: number;
-  formState: {
-    formType: 'add' | 'edit',
-    showForm: boolean,
-    formTitle: string,
-    object: DmNhanVatLichSu | null
-  } = {
-    formType: 'add',
-    showForm: false,
-    formTitle: '',
-    object: null
-  }
   filePermission = {
     canDelete: true,
     canDownload: true,
@@ -161,7 +150,7 @@ export class NganHangDeComponent implements OnInit {
     this.formSave = this.fb.group({
       title: ['', Validators.required],
       desc: [''],
-      number_questions_per_test: [null],
+      number_questions_per_test: [null,Validators.required],
       time_per_test: [null, Validators.required],
     });
     const observeProcessFormData = this.OBSERVE_PROCESS_FORM_DATA.asObservable().pipe(debounceTime(100)).subscribe(form => this.__processFrom(form));
@@ -200,11 +189,6 @@ export class NganHangDeComponent implements OnInit {
         this.notificationService.toastError('Mất kết nối với máy chủ');
       }
     })
-
-    // this.nganHangDeService.load(page).pipe(switchMap(list=>{
-    //   const list = list;
-    //   return list;
-    // }))
   }
 
 
@@ -223,16 +207,30 @@ export class NganHangDeComponent implements OnInit {
   }
 
   private __processFrom({data, object, type}: FormNganHangDe) {
-    // const time_conver = this.f['time_per_test'].value * 60;
-    // this.f['time_per_test'].setValue(time_conver);
-    const observer$: Observable<any> = type === FormType.ADDITION ? this.nganHangDeService.create(data) : this.nganHangDeService.update(object.id, data);
-    observer$.subscribe({
-      next: () => {
-        this.needUpdate = true;
-        this.notificationService.toastSuccess('Thao tác thành công', 'Thông báo');
-      },
-      error: () => this.notificationService.toastError('Thao tác thất bại', 'Thông báo')
-    });
+
+    if (this.f['time_per_test'].value>0 && this.f['number_questions_per_test'].value>0){
+      const observer$: Observable<any> = type === FormType.ADDITION ? this.nganHangDeService.create(data) : this.nganHangDeService.update(object.id, data);
+      observer$.subscribe({
+        next: () => {
+          this.needUpdate = true;
+          this.loadData(this.page);
+          this.notificationService.toastSuccess('Thao tác thành công', 'Thông báo');
+        },
+        error: () => this.notificationService.toastError('Thao tác thất bại', 'Thông báo')
+      });
+    }else if(this.f['time_per_test'].value<=0){
+      this.f['time_per_test'].setValue(null);
+      this.notificationService.toastWarning("Vui Lòng nhập đúng định dạng");
+    }
+    else if(this.f['number_questions_per_test'].value<=0){
+      this.f['number_questions_per_test'].setValue(null);
+      this.notificationService.toastWarning("Vui Lòng nhập đúng định dạng");
+    }else{
+      this.f['time_per_test'].setValue(null);
+      this.f['number_questions_per_test'].setValue(null);
+      this.notificationService.toastWarning("Vui Lòng nhập đúng định dạng");
+    }
+
   }
 
   private preSetupForm(name: string) {

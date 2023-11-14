@@ -238,3 +238,7 @@ export const MODULES_QUILL:any={
     modules     : [ 'Resize' , 'DisplaySize' , 'Toolbar' ]
   }
 }
+
+export const TYPE_FILE_IMAGE:string[] = ['image/png', 'image/gif','image/jpeg', 'image/bmp',' image/x-icon'];
+export const TYPE_FILE_VIDEO:string[] = ['video/mp4', 'image/gif', 'image/jpeg', 'image/bmp', 'image/x-icon'];
+export const TYPE_FILE_SCORM:string[] = ['application/zip', 'application/x-zip-compressed', 'application/x-7z-compressed' ,];

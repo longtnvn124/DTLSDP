@@ -1,7 +1,7 @@
 import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {debounceTime, distinctUntilChanged, filter, forkJoin, Observable, Subject, Subscription, takeUntil} from "rxjs";
 import {DmChuyenMuc, DmDiemDiTich, DmLinhVuc, DmLoaiNguLieu} from "@shared/models/danh-muc";
-import {FileType, MODULES_QUILL} from "@shared/utils/syscat";
+import {FileType, MODULES_QUILL, TYPE_FILE_IMAGE} from "@shared/utils/syscat";
 import {FormType, NgPaginateEvent, OvicForm} from "@shared/models/ovic-models";
 import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from "@angular/forms";
 import {Ngulieu} from "@shared/models/quan-ly-ngu-lieu";
@@ -25,7 +25,7 @@ const PinableValidator = (control: AbstractControl): ValidationErrors | null => 
   const fileTypeControl = control.get('file_type');
   if (fileTypeControl.valid) {
     if (fileTypeControl.value === 0) {
-      const isInvalid = control.get('file_media').value.length > 0 || control.get('file_audio').value.length > 0;
+      const isInvalid = control.get('file_media').value.length > 0 ;
       return isInvalid ? null : {pinableError: 'File media required'};
     } else {
       const isInvalid = control.get('file_product').value.length > 0;
@@ -97,7 +97,7 @@ export class NguLieuVideoVrComponent implements OnInit {
   loaidoituong:0|1 = 0;//0:bientap// 1 sp dongs goi
   characterAvatar:string = '';
   changeTb:0|1 = 0;//0:list// 1 card
-
+  btnNameCheck:string;
   constructor(
     private themeSettingsService: ThemeSettingsService,
     private nguLieuDanhSachService: NguLieuDanhSachService,
@@ -185,6 +185,7 @@ export class NguLieuVideoVrComponent implements OnInit {
   }
 
   private __processFrom({data, object, type}: FormNgulieu) {
+    // this.btnNameCheck =type === FormType.ADDITION ? "Lưu Lại":"Cập nhật";
     const observer$: Observable<any> = type === FormType.ADDITION ? this.nguLieuDanhSachService.create(data) : this.nguLieuDanhSachService.update(object.id, data);
     observer$.subscribe({
       next: () => {
@@ -204,6 +205,7 @@ export class NguLieuVideoVrComponent implements OnInit {
   }
 
   btnAddNew() {
+    this.btnNameCheck ="Lưu lại";
     this.formSave.reset({
       title: '',
       mota: '',
@@ -234,6 +236,8 @@ export class NguLieuVideoVrComponent implements OnInit {
   }
 
   btnEdit(object: Ngulieu) {
+    this.btnNameCheck ="Cập nhật";
+
     this.objectEdit = object;
     this.formSave.reset({
       title: object.title,
@@ -364,21 +368,27 @@ export class NguLieuVideoVrComponent implements OnInit {
     }
   }
 
+  typeFileAdd = TYPE_FILE_IMAGE;
   async onInputAvatar(event, fileChooser: HTMLInputElement) {
     if (fileChooser.files && fileChooser.files.length) {
-      const file = await this.makeCharacterAvatar(fileChooser.files[0], this.helperService.sanitizeVietnameseTitle(this.f['title'].value));
-      // upload file to server
-      this.fileService.uploadFile(file, 1).subscribe({
-        next: fileUl => {
-          this.formSave.get('file_thumbnail').setValue(fileUl);
-        }, error: () => {
-          this.notificationService.toastError('Upload file không thành công');
-        }
-      })
-      this.characterAvatar = URL.createObjectURL(file);
+      if (this.typeFileAdd.includes(fileChooser.files[0].type)){
+        const file = await this.makeCharacterAvatar(fileChooser.files[0], this.helperService.sanitizeVietnameseTitle(this.f['title'].value));
+        // upload file to server
+        this.fileService.uploadFile(file, 1).subscribe({
+          next: fileUl => {
+            this.formSave.get('file_thumbnail').setValue(fileUl);
+          }, error: () => {
+            this.notificationService.toastError('Upload file không thành công');
+          }
+        })
+        // laasy thoong tin vaf update truongwf
+        this.characterAvatar = URL.createObjectURL(file);
+
+      }else{
+        this.notificationService.toastWarning("Định dạng file không phù hợp");
+      }
     }
   }
-
   btnCheck(ngulieu:Ngulieu){
     if(ngulieu.root ===1){
       this.nguLieuDanhSachService.update(ngulieu.id, {root:0}).subscribe({

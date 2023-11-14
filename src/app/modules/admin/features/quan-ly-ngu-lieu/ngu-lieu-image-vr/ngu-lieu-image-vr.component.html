@@ -265,36 +265,36 @@
                           <div class="row">
                             <div class="col-12">
                               <p class="form-row">
-                                <label>Ảnh nền 3D 360 <span class="ovic-mark">*</span></label>
+                                <label>Ảnh nền 3D 360 <span class="ovic-mark">*</span> <span class="ovic-mark text-ovic-mark">(Chỉ hỗ trợ định dạng file: "'.jpg', '.jpeg', '.png'")</span></label>
                                 <app-file-list-local class="w-100 ovic-vertical__file-list"
                                                      [permission]="filePermission"
-                                                     [formField]="f['file_media']" [multiple]="false"
+                                                     [formField]="f['file_media']" [multiple]="false" [accept]="['.jpg','.jpeg','.png']"
                                                      [state]="1"></app-file-list-local>
                               </p>
                             </div>
                           </div>
                           <div class="row">
                             <div class="col-12">
-                              <p class="form-row">
-                                <label>File thuyết minh <span class="ovic-mark">*</span></label>
+                              <div class="form-row">
+                                  <label>File thuyết minh <span class="ovic-mark">*</span> <span class="ovic-mark text-ovic-mark">(Chỉ hỗ trợ định dạng file: ".mp3")</span></label>
                                 <app-file-list-local class="w-100 ovic-vertical__file-list"
                                                      [permission]="filePermission"
-                                                     [formField]="f['file_audio']" [multiple]="false"
+                                                     [formField]="f['file_audio']" [multiple]="false" [accept]="['.mp3']"
                                                      [state]="1"></app-file-list-local>
-                              </p>
+                              </div>
                             </div>
                           </div>
                         </ng-container>
                         <ng-container *ngIf="loaidoituong===1">
                           <div class="row">
                             <div class="col-12">
-                              <p class="form-row">
-                                <label>File sản phẩm <span class="ovic-mark">*</span></label>
+                              <div class="form-row">
+                                <label>File sản phẩm <span class="ovic-mark">*</span> <span class="ovic-mark text-ovic-mark">(Chỉ hỗ trợ định dạng file: ".zip")</span></label>
                                 <app-file-list-local class="w-100 ovic-vertical__file-list"
                                                      [permission]="filePermission"
-                                                     [formField]="f['file_product']" [multiple]="false"
+                                                     [formField]="f['file_product']" [multiple]="false" [accept]="['.zip']"
                                                      [state]="1"></app-file-list-local>
-                              </p>
+                              </div>
                             </div>
                           </div>
 
@@ -435,7 +435,7 @@
 
     <div class="ovic-side-navigation-content__foot">
       <span class="ovic-side-navigation-content__foot__notice mr-auto"><mark>(*)</mark> bắt buộc phải nhập</span>
-      <button pButton pRipple type="button" icon="pi pi-save" (click)="saveForm()" label="Cập nhật"
+      <button pButton pRipple type="button" icon="pi pi-save" (click)="saveForm()" label="{{btnNameCheck}}"
               class="p-button-success"></button>
       <button pButton pRipple type="button" label="Đóng" class="p-button-secondary ml-3" icon="pi pi-times"
               (click)="closeForm()"></button>

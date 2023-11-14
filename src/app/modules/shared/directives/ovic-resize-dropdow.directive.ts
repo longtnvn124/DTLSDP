@@ -44,29 +44,35 @@ export class OvicResizeDropdowDirective implements OnInit {
     const inputElemenet = document.createElement('input');
     inputElemenet.style.display = 'none';
     inputElemenet.type = 'file';
+    inputElemenet.accept = 'image/png, image/gif, image/jpeg, image/bmp, image/x-icon';
     inputElemenet.click();
 
     inputElemenet.addEventListener('change', () => {
       if (inputElemenet.files) {
-        this.notification.isProcessing(true);
-        this.fileService.uploadFile(inputElemenet.files[0], 1).subscribe({
-          next: (info) => {
+        const file = inputElemenet.files[0];
+        if (file['type'] && ['image/png', 'image/gif', 'image/jpeg', 'image/bmp', 'image/x-icon'].includes(file['type'])) {
+          this.notification.isProcessing(true);
 
-            this.url_image = this.fileService.getPreviewLinkLocalFileNotToken(info);
-            if (this.url_image) {
-              quill.insertEmbed(range.index, 'image', this.url_image);
+          this.fileService.uploadFile(file, 1).subscribe({
+            next: (info) => {
 
-              if (this.curentFormControl) {
-                this.curentFormControl.setValue(quill.container.querySelector('.ql-editor').innerHTML);
+              this.url_image = this.fileService.getPreviewLinkLocalFileNotToken(info);
+              if (this.url_image) {
+                quill.insertEmbed(range.index, 'image', this.url_image);
+
+                if (this.curentFormControl) {
+                  this.curentFormControl.setValue(quill.container.querySelector('.ql-editor').innerHTML);
+                }
+                // this.changeImgSettings.emit(this.url_image);
               }
-              // this.changeImgSettings.emit(this.url_image);
-            }
-            this.notification.isProcessing(false);
-          },
-          error: () => {
-            this.notification.isProcessing(false);
-          },
-        })
+              this.notification.isProcessing(false);
+            },
+            error: () => {
+              this.notification.isProcessing(false);
+            },
+          })
+        }
+
       }
     });
   }

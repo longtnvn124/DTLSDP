@@ -143,7 +143,7 @@ export class DotThiDanhSachService {
     return this.http.get<Dto>(''.concat(this.api), {params}).pipe(map(res => res.data));
   }
 
-  getDataByStatusAndSearch(page: number, search?:string, status?:number): Observable<{ recordsTotal: number, data: Shift[] }> {
+  getDataByStatusAndSearch(page: number, search?:string, date?:string): Observable<{ recordsTotal: number, data: Shift[] }> {
 
     const conditions: OvicConditionParam[] = [
       {
@@ -160,11 +160,12 @@ export class DotThiDanhSachService {
         orWhere: 'and'
       });
     }
-    if (status || status === 0) {
+    if (date) {
+      let time = new Date(date);
       conditions.push({
-        conditionName: 'status',
-        condition: OvicQueryCondition.equal,
-        value: status.toString(10),
+        conditionName: 'time_end',
+        condition: OvicQueryCondition.lessThanOrEqualsTo,
+        value: date,
         orWhere: 'and'
       });
     }

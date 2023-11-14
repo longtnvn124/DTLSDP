@@ -15,6 +15,7 @@
 	display: flex;
 	flex-flow: column;
 	height: 500px;
+  overflow: hidden;
 }
 
 .avatar-picker__section--right {

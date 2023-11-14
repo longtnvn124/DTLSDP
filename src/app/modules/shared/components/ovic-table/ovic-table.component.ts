@@ -120,7 +120,7 @@ export class OvicTableComponent implements OnInit , OnDestroy {
 		private viewContainerRef : ViewContainerRef
 	) {
 		this.notificationService.eventCloseRightContextMenu$.pipe( takeUntil( this.closeObservers$ ) ).subscribe( { next : () => this.activeRow = null } );
-		this._EVENT_CLICK.asObservable().pipe( takeUntil( this.closeObservers$ ) , debounceTime( 100 ) ).subscribe( { next : button => this.onButtonClick.emit( button ) } );
+		this._EVENT_CLICK.asObservable().pipe( takeUntil( this.closeObservers$ ) , debounceTime( 300 ) ).subscribe( { next : button => this.onButtonClick.emit( button ) } );
 		this._SEARCH_DEBOUNCE.asObservable().pipe( takeUntil( this.closeObservers$ ) , debounceTime( this.searchDebounceTime ) , distinctUntilChanged() ).subscribe( search => this.onSearch.emit( search ) );
 	}
 

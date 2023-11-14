@@ -148,6 +148,7 @@ export class ChuyenMucComponent implements OnInit {
     this.subscription.add(observeProcessCloseForm);
     const observerOnResize = this.notificationService.observeScreenSize.subscribe(size => this.sizeFullWidth = size.width)
     this.subscription.add(observerOnResize);
+
   }
 
   ngOnInit(): void {
@@ -159,10 +160,11 @@ export class ChuyenMucComponent implements OnInit {
     this.loadData(1);
   }
 
-  loadData(page) {
+  loadData(page:number, search?:string) {
     const limit = this.themeSettingsService.settings.rows;
     this.index = (page * limit) - limit + 1;
-    this.danhMucChuyenMucService.search(page, null, this.filter.search).subscribe({
+    let newsearch:string = search? search : this.filter.search;
+    this.danhMucChuyenMucService.search(page, null, newsearch).subscribe({
       next: ({data, recordsTotal}) => {
         this.recordsTotal = recordsTotal;
         this.listData = data.map(m => {
@@ -198,7 +200,7 @@ export class ChuyenMucComponent implements OnInit {
   onSearch(text: string) {
     this.filter.search = text;
     this.paginator.changePage(1);
-    this.loadData(1);
+    this.loadData(1, text);
   }
 
   private preSetupForm(name: string) {

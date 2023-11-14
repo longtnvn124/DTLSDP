@@ -1,7 +1,7 @@
 import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {debounceTime, filter, forkJoin, Observable, Subject, Subscription, takeUntil, distinctUntilChanged} from "rxjs";
 import {DmChuyenMuc, DmDiemDiTich, DmLinhVuc, DmLoaiNguLieu} from "@shared/models/danh-muc";
-import {FileType, MODULES_QUILL} from "@shared/utils/syscat";
+import {FileType, MODULES_QUILL, TYPE_FILE_IMAGE} from "@shared/utils/syscat";
 import {FormType, NgPaginateEvent, OvicForm} from "@shared/models/ovic-models";
 import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from "@angular/forms";
 import {Ngulieu} from "@shared/models/quan-ly-ngu-lieu";
@@ -27,7 +27,7 @@ const PinableValidator = (control: AbstractControl): ValidationErrors | null => 
   const fileTypeControl = control.get('file_type');
   if (fileTypeControl.valid) {
     if (fileTypeControl.value === 0) {
-      const isInvalid = control.get('file_media').value.length > 0 || control.get('file_audio').value.length > 0;
+      const isInvalid = control.get('file_media').value.length > 0 && control.get('file_audio').value.length > 0;
       return isInvalid ? null : {pinableError: 'File media required'};
     } else {
       const isInvalid = control.get('file_product').value.length > 0;
@@ -86,7 +86,7 @@ export class NguLieuImageVrComponent implements OnInit {
     file_product: [[]],
     file_type: [0]
   }, {validators: PinableValidator});
-
+  btnNameCheck :"Lưu Lại" |"Cập nhật";
   dataChuyemuc: DmChuyenMuc[];
   dataLoaingulieu: DmLoaiNguLieu[];
   dataLinhvuc: DmLinhVuc[];
@@ -149,14 +149,14 @@ export class NguLieuImageVrComponent implements OnInit {
   }
 
   loadData(page: number, search?:string) {
-    const searchdata =search ? search: this.filterData.search;
+    let searchdata =search ? search: this.filterData.search;
     let i = 1;
     this.isLoading = true;
     this.nguLieuDanhSachService.getDataByLinhvucIdAndSearch(page, this.filterData.linhvucid, searchdata, this.filterData.loaingulieu).subscribe({
       next: ({data, recordsTotal}) => {
         this.listData = data.map(m => {
-          const linhvuc = this.dataLinhvuc && m.linhvuc ? this.dataLinhvuc.find(f => f.id === m.linhvuc) : null;
-          const loaingulieu = this.dataLoaingulieu && m.loaingulieu ? this.dataLoaingulieu.find(f => f.kyhieu === m.loaingulieu) : null;
+          let linhvuc = this.dataLinhvuc && m.linhvuc ? this.dataLinhvuc.find(f => f.id === m.linhvuc) : null;
+          let loaingulieu = this.dataLoaingulieu && m.loaingulieu ? this.dataLoaingulieu.find(f => f.kyhieu === m.loaingulieu) : null;
           m['indexTable'] = (page - 1) * 10 + i++;
           m['__ten_converted'] = `<b>${m.title}</b><br>`;
           m['linhvuc_converted'] = linhvuc ? linhvuc.ten : '';
@@ -188,6 +188,7 @@ export class NguLieuImageVrComponent implements OnInit {
 
   private __processFrom({data, object, type}: FormNgulieu) {
 
+
     const observer$: Observable<any> = type === FormType.ADDITION ? this.nguLieuDanhSachService.create(data) : this.nguLieuDanhSachService.update(object.id, data);
     observer$.subscribe({
       next: () => {
@@ -209,6 +210,8 @@ export class NguLieuImageVrComponent implements OnInit {
   }
 
   btnAddNew() {
+    this.btnNameCheck ="Lưu Lại";
+
     this.objectEdit = null;
     this.isUpdate = false;
     this.formSave.reset({
@@ -245,6 +248,8 @@ export class NguLieuImageVrComponent implements OnInit {
   objectEdit: Ngulieu;
 
   btnEdit(object: Ngulieu) {
+    this.btnNameCheck ="Cập nhật";
+
     this.objectEdit = object;
     this.isUpdate = true;
     this.formSave.reset({
@@ -292,8 +297,11 @@ export class NguLieuImageVrComponent implements OnInit {
     this.f['title'].setValue(titleInput);
     if (this.formSave.valid) {
       if (titleInput !== '') {
-        this.formActive.data = this.formSave.value;
-        this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
+        if(this.f['file_type'].value === 0 && this.f['file_audio'].value.length>0){
+          this.formActive.data = this.formSave.value;
+          this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
+        }
+
       } else {
         this.notificationService.toastWarning('Vui lòng không nhập khoảng trống');
       }
@@ -389,19 +397,25 @@ export class NguLieuImageVrComponent implements OnInit {
     }
   }
 
+  typeFileAdd = TYPE_FILE_IMAGE;
   async onInputAvatar(event, fileChooser: HTMLInputElement) {
     if (fileChooser.files && fileChooser.files.length) {
-      const file = await this.makeCharacterAvatar(fileChooser.files[0], this.helperService.sanitizeVietnameseTitle(this.f['title'].value));
-      // upload file to server
-      this.fileService.uploadFile(file, 1).subscribe({
-        next: fileUl => {
-          this.formSave.get('file_thumbnail').setValue(fileUl);
-        }, error: () => {
-          this.notificationService.toastError('Upload file không thành công');
-        }
-      })
-      // laasy thoong tin vaf update truongwf
-      this.characterAvatar = URL.createObjectURL(file);
+      if (this.typeFileAdd.includes(fileChooser.files[0].type)){
+        const file = await this.makeCharacterAvatar(fileChooser.files[0], this.helperService.sanitizeVietnameseTitle(this.f['title'].value));
+        // upload file to server
+        this.fileService.uploadFile(file, 1).subscribe({
+          next: fileUl => {
+            this.formSave.get('file_thumbnail').setValue(fileUl);
+          }, error: () => {
+            this.notificationService.toastError('Upload file không thành công');
+          }
+        })
+        // laasy thoong tin vaf update truongwf
+        this.characterAvatar = URL.createObjectURL(file);
+
+      }else{
+        this.notificationService.toastWarning("Định dạng file không phù hợp");
+      }
     }
   }
 

@@ -4,15 +4,11 @@ import { DotThiDanhSachService } from '@shared/services/dot-thi-danh-sach.servic
 import { NganHangDeService } from '@shared/services/ngan-hang-de.service';
 import { NganHangCauHoiService } from '@shared/services/ngan-hang-cau-hoi.service';
 import { Shift } from '@shared/models/quan-ly-doi-thi';
-import { NganHangCauHoi , NganHangDe } from '@shared/models/quan-ly-ngan-hang';
-import { forkJoin , interval , of } from 'rxjs';
+import { forkJoin } from 'rxjs';
 import { NotificationService } from '@core/services/notification.service';
-import { logMessages } from '@angular-devkit/build-angular/src/builders/browser-esbuild/esbuild';
 import { AuthService } from '@core/services/auth.service';
-import {ActivatedRoute, ParamMap, Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import { DateTimeServer , ServerTimeService } from '@shared/services/server-time.service';
-import { OverlayPanel } from 'primeng/overlaypanel/overlaypanel';
-import { BUTTON_NO , BUTTON_YES } from '@core/models/buttons';
 import { KEY_NAME_SHIFT_ID } from '@shared/utils/syscat';
 
 type ShiftState = -1 | 0 | 1; // 0: chưa tới thời gian thi | 1 trong thời gian cho phép thi | -1 : quá hạn thời gian được phép thi
@@ -43,6 +39,7 @@ export class ShiftComponent implements OnInit {
 		'1'  : { state : 1 , label : 'Vào thi' , icon : 'pi pi-check-square' , class : 'p-button-success' }
 	};
 
+  presentTime= new Date().getTime();
 
 	userData = this.auth.user;
 
@@ -61,7 +58,6 @@ export class ShiftComponent implements OnInit {
 		private auth : AuthService ,
 		private serverTimeService : ServerTimeService ,
 		private router : Router,
-    private activatedRoute:ActivatedRoute
 	) {
 	}
 
@@ -78,12 +74,13 @@ export class ShiftComponent implements OnInit {
 				this.dsDotthi = shifts.map( ( shift : Shift ) => {
 					const startAt : string          = this.strToTime( shift.time_start );
 					const closeAt : string          = this.strToTime( shift.time_end );
+          const closeAtToTime:number      = new Date(shift.time_end).getTime();
 					const totalQuestion : number    = shift[ 'bank' ] ? shift[ 'bank' ].number_questions_per_test : 0;
 					const totalTime : number        = shift[ 'bank' ] ? shift[ 'bank' ].time_per_test : 0;
 					const state : ShiftState        = 0;
 					const button : ButtonShiftState = this._listButton[ state ];
-					return { ... shift , startAt , closeAt , totalQuestion , totalTime , state , button };
-				} );
+					return { ... shift , startAt , closeAt,closeAtToTime , totalQuestion , totalTime , state , button };
+				} ).filter(f=>f.closeAtToTime >=this.presentTime);
 				this._checkCaThi();
 				this.checkInterval = setInterval( () => this._checkCaThi() , 60000 );
 				this.isLoading     = false;

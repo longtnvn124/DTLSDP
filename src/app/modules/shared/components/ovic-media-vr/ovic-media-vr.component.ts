@@ -132,7 +132,7 @@ export class OvicMediaVrComponent implements OnInit, OnDestroy {
       ds_ngulieu: [[]], // ảnh 360 | video360// audio thuyết minh
       donvi_id: [null],
       ngulieu_id: [0],
-      file_media: [[]],
+      file_media: [[],Validators.required],
       file_audio: [[]],
     });
     this.audio = document.createElement('audio');
@@ -685,15 +685,11 @@ export class OvicMediaVrComponent implements OnInit, OnDestroy {
         file_audio: this.f['file_audio'].value,
         file_media: this.f['file_media'].value,
       }
-      if (this.formState.formType === 'add') {
+      if (this.formState.formType === 'add' ) {
         this.notificationService.isProcessing(true);
         this.pointsService.create(this.formSave.value).subscribe({
           next: (id) => {
             newPin.id = id;
-
-            // this.dataPointsChild.push(newPin);
-            // this.addPointInScene(this.dataPointsChild);
-            // this.renderSecene();
             this.formSave.reset({
               icon: '',
               title: '',
@@ -724,20 +720,25 @@ export class OvicMediaVrComponent implements OnInit, OnDestroy {
           }
         })
       } else {
-        this.notificationService.isProcessing(true);
-        this.pointsService.update(this.formState.object.id, this.formSave.value).subscribe({
-          next: () => {
-            newPin.id = this.formState.object.id;
-            this.scenePrev.deletePoint(this.formState.object.id);
-            this.pinInScene(newPin, false);
-            this.renderSecene();
-            this.notificationService.isProcessing(false);
-            this.notificationService.toastSuccess('Cập nhật thành công');
-          }, error: () => {
-            this.notificationService.isProcessing(false);
-            this.notificationService.toastSuccess('Cập nhật không thành công');
-          }
-        })
+        if ( this.f['file_media'].value.length>0){
+          this.notificationService.isProcessing(true);
+          this.pointsService.update(this.formState.object.id, this.formSave.value).subscribe({
+            next: () => {
+              newPin.id = this.formState.object.id;
+              this.scenePrev.deletePoint(this.formState.object.id);
+              this.pinInScene(newPin, false);
+              this.renderSecene();
+              this.notificationService.isProcessing(false);
+              this.notificationService.toastSuccess('Cập nhật thành công');
+            }, error: () => {
+              this.notificationService.isProcessing(false);
+              this.notificationService.toastSuccess('Cập nhật không thành công');
+            }
+          })
+        }else{
+          this.notificationService.toastWarning('Vui lòng nhập đủ thông tin');
+        }
+
       }
     } else {
       this.notificationService.toastError('Lỗi nhập liệu');

@@ -10,6 +10,7 @@ import {FileService} from "@core/services/file.service";
 import {HelperService} from "@core/services/helper.service";
 import {AvatarMakerSetting, MediaService} from "@shared/services/media.service";
 import {getLinkDownload} from "@env";
+import {TYPE_FILE_IMAGE} from "@shared/utils/syscat";
 
 interface FormDmNhanVatLichSu extends OvicForm {
   object: DmNhanVatLichSu;
@@ -282,19 +283,25 @@ export class DanhNhanLichSuComponent implements OnInit {
     }
   }
 
+  typeFileAdd = TYPE_FILE_IMAGE;
   async onInputAvatar(event, fileChooser: HTMLInputElement) {
+
     if (fileChooser.files && fileChooser.files.length) {
-      const file = await this.makeCharacterAvatar(fileChooser.files[0], this.helperService.sanitizeVietnameseTitle(this.f['ten'].value));
-      // upload file to server
-      this.fileService.uploadFile(file, 1).subscribe({
-        next: fileUl => {
-          this.formSave.get('files').setValue(fileUl);
-        }, error: () => {
-          this.notificationService.toastError('Upload file không thành công');
-        }
-      })
-      // laasy thoong tin vaf update truongwf
-      this.characterAvatar = URL.createObjectURL(file);
+      if (this.typeFileAdd.includes(fileChooser.files[0].type)){
+        const file = await this.makeCharacterAvatar(fileChooser.files[0], this.helperService.sanitizeVietnameseTitle(this.f['ten'].value));
+        this.fileService.uploadFile(file, 1).subscribe({
+          next: fileUl => {
+            this.formSave.get('files').setValue(fileUl);
+          }, error: () => {
+            this.notificationService.toastError('Upload file không thành công');
+          }
+        })
+        // laasy thoong tin vaf update truongwf
+        this.characterAvatar = URL.createObjectURL(file);
+
+      }else{
+        this.notificationService.toastWarning("Định dạng file không phù hợp");
+      }
     }
   }
 

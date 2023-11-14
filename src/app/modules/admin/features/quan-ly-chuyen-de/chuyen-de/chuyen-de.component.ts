@@ -1,6 +1,5 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
-import {DomSanitizer} from '@angular/platform-browser';
 import {AuthService} from '@core/services/auth.service';
 import {FileService} from '@core/services/file.service';
 import {HelperService} from '@core/services/helper.service';

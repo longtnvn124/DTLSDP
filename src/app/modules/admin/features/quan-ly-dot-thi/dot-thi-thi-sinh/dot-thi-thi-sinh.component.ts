@@ -48,7 +48,6 @@ export class DotThiThiSinhComponent implements OnInit {
   @ViewChild('testTaker', {static: true}) testTaker: TemplateRef<any>;
   private _SEARCH_DEBOUNCE = new Subject<string>();
   private closeObservers$ = new Subject<string>();
-
   rows = this.themeSettingsService.settings.rows;
   loadInitFail: false;
   page = 1;
@@ -71,9 +70,7 @@ export class DotThiThiSinhComponent implements OnInit {
       class: 'p-button-rounded p-button-success ml-3 mr-2'
     },
   ];
-  status= [{ value:1, label:'Đang diễn ra'},
-    { value:0, label:'Kết thúc'},
-  ]
+
   tblStructureShiftTest: OvicTableStructure[] = [
     {
       fieldType: 'normal',
@@ -155,8 +152,6 @@ export class DotThiThiSinhComponent implements OnInit {
     this._SEARCH_DEBOUNCE.asObservable().pipe( takeUntil( this.closeObservers$ ) , debounceTime( 500 ) , distinctUntilChanged() ).subscribe( search => this.loadData(1, search));
   }
 
-
-
   ngOnInit(): void {
     this.nganHangDeService.getDataUnlimit().subscribe({
       next: (data) => {
@@ -167,12 +162,9 @@ export class DotThiThiSinhComponent implements OnInit {
       }
     })
   }
-
   loadInit() {
     this.loadData(1);
-
   }
-
   strToTime(input: string): string {
     const date = input ? new Date(input) : null;
     let result = '';
@@ -183,21 +175,22 @@ export class DotThiThiSinhComponent implements OnInit {
     return result;
   }
 
-  loadData(page, search?:string, status?:number) {
+  loadData(page, search?:string, date?:string) {
     const dataSearch = search ?search: this.search;
     const limit = this.themeSettingsService.settings.rows;
     this.index = (page * limit) - limit + 1;
     let indexTable= 1;
     this.isLoading = true;
-    this.dotThiDanhSachService.getDataByStatusAndSearch(page, dataSearch,status).subscribe({
+    this.dotThiDanhSachService.getDataByStatusAndSearch(page, dataSearch,date).subscribe({
       next: ({data, recordsTotal}) => {
         this.listData = data.map(m => {
+          const timeszone = new Date(m.time_end).getTime() < new Date().getTime();
           m['indexTable']= page ===1 ? indexTable++ : page*10 +indexTable++;
           m['__title_converted'] = `<b>${m.title}</b><br>` + m.desc;
           m['__time_converted'] = this.strToTime(m.time_start) + ' - ' + this.strToTime(m.updated_at);
           m['__bank_coverted'] = this.nganHangDe && m.bank_id && this.nganHangDe.find(f => f.id === m.bank_id) ? this.nganHangDe.find(f => f.id === m.bank_id).title : '';
-          m['__status_converted'] = m.status === 1 ? this.statusOptions[1].color : this.statusOptions[0].color;
-          m['total_time'] = this.nganHangDe.find(f => f.id === m.bank_id).time_per_test;
+          m['__status_converted'] = !timeszone ? this.statusOptions[1].color : this.statusOptions[0].color;
+          m['total_time'] =  this.nganHangDe.find(f => f.id === m.bank_id) && this.nganHangDe.find(f => f.id === m.bank_id).time_per_test ? this.nganHangDe.find(f => f.id === m.bank_id).time_per_test:0;
           return m;
         })
         this.recordsTotal = recordsTotal;
@@ -213,11 +206,6 @@ export class DotThiThiSinhComponent implements OnInit {
     this.search = text;
     this._SEARCH_DEBOUNCE.next( text );
   }
-  changeFilter(event){
-    const value = event['value'];
-    this.loadData(1,this.search,value);
-  }
-
   paginate({page}: NgPaginateEvent) {
     this.page = page + 1;
     this.loadData(this.page);
@@ -236,11 +224,9 @@ export class DotThiThiSinhComponent implements OnInit {
         this.notificationService.isProcessing(true);
         this.nganHangCauHoiService.getDataByBankId(bank_id, null).subscribe({
           next: (data) => {
-            console.log( quesition_ids);
-            console.log(data);
             this.nganhangCauhoi = quesition_ids.map(m => {
               const item = data.find(f => f.id === m)?  data.find(f => f.id === m):null;
-              item['__per_select_question'] = details[m] ? details[m].join(',').toString() : '';
+              item['__per_select_question'] = details[m] && details[m].join(',').toString() ? details[m].join(',').toString() : '';
               item['__correct_answer_coverted'] =item ? item.correct_answer.map(t => item.answer_options.find(f => f.id === t)):null;
               item['__correct_answer'] = item.correct_answer.join(',');
               return item;
@@ -265,8 +251,6 @@ export class DotThiThiSinhComponent implements OnInit {
             _time_loadExam,
             _number_correct_converted,
             score,
-
-
           }) => ({
           index,
           _user_name,
@@ -290,11 +274,9 @@ export class DotThiThiSinhComponent implements OnInit {
 
     this.dotThiKetQuaService.getDataByShiftIdAndWidth(idShift).pipe(switchMap(project => {
       const ids = project ? project.map(m => m.thisinh_id) : [];
-
       return forkJoin<[ShiftTests[], NewContestant[]]>([of(project), this.thiSinhService.getDataByShiftest(ids)]);
     })).subscribe({
       next: ([dataShifTest, dataThisinh]) => {
-
         let i: number = 1;
         const dataUser = dataThisinh.map(m => {
           const shiftTest = dataShifTest.find(f => f.thisinh_id === m.id);

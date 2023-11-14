@@ -47,16 +47,6 @@
 
 <p-contextMenu [target]="container" [model]="items" appendTo="body" *ngIf="!showOnly"></p-contextMenu>
 
-
-<!--<audio #audio autoplay playsinline loop class="d-none">-->
-<!--&lt;!&ndash;  <source [src]="audioLink " type="audio/mp3">&ndash;&gt;-->
-<!--  <source src="{{audioLink}} " type="audio/mp3">-->
-<!--  <source src="{{audioLink}}" type="audio/mpeg" />-->
-
-<!--  <source src="{{audioLink}}" type="audio/ogg" />-->
-
-<!--</audio>-->
-
 <ng-template #fromUpdate>
   <div class="ovic-side-navigation-content h-100">
     <div class="ovic-side-navigation-content__head">
@@ -100,9 +90,9 @@
               <div class="row">
                 <div class="col-12">
                   <p class="form-row">
-                    <label>Ảnh nền 3D 360 </label>
+                    <label>Điểm truy cập 3D 360<span class="ovic-mark ">*</span> <span class="ovic-mark text-ovic-mark">(hỗ trợ định dạng file: '.jpg','.jpeg','.png','.mp4','avi')</span> </label>
                     <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"
-                                         [formField]="f['file_media']" [multiple]="false"
+                                         [formField]="f['file_media']" [multiple]="false" [accept]="['.jpg','.jpeg','.png','.mp4','avi']"
                                          [state]="1"></app-file-list-local>
                   </p>
                 </div>
@@ -110,9 +100,9 @@
               <div class="row">
                 <div class="col-12">
                   <p class="form-row">
-                    <label>File thuyết minh </label>
+                    <label>File thuyết minh  <span class="ovic-mark text-ovic-mark">(Chỉ hỗ trợ định dạng file: ".mp3")</span> </label>
                     <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"
-                                         [formField]="f['file_audio']" [multiple]="false"
+                                         [formField]="f['file_audio']" [multiple]="false" [accept]="['.mp3']"
                                          [state]="1"></app-file-list-local>
                   </p>
                 </div>

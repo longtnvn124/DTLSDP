@@ -531,7 +531,7 @@ app-chuyen-de{
 /*}*/
 
 span p img{
-  height:200px;
+  /*height:200px;*/
 
 }
 .img-h-200px{
@@ -668,4 +668,9 @@ p .ql-align-center{
 
 .mobile-select-sukien_desc p img{
   width:100%;
+}
+
+.text-ovic-mark{
+  font-size:12px;
+  font-weight: 500;
 }

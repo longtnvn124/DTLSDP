@@ -2,7 +2,7 @@ import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {FormType, NgPaginateEvent, OvicForm, OvicTableStructure} from "@shared/models/ovic-models";
 import {Shift, statusOptions} from "@shared/models/quan-ly-doi-thi";
 import {debounceTime, filter, Observable, Subject, Subscription} from "rxjs";
-import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from "@angular/forms";
+import {AbstractControl, FormBuilder, FormGroup,Validators} from "@angular/forms";
 import {NotificationService} from "@core/services/notification.service";
 import {ThemeSettingsService} from "@core/services/theme-settings.service";
 import {DotThiDanhSachService} from "@shared/services/dot-thi-danh-sach.service";
@@ -14,20 +14,6 @@ import {MODULES_QUILL} from "@shared/utils/syscat";
 interface FormDotthi extends OvicForm {
   object: Shift;
 }
-
-// ten
-// time_start
-// time_end
-// const PinableValidator = (control: AbstractControl): ValidationErrors | null => {
-//   if (control.get('time_start').value && control.get('time_end').value) {
-//     const timeStart = new Date(control.get('time_start').value).getTime();
-//     const timeEnd = new Date(control.get('time_end').value).getTime();
-//     const time: boolean = timeStart<timeEnd;
-//     return time ? null : {invalid: true};
-//   } else {
-//     return {invalid: true};
-//   }
-// }
 
 @Component({
   selector: 'app-dot-thi-danh-sach',
@@ -199,10 +185,11 @@ export class DotThiDanhSachComponent implements OnInit {
     this.dotThiDanhSachService.load(page, this.search).subscribe({
       next: ({data, recordsTotal}) => {
         this.listData = data.map(m => {
+          const timeszone = new Date(m.time_end).getTime() < new Date().getTime();
           m['__title_converted'] = `<b>${m.title}</b><br>`;
           m['__time_converted'] = this.strToTime(m.time_start) + ' - ' + this.strToTime(m.time_end);
           m['__bank_coverted'] = this.nganHangDe && m.bank_id && this.nganHangDe.find(f => f.id === m.bank_id) ? this.nganHangDe.find(f => f.id === m.bank_id).title : '';
-          m['__status_converted'] = m.status === 1 ? this.statusOptions[1].color : this.statusOptions[0].color;
+          m['__status_converted'] = !timeszone ? this.statusOptions[1].color : this.statusOptions[0].color;
           return m;
         })
         this.recordsTotal = recordsTotal;

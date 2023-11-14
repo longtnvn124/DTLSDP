@@ -38,25 +38,8 @@ export class PanelComponent implements OnInit, OnDestroy {
     this.isSmallScreen = window.innerWidth <= 500;
   }
 
-  // @HostListener('window:beforeunload', ['$event']) beforeUnloadHandler(event: Event) {
-  //   event.preventDefault();
-  //   console.log('Bạn đang thoạt khỏi bài thi');
-  //   this.updateTimeLeft(this.remainingTimeClone);
-  //
-  // }
-  // @HostListener('window:visibilitychange', ['$event']) visibilityChangeHandler(event: Event) {
-  //   console.log('Bạn đang thoạt khỏi tab bafi thi');
-  //   if (document.hidden){
-  //     this.updateTimeLeft(this.remainingTimeClone);
-  //   }else{
-  //     this.startTimer(this.remainingTimeClone);
-  //   }
-  // }
-
   isSmallScreen: boolean = window.innerWidth <= 500;
-
   mode: 'PANEL' | 'TEST_RESULT' | 'LOADING' = 'LOADING';
-
   contestantInfo: ContestantInfo = {
     phone: '',
     testName: '',
@@ -68,21 +51,13 @@ export class PanelComponent implements OnInit, OnDestroy {
   };
 
   shift: Shift;
-
   shiftTest: ShiftTests;
-
   answerQuestions: ClientAnswer = {};
-
   openStartTheTestDialog: boolean = false;
-
   destroy$: Subject<string> = new Subject<string>();
-
   questions: NganHangCauHoi[];
-
   remainingTimeClone: number = 0; // 30 minutes in seconds
-
   isTimeOver: boolean = false;
-
   timeCloser$: Subject<string> = new Subject<string>();
 
   private _validInfo: { shift_id: number, contestant: number } = {shift_id: 0, contestant: 0};
@@ -92,7 +67,6 @@ export class PanelComponent implements OnInit, OnDestroy {
   protected enableSubmitButton: boolean = false;
 
   protected strokeDasharray: string = '0 200';
-
 
 
   constructor(
@@ -205,7 +179,7 @@ export class PanelComponent implements OnInit, OnDestroy {
         remainingTime--;
         this.remainingTimeClone = Math.max(remainingTime, 0);
       } else {
-        this.remainingTimeClone =0;
+        this.remainingTimeClone = 0;
         this.stopTimer();
         this.isTimeOver = true;
         this.updateTimeLeft(0);

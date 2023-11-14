@@ -2,10 +2,9 @@ import {Injectable} from '@angular/core';
 import {getRoute} from '@env';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {HttpParamsHeplerService} from '@core/services/http-params-hepler.service';
-import {ThemeSettingsService} from '@core/services/theme-settings.service';
-import {Shift, ShiftTests} from '@shared/models/quan-ly-doi-thi';
+import {ShiftTests} from '@shared/models/quan-ly-doi-thi';
 import {map, Observable} from 'rxjs';
-import {Dto, OrWhereCondition, OvicConditionParam, OvicQueryCondition} from '@core/models/dto';
+import {Dto, OvicConditionParam, OvicQueryCondition} from '@core/models/dto';
 
 export interface ShiftTestScore {
   number_correct: number;
@@ -20,9 +19,7 @@ export class DotThiKetQuaService {
 
   constructor(
     private http: HttpClient,
-    private httpParamsHelper: HttpParamsHeplerService,
-    private themeSettingsService: ThemeSettingsService
-  ) {
+    private httpParamsHelper: HttpParamsHeplerService,) {
   }
 
   getShiftTestById(id: number): Observable<ShiftTests> {
@@ -70,28 +67,27 @@ export class DotThiKetQuaService {
     return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
   }
 
-  // getdataUnlimit(): Observable<ShiftTests[]> {
-  //   const fromObject = {
-  //     limit: -1
-  //   };
-  //   const params = new HttpParams({fromObject});
-  //   return this.http.get<Dto>(''.concat(this.api), {params}).pipe(map(res => res.data));
-  // }
-
   getDataByShiftIdAndWidth(shift_id: number): Observable<ShiftTests[]> {
     const conditions: OvicConditionParam[] = [{
       conditionName: 'shift_id',
       condition: OvicQueryCondition.equal,
       value: shift_id.toString(10)
     },
-    //   {
-    //     conditionName: 'state',
-    //     condition: OvicQueryCondition.equal,
-    //     value: '2',
-    //     orWhere:'and'
-    // }
+      {
+        conditionName: 'state',
+        condition: OvicQueryCondition.equal,
+        value: '2',
+        orWhere:'and'
+    }
     ];
-    const params: HttpParams = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams().set('with', 'thisinh'));
+
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+      orderby: 'score',
+      order: "ASC"
+    }
+    const params: HttpParams = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}).set('with', 'thisinh'));
     return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
   }
 }

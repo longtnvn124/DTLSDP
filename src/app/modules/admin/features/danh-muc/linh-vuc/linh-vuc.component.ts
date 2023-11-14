@@ -187,8 +187,9 @@ export class LinhVucComponent implements OnInit {
       if (!this.dataKyhieu.includes(this.f['kyhieu'].value)){
         this.danhMucLinhVucService.create(data).subscribe({
           next: () => {
-            this.needUpdate = true;
+            this.loadData(this.page);
             this.notificationService.toastSuccess('Thao tác thành công', 'Thông báo');
+            this.needUpdate = true;
           },
           error: () => this.notificationService.toastError('Thao tác thất bại', 'Thông báo')
         });
@@ -199,21 +200,13 @@ export class LinhVucComponent implements OnInit {
     }else{
       this.danhMucLinhVucService.update(object.id, data).subscribe({
         next: () => {
+          this.loadData(this.page);
           this.needUpdate = true;
           this.notificationService.toastSuccess('Thao tác thành công', 'Thông báo');
         },
         error: () => this.notificationService.toastError('Thao tác thất bại', 'Thông báo')
       })
     }
-
-    const observer$: Observable<any> = type === FormType.ADDITION ? this.danhMucLinhVucService.create(data) : this.danhMucLinhVucService.update(object.id, data);
-    observer$.subscribe({
-      next: () => {
-        this.needUpdate = true;
-        this.notificationService.toastSuccess('Thao tác thành công', 'Thông báo');
-      },
-      error: () => this.notificationService.toastError('Thao tác thất bại', 'Thông báo')
-    });
   }
 
   paginate({page}: NgPaginateEvent) {
@@ -302,9 +295,9 @@ export class LinhVucComponent implements OnInit {
   saveForm() {
     const titleInput = this.f['ten'].value.trim();
     this.f['ten'].setValue(titleInput);
-
+    const checkKyHieu = this.f['kyhieu'].value.trim();
     if (this.formSave.valid ) {
-      if (titleInput !== '') {
+      if (titleInput !== ''  && checkKyHieu !=='') {
           this.formActive.data = this.formSave.value;
           this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
       } else {

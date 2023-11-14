@@ -67,12 +67,6 @@ export class DanhMucChuyenMucService {
         value: '0'
       },
     ];
-    const fromObject = {
-      paged: page,
-      limit: this.themeSettingsService.settings.rows,
-      orderby: 'ten',
-      order: 'ASC'
-    };
     if (search) {
       const c1: OvicConditionParam[] = [
         {
@@ -81,21 +75,16 @@ export class DanhMucChuyenMucService {
           value: `%${search}%`,
           orWhere: 'and'
         },
-        {
-          conditionName: 'mota',
-          condition: OvicQueryCondition.like,
-          value: `%${search}%`,
-          orWhere: 'or'
-        },
-        {
-          conditionName: 'is_deleted',
-          condition: OvicQueryCondition.equal,
-          value: '0',
-          orWhere: 'and'
-        }
-        ];
+      ];
       conditions.push(...c1);
-      }
+    }
+
+    const fromObject = {
+      paged: page,
+      limit: this.themeSettingsService.settings.rows,
+      orderby: 'ten',
+      order: 'ASC'
+    };
     if (select) {
       fromObject['select'] = select;
     }
