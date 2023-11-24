@@ -44,13 +44,13 @@ export class OvicResizeDropdowDirective implements OnInit {
     const inputElemenet = document.createElement('input');
     inputElemenet.style.display = 'none';
     inputElemenet.type = 'file';
-    inputElemenet.accept = 'image/png, image/gif, image/jpeg, image/bmp, image/x-icon';
+    inputElemenet.accept = 'image/png, image/jpeg, image/jpg,';
     inputElemenet.click();
 
     inputElemenet.addEventListener('change', () => {
       if (inputElemenet.files) {
         const file = inputElemenet.files[0];
-        if (file['type'] && ['image/png', 'image/gif', 'image/jpeg', 'image/bmp', 'image/x-icon'].includes(file['type'])) {
+        if (file['type'] && ['image/png', 'image/jpg', 'image/jpeg',].includes(file['type'])) {
           this.notification.isProcessing(true);
 
           this.fileService.uploadFile(file, 1).subscribe({
@@ -71,6 +71,8 @@ export class OvicResizeDropdowDirective implements OnInit {
               this.notification.isProcessing(false);
             },
           })
+        }else{
+          this.notification.toastWarning('Định dạng file không phù hợp');
         }
 
       }

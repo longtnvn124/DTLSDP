@@ -242,14 +242,12 @@ export class MainLayoutComponent implements OnInit, OnChanges, OnDestroy {
 
         break;
       case 5:
-        this.router.navigate(['home/su-kien']);
-        this.btnClose()
-
+        this.btn_sukien();
+        this.btnClose();
         break;
       case 6:
-        this.router.navigate(['home/nhan-vat']);
+        this.btn_nhanvat();
         this.btnClose()
-
         break;
       case 7:
         this.router.navigate(['home/tim-kiem']);

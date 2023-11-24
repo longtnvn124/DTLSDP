@@ -75,7 +75,7 @@ export class NguLieuImageVrComponent implements OnInit {
   formSave: FormGroup = this.fb.group({
     title: ['', Validators.required],
     mota: [''],
-    chuyenmuc: ['', Validators.required],
+    chuyenmuc: [null, Validators.required],
     loaingulieu: ['', Validators.required],
     linhvuc: ['', Validators.required],
     diemditich_ids: [[]],
@@ -188,6 +188,10 @@ export class NguLieuImageVrComponent implements OnInit {
 
   private __processFrom({data, object, type}: FormNgulieu) {
 
+    //
+    // if(this.f['file_type'].value === 0 && this.f['file_audio'].value.length>0){
+    //
+    // }
 
     const observer$: Observable<any> = type === FormType.ADDITION ? this.nguLieuDanhSachService.create(data) : this.nguLieuDanhSachService.update(object.id, data);
     observer$.subscribe({
@@ -217,7 +221,7 @@ export class NguLieuImageVrComponent implements OnInit {
     this.formSave.reset({
       title: '',
       mota: '',
-      chuyenmuc: 0,
+      chuyenmuc: null,
       loaingulieu: 'image360',
       diemditich_ids: [],
       linhvuc: '',
@@ -297,11 +301,9 @@ export class NguLieuImageVrComponent implements OnInit {
     this.f['title'].setValue(titleInput);
     if (this.formSave.valid) {
       if (titleInput !== '') {
-        if(this.f['file_type'].value === 0 && this.f['file_audio'].value.length>0){
+
           this.formActive.data = this.formSave.value;
           this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
-        }
-
       } else {
         this.notificationService.toastWarning('Vui lòng không nhập khoảng trống');
       }

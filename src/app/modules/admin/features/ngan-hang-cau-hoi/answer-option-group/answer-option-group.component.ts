@@ -94,24 +94,32 @@ export class AnswerOptionGroupComponent implements OnInit {
 
   btnUploadFile(id: number) {
     const inputElement = this.fileInput.nativeElement as HTMLInputElement;
+    inputElement.type = 'file';
+    inputElement.accept = 'image/png, image/jpeg, image/jpg';
     inputElement.click();
     this.optionId = id;
   }
 
+
   uploadFile(event: Event) {
     const inputElement = this.fileInput.nativeElement as HTMLInputElement;
     const file = inputElement.files[0];
+    const data: string[] =['image/png','image/jpeg','image/jpg'];
+    if(data.includes(file.type)){
+      // upload file to server
+      this.fileService.uploadFile(file, 1).subscribe({
+        next: fileUl => {
+          this.options.find(f => f.id === this.optionId).file = fileUl;
+          this.options.find(f => f.id === this.optionId).value = fileUl? "image" :"text";
+          this.options.find(f => f.id === this.optionId)['_url_file'] = this.fileService.getPreviewLinkLocalFileNotToken(fileUl);
+        }, error: () => {
+          this.notificationService.toastError('Upload file không thành công');
+        }
+      })
+    }else {
+      this.notificationService.toastWarning('Định dạng file không phù hợp');
+    }
 
-    // upload file to server
-    this.fileService.uploadFile(file, 1).subscribe({
-      next: fileUl => {
-
-        this.options.find(f => f.id === this.optionId).file = fileUl;
-        this.options.find(f => f.id === this.optionId)['_url_file'] = this.fileService.getPreviewLinkLocalFileNotToken(fileUl);
-      }, error: () => {
-        this.notificationService.toastError('Upload file không thành công');
-      }
-    })
   }
 
 

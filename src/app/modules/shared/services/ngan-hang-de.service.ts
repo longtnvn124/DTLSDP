@@ -12,7 +12,7 @@ import {Dto, OvicConditionParam, OvicQueryCondition} from '@core/models/dto';
   providedIn: 'root'
 })
 export class NganHangDeService {
-  private readonly api = getRoute('bank/');
+  private readonly api = getRoute('bank-questions/');
 
   constructor(
     private http: HttpClient,

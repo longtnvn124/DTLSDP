@@ -181,5 +181,22 @@ export class DotThiDanhSachService {
       data: res.data
     })));
   }
+  getDataByBankId(bankid:number):Observable<Shift[]>{
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'bank_id',
+        condition: OvicQueryCondition.equal,
+        value: bankid.toString(10),
+      },
+    ];
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+      orderby: 'title',
+      order: 'ASC'
+    };
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
+    return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
+  }
 
 }

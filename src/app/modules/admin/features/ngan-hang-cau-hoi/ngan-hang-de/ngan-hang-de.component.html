@@ -31,7 +31,7 @@
             <div class="col-12">
               <p class="form-row">
                 <label>Tên ngân hàng<span class="ovic-mark">*</span></label>
-                <input type="text" placeholder="Tên ngân hàng..." formControlName="title"
+                <input type="text" placeholder="Tên ngân hàng..." formControlName="title" [ngClass]="btn_checkAdd === 'Cập nhật' ? 'p-disabled':''"
                        autocomplete="off">
               </p>
             </div>

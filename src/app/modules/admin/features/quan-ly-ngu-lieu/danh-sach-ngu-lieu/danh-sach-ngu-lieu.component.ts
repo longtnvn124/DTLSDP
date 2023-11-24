@@ -117,11 +117,9 @@ export class DanhSachNguLieuComponent implements OnInit {
     this.isLoading = true;
     this.nguLieuDanhSachService.getDataByLinhvucIdAndSearch(page, this.filterData.linhvucid, this.filterData.search, this.filterData.loaingulieu).subscribe({
       next: ({data, recordsTotal}) => {
-
         this.listData = data.filter(f=>f.loaingulieu !="image360" && f.loaingulieu !=="video360").map(m => {
           const linhvuc = this.dataLinhvuc && m.linhvuc ? this.dataLinhvuc.find(f => f.id === m.linhvuc) : null;
           const loaingulieu = this.dataLoaingulieu && m.loaingulieu ? this.dataLoaingulieu.find(f => f.kyhieu === m.loaingulieu) : null;
-
           m['indexTable'] = (page -1)*10 + i++;
           m['__ten_converted'] = `<b>${m.title}</b><br>`;
           m['linhvuc_converted'] = linhvuc ? linhvuc.ten : '';

@@ -245,28 +245,33 @@ export class NganHangCauHoiComponent implements OnInit {
 
 //=====================add exam=================================
   saveForm() {
+    const options =  this.f['answer_options'].value.map(m=>m.value).some(m=> m==='');
     if (this.formSave.valid) {
       if(this.f['correct_answer'].value.length >0 ) {
-        const index = this.listData.findIndex(u => u.id === this.formSave.get('bank_id').value);
-        forkJoin([
-          this.nganHangDeService.update(this._bank_id, {total: this.dataQuestion.length + 1}),
-          this.nganHangCauHoiService.create(this.formSave.value)
-        ]).subscribe({
-          next: () => {
-            this.formSave.reset(
-              {
-                title: '',
-                bank_id:this._bank_id,
-                answer_options: [],
-                correct_answer: [],
-              }
-            )
-            this.listData[index].total = this.listData[index].total + 1;
-            this.loadQuestion(this._bank_id);
-            this.notificationService.toastSuccess('Thao tác thành công', 'Thông báo');
-          },
-          error: () => this.notificationService.toastError('Thao tác thất bại', 'Thông báo')
-        })
+        if (options){
+          this.notificationService.toastWarning('Câu trả lời không để khoảng trống');
+        }else{
+          const index = this.listData.findIndex(u => u.id === this.formSave.get('bank_id').value);
+          forkJoin([
+            this.nganHangDeService.update(this._bank_id, {total: this.dataQuestion.length + 1}),
+            this.nganHangCauHoiService.create(this.formSave.value)
+          ]).subscribe({
+            next: () => {
+              this.formSave.reset(
+                {
+                  title: '',
+                  bank_id:this._bank_id,
+                  answer_options: [],
+                  correct_answer: [],
+                }
+              )
+              this.listData[index].total = this.listData[index].total + 1;
+              this.loadQuestion(this._bank_id);
+              this.notificationService.toastSuccess('Thao tác thành công', 'Thông báo');
+            },
+            error: () => this.notificationService.toastError('Thao tác thất bại', 'Thông báo')
+          })
+        }
       }
       else{
         this.notificationService.toastWarning('Chưa chọn câu trả lời đúng')
@@ -313,19 +318,26 @@ export class NganHangCauHoiComponent implements OnInit {
 
 
   saveEdit() {
-    if(this.f['correct_answer'].value.length >0 ) {
-      this.notificationService.isProcessing(true);
-      this.nganHangCauHoiService.update(this.objectEdit.id, this.formSave.value).subscribe({
-        next: () => {
+    const options =  this.f['answer_options'].value.map(m=>m.value).some(m=> m==='');
 
-          this.loadQuestion(this._bank_id);
-          this.notificationService.isProcessing(false);
-          this.notificationService.toastSuccess('Thao tác thành công');
-        }, error: () => {
-          this.notificationService.isProcessing(false);
-          this.notificationService.toastError('Thao tác không thành công');
-        }
-      })
+    if(this.f['correct_answer'].value.length >0 ) {
+      if(options) {
+        this.notificationService.toastWarning("Câu trả lời không được để trống");
+      }
+      else{
+        this.notificationService.isProcessing(true);
+        this.nganHangCauHoiService.update(this.objectEdit.id, this.formSave.value).subscribe({
+          next: () => {
+
+            this.loadQuestion(this._bank_id);
+            this.notificationService.isProcessing(false);
+            this.notificationService.toastSuccess('Thao tác thành công');
+          }, error: () => {
+            this.notificationService.isProcessing(false);
+            this.notificationService.toastError('Thao tác không thành công');
+          }
+        })
+      }
     }else {
       this.notificationService.toastWarning('Chưa chọn câu trả lời đúng');
     }

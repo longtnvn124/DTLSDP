@@ -6,4 +6,10 @@
   color: #FFF;
 }
 
-
+.btn-check{
+  font-size: 16px;
+  cursor: pointer;
+}
+.icon-check-pass{
+  color: #33bd1c;
+}

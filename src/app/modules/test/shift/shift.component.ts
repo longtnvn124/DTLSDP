@@ -7,7 +7,7 @@ import { Shift } from '@shared/models/quan-ly-doi-thi';
 import { forkJoin } from 'rxjs';
 import { NotificationService } from '@core/services/notification.service';
 import { AuthService } from '@core/services/auth.service';
-import {ActivatedRoute, Router} from '@angular/router';
+import {Router} from '@angular/router';
 import { DateTimeServer , ServerTimeService } from '@shared/services/server-time.service';
 import { KEY_NAME_SHIFT_ID } from '@shared/utils/syscat';
 

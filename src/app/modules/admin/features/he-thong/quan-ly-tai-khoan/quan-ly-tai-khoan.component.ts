@@ -261,12 +261,14 @@ export class QuanLyTaiKhoanComponent implements OnInit {
         void this.deleteUser(decision.id);
         break;
       case 'EDIT_DECISION':
+        this.type_password="password";
         this.editUser(decision);
         break;
       case 'SWITCH':
         this.switchEvent(decision.id);
         break;
       case 'ADD_NEW_ROW':
+        this.type_password==="text";
         void this.creatUser(this.tplCreateAccount);
         break;
       case 'ADD_NEW_ROW_FROM_EXCEL':
@@ -348,7 +350,6 @@ export class QuanLyTaiKhoanComponent implements OnInit {
     try {
       await this.callActionForm(frmTemplate);
     } catch (e) {
-
     }
   }
 
@@ -436,13 +437,12 @@ export class QuanLyTaiKhoanComponent implements OnInit {
   }
 
   async callActionForm(template): Promise<any> {
-
     if (this.dsNhomQuyen.length === 0) {
       if (Array.isArray(this.auth.roles) && this.auth.roles.length > 1) {
         const exceptHightRole = Math.min(...[...this.auth.roles].map(u => u.id));
         this.dsNhomQuyen = [...this.auth.roles].filter(r => r.id !== exceptHightRole);
-        return Promise.resolve();
       } else {
+
         return Promise.resolve();
       }
     }
@@ -450,9 +450,17 @@ export class QuanLyTaiKhoanComponent implements OnInit {
     return createUserForm.result;
   }
 
-  type_password:'password'|'text' = "password";
+  type_password:'password'|'text' = "text";
   btnShowPassWord(){
     this.type_password = this.type_password ==="password" ? "text": "password";
+  }
+
+  passwordSelectItem:boolean = false;
+  btnPasswordActive(){
+    // this.passwordSelectItem = !this.passwordSelectItem;
+
+    this.changPassState = !this.changPassState;
+    console.log(this.changPassState);
   }
 
 }

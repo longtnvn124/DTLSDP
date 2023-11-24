@@ -185,7 +185,6 @@ export class NguLieuVideoVrComponent implements OnInit {
   }
 
   private __processFrom({data, object, type}: FormNgulieu) {
-    // this.btnNameCheck =type === FormType.ADDITION ? "Lưu Lại":"Cập nhật";
     const observer$: Observable<any> = type === FormType.ADDITION ? this.nguLieuDanhSachService.create(data) : this.nguLieuDanhSachService.update(object.id, data);
     observer$.subscribe({
       next: () => {

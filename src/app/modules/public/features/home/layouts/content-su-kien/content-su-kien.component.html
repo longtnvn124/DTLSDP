@@ -50,11 +50,11 @@
 
             <div class="sukien_desc pb-3" [innerHTML]="sukienActive.mota | htmlDecode">
             </div>
-            <div class="sukien_desc m-1">
+            <div class="sukien_desc m-1 pb-4">
               <div class="mx-1" *ngIf="sukienActive['_diemditich_convented'] ?? 0>0">Diễn ra tại: <span
-                *ngFor="let item of sukienActive['_diemditich_convented']">{{item}}, </span></div>
+                *ngFor="let item of sukienActive['_diemditich_convented']">{{item}}, &nbsp;</span></div>
               <div class="mx-1" *ngIf="sukienActive['_nhanvat_convented'] ?? 0>0">Nhân vật lịch sử: <span
-                *ngFor="let item of sukienActive['_nhanvat_convented']">{{item}}, </span></div>
+                *ngFor="let item of sukienActive['_nhanvat_convented']">{{item}}, &nbsp;</span></div>
             </div>
 
           </div>

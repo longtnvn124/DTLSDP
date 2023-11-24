@@ -127,7 +127,8 @@ export class DotThiDanhSachComponent implements OnInit {
     private fb: FormBuilder,
     private themeSettingsService: ThemeSettingsService,
     private nganHangDeService: NganHangDeService,
-    private helperService: HelperService
+    private helperService: HelperService,
+
   ) {
     this.formSave = this.fb.group({
       title: ['', Validators.required],
@@ -172,12 +173,6 @@ export class DotThiDanhSachComponent implements OnInit {
     }
     return result;
   }
-
-  private convertDateFormat(dateString: string): string {
-    const date = new Date(dateString);
-    return date ? this.helperService.formatSQLDateTime(date) : null;
-  }
-
   loadData(page) {
     const limit = this.themeSettingsService.settings.rows;
     this.index = (page * limit) - limit + 1;
@@ -304,13 +299,12 @@ export class DotThiDanhSachComponent implements OnInit {
   saveForm() {
     const titleInput = this.f['title'].value.trim();
     this.f['title'].setValue(titleInput);
-    const timeszone = new Date(this.f['time_start'].value).getTime() < new Date(this.f['time_end'].value).getTime();
-
+    const timeszone = this.formatSQLDateTime(new Date(this.formSave.value['time_start'])) <  this.formatSQLDateTime(new Date(this.formSave.value['time_end']));
     if (this.formSave.valid) {
       if (titleInput !== '') {
         if (timeszone){
-          this.formSave.value['time_start'] = this.convertDateFormat(this.formSave.value['time_start']);
-          this.formSave.value['time_end'] = this.convertDateFormat(this.formSave.value['time_end']);
+          this.formSave.value['time_start'] = this.formatSQLDateTime(new Date(this.formSave.value['time_start']));
+          this.formSave.value['time_end'] = this.formatSQLDateTime(new Date(this.formSave.value['time_end']));
           this.formActive.data = this.formSave.value;
           this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
         }else{
@@ -326,4 +320,14 @@ export class DotThiDanhSachComponent implements OnInit {
     }
   }
 
+  formatSQLDateTime(date: Date): string {
+    const y = date.getFullYear().toString();
+    const m = (date.getMonth() + 1).toString().padStart(2, '0');
+    const d = date.getDate().toString().padStart(2, '0');
+    const h = date.getHours().toString().padStart(2, '0');
+    const min = date.getMinutes().toString().padStart(2, '0');
+    const sec = '00';
+    //'YYYY-MM-DD hh:mm:ss' type of sql DATETIME format
+    return `${y}-${m}-${d} ${h}:${min}:${sec}`;
+  }
 }

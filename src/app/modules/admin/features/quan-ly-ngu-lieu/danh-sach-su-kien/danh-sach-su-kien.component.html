@@ -233,9 +233,9 @@
               <div class="row">
                 <div class="col-12">
                   <p class="form-row">
-                    <label>File thuyết minh</label>
+                    <label>File thuyết minh <span class="ovic-mark text-ovic-mark">(Chỉ hỗ trợ định dạng file: ".mp3")</span></label>
                     <app-file-list-local class="w-100 ovic-vertical__file-list" [permission]="filePermission"
-                                         [formField]="f['file_audio']" [multiple]="true"
+                                         [formField]="f['file_audio']" [multiple]="true" [accept]="['.mp3']"
                                          [state]="1"></app-file-list-local>
                   </p>
                 </div>

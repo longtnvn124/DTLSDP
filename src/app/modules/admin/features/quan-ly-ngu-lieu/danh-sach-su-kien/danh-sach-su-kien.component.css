@@ -24,9 +24,11 @@
   display:flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
+  line-height: 1.2;
 }
 .news-container_title p{
-  font-size: 30px;
+  /*font-size: 30px;*/
   padding-top: 10px;
   margin-top: 20px;
 }
